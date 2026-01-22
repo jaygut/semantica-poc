@@ -545,9 +545,9 @@ The system is designed to answer complex, multi-hop questions with full provenan
 
 ## Contact
 
-**Project Lead:** [Your Name]
+**Project Lead:** Jay Gutierrez (Cross-System Architect) — [biome-translator.emergent.host](https://biome-translator.emergent.host/)
 **Semantica Integration:** Mohd Kaif (Lead Developer)
-**Repository:** [GitHub URL]
+**Repository:** [github.com/jaygut/semantica-poc](https://github.com/jaygut/semantica-poc)
 
 ---
 
