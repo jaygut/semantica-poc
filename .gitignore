@@ -2,6 +2,9 @@
 .claude/
 SYSTEM_OVERVIEW.md
 
+# AI working documents
+ai_docs/
+
 # macOS
 .DS_Store
 *.DS_Store
