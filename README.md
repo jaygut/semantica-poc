@@ -553,8 +553,8 @@ The system is designed to answer complex, multi-hop questions with full provenan
 
 ## License
 
-[Specify license]
+This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
 
 ---
 
-*Built with Semantica — Turning ecological complexity into investment clarity.*
+*Blue Natural Capital Knowledge Engineering — Where ocean science meets investment intelligence.*
