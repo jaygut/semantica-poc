@@ -1,0 +1,333 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "site": {
+    "@type": "MarineProtectedArea",
+    "@id": "mpa:cabo_pulmo_np",
+    "name": "Cabo Pulmo National Park",
+    "country": "Mexico",
+    "region": "Gulf of California",
+    "coordinates": {
+      "@type": "geo:Point",
+      "latitude": 23.42,
+      "longitude": -109.42
+    },
+    "area_km2": 71.11,
+    "designation_year": 1995,
+    "governance": {
+      "management_authority": "CONANP",
+      "management_plan_year": 2006,
+      "community_engagement": "high",
+      "local_support": "strong"
+    }
+  },
+
+  "neoli_assessment": {
+    "@type": "NEOLIAssessment",
+    "assessment_date": "2024",
+    "criteria": {
+      "no_take": {
+        "value": true,
+        "notes": "Complete prohibition on extractive activities since 1995"
+      },
+      "enforced": {
+        "value": true,
+        "notes": "Active ranger presence, community-based surveillance"
+      },
+      "old": {
+        "value": true,
+        "notes": "29 years since establishment (>10 year threshold)"
+      },
+      "large": {
+        "value": false,
+        "notes": "71 km² (<100 km² threshold)"
+      },
+      "isolated": {
+        "value": true,
+        "notes": "Deep water boundaries, limited edge habitat"
+      }
+    },
+    "neoli_score": 4,
+    "effectiveness_rating": "high",
+    "source": {
+      "citation": "Edgar et al. 2014 Nature",
+      "doi": "10.1038/nature13022"
+    }
+  },
+
+  "ecological_recovery": {
+    "@type": "RecoveryTrajectory",
+    "baseline_year": 1999,
+    "assessment_year": 2009,
+    "duration_years": 10,
+    "metrics": {
+      "fish_biomass": {
+        "baseline_tonnes_per_ha": 0.5,
+        "final_tonnes_per_ha": 2.8,
+        "recovery_ratio": 4.63,
+        "recovery_percent": 463,
+        "confidence_interval_95": [3.8, 5.5],
+        "comparison": "Highest documented recovery in Gulf of California"
+      },
+      "apex_predator_density": {
+        "baseline_per_ha": 2.1,
+        "final_per_ha": 12.4,
+        "recovery_ratio": 5.9,
+        "species": [
+          "Lutjanus argentiventris (Yellow snapper)",
+          "Mycteroperca rosacea (Leopard grouper)",
+          "Seriola lalandi (Yellowtail amberjack)"
+        ]
+      },
+      "species_richness": {
+        "baseline": 78,
+        "final": 143,
+        "change_percent": 83
+      },
+      "trophic_structure": {
+        "status": "intact",
+        "trophic_pyramid": "inverted (high predator biomass)",
+        "cascade_effects": "observable"
+      }
+    },
+    "source": {
+      "citation": "Aburto-Oropeza et al. 2011 PLOS ONE",
+      "doi": "10.1371/journal.pone.0023601"
+    }
+  },
+
+  "ecosystem_services": {
+    "@type": "EcosystemServiceBundle",
+    "services": [
+      {
+        "@type": "EcosystemService",
+        "service_type": "tourism",
+        "service_category": "cultural",
+        "annual_value_usd": 25000000,
+        "valuation_method": "market_price",
+        "beneficiaries": ["local_community", "dive_operators", "hotels"],
+        "metrics": {
+          "annual_visitors": 45000,
+          "spending_per_visitor_usd": 556,
+          "dive_operations": 12
+        },
+        "source": {
+          "citation": "Aburto-Oropeza et al. 2024 Frontiers",
+          "notes": "MPpA framework assessment"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "fisheries_spillover",
+        "service_category": "provisioning",
+        "annual_value_usd": 3200000,
+        "valuation_method": "market_price",
+        "beneficiaries": ["artisanal_fishers", "regional_fisheries"],
+        "metrics": {
+          "spillover_radius_km": 15,
+          "catch_enhancement_percent": 35,
+          "species_benefiting": ["snappers", "groupers", "amberjacks"]
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "carbon_sequestration",
+        "service_category": "regulating",
+        "annual_value_usd": 180000,
+        "valuation_method": "avoided_cost",
+        "metrics": {
+          "carbon_stock_tonnes": 4500,
+          "sequestration_rate_tonnes_yr": 45,
+          "carbon_price_usd_per_tonne": 40
+        },
+        "notes": "Reef-associated blue carbon, conservative estimate"
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "coastal_protection",
+        "service_category": "regulating",
+        "annual_value_usd": 890000,
+        "valuation_method": "avoided_cost",
+        "metrics": {
+          "wave_energy_reduction_percent": 85,
+          "protected_coastline_km": 12,
+          "properties_protected": 145
+        }
+      }
+    ],
+    "total_annual_value_usd": 29270000
+  },
+
+  "asset_quality_rating": {
+    "@type": "MARISRating",
+    "rating": "AAA",
+    "rating_date": "2024-01-15",
+    "rating_rationale": {
+      "ecological_condition": {
+        "score": 0.95,
+        "weight": 0.40,
+        "notes": "Near-pristine recovery, intact trophic structure"
+      },
+      "governance_effectiveness": {
+        "score": 0.90,
+        "weight": 0.25,
+        "notes": "Strong enforcement, community buy-in"
+      },
+      "financial_sustainability": {
+        "score": 0.85,
+        "weight": 0.20,
+        "notes": "Tourism revenue covers management costs"
+      },
+      "risk_factors": {
+        "score": 0.80,
+        "weight": 0.15,
+        "notes": "Climate vulnerability moderate, development pressure low"
+      }
+    },
+    "composite_score": 0.90,
+    "confidence_level": "high"
+  },
+
+  "key_species": [
+    {
+      "@type": "Species",
+      "scientific_name": "Lutjanus argentiventris",
+      "common_name": "Yellow snapper",
+      "worms_aphia_id": 281326,
+      "fishbase_spec_code": 1086,
+      "trophic_level": 3.8,
+      "functional_group": "mesopredator",
+      "role_in_ecosystem": "dominant_predator",
+      "commercial_importance": "high",
+      "recovery_indicator": true
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Mycteroperca rosacea",
+      "common_name": "Leopard grouper",
+      "worms_aphia_id": 275789,
+      "fishbase_spec_code": 4626,
+      "trophic_level": 4.1,
+      "functional_group": "apex_predator",
+      "role_in_ecosystem": "keystone_predator",
+      "commercial_importance": "high",
+      "endemic": true
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Balistes polylepis",
+      "common_name": "Finescale triggerfish",
+      "worms_aphia_id": 219813,
+      "trophic_level": 3.5,
+      "functional_group": "mesopredator",
+      "role_in_ecosystem": "urchin_predator",
+      "notes": "Controls sea urchin populations, maintains reef structure"
+    }
+  ],
+
+  "trophic_network": {
+    "@type": "FoodWeb",
+    "description": "Simplified trophic network for Cabo Pulmo rocky reef",
+    "nodes": [
+      {"id": "phytoplankton", "trophic_level": 1, "functional_group": "primary_producer"},
+      {"id": "zooplankton", "trophic_level": 2, "functional_group": "planktivore"},
+      {"id": "small_reef_fish", "trophic_level": 2.5, "functional_group": "planktivore"},
+      {"id": "damselfish", "trophic_level": 2.8, "functional_group": "omnivore"},
+      {"id": "parrotfish", "trophic_level": 2.5, "functional_group": "herbivore"},
+      {"id": "sea_urchins", "trophic_level": 2, "functional_group": "herbivore"},
+      {"id": "triggerfish", "trophic_level": 3.5, "functional_group": "urchin_predator"},
+      {"id": "snappers", "trophic_level": 3.8, "functional_group": "mesopredator"},
+      {"id": "groupers", "trophic_level": 4.1, "functional_group": "apex_predator"},
+      {"id": "jacks", "trophic_level": 4.0, "functional_group": "apex_predator"}
+    ],
+    "edges": [
+      {"from": "phytoplankton", "to": "zooplankton", "type": "PREYS_ON"},
+      {"from": "zooplankton", "to": "small_reef_fish", "type": "PREYS_ON"},
+      {"from": "small_reef_fish", "to": "snappers", "type": "PREYS_ON"},
+      {"from": "snappers", "to": "groupers", "type": "PREYS_ON"},
+      {"from": "sea_urchins", "to": "triggerfish", "type": "PREYS_ON"},
+      {"from": "damselfish", "to": "jacks", "type": "PREYS_ON"}
+    ],
+    "cascade_pathways": [
+      {
+        "description": "Predator release cascade",
+        "chain": ["groupers", "→", "snappers", "→", "small_fish", "→", "zooplankton"],
+        "effect": "Top-down control maintains balanced community"
+      },
+      {
+        "description": "Urchin control cascade",
+        "chain": ["triggerfish", "→", "sea_urchins", "→", "algae/coral"],
+        "effect": "Prevents urchin barrens, maintains coral recruitment"
+      }
+    ]
+  },
+
+  "bridge_axiom_applications": [
+    {
+      "axiom_id": "BA-001",
+      "application": "Tourism revenue linked to biomass recovery",
+      "calculation": {
+        "biomass_increase_percent": 463,
+        "elasticity": 0.346,
+        "implied_tourism_increase_percent": 160.2,
+        "observed_tourism_increase": "Tourism grew from ~$5M to $25M (400%)",
+        "notes": "Actual increase exceeds model prediction - additional factors (reputation, word-of-mouth)"
+      }
+    },
+    {
+      "axiom_id": "BA-002",
+      "application": "NEOLI score predicts recovery success",
+      "calculation": {
+        "neoli_score": 4,
+        "expected_biomass_ratio": 5.5,
+        "observed_biomass_ratio": 4.63,
+        "prediction_accuracy": "Within expected range"
+      }
+    }
+  ],
+
+  "provenance": {
+    "data_sources": [
+      {
+        "source": "Aburto-Oropeza et al. 2011",
+        "doi": "10.1371/journal.pone.0023601",
+        "data_type": "Primary field data",
+        "access_date": "2024-01-15"
+      },
+      {
+        "source": "Aburto-Oropeza et al. 2024",
+        "doi": "10.3389/fmars.2024.xxxx",
+        "data_type": "MPpA framework analysis",
+        "access_date": "2024-01-15"
+      },
+      {
+        "source": "dataMares",
+        "url": "https://datamares.org",
+        "data_type": "Regional database",
+        "access_date": "2024-01-15"
+      }
+    ],
+    "compilation_date": "2026-01-22",
+    "compiled_by": "MARIS POC Team"
+  },
+
+  "demo_value": {
+    "why_cabo_pulmo_for_demo": [
+      "Best-documented marine recovery in the world",
+      "Clear before/after data spanning 10+ years",
+      "Quantified economic benefits (tourism, fisheries)",
+      "Successfully rated as 'AAA' reference condition",
+      "Compelling narrative (community-led conservation success)"
+    ],
+    "investor_story": "Cabo Pulmo demonstrates what's possible when marine protection is done right. A degraded reef transformed into a thriving ecosystem, generating $25M/year in tourism and proving that conservation and economic development can align. MARIS can identify and rate similar opportunities worldwide.",
+    "key_demo_queries": [
+      "What ecological factors drove Cabo Pulmo's recovery?",
+      "How does Cabo Pulmo's NEOLI score correlate with its outcomes?",
+      "What ecosystem services does Cabo Pulmo provide and at what value?",
+      "Can we find other sites with similar potential?"
+    ]
+  }
+}

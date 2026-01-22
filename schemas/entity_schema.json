@@ -1,0 +1,461 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "schema": "http://schema.org/",
+    "dwc": "http://rs.tdwg.org/dwc/terms/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "seea": "https://seea.un.org/ecosystem-accounting/",
+    "tnfd": "https://tnfd.global/framework/"
+  },
+  "entities": {
+    "Species": {
+      "@type": "EcologicalEntity",
+      "description": "Taxonomic species with ecological and functional attributes",
+      "external_identifiers": {
+        "worms_aphia_id": {
+          "source": "https://www.marinespecies.org",
+          "description": "World Register of Marine Species identifier",
+          "required": true
+        },
+        "fishbase_spec_code": {
+          "source": "https://www.fishbase.org",
+          "description": "FishBase species code (for fishes)",
+          "required": false
+        },
+        "gbif_taxon_key": {
+          "source": "https://www.gbif.org",
+          "description": "Global Biodiversity Information Facility key",
+          "required": false
+        }
+      },
+      "properties": {
+        "scientific_name": {
+          "type": "string",
+          "required": true,
+          "example": "Semicossyphus pulcher"
+        },
+        "common_name": {
+          "type": "string",
+          "required": false,
+          "example": "California sheephead"
+        },
+        "taxonomic_rank": {
+          "type": "enum",
+          "values": ["kingdom", "phylum", "class", "order", "family", "genus", "species"],
+          "required": true
+        },
+        "trophic_level": {
+          "type": "number",
+          "range": [1.0, 5.5],
+          "source": "FishBase or literature",
+          "example": 3.4
+        },
+        "functional_group": {
+          "type": "enum",
+          "values": [
+            "apex_predator", "mesopredator", "herbivore", "planktivore",
+            "detritivore", "filter_feeder", "primary_producer", "decomposer"
+          ]
+        },
+        "body_size_cm": {
+          "type": "number",
+          "description": "Maximum recorded length"
+        },
+        "conservation_status": {
+          "type": "enum",
+          "values": ["LC", "NT", "VU", "EN", "CR", "EW", "EX", "DD", "NE"],
+          "source": "IUCN Red List"
+        },
+        "commercial_importance": {
+          "type": "enum",
+          "values": ["high", "medium", "low", "none"]
+        }
+      },
+      "relationships": [
+        "PREYS_ON",
+        "PREYED_UPON_BY",
+        "COMPETES_WITH",
+        "HABITAT_OF",
+        "INDICATOR_OF",
+        "KEYSTONE_IN"
+      ]
+    },
+
+    "Habitat": {
+      "@type": "EcologicalEntity",
+      "description": "Marine ecosystem habitat type with spatial and condition attributes",
+      "properties": {
+        "habitat_type": {
+          "type": "enum",
+          "values": [
+            "coral_reef", "kelp_forest", "seagrass_meadow", "mangrove_forest",
+            "rocky_reef", "soft_sediment", "pelagic", "deep_sea", "estuary"
+          ],
+          "required": true
+        },
+        "habitat_subtype": {
+          "type": "string",
+          "example": "Macrocystis pyrifera kelp forest"
+        },
+        "extent_km2": {
+          "type": "number",
+          "unit": "km²"
+        },
+        "depth_range_m": {
+          "type": "object",
+          "properties": {
+            "min": {"type": "number"},
+            "max": {"type": "number"}
+          }
+        },
+        "condition_score": {
+          "type": "number",
+          "range": [0.0, 1.0],
+          "description": "Normalized condition index (0=degraded, 1=pristine)"
+        },
+        "structural_complexity": {
+          "type": "enum",
+          "values": ["low", "medium", "high"]
+        },
+        "protection_status": {
+          "type": "enum",
+          "values": ["unprotected", "partial_protection", "no_take_mpa", "strict_reserve"]
+        },
+        "climate_refugia_potential": {
+          "type": "enum",
+          "values": ["low", "medium", "high"],
+          "description": "Potential to serve as climate refuge"
+        }
+      },
+      "relationships": [
+        "SUPPORTS_SERVICE",
+        "CONTAINS_SPECIES",
+        "CONNECTED_TO",
+        "PART_OF",
+        "ADJACENT_TO"
+      ]
+    },
+
+    "MarineProtectedArea": {
+      "@type": "SpatialEntity",
+      "description": "Designated marine protected area with governance attributes",
+      "external_identifiers": {
+        "wdpa_id": {
+          "source": "https://www.protectedplanet.net",
+          "description": "World Database on Protected Areas identifier"
+        }
+      },
+      "properties": {
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "designation_year": {
+          "type": "integer"
+        },
+        "area_km2": {
+          "type": "number"
+        },
+        "geometry": {
+          "type": "geojson",
+          "description": "Boundary polygon"
+        },
+        "neoli_criteria": {
+          "type": "object",
+          "description": "NEOLI effectiveness criteria (Edgar et al. 2014)",
+          "properties": {
+            "no_take": {"type": "boolean", "description": "No extractive activities permitted"},
+            "enforced": {"type": "boolean", "description": "Active enforcement present"},
+            "old": {"type": "boolean", "description": ">10 years since establishment"},
+            "large": {"type": "boolean", "description": ">100 km² in size"},
+            "isolated": {"type": "boolean", "description": "Deep water or sand barriers"}
+          }
+        },
+        "neoli_score": {
+          "type": "integer",
+          "range": [0, 5],
+          "description": "Count of NEOLI criteria met"
+        },
+        "management_effectiveness": {
+          "type": "enum",
+          "values": ["effective", "partially_effective", "ineffective", "unknown"]
+        },
+        "iucn_category": {
+          "type": "enum",
+          "values": ["Ia", "Ib", "II", "III", "IV", "V", "VI"]
+        }
+      },
+      "relationships": [
+        "PROTECTS_HABITAT",
+        "CONTAINS_SPECIES",
+        "MANAGED_BY",
+        "CONNECTED_TO"
+      ]
+    },
+
+    "EcosystemService": {
+      "@type": "seea:EcosystemService",
+      "description": "Ecosystem service with quantified value and dependencies",
+      "properties": {
+        "service_name": {
+          "type": "string",
+          "required": true
+        },
+        "service_category": {
+          "type": "enum",
+          "values": ["provisioning", "regulating", "cultural", "supporting"],
+          "required": true
+        },
+        "service_type": {
+          "type": "enum",
+          "values": [
+            "fisheries_yield", "aquaculture_support", "genetic_resources",
+            "coastal_protection", "carbon_sequestration", "water_quality", "climate_regulation",
+            "tourism", "recreation", "education", "cultural_heritage",
+            "nursery_habitat", "spawning_grounds", "connectivity_corridor", "refugia"
+          ],
+          "required": true
+        },
+        "value_usd_per_ha_yr": {
+          "type": "number",
+          "description": "Monetary value per hectare per year"
+        },
+        "value_range": {
+          "type": "object",
+          "properties": {
+            "min": {"type": "number"},
+            "max": {"type": "number"},
+            "confidence_level": {"type": "number", "default": 0.95}
+          }
+        },
+        "valuation_method": {
+          "type": "enum",
+          "values": [
+            "market_price", "replacement_cost", "avoided_cost",
+            "contingent_valuation", "travel_cost", "benefit_transfer"
+          ]
+        },
+        "beneficiary_sector": {
+          "type": "array",
+          "items": {
+            "type": "enum",
+            "values": ["fisheries", "tourism", "real_estate", "insurance", "government", "community"]
+          }
+        },
+        "evidence_tier": {
+          "type": "enum",
+          "values": ["T1", "T2", "T3", "T4"],
+          "description": "T1=peer-reviewed, T2=institutional, T3=data repo, T4=preprint"
+        }
+      },
+      "relationships": [
+        "DEPENDS_ON_HABITAT",
+        "DEPENDS_ON_SPECIES",
+        "PROVIDES_TO_SECTOR",
+        "MEASURED_BY",
+        "VALUED_IN"
+      ]
+    },
+
+    "FinancialInstrument": {
+      "@type": "FinancialEntity",
+      "description": "Blue finance or conservation finance instrument",
+      "properties": {
+        "instrument_type": {
+          "type": "enum",
+          "values": [
+            "blue_bond", "green_bond", "sustainability_linked_loan",
+            "debt_for_nature_swap", "impact_bond", "blended_finance",
+            "carbon_credit", "biodiversity_credit", "ecosystem_service_payment",
+            "parametric_insurance", "conservation_trust_fund"
+          ],
+          "required": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "issuer": {
+          "type": "string"
+        },
+        "value_usd": {
+          "type": "number"
+        },
+        "term_years": {
+          "type": "number"
+        },
+        "issuance_date": {
+          "type": "date"
+        },
+        "verification_standard": {
+          "type": "enum",
+          "values": ["verra", "gold_standard", "climate_bonds_initiative", "icma", "other"]
+        },
+        "use_of_proceeds": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "kpis": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metric": {"type": "string"},
+              "baseline": {"type": "number"},
+              "target": {"type": "number"},
+              "unit": {"type": "string"}
+            }
+          }
+        }
+      },
+      "relationships": [
+        "FUNDED_BY",
+        "PROTECTS_HABITAT",
+        "IMPROVES_SERVICE",
+        "REPORTS_TO_FRAMEWORK",
+        "VERIFIED_BY"
+      ]
+    },
+
+    "DisclosureFramework": {
+      "@type": "RegulatoryEntity",
+      "description": "Sustainability disclosure or reporting framework",
+      "properties": {
+        "framework_name": {
+          "type": "enum",
+          "values": ["TNFD", "ESRS_E4", "SEEA_EA", "SBTN", "GRI", "CDP"],
+          "required": true
+        },
+        "version": {
+          "type": "string"
+        },
+        "jurisdiction": {
+          "type": "string"
+        },
+        "mandatory": {
+          "type": "boolean"
+        },
+        "metrics_required": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "relationships": [
+        "REQUIRES_METRIC",
+        "APPLIES_TO_SECTOR",
+        "REFERENCES_STANDARD"
+      ]
+    },
+
+    "Observation": {
+      "@type": "prov:Entity",
+      "description": "Scientific observation or measurement with full provenance",
+      "properties": {
+        "observation_type": {
+          "type": "enum",
+          "values": [
+            "visual_census", "acoustic_survey", "edna_sample", "satellite_image",
+            "sensor_reading", "catch_data", "economic_survey", "literature_value"
+          ]
+        },
+        "timestamp": {
+          "type": "datetime"
+        },
+        "location": {
+          "type": "geojson"
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "uncertainty": {
+          "type": "object",
+          "properties": {
+            "type": {"type": "enum", "values": ["standard_error", "confidence_interval", "range"]},
+            "value": {"type": "number"},
+            "confidence_level": {"type": "number"}
+          }
+        },
+        "method": {
+          "type": "string"
+        }
+      },
+      "provenance": {
+        "source_document": {
+          "type": "string",
+          "description": "DOI or URL"
+        },
+        "source_document_hash": {
+          "type": "string",
+          "description": "SHA-256 checksum"
+        },
+        "extraction_timestamp": {
+          "type": "datetime"
+        },
+        "extracted_by": {
+          "type": "string"
+        },
+        "page_reference": {
+          "type": "string"
+        },
+        "quote": {
+          "type": "string",
+          "description": "Direct quote supporting the observation"
+        }
+      }
+    },
+
+    "BridgeAxiom": {
+      "@type": "TranslationRule",
+      "description": "Quantitative translation between ecological and financial domains",
+      "properties": {
+        "axiom_id": {
+          "type": "string",
+          "pattern": "^BA-\\d{3}$",
+          "required": true
+        },
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "domain_from": {
+          "type": "enum",
+          "values": ["ecological", "ecosystem_service"],
+          "required": true
+        },
+        "domain_to": {
+          "type": "enum",
+          "values": ["ecosystem_service", "financial"],
+          "required": true
+        },
+        "pattern": {
+          "type": "string",
+          "description": "IF-THEN pattern describing the translation",
+          "example": "IF biomass_increase(Site, X%) THEN tourism_revenue_increase(Site, Y%)"
+        },
+        "coefficients": {
+          "type": "object",
+          "description": "Quantitative parameters for the translation"
+        },
+        "applicable_habitats": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "evidence_tier": {
+          "type": "enum",
+          "values": ["T1", "T2", "T3", "T4"]
+        },
+        "sources": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "DOIs or citations supporting the axiom"
+        },
+        "confidence_score": {
+          "type": "number",
+          "range": [0.0, 1.0]
+        }
+      }
+    }
+  }
+}

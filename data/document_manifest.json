@@ -1,0 +1,434 @@
+{
+  "manifest_version": "1.0",
+  "created": "2026-01-22",
+  "description": "Prioritized document list for Semantica entity extraction",
+  "total_documents": 195,
+  "priority_levels": {
+    "CRITICAL": "Must extract - foundational papers defining core axioms",
+    "HIGH": "Should extract - key quantitative findings",
+    "MEDIUM": "Helpful - supporting evidence and context",
+    "LOW": "Optional - additional validation data"
+  },
+  "extraction_order": [
+    {
+      "phase": 1,
+      "name": "Foundational Axiom Papers",
+      "target_week": 1,
+      "documents": [
+        {
+          "id": "edgar_2014",
+          "priority": "CRITICAL",
+          "title": "Global conservation outcomes depend on marine protected areas with five key features",
+          "authors": "Edgar GJ et al.",
+          "journal": "Nature",
+          "year": 2014,
+          "doi": "10.1038/nature13022",
+          "url": "https://www.nature.com/articles/nature13022",
+          "key_extractions": [
+            "NEOLI criteria definition",
+            "Biomass ratios by NEOLI score",
+            "87 MPA dataset characteristics"
+          ],
+          "bridge_axioms": ["BA-002", "BA-011"]
+        },
+        {
+          "id": "aburto_2011",
+          "priority": "CRITICAL",
+          "title": "Large Recovery of Fish Biomass in a No-Take Marine Reserve",
+          "authors": "Aburto-Oropeza O et al.",
+          "journal": "PLOS ONE",
+          "year": 2011,
+          "doi": "10.1371/journal.pone.0023601",
+          "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0023601",
+          "key_extractions": [
+            "Cabo Pulmo biomass recovery timeline",
+            "Species composition changes",
+            "Trophic structure restoration"
+          ],
+          "bridge_axioms": ["BA-002"],
+          "calibration_site": true
+        },
+        {
+          "id": "costanza_2014",
+          "priority": "CRITICAL",
+          "title": "Changes in the Global Value of Ecosystem Services",
+          "authors": "Costanza R et al.",
+          "journal": "Global Environmental Change",
+          "year": 2014,
+          "doi": "10.1016/j.gloenvcha.2014.04.002",
+          "url": "https://www.sciencedirect.com/science/article/abs/pii/S0959378014000685",
+          "key_extractions": [
+            "Ecosystem service categories",
+            "Value per hectare by ecosystem type",
+            "Coastal wetland valuations"
+          ],
+          "bridge_axioms": ["BA-005", "BA-010"]
+        },
+        {
+          "id": "hopf_2024",
+          "priority": "CRITICAL",
+          "title": "Ecological success of no-take marine protected areas",
+          "authors": "Hopf JK et al.",
+          "journal": "Ecological Applications",
+          "year": 2024,
+          "doi": "10.1002/eap.3027",
+          "url": "https://esajournals.onlinelibrary.wiley.com/doi/10.1002/eap.3027",
+          "key_extractions": [
+            "Biomass ratios vs unprotected (670%)",
+            "Biomass ratios vs partial protection (343%)",
+            "Recovery rate estimates"
+          ],
+          "bridge_axioms": ["BA-002"]
+        },
+        {
+          "id": "beck_2018",
+          "priority": "CRITICAL",
+          "title": "The global flood protection savings provided by coral reefs",
+          "authors": "Beck MW et al.",
+          "journal": "Nature Communications",
+          "year": 2018,
+          "doi": "10.1038/s41467-018-04568-z",
+          "url": "https://www.nature.com/articles/s41467-018-04568-z",
+          "key_extractions": [
+            "Global flood protection value ($272B)",
+            "Regional flood risk values",
+            "Wave attenuation percentages"
+          ],
+          "bridge_axioms": ["BA-004"]
+        }
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Habitat-Specific Value Papers",
+      "target_week": 2,
+      "documents": [
+        {
+          "id": "wilmers_2012",
+          "priority": "CRITICAL",
+          "title": "Do trophic cascades affect atmospheric carbon storage?",
+          "authors": "Wilmers CC et al.",
+          "journal": "Frontiers in Ecology and the Environment",
+          "year": 2012,
+          "doi": "10.1890/110176",
+          "url": "https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/110176",
+          "key_extractions": [
+            "Sea otter carbon cascade mechanism",
+            "NPP values with/without otters",
+            "Carbon market value estimates"
+          ],
+          "bridge_axioms": ["BA-003"]
+        },
+        {
+          "id": "menendez_2020",
+          "priority": "CRITICAL",
+          "title": "The Global Flood Protection Benefits of Mangroves",
+          "authors": "Menendez P et al.",
+          "journal": "Scientific Reports",
+          "year": 2020,
+          "doi": "10.1038/s41598-020-61136-6",
+          "url": "https://www.nature.com/articles/s41598-020-61136-6",
+          "key_extractions": [
+            "Global flood protection value ($65B/yr)",
+            "Storm surge decay rates",
+            "People protected statistics"
+          ],
+          "bridge_axioms": ["BA-005"]
+        },
+        {
+          "id": "donato_2011",
+          "priority": "CRITICAL",
+          "title": "Mangroves among the most carbon-rich forests in the tropics",
+          "authors": "Donato DC et al.",
+          "journal": "Nature Geoscience",
+          "year": 2011,
+          "doi": "10.1038/ngeo1123",
+          "url": "https://www.nature.com/articles/ngeo1123",
+          "key_extractions": [
+            "Carbon stock values by condition",
+            "Comparison to tropical forests",
+            "Emission factors"
+          ],
+          "bridge_axioms": ["BA-007"]
+        },
+        {
+          "id": "aburto_2008",
+          "priority": "CRITICAL",
+          "title": "Mangroves in the Gulf of California increase fishery yields",
+          "authors": "Aburto-Oropeza O et al.",
+          "journal": "PNAS",
+          "year": 2008,
+          "doi": "10.1073/pnas.0804601105",
+          "url": "https://www.pnas.org/doi/10.1073/pnas.0804601105",
+          "key_extractions": [
+            "Fisheries-mangrove correlation",
+            "Value per hectare of mangrove fringe",
+            "30-year loss economic impact"
+          ],
+          "bridge_axioms": ["BA-006"]
+        },
+        {
+          "id": "eger_2023",
+          "priority": "CRITICAL",
+          "title": "The value of ecosystem services in global marine kelp forests",
+          "authors": "Eger AM et al.",
+          "journal": "Nature Communications",
+          "year": 2023,
+          "doi": "10.1038/s41467-023-37385-0",
+          "url": "https://www.nature.com/articles/s41467-023-37385-0",
+          "key_extractions": [
+            "Global kelp value ($500B/yr)",
+            "Value per hectare range",
+            "Service breakdown percentages"
+          ],
+          "bridge_axioms": ["BA-010"]
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Financial Mechanism Papers",
+      "target_week": 3,
+      "documents": [
+        {
+          "id": "zeng_2025",
+          "priority": "HIGH",
+          "title": "Getting the best of carbon bang for mangrove restoration buck",
+          "authors": "Zeng Y et al.",
+          "journal": "Nature Communications",
+          "year": 2025,
+          "doi": "10.1038/s41467-025-56587-2",
+          "url": "https://www.nature.com/articles/s41467-025-56587-2",
+          "key_extractions": [
+            "Benefit-cost ratios",
+            "Optimal investment strategies",
+            "Blue carbon trading potential"
+          ],
+          "bridge_axioms": ["BA-009"]
+        },
+        {
+          "id": "duarte_2025",
+          "priority": "HIGH",
+          "title": "Management approach matters: seagrass recovery and carbon mitigation",
+          "authors": "Duarte CM et al.",
+          "journal": "npj Ocean Sustainability",
+          "year": 2025,
+          "doi": "10.1038/s44183-025-00111-y",
+          "url": "https://www.nature.com/articles/s44183-025-00111-y",
+          "key_extractions": [
+            "Carbon credit revenue ranges",
+            "Project type comparisons",
+            "10-year revenue projections"
+          ],
+          "bridge_axioms": ["BA-008"]
+        },
+        {
+          "id": "su_2021",
+          "priority": "HIGH",
+          "title": "Meta-analysis of mangrove restoration outcomes",
+          "authors": "Su J et al.",
+          "journal": "Nature Communications",
+          "year": 2021,
+          "doi": "10.1038/s41467-021-25349-1",
+          "url": "https://www.nature.com/articles/s41467-021-25349-1",
+          "key_extractions": [
+            "Restoration success factors",
+            "Benefit-cost ratio calculations",
+            "Carbon recovery trajectories"
+          ],
+          "bridge_axioms": ["BA-009"]
+        },
+        {
+          "id": "jakovac_2020",
+          "priority": "HIGH",
+          "title": "Costs and Carbon Benefits of Mangrove Conservation and Restoration",
+          "authors": "Jakovac CC et al.",
+          "journal": "Ecological Economics",
+          "year": 2020,
+          "doi": "10.1016/j.ecolecon.2020.106758",
+          "url": "https://www.sciencedirect.com/science/article/abs/pii/S0921800919318154",
+          "key_extractions": [
+            "Conservation vs restoration costs",
+            "Carbon price thresholds",
+            "Global sequestration potential"
+          ],
+          "bridge_axioms": ["BA-009"]
+        }
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Trophic Ecology Papers",
+      "target_week": 4,
+      "documents": [
+        {
+          "id": "cowen_2009",
+          "priority": "HIGH",
+          "title": "Larval Dispersal and Marine Population Connectivity",
+          "authors": "Cowen RK, Sponaugle S",
+          "journal": "Annual Review of Marine Science",
+          "year": 2009,
+          "doi": "10.1146/annurev.marine.010908.163757",
+          "url": "https://www.annualreviews.org/content/journals/10.1146/annurev.marine.010908.163757",
+          "key_extractions": [
+            "Connectivity mechanisms",
+            "Dispersal kernel estimates",
+            "Population openness/closure"
+          ]
+        },
+        {
+          "id": "cowen_1983",
+          "priority": "HIGH",
+          "title": "Sheephead predation effects on sea urchin populations",
+          "authors": "Cowen RK",
+          "journal": "Oecologia",
+          "year": 1983,
+          "doi": "10.1007/BF00399225",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/28310586/",
+          "key_extractions": [
+            "Sheephead-urchin interaction strength",
+            "Density threshold effects",
+            "Kelp forest implications"
+          ]
+        },
+        {
+          "id": "caselle_2015",
+          "priority": "HIGH",
+          "title": "Exploitation and recovery of a sea urchin predator",
+          "authors": "Caselle JE, Hamilton SL",
+          "journal": "Proceedings of the Royal Society B",
+          "year": 2015,
+          "doi": "10.1098/rspb.2014.1817",
+          "key_extractions": [
+            "Size-dependent predation rates",
+            "Recovery trajectories",
+            "Kelp forest resilience link"
+          ]
+        },
+        {
+          "id": "burt_2023",
+          "priority": "HIGH",
+          "title": "Sunflower sea star predation facilitates kelp forest recovery",
+          "authors": "Burt JM et al.",
+          "journal": "Proceedings of the Royal Society B",
+          "year": 2023,
+          "doi": "10.1098/rspb.2022.1897",
+          "key_extractions": [
+            "Sea star predation rates",
+            "Urchin control mechanisms",
+            "Recovery potential"
+          ]
+        }
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Climate Resilience Papers",
+      "target_week": 5,
+      "documents": [
+        {
+          "id": "mellin_2016",
+          "priority": "HIGH",
+          "title": "Marine protected areas increase resilience among coral reef communities",
+          "authors": "Mellin C et al.",
+          "journal": "Ecology Letters",
+          "year": 2016,
+          "doi": "10.1111/ele.12598",
+          "key_extractions": [
+            "Stability metrics inside/outside MPAs",
+            "Recovery speed comparisons",
+            "Disturbance impact reductions"
+          ],
+          "bridge_axioms": ["BA-011"]
+        },
+        {
+          "id": "ortiz_villa_2024",
+          "priority": "HIGH",
+          "title": "Marine protected areas enhance climate resilience for kelp forests",
+          "authors": "Ortiz-Villa A et al.",
+          "journal": "Global Change Biology",
+          "year": 2024,
+          "doi": "10.1111/gcb.17477",
+          "key_extractions": [
+            "Kelp recovery premium in MPAs (8.5%)",
+            "38-year satellite data analysis",
+            "Climate adaptation mechanisms"
+          ],
+          "bridge_axioms": ["BA-011"]
+        },
+        {
+          "id": "smith_2024",
+          "priority": "HIGH",
+          "title": "Kelp forest persistence through a large marine heatwave",
+          "authors": "Smith JG et al.",
+          "journal": "Science",
+          "year": 2024,
+          "doi": "10.1126/science.adf6064",
+          "key_extractions": [
+            "Persistence factors",
+            "Monterey decline statistics",
+            "Otter-mediated survival"
+          ]
+        },
+        {
+          "id": "rogers_bennett_2019",
+          "priority": "HIGH",
+          "title": "Marine heat wave tips bull kelp to sea urchin barrens",
+          "authors": "Rogers-Bennett L, Catton CA",
+          "journal": "Scientific Reports",
+          "year": 2019,
+          "doi": "10.1038/s41598-019-15050-7",
+          "key_extractions": [
+            "95% kelp loss statistics",
+            "60-fold urchin increase",
+            "Triple stressor analysis"
+          ]
+        }
+      ]
+    }
+  ],
+  "additional_documents_by_habitat": {
+    "coral_reef": {
+      "count": 21,
+      "priority_distribution": {"CRITICAL": 3, "HIGH": 12, "MEDIUM": 6}
+    },
+    "kelp_forest": {
+      "count": 20,
+      "priority_distribution": {"CRITICAL": 4, "HIGH": 10, "MEDIUM": 6}
+    },
+    "seagrass": {
+      "count": 15,
+      "priority_distribution": {"CRITICAL": 2, "HIGH": 8, "MEDIUM": 5}
+    },
+    "mangrove": {
+      "count": 18,
+      "priority_distribution": {"CRITICAL": 4, "HIGH": 9, "MEDIUM": 5}
+    },
+    "cross_cutting": {
+      "count": 121,
+      "priority_distribution": {"CRITICAL": 5, "HIGH": 40, "MEDIUM": 50, "LOW": 26}
+    }
+  },
+  "extraction_guidance": {
+    "entity_types_to_extract": [
+      "Species (with WoRMS IDs where available)",
+      "Habitat types and conditions",
+      "Quantitative ecosystem service values",
+      "Financial instrument parameters",
+      "Geographic locations (as GeoJSON)",
+      "Temporal data (years, durations)"
+    ],
+    "relationship_types_to_extract": [
+      "PREYS_ON (species interactions)",
+      "PROVIDES_SERVICE (habitat/species → service)",
+      "QUANTIFIED_BY (service → value)",
+      "CONTROLS_VIA_CASCADE (keystone effects)"
+    ],
+    "provenance_requirements": [
+      "DOI for each extracted fact",
+      "Page/table/figure reference",
+      "Direct quote where possible",
+      "Extraction timestamp"
+    ]
+  }
+}

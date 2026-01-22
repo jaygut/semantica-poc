@@ -1,0 +1,364 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "relationships": {
+    "ecological_relationships": {
+      "PREYS_ON": {
+        "domain": "Species",
+        "range": "Species",
+        "cardinality": "many:many",
+        "properties": {
+          "interaction_strength": {
+            "type": "enum",
+            "values": ["weak", "moderate", "strong"],
+            "description": "Relative importance in diet"
+          },
+          "diet_proportion": {
+            "type": "number",
+            "range": [0.0, 1.0],
+            "description": "Proportion of diet by mass or frequency"
+          },
+          "ontogenetic_shift": {
+            "type": "boolean",
+            "description": "Whether interaction changes with life stage"
+          }
+        },
+        "sources": ["GloBI", "FishBase diet data", "Primary literature"],
+        "example": {
+          "subject": "Semicossyphus pulcher (California sheephead)",
+          "object": "Strongylocentrotus purpuratus (Purple sea urchin)",
+          "properties": {
+            "interaction_strength": "strong",
+            "diet_proportion": 0.45
+          }
+        }
+      },
+
+      "CONTROLS_VIA_CASCADE": {
+        "domain": "Species",
+        "range": "Habitat",
+        "cardinality": "one:many",
+        "description": "Keystone species effect through trophic cascade",
+        "properties": {
+          "cascade_type": {
+            "type": "enum",
+            "values": ["top_down", "bottom_up", "mixed"]
+          },
+          "effect_magnitude": {
+            "type": "number",
+            "description": "Multiplier on habitat biomass/extent"
+          },
+          "mechanism": {
+            "type": "string",
+            "description": "Description of cascade mechanism"
+          }
+        },
+        "example": {
+          "subject": "Enhydra lutris (Sea otter)",
+          "object": "Kelp forest",
+          "properties": {
+            "cascade_type": "top_down",
+            "effect_magnitude": 12.0,
+            "mechanism": "Otters reduce urchin density, releasing kelp from grazing pressure"
+          },
+          "source": "Wilmers et al. 2012"
+        }
+      },
+
+      "HABITAT_OF": {
+        "domain": "Species",
+        "range": "Habitat",
+        "cardinality": "many:many",
+        "properties": {
+          "association_type": {
+            "type": "enum",
+            "values": ["obligate", "facultative", "opportunistic"]
+          },
+          "life_stage": {
+            "type": "enum",
+            "values": ["larval", "juvenile", "adult", "all"]
+          },
+          "habitat_use": {
+            "type": "enum",
+            "values": ["foraging", "shelter", "spawning", "nursery", "migration"]
+          }
+        }
+      },
+
+      "CONNECTED_TO": {
+        "domain": "Habitat",
+        "range": "Habitat",
+        "cardinality": "many:many",
+        "description": "Ecological connectivity between habitats",
+        "properties": {
+          "connectivity_type": {
+            "type": "enum",
+            "values": ["larval_dispersal", "adult_movement", "ontogenetic_migration", "trophic_linkage"]
+          },
+          "connectivity_strength": {
+            "type": "number",
+            "range": [0.0, 1.0],
+            "description": "Relative exchange rate"
+          },
+          "distance_km": {
+            "type": "number"
+          },
+          "directionality": {
+            "type": "enum",
+            "values": ["unidirectional", "bidirectional", "asymmetric"]
+          }
+        }
+      },
+
+      "INDICATOR_OF": {
+        "domain": "Species",
+        "range": "EcosystemService",
+        "cardinality": "many:many",
+        "description": "Species serves as indicator of ecosystem service condition",
+        "properties": {
+          "indicator_type": {
+            "type": "enum",
+            "values": ["direct", "indirect", "surrogate"]
+          },
+          "correlation_strength": {
+            "type": "number",
+            "range": [-1.0, 1.0]
+          },
+          "sensitivity": {
+            "type": "enum",
+            "values": ["low", "medium", "high"]
+          }
+        }
+      }
+    },
+
+    "service_relationships": {
+      "PROVIDES_SERVICE": {
+        "domain": ["Habitat", "Species"],
+        "range": "EcosystemService",
+        "cardinality": "many:many",
+        "properties": {
+          "contribution_type": {
+            "type": "enum",
+            "values": ["direct", "indirect", "enabling"]
+          },
+          "contribution_strength": {
+            "type": "enum",
+            "values": ["critical", "important", "supporting", "minor"]
+          },
+          "substitutability": {
+            "type": "enum",
+            "values": ["irreplaceable", "limited", "substitutable"]
+          }
+        },
+        "example": {
+          "subject": "Mangrove forest",
+          "object": "Coastal protection service",
+          "properties": {
+            "contribution_type": "direct",
+            "contribution_strength": "critical",
+            "substitutability": "limited"
+          }
+        }
+      },
+
+      "DEPENDS_ON": {
+        "domain": "EcosystemService",
+        "range": ["Habitat", "Species", "EcologicalProcess"],
+        "cardinality": "many:many",
+        "properties": {
+          "dependency_type": {
+            "type": "enum",
+            "values": ["structural", "functional", "compositional"]
+          },
+          "criticality": {
+            "type": "enum",
+            "values": ["essential", "important", "beneficial"]
+          },
+          "threshold_exists": {
+            "type": "boolean",
+            "description": "Whether there's a threshold below which service collapses"
+          }
+        }
+      },
+
+      "QUANTIFIED_BY": {
+        "domain": "EcosystemService",
+        "range": "Observation",
+        "cardinality": "one:many",
+        "description": "Service value quantified by observation/study",
+        "properties": {
+          "metric_type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "spatial_scale": {
+            "type": "enum",
+            "values": ["local", "regional", "national", "global"]
+          }
+        }
+      }
+    },
+
+    "financial_relationships": {
+      "INFORMS_INSTRUMENT": {
+        "domain": "EcosystemService",
+        "range": "FinancialInstrument",
+        "cardinality": "many:many",
+        "properties": {
+          "metric_type": {
+            "type": "enum",
+            "values": ["kpi", "covenant", "target", "disclosure", "trigger"]
+          },
+          "verification_method": {
+            "type": "string"
+          },
+          "update_frequency": {
+            "type": "enum",
+            "values": ["real_time", "monthly", "quarterly", "annual"]
+          }
+        }
+      },
+
+      "FUNDED_BY": {
+        "domain": ["Habitat", "MarineProtectedArea"],
+        "range": "FinancialInstrument",
+        "cardinality": "many:many",
+        "properties": {
+          "funding_amount_usd": {
+            "type": "number"
+          },
+          "funding_period_years": {
+            "type": "number"
+          },
+          "funding_type": {
+            "type": "enum",
+            "values": ["capital", "operational", "endowment"]
+          }
+        }
+      },
+
+      "REPORTS_TO": {
+        "domain": "FinancialInstrument",
+        "range": "DisclosureFramework",
+        "cardinality": "many:many",
+        "properties": {
+          "compliance_level": {
+            "type": "enum",
+            "values": ["full", "partial", "voluntary"]
+          },
+          "metrics_reported": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        }
+      },
+
+      "TRANSLATES_TO": {
+        "domain": "BridgeAxiom",
+        "range": ["EcosystemService", "FinancialInstrument"],
+        "cardinality": "many:many",
+        "description": "Bridge axiom enables translation between domains",
+        "properties": {
+          "translation_direction": {
+            "type": "enum",
+            "values": ["ecological_to_service", "service_to_financial"]
+          },
+          "confidence_score": {
+            "type": "number",
+            "range": [0.0, 1.0]
+          }
+        }
+      }
+    },
+
+    "provenance_relationships": {
+      "DERIVED_FROM": {
+        "domain": ["Observation", "BridgeAxiom"],
+        "range": "Source",
+        "cardinality": "many:many",
+        "description": "Provenance chain linking to source document",
+        "properties": {
+          "source_type": {
+            "type": "enum",
+            "values": ["peer_reviewed", "institutional", "data_repository", "preprint"]
+          },
+          "doi": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "document_hash": {
+            "type": "string",
+            "description": "SHA-256 checksum of source document"
+          },
+          "extraction_method": {
+            "type": "enum",
+            "values": ["manual", "llm_extraction", "api", "structured_data"]
+          },
+          "page_reference": {
+            "type": "string"
+          },
+          "quote": {
+            "type": "string"
+          }
+        }
+      },
+
+      "SUPPORTS_CLAIM": {
+        "domain": "Source",
+        "range": ["Observation", "BridgeAxiom"],
+        "cardinality": "one:many",
+        "properties": {
+          "support_strength": {
+            "type": "enum",
+            "values": ["direct", "indirect", "corroborating"]
+          },
+          "evidence_tier": {
+            "type": "enum",
+            "values": ["T1", "T2", "T3", "T4"]
+          }
+        }
+      },
+
+      "AGGREGATED_FROM": {
+        "domain": "Observation",
+        "range": "Observation",
+        "cardinality": "one:many",
+        "description": "Derived metric aggregated from multiple observations",
+        "properties": {
+          "aggregation_method": {
+            "type": "enum",
+            "values": ["mean", "median", "sum", "weighted_mean", "meta_analysis"]
+          },
+          "sample_size": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  },
+
+  "inference_rules": {
+    "transitive_cascade": {
+      "description": "If A CONTROLS_VIA_CASCADE B and B PROVIDES_SERVICE C, then A indirectly enables C",
+      "pattern": "(?a CONTROLS_VIA_CASCADE ?b) AND (?b PROVIDES_SERVICE ?c) => (?a ENABLES_SERVICE ?c)"
+    },
+    "connectivity_benefit": {
+      "description": "Connected MPAs share ecological benefits",
+      "pattern": "(?mpa1 CONNECTED_TO ?mpa2) AND (?mpa1 hasHighBiomass true) => (?mpa2 receivesSpillover true)"
+    },
+    "service_dependency_chain": {
+      "description": "If service depends on habitat and habitat is degraded, service is at risk",
+      "pattern": "(?service DEPENDS_ON ?habitat) AND (?habitat condition < 0.3) => (?service risk 'high')"
+    }
+  }
+}
