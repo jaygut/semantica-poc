@@ -153,6 +153,7 @@ semantica-poc/
 │
 ├── data/
 │   ├── document_manifest.json             # 195 papers, prioritized
+│   ├── papers/                            # Local fetch cache (gitignored)
 │   └── sample_extractions/
 │       ├── aburto_2011_extraction.json    # Cabo Pulmo extraction
 │       └── edgar_2014_extraction.json     # NEOLI framework extraction
@@ -358,6 +359,8 @@ By Habitat:
 This registry is the ingestion contract for Semantica. It is the single source of truth for document metadata and retrieval.
 
 **Registry file:** `.claude/registry/document_index.json`
+
+**Fetched artifacts:** `data/papers/` (intentionally gitignored; local-only cache)
 
 ### Minimal JSON Schema
 
