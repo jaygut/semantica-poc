@@ -353,6 +353,86 @@ By Habitat:
 
 ---
 
+## Registry Spec & Ingestion Agreement
+
+This registry is the ingestion contract for Semantica. It is the single source of truth for document metadata and retrieval.
+
+**Registry file:** `.claude/registry/document_index.json`
+
+### Minimal JSON Schema
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Semantica MARIS Document Registry",
+  "type": "object",
+  "required": ["version", "created_at", "updated_at", "document_count", "documents"],
+  "properties": {
+    "version": {"type": "string"},
+    "created_at": {"type": "string"},
+    "updated_at": {"type": "string"},
+    "document_count": {"type": "integer"},
+    "documents": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "title",
+          "url",
+          "year",
+          "source_tier",
+          "document_type",
+          "domain_tags",
+          "added_at"
+        ],
+        "properties": {
+          "title": {"type": "string"},
+          "url": {"type": "string"},
+          "doi": {"type": "string"},
+          "authors": {"type": ["string", "array"]},
+          "year": {"type": "integer"},
+          "journal": {"type": "string"},
+          "source_tier": {"type": "string", "enum": ["T1", "T2", "T3", "T4"]},
+          "document_type": {"type": "string"},
+          "domain_tags": {"type": "array", "items": {"type": "string"}},
+          "added_at": {"type": "string"},
+          "notes": {"type": "string"},
+          "access_status": {
+            "type": "string",
+            "enum": ["open_access", "paywalled", "institutional", "unknown"]
+          },
+          "retrieval": {
+            "type": "object",
+            "properties": {
+              "retrieved_at": {"type": "string"},
+              "sha256": {"type": "string"},
+              "content_type": {"type": "string"},
+              "source_url": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Required Fields (per document entry)
+
+- `title`, `url`, `year`, `source_tier`, `document_type`, `domain_tags`, `added_at`
+- Optional but recommended: `doi`, `authors`, `journal`, `access_status`, `retrieval.sha256`
+
+### Ingestion Agreement (Handoff Contract)
+
+- The registry is the authoritative list of documents to ingest; new sources must be added here first.
+- The Semantica team will attempt fetch and parse from `url`; any access issues are reported with HTTP status and reason.
+- For paywalled or blocked documents, MARIS will provide local PDFs or alternate access URLs.
+- Provenance must include DOI + page reference + quote for all numeric claims used in bridge axioms.
+- Parsing should use Docling for PDFs with tables/figures; OCR enabled when scans are detected.
+- Extraction outputs must map to Semantica canonical entity/relation schemas with provenance metadata.
+
+---
+
 ## Reference Case: Cabo Pulmo
 
 **Cabo Pulmo National Park** (Gulf of California, Mexico) serves as the **AAA-rated reference site** for model validation. It represents the best-documented marine ecosystem recovery globally.

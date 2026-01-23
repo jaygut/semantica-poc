@@ -1,0 +1,35 @@
+[project]
+name = "semantica-poc"
+version = "0.1.0"
+description = "MARIS x Semantica POC - Marine Asset Risk Intelligence System"
+readme = "SEMANTICA_HANDOFF_README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31.0",
+    "urllib3>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+fetch-documents = "scripts.fetch_documents:fetch_documents"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["scripts"]
+include-package-data = false
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+]
