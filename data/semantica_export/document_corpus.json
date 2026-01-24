@@ -2,28 +2,121 @@
   "corpus_summary": {
     "total_documents": 195,
     "by_tier": {
-      "T1_peer_reviewed": 179,
-      "T2_institutional": 10,
-      "T3_data_repository": 6
+      "T1_peer_reviewed": 181,
+      "T2_institutional": 9,
+      "T3_data_repository": 5
     },
     "by_habitat": {
-      "coral_reef": 45,
+      "general": 95,
+      "coral_reef": 34,
       "kelp_forest": 28,
-      "seagrass": 22,
-      "mangrove": 25,
-      "general": 75
+      "seagrass": 17,
+      "mangrove": 21
     },
     "by_domain": {
-      "mpa_effectiveness": 42,
-      "trophic_ecology": 35,
-      "blue_carbon": 28,
-      "ecosystem_services": 32,
-      "climate_resilience": 25,
-      "connectivity": 22,
-      "blue_finance": 18,
-      "disclosure_frameworks": 12,
-      "restoration": 24,
-      "methods": 20
+      "ecological_foundations": 3,
+      "mpa_effectiveness": 23,
+      "calibration_site": 1,
+      "biodiversity": 7,
+      "connectivity": 13,
+      "larval_dispersal": 3,
+      "ecosystem_services": 34,
+      "coral_reef": 33,
+      "trophic_ecology": 23,
+      "restoration": 31,
+      "blue_finance": 34,
+      "coastal_protection": 7,
+      "climate_resilience": 26,
+      "mpa_network_design": 6,
+      "kelp_forest": 27,
+      "california": 16,
+      "blue_carbon": 29,
+      "climate_change": 4,
+      "seagrass": 18,
+      "global": 22,
+      "mangrove": 22,
+      "apex_predator": 4,
+      "trophic_cascade": 1,
+      "blue_bonds": 3,
+      "ocean_economy": 4,
+      "debt_swap": 1,
+      "conservation_finance": 3,
+      "indian_ocean": 1,
+      "conservation": 7,
+      "no_take_reserves": 1,
+      "fish_biomass": 2,
+      "equity": 1,
+      "mpa_network": 5,
+      "graph_theory": 2,
+      "scalability": 1,
+      "carbon_sequestration": 1,
+      "valuation": 4,
+      "national_assessment": 1,
+      "edna": 5,
+      "biodiversity_monitoring": 3,
+      "methods": 7,
+      "fish_community": 1,
+      "seasonal_dynamics": 1,
+      "remote_sensing": 7,
+      "biodiversity_hotspots": 1,
+      "management": 2,
+      "thermal_tolerance": 1,
+      "coral_bleaching": 1,
+      "regime_shift": 1,
+      "climate": 2,
+      "disclosure_frameworks": 6,
+      "tnfd": 3,
+      "sbtn": 1,
+      "marine": 2,
+      "classification": 1,
+      "recovery": 1,
+      "trends": 1,
+      "fisheries": 13,
+      "socioeconomic": 1,
+      "research_priorities": 1,
+      "parametric_insurance": 2,
+      "nature_based_solutions": 1,
+      "insurance": 1,
+      "shipping": 1,
+      "seea": 2,
+      "ecosystem_accounting": 1,
+      "uk": 1,
+      "aquaculture": 1,
+      "marine_spatial_planning": 4,
+      "conservation_planning": 3,
+      "ecosystem_based_management": 3,
+      "deep_sea": 2,
+      "chlorophyll": 3,
+      "data": 1,
+      "bgc_argo": 1,
+      "policy": 4,
+      "sustainability": 2,
+      "livelihoods": 1,
+      "marine_heatwave": 6,
+      "foundation_species": 1,
+      "arctic": 1,
+      "local_conditions": 1,
+      "bleaching": 1,
+      "nursery_habitat": 1,
+      "persistence": 1,
+      "climate_mitigation": 2,
+      "permanence": 1,
+      "biodiversity_credits": 2,
+      "markets": 1,
+      "modeling": 1,
+      "ocean_governance": 1,
+      "ocean_solutions": 1,
+      "coastal": 1,
+      "assessment": 1,
+      "european": 1,
+      "coastal_habitats": 1,
+      "data_repository": 5,
+      "taxonomy": 1,
+      "fish": 1,
+      "interactions": 1,
+      "bright_spots": 1,
+      "gulf_of_california": 2,
+      "economics": 1
     },
     "abstract_coverage": 0.672,
     "doi_coverage": 0.903
@@ -61,18 +154,54 @@
     }
   ],
   "bridge_axiom_coverage": {
-    "BA-001": {"sources": 3, "status": "supported"},
-    "BA-002": {"sources": 4, "status": "strongly_supported"},
-    "BA-003": {"sources": 3, "status": "supported"},
-    "BA-004": {"sources": 3, "status": "strongly_supported"},
-    "BA-005": {"sources": 3, "status": "strongly_supported"},
-    "BA-006": {"sources": 3, "status": "supported"},
-    "BA-007": {"sources": 3, "status": "strongly_supported"},
-    "BA-008": {"sources": 3, "status": "strongly_supported"},
-    "BA-009": {"sources": 3, "status": "supported"},
-    "BA-010": {"sources": 3, "status": "supported"},
-    "BA-011": {"sources": 3, "status": "supported"},
-    "BA-012": {"sources": 3, "status": "strongly_supported"}
+    "BA-001": {
+      "sources": 3,
+      "status": "supported"
+    },
+    "BA-002": {
+      "sources": 4,
+      "status": "strongly_supported"
+    },
+    "BA-003": {
+      "sources": 3,
+      "status": "supported"
+    },
+    "BA-004": {
+      "sources": 3,
+      "status": "strongly_supported"
+    },
+    "BA-005": {
+      "sources": 3,
+      "status": "strongly_supported"
+    },
+    "BA-006": {
+      "sources": 3,
+      "status": "supported"
+    },
+    "BA-007": {
+      "sources": 3,
+      "status": "strongly_supported"
+    },
+    "BA-008": {
+      "sources": 3,
+      "status": "strongly_supported"
+    },
+    "BA-009": {
+      "sources": 3,
+      "status": "supported"
+    },
+    "BA-010": {
+      "sources": 3,
+      "status": "supported"
+    },
+    "BA-011": {
+      "sources": 3,
+      "status": "supported"
+    },
+    "BA-012": {
+      "sources": 3,
+      "status": "strongly_supported"
+    }
   },
   "calibration_sites": {
     "cabo_pulmo": {
@@ -80,11 +209,14 @@
       "biomass_recovery_percent": 463,
       "neoli_score": 4,
       "annual_tourism_value_million_usd": 29,
-      "supporting_documents": ["aburto_2011_cabo_pulmo", "aburto_2024_mppa_framework"]
+      "supporting_documents": [
+        "aburto_2011_cabo_pulmo",
+        "aburto_2024_mppa_framework"
+      ]
     }
   },
   "export_metadata": {
-    "generated_at": "2026-01-24T10:30:00Z",
+    "generated_at": "2026-01-24T17:59:38.362865Z",
     "version": "1.0",
     "registry_path": ".claude/registry/document_index.json"
   }

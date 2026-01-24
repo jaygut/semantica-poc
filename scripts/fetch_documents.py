@@ -10,7 +10,6 @@ Usage:
 """
 
 import json
-import os
 import re
 import time
 from datetime import datetime, timezone
@@ -22,9 +21,10 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 # Configuration
-REGISTRY_PATH = "/Users/jaygut/Desktop/semantica-poc/.claude/registry/document_index.json"
-OUTPUT_DIR = "/Users/jaygut/Desktop/semantica-poc/data/papers"
-REPORT_PATH = "/Users/jaygut/Desktop/semantica-poc/data/fetch_report.json"
+BASE_DIR = Path(__file__).resolve().parent.parent
+REGISTRY_PATH = BASE_DIR / ".claude/registry/document_index.json"
+OUTPUT_DIR = BASE_DIR / "data/papers"
+REPORT_PATH = BASE_DIR / "data/fetch_report.json"
 
 USER_AGENT = "SemanticaMARISFetcher/1.0 (+https://github.com/Hawksight-AI/semantica; mailto:green-intel@technetium-ia.com)"
 TIMEOUT = 30
@@ -171,7 +171,7 @@ def fetch_pdf_from_html(
             return result
 
         filename = safe_filename(doc_id, content_type, result["pdf_url"])
-        out_path = os.path.join(OUTPUT_DIR, filename)
+        out_path = OUTPUT_DIR / filename
 
         bytes_written = 0
         with open(out_path, "wb") as out_file:
@@ -181,7 +181,7 @@ def fetch_pdf_from_html(
                     bytes_written += len(chunk)
 
         result["pdf_size_bytes"] = bytes_written
-        result["pdf_path"] = out_path
+        result["pdf_path"] = str(out_path)
         return result
     except requests.Timeout:
         result["pdf_error"] = "pdf_timeout"
@@ -201,7 +201,7 @@ def fetch_documents():
     """Main function to fetch all documents from the registry."""
 
     # Create output directory
-    Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     # Initialize report
     report = {
@@ -278,7 +278,7 @@ def fetch_documents():
 
                 # Generate filename and save
                 filename = safe_filename(doc_id, content_type, candidate_url)
-                out_path = os.path.join(OUTPUT_DIR, filename)
+                out_path = OUTPUT_DIR / filename
 
                 # Stream content to file
                 bytes_written = 0
@@ -295,7 +295,7 @@ def fetch_documents():
                     "status": response.status_code,
                     "content_type": content_type or "unknown",
                     "size_bytes": bytes_written,
-                    "path": out_path,
+                    "path": str(out_path),
                     "retrieved_at": datetime.now(timezone.utc).isoformat()
                 })
                 report["fetched_count"] += 1
@@ -305,7 +305,7 @@ def fetch_documents():
                 if "html" in (content_type or ""):
                     pdf_result = fetch_pdf_from_html(
                         session=session,
-                        html_path=out_path,
+                        html_path=str(out_path),
                         base_url=candidate_url,
                         doc_id=doc_id
                     )
@@ -348,7 +348,7 @@ def fetch_documents():
     report["fetch_completed"] = datetime.now(timezone.utc).isoformat()
 
     # Write report
-    report_dir = Path(REPORT_PATH).parent
+    report_dir = REPORT_PATH.parent
     report_dir.mkdir(parents=True, exist_ok=True)
 
     with open(REPORT_PATH, "w", encoding="utf-8") as f:

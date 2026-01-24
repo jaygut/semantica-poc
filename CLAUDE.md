@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is the **Semantica × MARIS POC** (Proof of Concept) - a project to build an AI-powered knowledge integration system bridging marine ecological science with blue finance. The core deliverable is **MARIS** (Marine Asset Risk Intelligence System), which translates ecological complexity into investment-grade natural capital assets.
 
-**Current Status:** Active development. The repository contains a comprehensive conceptual framework, upgraded SKILLS system, and document registry with 70+ verified papers.
+**Current Status:** Active development. The repository contains a comprehensive conceptual framework, upgraded SKILLS system, and document registry with 195 verified papers.
 
 ## Quick Start Commands
 
@@ -116,7 +116,7 @@ The system follows a **Three-Layer Translation Model**:
 
 | File | Purpose |
 |------|---------|
-| `.claude/registry/document_index.json` | Master bibliography (70+ papers) |
+| `.claude/registry/document_index.json` | Master bibliography (195 papers) |
 | `data/sample_extractions/` | Example entity extractions |
 | `examples/cabo_pulmo_case_study.json` | AAA reference validation site |
 
