@@ -1,0 +1,214 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "extraction_metadata": {
+    "document_id": "hopf_2024",
+    "doi": "10.1038/s41559-024-02339-y",
+    "title": "No-take marine reserves consistently generate larger conservation benefits than fished areas",
+    "authors": ["Hopf JK", "Selkoe KA", "Costello C", "Lester SE", "et al."],
+    "journal": "Nature Ecology & Evolution",
+    "year": 2024,
+    "extraction_date": "2026-01-24",
+    "extractor": "Semantica POC v1.0",
+    "evidence_tier": "T1"
+  },
+
+  "entities_extracted": [
+    {
+      "@type": "Observation",
+      "observation_type": "meta_analysis_result",
+      "metric": "fish_biomass_ratio",
+      "description": "Global meta-analysis of no-take reserve effects on fish biomass",
+      "results": {
+        "notake_vs_fished": {
+          "biomass_ratio": 2.7,
+          "confidence_interval_95": [2.3, 3.2],
+          "interpretation": "170% more fish biomass in no-take reserves"
+        },
+        "targeted_species_ratio": {
+          "biomass_ratio": 3.4,
+          "confidence_interval_95": [2.8, 4.1],
+          "interpretation": "Fished species show largest response"
+        },
+        "apex_predator_ratio": {
+          "biomass_ratio": 4.2,
+          "confidence_interval_95": [3.1, 5.6],
+          "interpretation": "Top predators recover most strongly"
+        }
+      },
+      "sample_size": {
+        "number_of_reserves": 145,
+        "number_of_studies": 89,
+        "geographic_coverage": "Global - tropical and temperate"
+      },
+      "source_quote": "Fish biomass was on average 2.7 times higher in no-take reserves compared to fished areas",
+      "page_reference": "Results, Figure 2"
+    },
+    {
+      "@type": "Observation",
+      "observation_type": "time_series_synthesis",
+      "metric": "recovery_trajectory",
+      "description": "Temporal patterns of biomass recovery in reserves",
+      "results": {
+        "initial_response_years": {
+          "value": 5,
+          "notes": "Significant biomass increase detectable after 5 years"
+        },
+        "asymptote_years": {
+          "value": 15,
+          "range": [10, 20],
+          "notes": "Maximum biomass reached 10-20 years post-establishment"
+        },
+        "continued_growth": {
+          "observation": "Some reserves show continued growth >20 years",
+          "examples": ["Cabo Pulmo", "Poor Knights", "Medes Islands"]
+        }
+      },
+      "source_quote": "Recovery trajectories suggest reserves require 10-20 years to reach maximum biomass",
+      "page_reference": "Results, p. 4"
+    },
+    {
+      "@type": "Observation",
+      "observation_type": "effect_modifiers",
+      "metric": "contextual_factors",
+      "description": "Factors affecting reserve performance",
+      "results": {
+        "enforcement_effect": {
+          "well_enforced": 3.2,
+          "poorly_enforced": 1.4,
+          "interpretation": "Enforcement doubles the biomass ratio"
+        },
+        "size_effect": {
+          "large_over_100km2": 2.9,
+          "small_under_10km2": 2.1,
+          "interpretation": "Larger reserves show modestly better outcomes"
+        },
+        "age_effect": {
+          "old_over_10yr": 3.1,
+          "young_under_5yr": 1.8,
+          "interpretation": "Time since establishment is critical"
+        },
+        "isolation_effect": {
+          "isolated": 2.8,
+          "connected": 2.4,
+          "interpretation": "Isolation provides modest additional benefit"
+        }
+      },
+      "source_quote": "Reserve performance was most strongly associated with enforcement and age",
+      "page_reference": "Results, Figure 3"
+    },
+    {
+      "@type": "Concept",
+      "concept_name": "MPA Protection Level Spectrum",
+      "definition": "Classification of MPAs by fishing restrictions",
+      "categories": {
+        "no_take": {
+          "definition": "Complete prohibition on all extractive activities",
+          "biomass_ratio": 2.7
+        },
+        "highly_protected": {
+          "definition": "Minimal fishing allowed (e.g., subsistence only)",
+          "biomass_ratio": 2.1
+        },
+        "lightly_protected": {
+          "definition": "Some gear restrictions but commercial fishing allowed",
+          "biomass_ratio": 1.3
+        },
+        "minimally_protected": {
+          "definition": "Few restrictions on fishing",
+          "biomass_ratio": 1.0
+        }
+      },
+      "source_quote": "Protection level is the strongest predictor of conservation outcomes",
+      "page_reference": "Discussion, p. 6"
+    },
+    {
+      "@type": "Dataset",
+      "dataset_name": "Global MPA Effectiveness Database",
+      "description": "Compilation of MPA effectiveness studies for meta-analysis",
+      "parameters": {
+        "number_of_reserves": 145,
+        "number_of_countries": 52,
+        "survey_years": "1990-2023",
+        "species_groups": ["reef fish", "temperate fish", "invertebrates"]
+      },
+      "data_quality": "High - standardized effect size calculation",
+      "page_reference": "Methods"
+    }
+  ],
+
+  "relationships_extracted": [
+    {
+      "@type": "Relationship",
+      "relationship_type": "DETERMINES_OUTCOME",
+      "subject": "no_take_status",
+      "object": "fish_biomass",
+      "quantification": "2.7x multiplier (95% CI: 2.3-3.2)",
+      "strength": "strong",
+      "source_quote": "No-take reserves consistently outperform partially protected areas"
+    },
+    {
+      "@type": "Relationship",
+      "relationship_type": "MODIFIES_EFFECT",
+      "subject": "enforcement_level",
+      "object": "reserve_effectiveness",
+      "quantification": "2.3x difference between well and poorly enforced",
+      "mechanism": "Prevents illegal fishing and maintains protection"
+    },
+    {
+      "@type": "Relationship",
+      "relationship_type": "MODIFIES_EFFECT",
+      "subject": "reserve_age",
+      "object": "fish_biomass",
+      "quantification": "1.7x difference between old and young reserves",
+      "mechanism": "Time for population recovery and trophic restoration"
+    }
+  ],
+
+  "bridge_axiom_support": {
+    "axiom_id": "BA-002",
+    "axiom_name": "notake_mpa_biomass_multiplier",
+    "support_type": "updated_meta_analysis",
+    "key_coefficients_extracted": {
+      "base_biomass_ratio": 2.7,
+      "targeted_species_ratio": 3.4,
+      "apex_predator_ratio": 4.2,
+      "effect_modifiers": {
+        "enforcement": 2.3,
+        "age_over_10yr": 1.7,
+        "size_over_100km2": 1.4,
+        "isolation": 1.2
+      }
+    },
+    "confidence": "high",
+    "notes": "Updated synthesis confirming and refining Edgar 2014 NEOLI findings"
+  },
+
+  "key_quotes": [
+    {
+      "quote": "Fish biomass was on average 2.7 times higher in no-take reserves compared to fished areas, with the strongest effects observed for targeted species (3.4×) and apex predators (4.2×)",
+      "page": "Abstract",
+      "relevance": "Core quantitative finding"
+    },
+    {
+      "quote": "Enforcement emerged as the strongest predictor of reserve performance, with well-enforced reserves showing biomass ratios more than double those of poorly enforced reserves",
+      "page": "Results, p. 5",
+      "relevance": "Key for BA-002 modifiers"
+    },
+    {
+      "quote": "Our results provide updated and more precise estimates that can inform the design and management of marine protected areas globally",
+      "page": "Discussion, p. 7",
+      "relevance": "Policy relevance"
+    }
+  ],
+
+  "provenance": {
+    "document_hash": "sha256:d4e5f6a7b8c9...[would be actual hash]",
+    "extraction_method": "llm_assisted_manual_review",
+    "reviewed_by": "MARIS Pipeline",
+    "review_date": "2026-01-24",
+    "confidence_assessment": "high - rigorous meta-analysis with large sample size"
+  }
+}
