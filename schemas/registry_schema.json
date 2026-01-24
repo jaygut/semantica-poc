@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maris.ocean/schemas/registry_schema.json",
+  "title": "MARIS Document Registry Schema",
+  "description": "JSON Schema for validating document entries in the MARIS registry",
+
+  "definitions": {
+    "source_tier": {
+      "type": "string",
+      "enum": ["T1", "T2", "T3", "T4"],
+      "description": "Evidence tier: T1=peer-reviewed, T2=institutional, T3=data repos, T4=preprints"
+    },
+
+    "document_type": {
+      "type": "string",
+      "enum": [
+        "peer-reviewed",
+        "institutional_report",
+        "institutional_guidance",
+        "technical_guidance",
+        "disclosure_framework",
+        "methodology_standard",
+        "sector_guidance",
+        "international_standard",
+        "regulatory_standard",
+        "case_study",
+        "market_report",
+        "textbook",
+        "dataset",
+        "database",
+        "unknown"
+      ]
+    },
+
+    "habitat": {
+      "type": "string",
+      "enum": ["coral_reef", "kelp_forest", "seagrass", "mangrove", "general"]
+    },
+
+    "abstract_source": {
+      "type": "string",
+      "enum": [
+        "crossref_api",
+        "openalex_api",
+        "semantic_scholar_api",
+        "html_meta",
+        "pdf_parse",
+        "webfetch",
+        "websearch",
+        "manual"
+      ]
+    },
+
+    "document_entry": {
+      "type": "object",
+      "required": ["title", "url", "source_tier"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 5,
+          "description": "Full title of the document"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Primary URL for accessing the document"
+        },
+        "doi": {
+          "type": ["string", "null"],
+          "pattern": "^10\\.\\d{4,}/.*$",
+          "description": "Digital Object Identifier"
+        },
+        "authors": {
+          "type": ["string", "array"],
+          "description": "Author(s) of the document"
+        },
+        "year": {
+          "type": ["integer", "null"],
+          "minimum": 1900,
+          "maximum": 2030,
+          "description": "Publication year"
+        },
+        "journal": {
+          "type": ["string", "null"],
+          "description": "Journal or publication venue"
+        },
+        "source_tier": {
+          "$ref": "#/definitions/source_tier"
+        },
+        "document_type": {
+          "$ref": "#/definitions/document_type"
+        },
+        "domain_tags": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Knowledge domain tags"
+        },
+        "habitat": {
+          "$ref": "#/definitions/habitat"
+        },
+        "abstract": {
+          "type": ["string", "null"],
+          "minLength": 50,
+          "description": "Abstract or summary text"
+        },
+        "abstract_source": {
+          "$ref": "#/definitions/abstract_source"
+        },
+        "abstract_captured_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "When abstract was captured"
+        },
+        "notes": {
+          "type": ["string", "null"],
+          "description": "Additional notes about the document"
+        },
+        "added_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When document was added to registry"
+        }
+      }
+    }
+  },
+
+  "type": "object",
+  "required": ["version", "document_count", "documents", "statistics"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "document_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "documents": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/document_entry"
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "properties": {
+        "by_tier": {
+          "type": "object",
+          "properties": {
+            "T1": {"type": "integer"},
+            "T2": {"type": "integer"},
+            "T3": {"type": "integer"},
+            "T4": {"type": "integer"}
+          }
+        },
+        "by_type": {
+          "type": "object",
+          "additionalProperties": {"type": "integer"}
+        },
+        "by_domain": {
+          "type": "object",
+          "additionalProperties": {"type": "integer"}
+        },
+        "by_habitat": {
+          "type": "object",
+          "additionalProperties": {"type": "integer"}
+        }
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}
