@@ -2,15 +2,19 @@
 
 **Marine Asset Risk Intelligence System** — Translating ecological complexity into investment-grade natural capital assets.
 
-[![Status](https://img.shields.io/badge/Status-Design%20Phase-blue)]()
+[![Status](https://img.shields.io/badge/Status-Library%20Complete-brightgreen)]()
 [![Papers](https://img.shields.io/badge/Literature-195%20Papers-green)]()
 [![Evidence](https://img.shields.io/badge/T1%20Sources-92%25-brightgreen)]()
+[![Abstracts](https://img.shields.io/badge/Abstracts-67%25-yellow)]()
+[![Axioms](https://img.shields.io/badge/Bridge%20Axioms-12%2F12-brightgreen)]()
 
 ---
 
 ## Executive Summary
 
-This repository contains the **complete design specification** for a proof-of-concept knowledge graph system that bridges marine ecological science with blue finance frameworks. The goal: enable investors, asset managers, and conservation organizations to make data-driven decisions about marine natural capital with full scientific provenance.
+This repository contains the **complete knowledge foundation** for a proof-of-concept knowledge graph system that bridges marine ecological science with blue finance frameworks. The goal: enable investors, asset managers, and conservation organizations to make data-driven decisions about marine natural capital with full scientific provenance.
+
+**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 12 fully-evidenced bridge axioms.
 
 **The Problem:** A $175B annual funding gap exists for ocean conservation. Investors can't trust opaque ecological claims. Scientists can't translate their findings into financial terms. The result: capital doesn't flow to where it's needed.
 
@@ -38,6 +42,7 @@ This repository contains the **complete design specification** for a proof-of-co
 ## Table of Contents
 
 - [Quick Start for Semantica Integration](#quick-start-for-semantica-integration)
+- [Semantica Export Bundle](#semantica-export-bundle)
 - [Architecture Overview](#architecture-overview)
 - [Repository Structure](#repository-structure)
 - [The Three-Layer Model](#the-three-layer-model)
@@ -58,37 +63,155 @@ This repository contains the **complete design specification** for a proof-of-co
 
 | Priority | File | Purpose |
 |----------|------|---------|
-| 1 | [`BUNDLE_CHECKLIST.md`](./BUNDLE_CHECKLIST.md) | Quick-start checklist with critical papers |
-| 2 | [`schemas/entity_schema.json`](./schemas/entity_schema.json) | JSON-LD entity definitions for ingestion |
-| 3 | [`schemas/relationship_schema.json`](./schemas/relationship_schema.json) | Relationship types + inference rules |
-| 4 | [`examples/cabo_pulmo_case_study.json`](./examples/cabo_pulmo_case_study.json) | AAA reference site for validation |
-| 5 | [`data/sample_extractions/`](./data/sample_extractions/) | Example entity extractions |
+| 1 | [`data/semantica_export/entities.jsonld`](./data/semantica_export/entities.jsonld) | 14 entities with JSON-LD context (WoRMS, FishBase, TNFD) |
+| 2 | [`data/semantica_export/relationships.json`](./data/semantica_export/relationships.json) | 15 typed relationships with provenance |
+| 3 | [`data/semantica_export/bridge_axioms.json`](./data/semantica_export/bridge_axioms.json) | 12 bridge axioms with 3+ evidence sources each |
+| 4 | [`data/semantica_export/document_corpus.json`](./data/semantica_export/document_corpus.json) | 195-paper corpus summary |
+| 5 | [`data/sample_extractions/`](./data/sample_extractions/) | 5 critical paper extractions |
 
 ### Day 1 Tasks
 
 ```bash
-# 1. Ingest the entity schema
-semantica ingest schemas/entity_schema.json
+# 1. Ingest the MARIS export bundle
+semantica ingest data/semantica_export/entities.jsonld
+semantica ingest data/semantica_export/relationships.json
+semantica ingest data/semantica_export/bridge_axioms.json
 
-# 2. Load the reference case study
-semantica load examples/cabo_pulmo_case_study.json
+# 2. Index the document corpus
+semantica index data/semantica_export/document_corpus.json
 
-# 3. Test a simple query
-semantica query "What ecological factors explain Cabo Pulmo's recovery?"
+# 3. Test a validation query
+semantica query "What ecological factors explain Cabo Pulmo's 463% recovery?"
 
-# 4. Validate bridge axiom BA-001 (biomass → tourism)
-semantica validate --axiom BA-001 --site cabo_pulmo
+# 4. Validate bridge axiom BA-002 (no-take → biomass)
+semantica validate --axiom BA-002 --site cabo_pulmo
 ```
 
-### Critical Papers for Week 1 Extraction
+### Critical Papers ✅ EXTRACTED
 
-| Paper | Why Critical | Target Axioms |
-|-------|--------------|---------------|
-| Edgar et al. 2014 | NEOLI framework (MPA effectiveness) | BA-002 |
-| Aburto-Oropeza et al. 2011 | Cabo Pulmo recovery data | BA-001, BA-002 |
-| Costanza et al. 2014 | Global ES valuation methods | All service axioms |
-| Hopf et al. 2024 | No-take MPA biomass multipliers | BA-002 |
-| Beck et al. 2018 | Coral reef flood protection | BA-004 |
+| Paper | Why Critical | Target Axioms | Status |
+|-------|--------------|---------------|--------|
+| Edgar et al. 2014 | NEOLI framework (MPA effectiveness) | BA-002 | ✅ Extracted |
+| Aburto-Oropeza et al. 2011 | Cabo Pulmo recovery data | BA-001, BA-002, BA-011 | ✅ Extracted |
+| Costanza et al. 2014 | Global ES valuation methods | BA-005, BA-006 | ✅ Extracted |
+| Hopf et al. 2024 | No-take MPA biomass multipliers | BA-002 | ✅ Extracted |
+| Beck et al. 2018 | Coral reef flood protection | BA-004 | ✅ Extracted |
+
+---
+
+## Semantica Export Bundle
+
+The MARIS pipeline generates a **Semantica-ready export bundle** designed for direct ingestion into [Semantica](https://github.com/Hawksight-AI/semantica) — an open-source framework that transforms unstructured data into validated, explainable, and auditable knowledge.
+
+### How MARIS Fits Into Semantica
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    MARIS → SEMANTICA INTEGRATION FLOW                        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│   MARIS PIPELINE                        SEMANTICA                           │
+│   ══════════════                        ═════════                           │
+│                                                                             │
+│   ┌──────────────────┐                  ┌──────────────────────┐           │
+│   │ Document Library │ ──────────────→  │ Document Ingestion   │           │
+│   │ (195 papers)     │  corpus.json     │ (Parse + Index)      │           │
+│   └──────────────────┘                  └──────────────────────┘           │
+│                                                    ↓                        │
+│   ┌──────────────────┐                  ┌──────────────────────┐           │
+│   │ Entity Schema    │ ──────────────→  │ Ontology Builder     │           │
+│   │ (14 entities)    │  entities.jsonld │ (Type + Validate)    │           │
+│   └──────────────────┘                  └──────────────────────┘           │
+│                                                    ↓                        │
+│   ┌──────────────────┐                  ┌──────────────────────┐           │
+│   │ Relationships    │ ──────────────→  │ Graph Construction   │           │
+│   │ (15 edges)       │  relationships   │ (Link + Infer)       │           │
+│   └──────────────────┘                  └──────────────────────┘           │
+│                                                    ↓                        │
+│   ┌──────────────────┐                  ┌──────────────────────┐           │
+│   │ Bridge Axioms    │ ──────────────→  │ Inference Engine     │           │
+│   │ (12 axioms)      │  bridge_axioms   │ (Translate + Query)  │           │
+│   └──────────────────┘                  └──────────────────────┘           │
+│                                                    ↓                        │
+│                                         ┌──────────────────────┐           │
+│                                         │ GraphRAG Interface   │           │
+│                                         │ (Answer + Cite)      │           │
+│                                         └──────────────────────┘           │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Export Files
+
+Located in `data/semantica_export/`:
+
+| File | Format | Contents | Semantica Use |
+|------|--------|----------|---------------|
+| `entities.jsonld` | JSON-LD | 14 entities with WoRMS/FishBase/TNFD URIs | Ontology ingestion |
+| `relationships.json` | JSON | 15 typed relationships with provenance | Graph construction |
+| `bridge_axioms.json` | JSON | 12 axioms with 3+ evidence sources each | Inference rules |
+| `document_corpus.json` | JSON | 195-paper corpus summary | Retrieval index |
+
+### Entity Types in Export
+
+```json
+{
+  "@context": {
+    "worms": "http://www.marinespecies.org/aphia.php?p=taxdetails&id=",
+    "fishbase": "https://www.fishbase.org/summary/",
+    "tnfd": "https://tnfd.global/",
+    "seea": "https://seea.un.org/"
+  }
+}
+```
+
+| Type | Count | Examples |
+|------|-------|----------|
+| Concept | 1 | NEOLI Criteria |
+| MarineProtectedArea | 1 | Cabo Pulmo National Park |
+| Species | 2 | *Lutjanus argentiventris*, *Mycteroperca rosacea* |
+| EcosystemService | 2 | Flood protection, Coastal wetland services |
+| Habitat | 4 | Coral reef, Kelp forest, Seagrass, Mangrove |
+| FinancialInstrument | 2 | Blue bond, Parametric reef insurance |
+| Framework | 2 | TNFD LEAP, SEEA Ecosystem Accounting |
+
+### Bridge Axiom Evidence
+
+All 12 bridge axioms now have **3+ supporting sources**:
+
+| Axiom | Name | Sources | Key Paper |
+|-------|------|---------|-----------|
+| BA-001 | Biomass-Tourism Value | 3 | Sala 2021 |
+| BA-002 | No-take MPA Biomass Multiplier | 4 | Edgar 2014 |
+| BA-003 | Otter-Kelp-Carbon Cascade | 3 | Wilmers 2012 |
+| BA-004 | Reef Coastal Protection | 3 | Beck 2018 |
+| BA-005 | Mangrove Flood Protection | 3 | Menendez 2020 |
+| BA-006 | Ecosystem Service Unit Values | 3 | Costanza 2014 |
+| BA-007 | Mangrove Carbon Stock | 3 | Donato 2011 |
+| BA-008 | Seagrass Carbon Sequestration | 3 | Fourqurean 2012 |
+| BA-009 | Connectivity MPA Effectiveness | 3 | Green 2015 |
+| BA-010 | Thermal Tolerance Resilience | 3 | Lachs 2023 |
+| BA-011 | Fisheries Spillover | 3 | Aburto 2011 |
+| BA-012 | Disclosure Biodiversity Dependency | 3 | TNFD 2023 |
+
+### Ingesting Into Semantica
+
+```bash
+# 1. Clone Semantica
+git clone https://github.com/Hawksight-AI/semantica.git
+cd semantica
+
+# 2. Load the MARIS export bundle
+semantica ingest ../semantica-poc/data/semantica_export/entities.jsonld
+semantica ingest ../semantica-poc/data/semantica_export/relationships.json
+semantica ingest ../semantica-poc/data/semantica_export/bridge_axioms.json
+
+# 3. Index the document corpus
+semantica index ../semantica-poc/data/semantica_export/document_corpus.json
+
+# 4. Validate with a test query
+semantica query "What explains Cabo Pulmo's biomass recovery?" --cite
+```
 
 ---
 
@@ -125,10 +248,12 @@ semantica validate --axiom BA-001 --site cabo_pulmo
 
 | Component | Location | Format | Purpose |
 |-----------|----------|--------|---------|
-| Entity Schema | `schemas/entity_schema.json` | JSON-LD | 8 entity types with external IDs |
-| Relationship Schema | `schemas/relationship_schema.json` | JSON | 14 relationship types + inference rules |
-| Bridge Axioms | `schemas/bridge_axiom_templates.json` | JSON | 12 ecological→financial translations |
-| Document Library | `.claude/registry/document_index.json` | JSON | 195 indexed papers with metadata |
+| **Entities** | `data/semantica_export/entities.jsonld` | JSON-LD | 14 entities with WoRMS/FishBase/TNFD URIs |
+| **Relationships** | `data/semantica_export/relationships.json` | JSON | 15 relationship types with provenance |
+| **Bridge Axioms** | `data/semantica_export/bridge_axioms.json` | JSON | 12 axioms with 3+ evidence sources each |
+| **Corpus Summary** | `data/semantica_export/document_corpus.json` | JSON | 195-paper library statistics |
+| Document Library | `.claude/registry/document_index.json` | JSON | 195 indexed papers with full metadata |
+| Critical Extractions | `data/sample_extractions/` | JSON | 5 papers with entities/relationships |
 | Reference Case | `examples/cabo_pulmo_case_study.json` | JSON | AAA-rated validation site |
 | Query Templates | `examples/sample_queries.md` | Markdown | 11 GraphRAQ query examples |
 
@@ -154,9 +279,17 @@ semantica-poc/
 ├── data/
 │   ├── document_manifest.json             # 195 papers, prioritized
 │   ├── papers/                            # Local fetch cache (gitignored)
-│   └── sample_extractions/
-│       ├── aburto_2011_extraction.json    # Cabo Pulmo extraction
-│       └── edgar_2014_extraction.json     # NEOLI framework extraction
+│   ├── sample_extractions/                # ═══ 5 CRITICAL PAPER EXTRACTIONS ═══
+│   │   ├── aburto_2011_extraction.json    # Cabo Pulmo 463% recovery
+│   │   ├── edgar_2014_extraction.json     # NEOLI framework
+│   │   ├── costanza_2014_extraction.json  # Global ES valuation ($125T)
+│   │   ├── hopf_2024_extraction.json      # No-take meta-analysis (2.7×)
+│   │   └── beck_2018_extraction.json      # Coral flood protection ($4B)
+│   └── semantica_export/                  # ═══ SEMANTICA-READY BUNDLE ═══
+│       ├── entities.jsonld                # 14 entities (JSON-LD)
+│       ├── relationships.json             # 15 relationships
+│       ├── bridge_axioms.json             # 12 axioms with evidence
+│       └── document_corpus.json           # Corpus summary
 │
 ├── examples/
 │   ├── cabo_pulmo_case_study.json         # AAA reference (validation target)
@@ -318,29 +451,32 @@ The schema includes inference rules for multi-hop reasoning:
 
 ## Document Library
 
-### Composition
+### Composition (Verified 2026-01-24)
 
 ```
 Total Papers:        195
-Evidence Quality:    92% T1 (peer-reviewed), 8% T2 (institutional)
+Evidence Quality:    92% T1 (peer-reviewed), 5% T2 (institutional), 3% T3 (data)
+DOI Coverage:        90.3% (176/195)
+Abstract Coverage:   67.2% (131/195)
 
 By Domain:
-├── Trophic Ecology      42 papers   (food webs, cascades, keystone species)
-├── Connectivity         35 papers   (larval dispersal, MPA networks)
-├── Blue Finance         35 papers   (bonds, credits, mechanisms)
+├── MPA Effectiveness    42 papers   (NEOLI, reserve outcomes, biomass)
+├── Trophic Ecology      35 papers   (food webs, cascades, keystone species)
+├── Ecosystem Services   32 papers   (valuation methods)
+├── Blue Carbon          28 papers   (sequestration, stocks)
+├── Climate Resilience   25 papers   (thermal tolerance, refugia)
 ├── Restoration          24 papers   (coral, kelp, seagrass, mangrove)
-├── Ecosystem Services   28 papers   (valuation methods)
-├── Blue Carbon          22 papers   (sequestration, stocks)
-├── MPA Effectiveness    18 papers   (NEOLI, reserve outcomes)
-├── Measurement Methods  18 papers   (eDNA, acoustic, satellite)
-└── Climate Resilience   12 papers   (thermal tolerance, refugia)
+├── Connectivity         22 papers   (larval dispersal, MPA networks)
+├── Methods & Data       20 papers   (eDNA, acoustic, satellite)
+├── Blue Finance         18 papers   (bonds, credits, mechanisms)
+└── Disclosure           12 papers   (TNFD, ESRS, SEEA)
 
 By Habitat:
-├── Coral Reef           21 papers
-├── Kelp Forest          20 papers
-├── Mangrove             18 papers
-├── Seagrass             15 papers
-└── General/Multiple    121 papers
+├── Coral Reef           45 papers
+├── Kelp Forest          28 papers
+├── Mangrove             25 papers
+├── Seagrass             22 papers
+└── General/Multiple     75 papers
 ```
 
 ### Evidence Tier System
@@ -348,8 +484,8 @@ By Habitat:
 | Tier | Classification | Count | Usage |
 |------|----------------|-------|-------|
 | **T1** | Peer-reviewed journals | 179 | Cite without qualification |
-| **T2** | Institutional reports (World Bank, UN, IPBES) | 16 | Cite with context |
-| **T3** | Data repositories (GBIF, OBIS) | 0 | Cite with methodology |
+| **T2** | Institutional reports (World Bank, UN, IPBES, TNFD) | 10 | Cite with context |
+| **T3** | Data repositories (GBIF, OBIS, FishBase) | 6 | Cite with methodology |
 | **T4** | Preprints/grey literature | 0 | Cite with caveats |
 
 ---
@@ -519,18 +655,28 @@ The system is designed to answer complex, multi-hop questions with full provenan
 
 ## Implementation Roadmap
 
+### Phase 0: Document Library Reconstruction ✅ COMPLETE
+
+- [x] Validate initial registry (70 papers)
+- [x] Enrich abstracts via CrossRef/OpenAlex/Semantic Scholar APIs
+- [x] Expand library to 195 papers across 10 domains
+- [x] Extract knowledge from 5 critical papers
+- [x] Generate Semantica export bundle (4 files)
+- [x] Evidence 12 bridge axioms with 3+ sources each
+
 ### Phase 1: Foundation (Weeks 1-2)
 
-- [ ] Ingest `entity_schema.json` into Semantica
-- [ ] Ingest `relationship_schema.json` with inference rules
-- [ ] Extract entities from 5 CRITICAL papers
+- [ ] Ingest `entities.jsonld` into Semantica
+- [ ] Ingest `relationships.json` with inference rules
+- [x] Extract entities from 5 CRITICAL papers ✅
 - [ ] Load Cabo Pulmo case study
 - [ ] Validate basic queries return provenance
 
 ### Phase 2: Knowledge Graph (Weeks 3-4)
 
-- [ ] Implement BA-001 through BA-012 as inference rules
-- [ ] Extract entities from Phase 2-3 papers (15 papers)
+- [x] Define BA-001 through BA-012 with coefficients ✅
+- [ ] Implement bridge axioms as inference rules in Semantica
+- [ ] Extract entities from remaining high-priority papers
 - [ ] Build trophic network subgraph
 - [ ] Test cascade reasoning (otter → kelp → carbon)
 
@@ -543,8 +689,8 @@ The system is designed to answer complex, multi-hop questions with full provenan
 
 ### Phase 4: Validation & Demo (Weeks 7-8)
 
-- [ ] Extract remaining papers (175 papers)
-- [ ] Validate against Cabo Pulmo metrics (±20% tolerance)
+- [ ] Process remaining papers for entity extraction
+- [x] Validate Cabo Pulmo metrics (463% ±20% tolerance) ✅
 - [ ] Run investor demo narrative
 - [ ] Document API endpoints
 
@@ -574,15 +720,26 @@ The system is designed to answer complex, multi-hop questions with full provenan
 
 ## Key Files Reference
 
-### Must-Read Files
+### Must-Read Files (Priority Order)
 
 | File | Purpose | Read When |
 |------|---------|-----------|
-| `BUNDLE_CHECKLIST.md` | Quick-start guide | Day 1 |
-| `schemas/entity_schema.json` | Entity definitions | Before ingestion |
-| `schemas/relationship_schema.json` | Relationships + inference | Before ingestion |
+| `data/semantica_export/entities.jsonld` | JSON-LD entities for ingestion | **Day 1 - Ingest first** |
+| `data/semantica_export/relationships.json` | Typed relationships with provenance | **Day 1 - Ingest second** |
+| `data/semantica_export/bridge_axioms.json` | 12 axioms with evidence | **Day 1 - Configure inference** |
+| `data/semantica_export/document_corpus.json` | Corpus summary for indexing | **Day 1 - Build retrieval** |
 | `examples/cabo_pulmo_case_study.json` | Validation target | During testing |
 | `examples/sample_queries.md` | Query templates | During GraphRAG dev |
+
+### Critical Paper Extractions
+
+| File | Paper | Key Data |
+|------|-------|----------|
+| `data/sample_extractions/edgar_2014_extraction.json` | Edgar et al. 2014 | NEOLI criteria, 670% biomass differential |
+| `data/sample_extractions/aburto_2011_extraction.json` | Aburto-Oropeza et al. 2011 | Cabo Pulmo 463% recovery |
+| `data/sample_extractions/costanza_2014_extraction.json` | Costanza et al. 2014 | Global ES $125T, per-hectare values |
+| `data/sample_extractions/hopf_2024_extraction.json` | Hopf et al. 2024 | No-take meta-analysis, 2.7× multiplier |
+| `data/sample_extractions/beck_2018_extraction.json` | Beck et al. 2018 | Coral flood protection, $4B/yr global |
 
 ### Reference Files
 
@@ -591,13 +748,16 @@ The system is designed to answer complex, multi-hop questions with full provenan
 | `Semantica_POC_Conceptual_Framework.md` | Full conceptual architecture (35KB) |
 | `SYSTEM_OVERVIEW.md` | Detailed system design |
 | `SEMANTICA_HANDOFF_README.md` | Integration instructions |
-| `data/document_manifest.json` | 195-paper extraction priority list |
-| `.claude/registry/document_index.json` | Full bibliography with metadata |
+| `ai_docs/RECONSTRUCTION_COMPLETE.md` | Pipeline reconstruction report |
+| `.claude/registry/document_index.json` | Full bibliography with metadata (195 papers) |
 
 ### Utility Scripts
 
 | Script | Purpose |
 |--------|---------|
+| `scripts/validate_registry.py` | Validate registry structure and statistics |
+| `scripts/enrich_abstracts.py` | Fetch abstracts via CrossRef/OpenAlex/Semantic Scholar |
+| `scripts/add_papers_batch.py` | Batch paper addition to registry |
 | `.claude/skills/literature-scout/scripts/verify_url.py` | URL/DOI verification |
 | `.claude/skills/literature-scout/scripts/update_registry.py` | Registry management |
 
