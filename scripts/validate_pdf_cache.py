@@ -162,6 +162,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--require-match", action="store_true")
     parser.add_argument("--allow-mismatch", action="store_true")
     parser.add_argument("--title-match-ratio", type=float, default=0.6)
+    parser.add_argument("--update-registry", action="store_true")
     return parser.parse_args()
 
 
@@ -192,22 +193,20 @@ def main() -> int:
 
     for path in pdf_files:
         doc_id = path.stem
-        doc = registry.get(doc_id, {})
-        doc_id = path.stem
         doc = registry.get(doc_id)
         if require_match and doc is None:
             valid, text_ok, match_ok, error = False, False, False, "doc_id_not_in_registry"
         else:
             valid, text_ok, match_ok, error = validate_pdf_file(
-            path,
-            require_text=require_text,
-            min_text_chars=args.min_text_chars,
-            check_pages=args.check_pages,
-            expected_title=doc.get("title") if doc else None,
-            expected_doi=doc.get("doi") if doc else None,
-            require_match=require_match,
-            title_match_ratio=args.title_match_ratio,
-        )
+                path,
+                require_text=require_text,
+                min_text_chars=args.min_text_chars,
+                check_pages=args.check_pages,
+                expected_title=doc.get("title") if doc else None,
+                expected_doi=doc.get("doi") if doc else None,
+                require_match=require_match,
+                title_match_ratio=args.title_match_ratio,
+            )
         results.append(
             {
                 "path": str(path),
@@ -240,6 +239,33 @@ def main() -> int:
     }
 
     REPORT_PATH.write_text(json.dumps(report, indent=2) + "\n")
+
+    if args.update_registry and REGISTRY_PATH.exists():
+        registry = json.loads(REGISTRY_PATH.read_text())
+        documents = registry.get("documents", {})
+        updated_at = datetime.now(timezone.utc).isoformat()
+        for item in results:
+            doc_id = item.get("doc_id")
+            if not doc_id or doc_id not in documents:
+                continue
+            doc = documents[doc_id]
+            pdf_cache = doc.get("pdf_cache", {})
+            pdf_cache.update(
+                {
+                    "status": "available" if item["valid"] else "failed",
+                    "size_bytes": item.get("size_bytes"),
+                    "error": item.get("error"),
+                    "text_extractable": item.get("text_extractable"),
+                    "match_ok": item.get("match_ok"),
+                    "checked_at": updated_at,
+                    "validator": "validate_pdf_cache.py",
+                }
+            )
+            doc["pdf_cache"] = pdf_cache
+            documents[doc_id] = doc
+        registry["documents"] = documents
+        registry["updated_at"] = updated_at
+        REGISTRY_PATH.write_text(json.dumps(registry, indent=2) + "\n")
 
     print("PDF CACHE VALIDATION COMPLETE")
     print(f"  PDFs checked: {report['pdf_count']}")

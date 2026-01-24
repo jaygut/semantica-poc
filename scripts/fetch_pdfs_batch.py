@@ -389,6 +389,16 @@ def attempt_document_pdf(
                 title_match_ratio=title_match_ratio,
             )
             if ok:
+                valid, text_ok, match_ok, _ = validate_pdf_file(
+                    out_path,
+                    require_text=require_text,
+                    min_text_chars=min_text_chars,
+                    check_pages=check_pages,
+                    expected_title=doc.get("title"),
+                    expected_doi=doc.get("doi"),
+                    require_match=require_match,
+                    title_match_ratio=title_match_ratio,
+                )
                 time.sleep(delay_s)
                 return {
                     "doc_id": doc_id,
@@ -397,6 +407,8 @@ def attempt_document_pdf(
                     "source_url": candidate_url,
                     "size_bytes": size,
                     "method": "direct_pdf",
+                    "text_extractable": text_ok,
+                    "match_ok": match_ok,
                 }
             last_error = err
             continue
@@ -419,6 +431,16 @@ def attempt_document_pdf(
                     title_match_ratio=title_match_ratio,
                 )
                 if ok:
+                    valid, text_ok, match_ok, _ = validate_pdf_file(
+                        out_path,
+                        require_text=require_text,
+                        min_text_chars=min_text_chars,
+                        check_pages=check_pages,
+                        expected_title=doc.get("title"),
+                        expected_doi=doc.get("doi"),
+                        require_match=require_match,
+                        title_match_ratio=title_match_ratio,
+                    )
                     time.sleep(delay_s)
                     return {
                         "doc_id": doc_id,
@@ -427,6 +449,8 @@ def attempt_document_pdf(
                         "source_url": pdf_url,
                         "size_bytes": size,
                         "method": "html_pdf_link",
+                        "text_extractable": text_ok,
+                        "match_ok": match_ok,
                     }
                 last_error = err
 
@@ -478,6 +502,7 @@ def build_report(results: list[dict], args: argparse.Namespace) -> dict:
         "check_pages": args.check_pages,
         "require_match": True if not args.allow_mismatch else args.require_match,
         "title_match_ratio": args.title_match_ratio,
+        "update_registry": not args.no_update_registry,
         "attempted_docs": len(results),
         "pdfs_found": len(successes),
         "successes": successes,
@@ -499,7 +524,42 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--require-match", action="store_true")
     parser.add_argument("--allow-mismatch", action="store_true")
     parser.add_argument("--title-match-ratio", type=float, default=0.6)
+    parser.add_argument("--no-update-registry", action="store_true")
     return parser.parse_args()
+
+
+def update_registry_pdf_status(results: list[dict]) -> None:
+    if not REGISTRY_PATH.exists():
+        return
+    registry = json.loads(REGISTRY_PATH.read_text())
+    documents = registry.get("documents", {})
+    updated_at = datetime.now(timezone.utc).isoformat()
+
+    for result in results:
+        doc_id = result.get("doc_id")
+        if not doc_id or doc_id not in documents:
+            continue
+        doc = documents[doc_id]
+        pdf_cache = doc.get("pdf_cache", {})
+        status = result.get("status")
+        pdf_cache.update(
+            {
+                "status": "available" if status in {"success", "exists"} else "failed",
+                "source_url": result.get("source_url"),
+                "size_bytes": result.get("size_bytes"),
+                "error": result.get("error"),
+                "text_extractable": result.get("text_extractable"),
+                "match_ok": result.get("match_ok"),
+                "checked_at": updated_at,
+                "validator": "fetch_pdfs_batch.py",
+            }
+        )
+        doc["pdf_cache"] = pdf_cache
+        documents[doc_id] = doc
+
+    registry["documents"] = documents
+    registry["updated_at"] = updated_at
+    REGISTRY_PATH.write_text(json.dumps(registry, indent=2) + "\n")
 
 
 def main() -> int:
@@ -544,6 +604,9 @@ def main() -> int:
 
     report = build_report(results, args)
     REPORT_PATH.write_text(json.dumps(report, indent=2) + "\n")
+
+    if not args.no_update_registry:
+        update_registry_pdf_status(results)
 
     print("PDF FETCH COMPLETE")
     print(f"  Attempted docs: {report['attempted_docs']}")

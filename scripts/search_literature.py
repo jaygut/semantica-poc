@@ -14,21 +14,52 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
-from urllib.parse import quote_plus
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 REGISTRY_PATH = BASE_DIR / ".claude/registry/document_index.json"
-KEYWORDS_PATH = BASE_DIR / ".claude/skills/literature-scout/references/search_keywords.md"
+KEYWORD_CANDIDATES = [
+    BASE_DIR / "data/keywords/search_keywords.md",
+    BASE_DIR / ".claude/skills/literature-scout/references/search_keywords.md",
+]
 OUTPUT_DIR = BASE_DIR / "data/search_results"
 
 OPENALEX_URL = "https://api.openalex.org/works"
 CROSSREF_URL = "https://api.crossref.org/works"
+USER_AGENT = "MARIS-LiteratureSearch/1.0 (+https://github.com/Hawksight-AI/semantica)"
+MAILTO = "green-intel@technetium-ia.com"
+
+
+def get_session() -> requests.Session:
+    retry_strategy = Retry(
+        total=3,
+        backoff_factor=1.0,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET"],
+        raise_on_status=False,
+    )
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT})
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    return session
+
+
+def resolve_keywords_path() -> Path:
+    for candidate in KEYWORD_CANDIDATES:
+        if candidate.exists():
+            return candidate
+    raise FileNotFoundError(
+        "Missing search keywords. Expected data/keywords/search_keywords.md."
+    )
 
 
 def load_keywords() -> str:
-    return KEYWORDS_PATH.read_text()
+    return resolve_keywords_path().read_text()
 
 
 def parse_queries(domain: str) -> list[str]:
@@ -99,9 +130,9 @@ def generate_doc_id(authors: list[str], year: int | None, title: str) -> str:
     return f"{author_slug}_{year_str}_{title_slug}"
 
 
-def openalex_search(query: str, per_page: int) -> list[dict]:
-    params = {"search": query, "per-page": per_page}
-    response = requests.get(OPENALEX_URL, params=params, timeout=20)
+def openalex_search(session: requests.Session, query: str, per_page: int) -> list[dict]:
+    params = {"search": query, "per-page": per_page, "mailto": MAILTO}
+    response = session.get(OPENALEX_URL, params=params, timeout=20)
     if response.status_code != 200:
         return []
     data = response.json()
@@ -129,14 +160,15 @@ def openalex_search(query: str, per_page: int) -> list[dict]:
                 "url": url,
                 "journal": journal,
                 "source": "openalex",
+                "query": query,
             }
         )
     return results
 
 
-def crossref_search(query: str, rows: int) -> list[dict]:
-    params = {"query": query, "rows": rows}
-    response = requests.get(CROSSREF_URL, params=params, timeout=20)
+def crossref_search(session: requests.Session, query: str, rows: int) -> list[dict]:
+    params = {"query": query, "rows": rows, "mailto": MAILTO}
+    response = session.get(CROSSREF_URL, params=params, timeout=20)
     if response.status_code != 200:
         return []
     data = response.json()
@@ -170,6 +202,7 @@ def crossref_search(query: str, rows: int) -> list[dict]:
                 "url": url,
                 "journal": journal,
                 "source": "crossref",
+                "query": query,
             }
         )
     return results
@@ -199,7 +232,7 @@ def dedup_results(results: list[dict]) -> list[dict]:
     return deduped
 
 
-def update_registry(entries: list[dict], domain: str) -> int:
+def update_registry(entries: list[dict], domain: str, search_meta: dict) -> int:
     if not REGISTRY_PATH.exists():
         print(f"Missing registry: {REGISTRY_PATH}")
         return 0
@@ -232,6 +265,11 @@ def update_registry(entries: list[dict], domain: str) -> int:
             "domain_tags": list({domain, entry.get("source")} - {None}),
             "added_at": datetime.now(timezone.utc).isoformat(),
             "notes": f"auto-import via search_literature ({entry.get('source')})",
+            "search_provenance": search_meta | {
+                "source": entry.get("source"),
+                "query": entry.get("query"),
+                "verified": entry.get("verification") is not None,
+            },
         }
         added += 1
 
@@ -275,13 +313,14 @@ def main() -> int:
     tiers = {t.strip() for t in args.tiers.split(",") if t.strip()}
 
     verify_url_fn, tier_fn = load_verify_helpers()
+    session = get_session()
     results: list[dict] = []
 
     def run_query(query: str, source: str) -> list[dict]:
         if source == "openalex":
-            return openalex_search(query, per_query)
+            return openalex_search(session, query, per_query)
         if source == "crossref":
-            return crossref_search(query, per_query)
+            return crossref_search(session, query, per_query)
         return []
 
     from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -297,9 +336,20 @@ def main() -> int:
 
     results = dedup_results(results)
 
+    search_meta = {
+        "run_id": datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"),
+        "domain": args.domain,
+        "depth": args.depth,
+        "tiers": sorted(tiers),
+        "sources": sources,
+        "queried_at": datetime.now(timezone.utc).isoformat(),
+        "keywords_path": str(resolve_keywords_path()),
+    }
+
     filtered = []
     for entry in results:
         url = entry.get("url")
+        entry["query"] = entry.get("query") or None
         if tier_fn:
             entry["source_tier"] = tier_fn(url) if url else "T4"
         if entry.get("source_tier") not in tiers:
@@ -313,11 +363,13 @@ def main() -> int:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     output_path = OUTPUT_DIR / f"{args.domain}_{timestamp}.json"
-    output_path.write_text(json.dumps(filtered, indent=2) + "\n")
+    output_path.write_text(
+        json.dumps({"metadata": search_meta, "results": filtered}, indent=2) + "\n"
+    )
 
     added = 0
     if args.update_registry and filtered:
-        added = update_registry(filtered, args.domain)
+        added = update_registry(filtered, args.domain, search_meta)
 
     print("SEARCH COMPLETE")
     print(f"  Queries:     {len(queries)}")
