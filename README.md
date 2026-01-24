@@ -1,6 +1,7 @@
 # Semantica × MARIS POC
 
 **Marine Asset Risk Intelligence System** — Translating ecological complexity into investment-grade natural capital assets.
+**Blue Natural Capital Knowledge Engineering** — Where ocean science meets investment intelligence.
 
 [![Status](https://img.shields.io/badge/Status-Library%20Complete-brightgreen)]()
 [![Papers](https://img.shields.io/badge/Literature-195%20Papers-green)]()
@@ -86,6 +87,35 @@ semantica query "What ecological factors explain Cabo Pulmo's 463% recovery?"
 # 4. Validate bridge axiom BA-002 (no-take → biomass)
 semantica validate --axiom BA-002 --site cabo_pulmo
 ```
+
+### PDF Cache (Validated)
+
+Build a local PDF cache for downstream ingestion with strict validation:
+- PDF header check
+- Text extractable (non-scanned) content with a high minimum text threshold
+- Content match to registry (title match preferred; DOI fallback)
+- Access notice detection (login/download notices rejected)
+
+```bash
+# Optional: clear existing cache
+rm -f data/papers/*.pdf data/papers/*.html
+
+# Fetch PDFs for the full registry (strict validation enabled by default)
+python scripts/fetch_pdfs_batch.py \
+  --max-docs 195 --tiers T1,T2,T3,T4 --workers 6 --delay-s 0.4 \
+  --min-text-chars 2000 --check-pages 5
+
+# Validate cache and remove invalid/mismatched files
+python scripts/validate_pdf_cache.py \
+  --delete-invalid --delete-html --min-text-chars 2000 --check-pages 5
+```
+
+Reports are written to `data/pdf_registry.json` and `data/pdf_cache_report.json`.
+
+Tuning knobs:
+- `--title-match-ratio` (default 0.6): raise for stricter title alignment
+- `--min-text-chars`: raise to filter short notices or cover pages
+- `--allow-mismatch` / `--allow-non-text`: debugging only (not recommended)
 
 ### Critical Papers ✅ EXTRACTED
 
