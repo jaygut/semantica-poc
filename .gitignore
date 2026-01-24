@@ -34,3 +34,10 @@ node_modules/
 
 # Local document cache
 data/papers/
+
+# Generated fetch/search reports
+data/pdf_registry.json
+data/pdf_cache_report.json
+data/fetch_report.json
+data/fetch_quality_report.tsv
+data/search_results/

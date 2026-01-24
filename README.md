@@ -88,6 +88,25 @@ semantica query "What ecological factors explain Cabo Pulmo's 463% recovery?"
 semantica validate --axiom BA-002 --site cabo_pulmo
 ```
 
+### End-to-End Pipeline (Search → Registry → PDFs)
+
+```bash
+# 1. Search literature by domain and update registry
+python scripts/search_literature.py trophic --depth deep --tiers T1,T2 --update-registry
+
+# 2. Validate registry integrity
+python scripts/validate_registry.py
+
+# 3. Fetch validated PDFs (strict content checks)
+python scripts/fetch_pdfs_batch.py \
+  --max-docs 195 --tiers T1,T2,T3,T4 --workers 6 --delay-s 0.4 \
+  --min-text-chars 2000 --check-pages 5
+
+# 4. Validate and clean the PDF cache
+python scripts/validate_pdf_cache.py \
+  --delete-invalid --delete-html --min-text-chars 2000 --check-pages 5
+```
+
 ### PDF Cache (Validated)
 
 Build a local PDF cache for downstream ingestion with strict validation:
