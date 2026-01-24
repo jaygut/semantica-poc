@@ -1,0 +1,157 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "prov": "http://www.w3.org/ns/prov#",
+    "worms": "http://www.marinespecies.org/aphia.php?p=taxdetails&id=",
+    "fishbase": "https://www.fishbase.org/summary/",
+    "obis": "https://obis.org/taxon/",
+    "tnfd": "https://tnfd.global/",
+    "seea": "https://seea.un.org/"
+  },
+  "entities": [
+    {
+      "@type": "Concept",
+      "@id": "maris:neoli_criteria",
+      "name": "NEOLI Criteria",
+      "definition": "Five key features that determine marine protected area conservation success: No-take, Enforced, Old, Large, Isolated",
+      "source": "edgar_2014",
+      "components": {
+        "N": {"name": "No-take", "effect_multiplier": 2.0},
+        "E": {"name": "Enforced", "effect_multiplier": 1.8},
+        "O": {"name": "Old (>10 years)", "effect_multiplier": 1.5},
+        "L": {"name": "Large (>100 km2)", "effect_multiplier": 1.3},
+        "I": {"name": "Isolated", "effect_multiplier": 1.2}
+      }
+    },
+    {
+      "@type": "MarineProtectedArea",
+      "@id": "maris:cabo_pulmo_np",
+      "name": "Cabo Pulmo National Park",
+      "country": "Mexico",
+      "region": "Gulf of California",
+      "coordinates": {"lat": 23.42, "lon": -109.42},
+      "area_km2": 71.11,
+      "designation_year": 1995,
+      "protection_level": "no_take",
+      "neoli_score": 4,
+      "biomass_recovery_percent": 463,
+      "reference_condition": "AAA",
+      "sources": ["aburto_2011", "aburto_2024_mppa_framework"]
+    },
+    {
+      "@type": "Species",
+      "@id": "worms:281326",
+      "scientific_name": "Lutjanus argentiventris",
+      "common_name": "Yellow snapper",
+      "fishbase_id": 1086,
+      "trophic_level": 3.8,
+      "functional_group": "mesopredator",
+      "commercial_importance": "high",
+      "recovery_indicator": true
+    },
+    {
+      "@type": "Species",
+      "@id": "worms:275789",
+      "scientific_name": "Mycteroperca rosacea",
+      "common_name": "Leopard grouper",
+      "fishbase_id": 4626,
+      "trophic_level": 4.1,
+      "functional_group": "apex_predator",
+      "endemic_to": "Gulf of California",
+      "conservation_status": "Vulnerable"
+    },
+    {
+      "@type": "EcosystemService",
+      "@id": "maris:flood_protection_coral",
+      "name": "Coastal flood protection by coral reefs",
+      "category": "regulating",
+      "global_annual_value_billion_usd": 4.0,
+      "wave_energy_dissipation": 0.97,
+      "people_protected_annually": 197000,
+      "source": "beck_2018"
+    },
+    {
+      "@type": "EcosystemService",
+      "@id": "maris:coastal_wetland_services",
+      "name": "Coastal wetland ecosystem services",
+      "category": "regulating",
+      "global_annual_value_trillion_usd": 26.8,
+      "value_per_hectare_usd": 193845,
+      "source": "costanza_2014"
+    },
+    {
+      "@type": "Habitat",
+      "@id": "maris:coral_reef",
+      "name": "Tropical Coral Reef",
+      "global_extent_km2": 250000,
+      "reef_lined_coast_km": 71000,
+      "per_hectare_value_usd": 352249,
+      "key_services": ["coastal_protection", "fisheries", "tourism", "biodiversity"]
+    },
+    {
+      "@type": "Habitat",
+      "@id": "maris:kelp_forest",
+      "name": "Kelp Forest",
+      "primary_regions": ["California", "Australia", "Chile", "South Africa"],
+      "carbon_sequestration_potential": true,
+      "key_species": ["Macrocystis pyrifera", "Eisenia arborea", "Laminaria"]
+    },
+    {
+      "@type": "Habitat",
+      "@id": "maris:seagrass_meadow",
+      "name": "Seagrass Meadow",
+      "global_extent_percent_ocean": 0.1,
+      "carbon_storage_percent_ocean": 11,
+      "carbon_capture_rate_vs_rainforest": 35,
+      "key_services": ["carbon_sequestration", "nursery_habitat", "sediment_stabilization"]
+    },
+    {
+      "@type": "Habitat",
+      "@id": "maris:mangrove_forest",
+      "name": "Mangrove Forest",
+      "carbon_removal_rate_vs_tropical_forest": 10,
+      "global_loss_rate_per_year": 0.02,
+      "key_services": ["carbon_sequestration", "coastal_protection", "nursery_habitat", "fisheries"]
+    },
+    {
+      "@type": "FinancialInstrument",
+      "@id": "maris:blue_bond",
+      "name": "Blue Bond",
+      "definition": "Debt instrument to raise finance for marine and ocean-based projects with sustainability objectives",
+      "alignment_frameworks": ["GBP", "SDG14", "SDG6"],
+      "market_size_2023_billion_eur": 13
+    },
+    {
+      "@type": "FinancialInstrument",
+      "@id": "maris:parametric_reef_insurance",
+      "name": "Parametric Coral Reef Insurance",
+      "definition": "Insurance product triggered by wind speed thresholds to fund rapid reef restoration",
+      "examples": ["Quintana Roo", "Hawaii", "Mesoamerican Reef"],
+      "trigger_mechanism": "hurricane_wind_speed"
+    },
+    {
+      "@type": "Framework",
+      "@id": "tnfd:leap",
+      "name": "TNFD LEAP Approach",
+      "definition": "Locate, Evaluate, Assess, Prepare framework for nature-related risk assessment",
+      "applicability": "Corporate disclosure of nature-related risks and opportunities",
+      "marine_guidance_available": true
+    },
+    {
+      "@type": "Framework",
+      "@id": "seea:ecosystem_accounting",
+      "name": "SEEA Ecosystem Accounting",
+      "definition": "UN statistical framework for organizing ecosystem data and measuring services",
+      "adoption_year": 2021,
+      "sdg_indicator": "15.9.1"
+    }
+  ],
+  "export_metadata": {
+    "generated_at": "2026-01-24T10:30:00Z",
+    "version": "1.0",
+    "source": "MARIS Pipeline",
+    "document_count": 195,
+    "entity_count": 14
+  }
+}

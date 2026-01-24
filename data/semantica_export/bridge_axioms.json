@@ -1,0 +1,248 @@
+{
+  "bridge_axioms": [
+    {
+      "axiom_id": "BA-001",
+      "name": "biomass_tourism_value",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Higher fish biomass in protected areas increases dive tourism revenue",
+      "formula": "tourism_value = f(fish_biomass, accessibility, infrastructure)",
+      "coefficients": {
+        "elasticity": 0.45,
+        "base_value_per_diver": 150
+      },
+      "evidence_sources": [
+        {"doc_id": "sala_2021_mpa_carbon_food", "support_type": "primary"},
+        {"doc_id": "spalding_2017_coral_tourism_value", "support_type": "secondary"},
+        {"doc_id": "aburto_2024_mppa_framework", "support_type": "calibration"}
+      ],
+      "confidence": "high",
+      "validation": "Cabo Pulmo tourism revenue correlates with biomass recovery"
+    },
+    {
+      "axiom_id": "BA-002",
+      "name": "notake_mpa_biomass_multiplier",
+      "domain_from": "governance",
+      "domain_to": "ecological",
+      "description": "No-take MPAs with NEOLI features achieve predictable biomass increases",
+      "formula": "biomass_ratio = base_ratio * product(neoli_modifiers)",
+      "coefficients": {
+        "base_ratio": 2.7,
+        "neoli_modifiers": {
+          "no_take": 2.0,
+          "enforced": 1.8,
+          "old": 1.5,
+          "large": 1.3,
+          "isolated": 1.2
+        }
+      },
+      "evidence_sources": [
+        {"doc_id": "edgar_2014_nature_mpa_neoli", "support_type": "primary"},
+        {"doc_id": "hopf_2024_notake_meta", "support_type": "meta_analysis"},
+        {"doc_id": "aburto_2011_cabo_pulmo", "support_type": "calibration"},
+        {"doc_id": "sala_2018_notake_most_effective", "support_type": "supporting"}
+      ],
+      "confidence": "high",
+      "validation": "Cabo Pulmo achieved 4.63x with NEOLI score 4/5"
+    },
+    {
+      "axiom_id": "BA-003",
+      "name": "otter_kelp_carbon",
+      "domain_from": "ecological",
+      "domain_to": "climate",
+      "description": "Sea otter presence enables kelp forest carbon sequestration via trophic cascade",
+      "formula": "carbon_seq = otter_density * kelp_area * sequestration_rate",
+      "coefficients": {
+        "carbon_per_otter_ton_yr": 0.002,
+        "kelp_recovery_with_otters": 4.4
+      },
+      "evidence_sources": [
+        {"doc_id": "wilmers_2012_otter_carbon", "support_type": "primary"},
+        {"doc_id": "estes_2021_behavioral_cascade", "support_type": "supporting"},
+        {"doc_id": "eger_2023_kelp_global_value", "support_type": "valuation"}
+      ],
+      "confidence": "medium",
+      "validation": "Documented in Aleutian Islands, expanding to other regions"
+    },
+    {
+      "axiom_id": "BA-004",
+      "name": "reef_coastal_protection_value",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Coral reefs provide quantifiable flood protection savings",
+      "formula": "protection_value = wave_attenuation * property_exposure * damage_function",
+      "coefficients": {
+        "wave_energy_dissipation": 0.97,
+        "global_annual_value_billion": 4.0,
+        "loss_per_1m_reef_height": 0.4
+      },
+      "evidence_sources": [
+        {"doc_id": "beck_2018_coral_flood_protection", "support_type": "primary"},
+        {"doc_id": "storlazzi_2021_florida_pr_restoration", "support_type": "regional"},
+        {"doc_id": "reguero_2025_hybrid_restoration", "support_type": "restoration"}
+      ],
+      "confidence": "high",
+      "validation": "Model validated against observed flood events"
+    },
+    {
+      "axiom_id": "BA-005",
+      "name": "mangrove_flood_protection",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Mangroves reduce storm surge and wave damage to coastal communities",
+      "formula": "protection_value = mangrove_width * storm_exposure * attenuation_rate",
+      "coefficients": {
+        "wave_attenuation_per_100m": 0.66,
+        "surge_reduction_per_km": 0.5
+      },
+      "evidence_sources": [
+        {"doc_id": "menendez_2020_mangrove_flood_protection", "support_type": "primary"},
+        {"doc_id": "montgomery_2019_storm_surge_attenuation", "support_type": "supporting"},
+        {"doc_id": "salem_2012_mangrove_meta_valuation", "support_type": "meta_analysis"}
+      ],
+      "confidence": "high",
+      "validation": "Validated across multiple hurricane events"
+    },
+    {
+      "axiom_id": "BA-006",
+      "name": "ecosystem_service_unit_values",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Standard unit values for coastal ecosystem services by habitat type",
+      "formula": "total_value = area * per_hectare_value",
+      "coefficients": {
+        "coral_reef_per_ha_usd": 352249,
+        "mangrove_per_ha_usd": 193845,
+        "seagrass_per_ha_usd": 28916,
+        "kelp_per_ha_usd": 19000
+      },
+      "evidence_sources": [
+        {"doc_id": "costanza_2014_global_es_update", "support_type": "primary"},
+        {"doc_id": "barbier_2011_coastal_es_value", "support_type": "methodology"},
+        {"doc_id": "selig_2024_es_valuation_review", "support_type": "review"}
+      ],
+      "confidence": "medium",
+      "validation": "Benefit transfer approach with acknowledged uncertainties"
+    },
+    {
+      "axiom_id": "BA-007",
+      "name": "mangrove_carbon_stock",
+      "domain_from": "ecological",
+      "domain_to": "climate",
+      "description": "Mangroves store exceptional amounts of carbon in biomass and soil",
+      "formula": "carbon_stock = mangrove_area * carbon_density",
+      "coefficients": {
+        "avg_carbon_density_mg_per_ha": 1023,
+        "soil_carbon_fraction": 0.78
+      },
+      "evidence_sources": [
+        {"doc_id": "donato_2011_mangrove_carbon", "support_type": "primary"},
+        {"doc_id": "alongi_2014_mangrove_carbon_update", "support_type": "review"},
+        {"doc_id": "adame_2021_mangrove_carbon_national", "support_type": "policy"}
+      ],
+      "confidence": "high",
+      "validation": "Global synthesis of field measurements"
+    },
+    {
+      "axiom_id": "BA-008",
+      "name": "seagrass_carbon_sequestration",
+      "domain_from": "ecological",
+      "domain_to": "climate",
+      "description": "Seagrass meadows are highly efficient carbon sinks",
+      "formula": "annual_sequestration = seagrass_area * burial_rate",
+      "coefficients": {
+        "carbon_burial_g_per_m2_yr": 138,
+        "global_stock_pg": 19.9
+      },
+      "evidence_sources": [
+        {"doc_id": "fourqurean_2012_seagrass_carbon_stocks", "support_type": "primary"},
+        {"doc_id": "duarte_2025_seagrass_carbon_credits", "support_type": "carbon_credits"},
+        {"doc_id": "oreska_2020_seagrass_ghg_offset", "support_type": "methodology"}
+      ],
+      "confidence": "high",
+      "validation": "Core Verra blue carbon methodology basis"
+    },
+    {
+      "axiom_id": "BA-009",
+      "name": "connectivity_mpa_effectiveness",
+      "domain_from": "ecological",
+      "domain_to": "governance",
+      "description": "Larval connectivity determines MPA network effectiveness for fisheries",
+      "formula": "network_effectiveness = f(connectivity_matrix, mpa_placement)",
+      "coefficients": {
+        "optimal_spacing_km": 20,
+        "larval_export_threshold": 0.25
+      },
+      "evidence_sources": [
+        {"doc_id": "green_2015_larval_dispersal_reserves", "support_type": "primary"},
+        {"doc_id": "chalifour_2024_transboundary_connectivity", "support_type": "modeling"},
+        {"doc_id": "krueck_2017_connectivity_mpa_placement", "support_type": "optimization"}
+      ],
+      "confidence": "medium",
+      "validation": "Validated in multiple MPA network designs"
+    },
+    {
+      "axiom_id": "BA-010",
+      "name": "thermal_tolerance_resilience",
+      "domain_from": "climate",
+      "domain_to": "ecological",
+      "description": "Coral thermal tolerance increases over time through selection/acclimatization",
+      "formula": "bleaching_probability = f(dhw, thermal_tolerance, local_stress)",
+      "coefficients": {
+        "tolerance_increase_per_decade": 0.1,
+        "critical_warming_threshold": 2.0
+      },
+      "evidence_sources": [
+        {"doc_id": "lachs_2023_thermal_tolerance", "support_type": "primary"},
+        {"doc_id": "harrison_2025_gbr_recovery", "support_type": "modeling"},
+        {"doc_id": "hoegh_guldberg_2025_seychelles_resilience", "support_type": "time_series"}
+      ],
+      "confidence": "medium",
+      "validation": "Observed in Palau, Seychelles, GBR"
+    },
+    {
+      "axiom_id": "BA-011",
+      "name": "fisheries_spillover",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "No-take reserves enhance catches in adjacent fishing grounds",
+      "formula": "spillover_benefit = reserve_biomass * export_rate * catch_value",
+      "coefficients": {
+        "spillover_radius_km": 15,
+        "biomass_export_fraction": 0.1
+      },
+      "evidence_sources": [
+        {"doc_id": "aburto_2011_cabo_pulmo", "support_type": "calibration"},
+        {"doc_id": "gaines_2010_designing_networks", "support_type": "theory"},
+        {"doc_id": "cinner_2025_small_scale_fisheries", "support_type": "global_synthesis"}
+      ],
+      "confidence": "medium",
+      "validation": "Documented at Cabo Pulmo and other sites"
+    },
+    {
+      "axiom_id": "BA-012",
+      "name": "disclosure_biodiversity_dependency",
+      "domain_from": "financial",
+      "domain_to": "governance",
+      "description": "Corporate disclosure of marine biodiversity dependencies under TNFD",
+      "formula": "disclosure_requirement = f(sector, location, dependencies)",
+      "coefficients": {
+        "high_dependency_sectors": ["fisheries", "tourism", "coastal_development"],
+        "material_threshold": 0.05
+      },
+      "evidence_sources": [
+        {"doc_id": "tnfd_2023_framework", "support_type": "primary"},
+        {"doc_id": "tnfd_2025_marine_transport", "support_type": "sector_guidance"},
+        {"doc_id": "sbtn_2023_marine_targets", "support_type": "complementary"}
+      ],
+      "confidence": "high",
+      "validation": "TNFD v1.0 adopted by 500+ organizations"
+    }
+  ],
+  "export_metadata": {
+    "generated_at": "2026-01-24T10:30:00Z",
+    "version": "1.0",
+    "axiom_count": 12,
+    "average_sources_per_axiom": 3.2
+  }
+}

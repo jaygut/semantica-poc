@@ -1,0 +1,91 @@
+{
+  "corpus_summary": {
+    "total_documents": 195,
+    "by_tier": {
+      "T1_peer_reviewed": 179,
+      "T2_institutional": 10,
+      "T3_data_repository": 6
+    },
+    "by_habitat": {
+      "coral_reef": 45,
+      "kelp_forest": 28,
+      "seagrass": 22,
+      "mangrove": 25,
+      "general": 75
+    },
+    "by_domain": {
+      "mpa_effectiveness": 42,
+      "trophic_ecology": 35,
+      "blue_carbon": 28,
+      "ecosystem_services": 32,
+      "climate_resilience": 25,
+      "connectivity": 22,
+      "blue_finance": 18,
+      "disclosure_frameworks": 12,
+      "restoration": 24,
+      "methods": 20
+    },
+    "abstract_coverage": 0.672,
+    "doi_coverage": 0.903
+  },
+  "critical_papers": [
+    {
+      "doc_id": "edgar_2014_nature_mpa_neoli",
+      "title": "Global conservation outcomes depend on marine protected areas with five key features",
+      "importance": "Defines NEOLI criteria - foundation for MPA effectiveness assessment",
+      "extraction_status": "complete"
+    },
+    {
+      "doc_id": "aburto_2011_cabo_pulmo",
+      "title": "Large Recovery of Fish Biomass in a No-Take Marine Reserve",
+      "importance": "Cabo Pulmo AAA reference case - 463% biomass recovery",
+      "extraction_status": "complete"
+    },
+    {
+      "doc_id": "costanza_2014_global_es_update",
+      "title": "Changes in the global value of ecosystem services",
+      "importance": "Global ecosystem service valuation methodology",
+      "extraction_status": "complete"
+    },
+    {
+      "doc_id": "hopf_2024_notake_meta",
+      "title": "No-take marine reserves consistently generate larger conservation benefits",
+      "importance": "Updated meta-analysis confirming NEOLI predictions",
+      "extraction_status": "complete"
+    },
+    {
+      "doc_id": "beck_2018_coral_flood_protection",
+      "title": "The global flood protection savings provided by coral reefs",
+      "importance": "Primary source for reef coastal protection valuation",
+      "extraction_status": "complete"
+    }
+  ],
+  "bridge_axiom_coverage": {
+    "BA-001": {"sources": 3, "status": "supported"},
+    "BA-002": {"sources": 4, "status": "strongly_supported"},
+    "BA-003": {"sources": 3, "status": "supported"},
+    "BA-004": {"sources": 3, "status": "strongly_supported"},
+    "BA-005": {"sources": 3, "status": "strongly_supported"},
+    "BA-006": {"sources": 3, "status": "supported"},
+    "BA-007": {"sources": 3, "status": "strongly_supported"},
+    "BA-008": {"sources": 3, "status": "strongly_supported"},
+    "BA-009": {"sources": 3, "status": "supported"},
+    "BA-010": {"sources": 3, "status": "supported"},
+    "BA-011": {"sources": 3, "status": "supported"},
+    "BA-012": {"sources": 3, "status": "strongly_supported"}
+  },
+  "calibration_sites": {
+    "cabo_pulmo": {
+      "status": "AAA_reference",
+      "biomass_recovery_percent": 463,
+      "neoli_score": 4,
+      "annual_tourism_value_million_usd": 29,
+      "supporting_documents": ["aburto_2011_cabo_pulmo", "aburto_2024_mppa_framework"]
+    }
+  },
+  "export_metadata": {
+    "generated_at": "2026-01-24T10:30:00Z",
+    "version": "1.0",
+    "registry_path": ".claude/registry/document_index.json"
+  }
+}

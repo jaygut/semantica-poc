@@ -1,0 +1,150 @@
+{
+  "relationships": [
+    {
+      "id": "rel_001",
+      "type": "DETERMINES_OUTCOME",
+      "subject": "maris:neoli_criteria",
+      "object": "mpa_conservation_success",
+      "strength": "strong",
+      "quantification": "MPAs meeting all 5 criteria have 670% higher biomass",
+      "source": "edgar_2014",
+      "confidence": "high"
+    },
+    {
+      "id": "rel_002",
+      "type": "MULTIPLICATIVE_EFFECT",
+      "subject": "no_take_status",
+      "object": "fish_biomass",
+      "quantification": "2.7x average increase (95% CI: 2.3-3.2)",
+      "sources": ["edgar_2014", "hopf_2024"],
+      "confidence": "high"
+    },
+    {
+      "id": "rel_003",
+      "type": "RECOVERY_DRIVER",
+      "subject": "no_take_protection",
+      "object": "fish_biomass_recovery",
+      "mechanism": "Elimination of fishing mortality allows population rebuilding",
+      "quantification": "463% recovery in 10 years at Cabo Pulmo",
+      "source": "aburto_2011",
+      "confidence": "high"
+    },
+    {
+      "id": "rel_004",
+      "type": "PROVIDES_SERVICE",
+      "subject": "maris:coral_reef",
+      "object": "maris:flood_protection_coral",
+      "quantification": "$4 billion/yr expected damages avoided globally",
+      "mechanism": "Wave energy dissipation at reef crest (97%)",
+      "source": "beck_2018",
+      "confidence": "high"
+    },
+    {
+      "id": "rel_005",
+      "type": "DEGRADATION_IMPACT",
+      "subject": "reef_height_loss",
+      "object": "flood_damage_increase",
+      "quantification": "1m loss = 40% increase in expected damages",
+      "mechanism": "Reduced wave attenuation capacity",
+      "source": "beck_2018",
+      "confidence": "high"
+    },
+    {
+      "id": "rel_006",
+      "type": "VALUE_CONTRIBUTION",
+      "subject": "maris:coastal_wetland_services",
+      "object": "global_ecosystem_services",
+      "quantification": "$26.8 trillion/yr (21% of global total)",
+      "source": "costanza_2014",
+      "confidence": "medium"
+    },
+    {
+      "id": "rel_007",
+      "type": "HABITAT_OF",
+      "subject": "maris:cabo_pulmo_np",
+      "object": "worms:275789",
+      "notes": "Critical habitat for endemic leopard grouper",
+      "source": "aburto_2011"
+    },
+    {
+      "id": "rel_008",
+      "type": "TROPHIC_LINK",
+      "subject": "worms:275789",
+      "object": "small_reef_fish",
+      "interaction_type": "predation",
+      "effect_on_community": "Top-down control maintains community structure",
+      "source": "aburto_2011"
+    },
+    {
+      "id": "rel_009",
+      "type": "MODIFIES_EFFECT",
+      "subject": "enforcement_level",
+      "object": "reserve_effectiveness",
+      "quantification": "2.3x difference between well and poorly enforced",
+      "source": "hopf_2024",
+      "confidence": "high"
+    },
+    {
+      "id": "rel_010",
+      "type": "CARBON_SEQUESTRATION",
+      "subject": "maris:seagrass_meadow",
+      "object": "blue_carbon",
+      "quantification": "35x faster carbon capture than tropical rainforest",
+      "sources": ["fourqurean_2012", "duarte_2013"],
+      "confidence": "high"
+    },
+    {
+      "id": "rel_011",
+      "type": "CARBON_SEQUESTRATION",
+      "subject": "maris:mangrove_forest",
+      "object": "blue_carbon",
+      "quantification": "10x carbon removal rate vs tropical forest",
+      "sources": ["donato_2011", "alongi_2014"],
+      "confidence": "high"
+    },
+    {
+      "id": "rel_012",
+      "type": "SUPPORTS_FISHERIES",
+      "subject": "maris:seagrass_meadow",
+      "object": "commercial_fisheries",
+      "quantification": "$1.9 trillion/yr in fisheries supported",
+      "mechanism": "Nursery habitat for juvenile fish",
+      "source": "unsworth_2019",
+      "confidence": "medium"
+    },
+    {
+      "id": "rel_013",
+      "type": "CLIMATE_IMPACT",
+      "subject": "marine_heatwave",
+      "object": "foundation_species",
+      "mechanism": "Thermal stress mortality and regime shifts",
+      "examples": ["kelp_forest_collapse", "coral_bleaching", "seagrass_dieback"],
+      "sources": ["smale_2025", "hughes_2018"],
+      "confidence": "high"
+    },
+    {
+      "id": "rel_014",
+      "type": "FINANCIAL_MECHANISM",
+      "subject": "maris:blue_bond",
+      "object": "marine_conservation",
+      "mechanism": "Debt refinancing generates conservation funding",
+      "examples": ["Seychelles", "Belize", "Barbados"],
+      "sources": ["tucker_2022", "subramaniam_2025"],
+      "confidence": "medium"
+    },
+    {
+      "id": "rel_015",
+      "type": "DISCLOSURE_REQUIRES",
+      "subject": "tnfd:leap",
+      "object": "marine_biodiversity_assessment",
+      "mechanism": "Corporate nature-related risk disclosure",
+      "source": "tnfd_2023_framework",
+      "confidence": "high"
+    }
+  ],
+  "export_metadata": {
+    "generated_at": "2026-01-24T10:30:00Z",
+    "version": "1.0",
+    "relationship_count": 15
+  }
+}
