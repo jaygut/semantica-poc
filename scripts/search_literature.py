@@ -20,6 +20,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from run_manifest import write_run_manifest
+from registry_filters import is_recent, looks_like_asset
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 REGISTRY_PATH = BASE_DIR / ".claude/registry/document_index.json"
@@ -234,57 +235,6 @@ def dedup_results(results: list[dict]) -> list[dict]:
     return deduped
 
 
-def looks_like_asset(entry: dict) -> bool:
-    title = (entry.get("title") or "").strip().lower()
-    if not title:
-        return True
-
-    prefixes = (
-        "figure",
-        "fig.",
-        "table",
-        "supplementary",
-        "supplemental",
-        "appendix",
-        "supporting information",
-        "data file",
-        "dataset",
-        "poster",
-        "cover image",
-    )
-    if title.startswith(prefixes):
-        return True
-
-    markers = (
-        "supplementary information",
-        "supplemental information",
-        "supporting information",
-        "figure s",
-        "table s",
-        "fig. s",
-    )
-    if any(marker in title for marker in markers):
-        return True
-
-    doi = (entry.get("doi") or "").lower()
-    url = (entry.get("url") or "").lower()
-    patterns = (
-        r"/fig(?:ure)?[-_/]",
-        r"/table[-_/]",
-        r"/supp(?:lement)?[-_/]",
-        r"/suppl[-_/]",
-    )
-    if any(re.search(pattern, doi) for pattern in patterns):
-        return True
-    if any(re.search(pattern, url) for pattern in patterns):
-        return True
-
-    if not entry.get("authors") and not entry.get("year"):
-        return True
-
-    return False
-
-
 def update_registry(entries: list[dict], domain: str, search_meta: dict) -> int:
     if not REGISTRY_PATH.exists():
         print(f"Missing registry: {REGISTRY_PATH}")
@@ -349,6 +299,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--verify", action="store_true")
     parser.add_argument("--update-registry", action="store_true")
     parser.add_argument("--workers", type=int, default=6)
+    parser.add_argument("--min-year", type=int, default=2018)
+    parser.add_argument("--allow-missing-year", action="store_true")
     return parser.parse_args()
 
 
@@ -396,15 +348,21 @@ def main() -> int:
         "depth": args.depth,
         "tiers": sorted(tiers),
         "sources": sources,
+        "min_year": args.min_year,
+        "allow_missing_year": args.allow_missing_year,
         "queried_at": datetime.now(timezone.utc).isoformat(),
         "keywords_path": str(resolve_keywords_path()),
     }
 
     filtered = []
     skipped_assets = 0
+    skipped_old = 0
     for entry in results:
         if looks_like_asset(entry):
             skipped_assets += 1
+            continue
+        if not is_recent(entry.get("year"), args.min_year, args.allow_missing_year):
+            skipped_old += 1
             continue
         url = entry.get("url")
         entry["query"] = entry.get("query") or None
@@ -451,6 +409,7 @@ def main() -> int:
     print(f"  Queries:     {len(queries)}")
     print(f"  Results:     {len(results)}")
     print(f"  Skipped:     {skipped_assets}")
+    print(f"  Skipped old: {skipped_old}")
     print(f"  Filtered:    {len(filtered)}")
     print(f"  Output:      {output_path}")
     print(f"  Run manifest: {manifest_path}")

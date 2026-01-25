@@ -43,3 +43,4 @@ data/fetch_quality_report.tsv
 data/search_results/
 data/pdf_filename_report.json
 data/run_manifests/
+data/registry_purge_report.json

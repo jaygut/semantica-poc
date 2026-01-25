@@ -26,6 +26,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from run_manifest import write_run_manifest
+from registry_filters import is_recent, looks_like_asset
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 REGISTRY_PATH = BASE_DIR / ".claude/registry/document_index.json"
@@ -468,14 +469,24 @@ def select_documents(
     documents: dict,
     tiers: Iterable[str],
     max_docs: int,
-) -> list[tuple[str, dict]]:
+    min_year: int,
+    allow_missing_year: bool,
+) -> tuple[list[tuple[str, dict]], dict]:
     tier_rank = {"T1": 0, "T2": 1, "T3": 2, "T4": 3}
     allowed = set(tiers)
 
     items = []
+    skipped_assets = 0
+    skipped_old = 0
     for doc_id, doc in documents.items():
         tier = doc.get("source_tier", "T4")
         if tier not in allowed:
+            continue
+        if looks_like_asset(doc):
+            skipped_assets += 1
+            continue
+        if not is_recent(doc.get("year"), min_year, allow_missing_year):
+            skipped_old += 1
             continue
         items.append((doc_id, doc))
 
@@ -487,10 +498,18 @@ def select_documents(
         )
     )
 
-    return items[:max_docs]
+    return items[:max_docs], {
+        "skipped_assets": skipped_assets,
+        "skipped_old": skipped_old,
+        "candidates": len(items),
+    }
 
 
-def build_report(results: list[dict], args: argparse.Namespace) -> dict:
+def build_report(
+    results: list[dict],
+    args: argparse.Namespace,
+    selection_stats: dict,
+) -> dict:
     successes = [r for r in results if r["status"] in {"success", "exists"}]
     failures = [r for r in results if r["status"] == "failed"]
     return {
@@ -504,6 +523,11 @@ def build_report(results: list[dict], args: argparse.Namespace) -> dict:
         "check_pages": args.check_pages,
         "require_match": True if not args.allow_mismatch else args.require_match,
         "title_match_ratio": args.title_match_ratio,
+        "min_year": args.min_year,
+        "allow_missing_year": args.allow_missing_year,
+        "skipped_assets": selection_stats.get("skipped_assets"),
+        "skipped_old": selection_stats.get("skipped_old"),
+        "candidates": selection_stats.get("candidates"),
         "update_registry": not args.no_update_registry,
         "attempted_docs": len(results),
         "pdfs_found": len(successes),
@@ -527,6 +551,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--allow-mismatch", action="store_true")
     parser.add_argument("--title-match-ratio", type=float, default=0.6)
     parser.add_argument("--no-update-registry", action="store_true")
+    parser.add_argument("--min-year", type=int, default=2018)
+    parser.add_argument("--allow-missing-year", action="store_true")
     return parser.parse_args()
 
 
@@ -572,7 +598,13 @@ def main() -> int:
 
     registry = load_registry()
     documents = registry.get("documents", {})
-    selection = select_documents(documents, tiers=tiers, max_docs=args.max_docs)
+    selection, selection_stats = select_documents(
+        documents,
+        tiers=tiers,
+        max_docs=args.max_docs,
+        min_year=args.min_year,
+        allow_missing_year=args.allow_missing_year,
+    )
 
     require_text = True if not args.allow_non_text else args.require_text
     require_match = True if not args.allow_mismatch else args.require_match
@@ -605,7 +637,7 @@ def main() -> int:
         for _ in as_completed(futures):
             pass
 
-    report = build_report(results, args)
+    report = build_report(results, args, selection_stats)
     REPORT_PATH.write_text(json.dumps(report, indent=2) + "\n")
 
     if not args.no_update_registry:
