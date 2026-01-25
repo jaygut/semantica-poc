@@ -19,6 +19,8 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from run_manifest import write_run_manifest
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 REGISTRY_PATH = BASE_DIR / ".claude/registry/document_index.json"
 KEYWORD_CANDIDATES = [
@@ -300,6 +302,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    started_at = datetime.now(timezone.utc)
     args = parse_args()
     cfg = depth_config(args.depth)
     queries = parse_queries(args.domain)
@@ -371,11 +374,28 @@ def main() -> int:
     if args.update_registry and filtered:
         added = update_registry(filtered, args.domain, search_meta)
 
+    manifest_path = write_run_manifest(
+        script_name=Path(__file__).stem,
+        args=vars(args),
+        inputs={
+            "registry_path": str(REGISTRY_PATH),
+            "keywords_path": str(resolve_keywords_path()),
+        },
+        outputs={
+            "search_results": str(output_path),
+            "registry_updated": bool(args.update_registry),
+            "added_entries": added,
+        },
+        started_at=started_at,
+        ended_at=datetime.now(timezone.utc),
+    )
+
     print("SEARCH COMPLETE")
     print(f"  Queries:     {len(queries)}")
     print(f"  Results:     {len(results)}")
     print(f"  Filtered:    {len(filtered)}")
     print(f"  Output:      {output_path}")
+    print(f"  Run manifest: {manifest_path}")
     if args.update_registry:
         print(f"  Added docs:  {added}")
 

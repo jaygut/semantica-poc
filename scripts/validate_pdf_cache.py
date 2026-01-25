@@ -14,6 +14,8 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+from run_manifest import write_run_manifest
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 PAPERS_DIR = BASE_DIR / "data/papers"
 REPORT_PATH = BASE_DIR / "data/pdf_cache_report.json"
@@ -167,6 +169,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    started_at = datetime.now(timezone.utc)
     args = parse_args()
 
     if not PAPERS_DIR.exists():
@@ -272,6 +275,25 @@ def main() -> int:
     print(f"  Invalid PDFs: {report['invalid_count']}")
     print(f"  HTML files:   {report['html_count']}")
     print(f"  Report:       {REPORT_PATH}")
+
+    manifest_path = write_run_manifest(
+        script_name=Path(__file__).stem,
+        args=vars(args),
+        inputs={
+            "papers_dir": str(PAPERS_DIR),
+            "registry_path": str(REGISTRY_PATH),
+        },
+        outputs={
+            "pdf_cache_report": str(REPORT_PATH),
+            "invalid_count": report["invalid_count"],
+            "deleted_invalid": len(invalid_removed),
+            "deleted_html": len(html_removed),
+            "registry_updated": bool(args.update_registry),
+        },
+        started_at=started_at,
+        ended_at=datetime.now(timezone.utc),
+    )
+    print(f"  Run manifest: {manifest_path}")
 
     return 0
 

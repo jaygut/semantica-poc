@@ -25,6 +25,8 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from run_manifest import write_run_manifest
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 REGISTRY_PATH = BASE_DIR / ".claude/registry/document_index.json"
 OUTPUT_DIR = BASE_DIR / "data/papers"
@@ -563,6 +565,7 @@ def update_registry_pdf_status(results: list[dict]) -> None:
 
 
 def main() -> int:
+    started_at = datetime.now(timezone.utc)
     args = parse_args()
     tiers = [t.strip() for t in args.tiers.split(",") if t.strip()]
     args.tiers = tiers
@@ -608,10 +611,28 @@ def main() -> int:
     if not args.no_update_registry:
         update_registry_pdf_status(results)
 
+    manifest_path = write_run_manifest(
+        script_name=Path(__file__).stem,
+        args=vars(args),
+        inputs={
+            "registry_path": str(REGISTRY_PATH),
+            "output_dir": str(OUTPUT_DIR),
+        },
+        outputs={
+            "pdf_registry": str(REPORT_PATH),
+            "pdfs_found": report.get("pdfs_found"),
+            "attempted_docs": report.get("attempted_docs"),
+            "registry_updated": bool(not args.no_update_registry),
+        },
+        started_at=started_at,
+        ended_at=datetime.now(timezone.utc),
+    )
+
     print("PDF FETCH COMPLETE")
     print(f"  Attempted docs: {report['attempted_docs']}")
     print(f"  PDFs found:     {report['pdfs_found']}")
     print(f"  Report:         {REPORT_PATH}")
+    print(f"  Run manifest:   {manifest_path}")
 
     if report["pdfs_found"] < args.target_pdfs:
         print("WARNING: Target PDF count not met.")

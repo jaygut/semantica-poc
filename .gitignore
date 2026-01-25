@@ -41,3 +41,5 @@ data/pdf_cache_report.json
 data/fetch_report.json
 data/fetch_quality_report.tsv
 data/search_results/
+data/pdf_filename_report.json
+data/run_manifests/
