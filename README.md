@@ -100,9 +100,9 @@ python scripts/search_literature.py trophic --depth deep --tiers T1,T2 --update-
 # 2. Validate registry integrity
 python scripts/validate_registry.py
 
-# 3. Fetch validated PDFs (strict content checks)
+# 3. Fetch validated PDFs (strict content checks, capped to 250 for now)
 python scripts/fetch_pdfs_batch.py \
-  --max-docs 195 --tiers T1,T2,T3,T4 --workers 6 --delay-s 0.4 \
+  --max-docs 250 --tiers T1,T2,T3,T4 --workers 6 --delay-s 0.4 \
   --min-text-chars 2000 --check-pages 5
 
 # 3b. Normalize cached PDF filenames based on PDF signals (optional)
@@ -126,9 +126,9 @@ Build a local PDF cache for downstream ingestion with strict validation:
 # Optional: clear existing cache
 rm -f data/papers/*.pdf data/papers/*.html
 
-# Fetch PDFs for the full registry (strict validation enabled by default)
+# Fetch PDFs for the registry (strict validation enabled by default; cap 250)
 python scripts/fetch_pdfs_batch.py \
-  --max-docs 195 --tiers T1,T2,T3,T4 --workers 6 --delay-s 0.4 \
+  --max-docs 250 --tiers T1,T2,T3,T4 --workers 6 --delay-s 0.4 \
   --min-text-chars 2000 --check-pages 5
 
 # Validate cache and remove invalid/mismatched files (optionally sync registry)
@@ -138,6 +138,10 @@ python scripts/validate_pdf_cache.py \
 
 Search results are written to `data/search_results/<domain>_<timestamp>.json` with metadata
 (keywords path, tiers, sources, and queries).
+The search runner skips obvious non-article assets (figure/table/supplement titles or
+DOI patterns), plus entries missing both authors and year, to avoid junk doc IDs.
+If source tier helpers are unavailable, `search_literature.py` defaults `source_tier` to `T1`
+so results are not dropped; use `--verify` with the helper to compute real tiers.
 
 PDF reports are written to `data/pdf_registry.json` and `data/pdf_cache_report.json`.
 Filename normalization report is written to `data/pdf_filename_report.json`.

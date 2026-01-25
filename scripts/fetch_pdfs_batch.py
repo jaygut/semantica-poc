@@ -515,7 +515,7 @@ def build_report(results: list[dict], args: argparse.Namespace) -> dict:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Batch PDF fetcher for MARIS registry.")
     parser.add_argument("--target-pdfs", type=int, default=60)
-    parser.add_argument("--max-docs", type=int, default=120)
+    parser.add_argument("--max-docs", type=int, default=250)
     parser.add_argument("--tiers", type=str, default="T1,T2")
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--delay-s", type=float, default=0.4)

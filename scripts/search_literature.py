@@ -234,6 +234,57 @@ def dedup_results(results: list[dict]) -> list[dict]:
     return deduped
 
 
+def looks_like_asset(entry: dict) -> bool:
+    title = (entry.get("title") or "").strip().lower()
+    if not title:
+        return True
+
+    prefixes = (
+        "figure",
+        "fig.",
+        "table",
+        "supplementary",
+        "supplemental",
+        "appendix",
+        "supporting information",
+        "data file",
+        "dataset",
+        "poster",
+        "cover image",
+    )
+    if title.startswith(prefixes):
+        return True
+
+    markers = (
+        "supplementary information",
+        "supplemental information",
+        "supporting information",
+        "figure s",
+        "table s",
+        "fig. s",
+    )
+    if any(marker in title for marker in markers):
+        return True
+
+    doi = (entry.get("doi") or "").lower()
+    url = (entry.get("url") or "").lower()
+    patterns = (
+        r"/fig(?:ure)?[-_/]",
+        r"/table[-_/]",
+        r"/supp(?:lement)?[-_/]",
+        r"/suppl[-_/]",
+    )
+    if any(re.search(pattern, doi) for pattern in patterns):
+        return True
+    if any(re.search(pattern, url) for pattern in patterns):
+        return True
+
+    if not entry.get("authors") and not entry.get("year"):
+        return True
+
+    return False
+
+
 def update_registry(entries: list[dict], domain: str, search_meta: dict) -> int:
     if not REGISTRY_PATH.exists():
         print(f"Missing registry: {REGISTRY_PATH}")
@@ -279,7 +330,7 @@ def update_registry(entries: list[dict], domain: str, search_meta: dict) -> int:
 
     # Recalculate statistics using existing helper if available
     try:
-        from scripts.validate_registry import recalculate_statistics
+        from validate_registry import recalculate_statistics
         registry = recalculate_statistics(registry)
     except Exception:
         pass
@@ -350,17 +401,23 @@ def main() -> int:
     }
 
     filtered = []
+    skipped_assets = 0
     for entry in results:
+        if looks_like_asset(entry):
+            skipped_assets += 1
+            continue
         url = entry.get("url")
         entry["query"] = entry.get("query") or None
         if tier_fn:
             entry["source_tier"] = tier_fn(url) if url else "T4"
-        if entry.get("source_tier") not in tiers:
-            continue
+        else:
+            entry["source_tier"] = entry.get("source_tier") or "T1"
         if args.verify and verify_url_fn and url:
             verification = verify_url_fn(url)
             entry["verification"] = verification
             entry["source_tier"] = verification["extracted_metadata"]["source_tier"]
+        if entry.get("source_tier") not in tiers:
+            continue
         filtered.append(entry)
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -393,6 +450,7 @@ def main() -> int:
     print("SEARCH COMPLETE")
     print(f"  Queries:     {len(queries)}")
     print(f"  Results:     {len(results)}")
+    print(f"  Skipped:     {skipped_assets}")
     print(f"  Filtered:    {len(filtered)}")
     print(f"  Output:      {output_path}")
     print(f"  Run manifest: {manifest_path}")
