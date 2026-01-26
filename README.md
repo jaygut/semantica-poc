@@ -781,33 +781,113 @@ The system is designed to answer complex, multi-hop questions with full provenan
 
 ### Phase 1: Foundation (Weeks 1-2)
 
+**Week 1:**
+- [x] `maris/__init__.py` ✅ - Package initialization
+- [x] `maris/config.py` ✅ - Configuration management
+- [ ] `maris/utils.py` - Utility functions (Week 1)
+- [ ] `maris/schemas.py` - Schema loading utilities (Week 1-2)
+- [ ] `config/config.yaml` - Configuration file (Week 1)
+- [ ] `config/.env.example` - Environment variables template (Week 1)
+
+**Week 2:**
+- [ ] `maris/semantica_integration.py` - Main Semantica integration (Week 1-2)
 - [ ] Ingest `entities.jsonld` into Semantica
 - [ ] Ingest `relationships.json` with inference rules
-- [x] Extract entities from 5 CRITICAL papers ✅
 - [ ] Load Cabo Pulmo case study
 - [ ] Validate basic queries return provenance
 
-### Phase 2: Knowledge Graph (Weeks 3-4)
+### Phase 2: Data Loading & Processing (Weeks 2-3)
 
+**Week 2-3:**
+- [ ] `maris/data_loader.py` - Load existing Semantica export bundle (Week 2-3)
+- [ ] `maris/document_processor.py` - Document ingestion (Week 2-3)
+- [ ] `maris/provenance.py` - Provenance tracking (Week 2-3)
+- [ ] Index document corpus into Semantica
+- [ ] Validate data integrity
+
+### Phase 3: Extraction (Weeks 3-5)
+
+**Week 3-4:**
+- [ ] `maris/entity_extractor.py` - Entity extraction pipeline (Week 3-5)
+- [ ] `tests/test_entity_extraction.py` - Entity extraction tests (Week 3-5)
+- [x] Extract entities from 5 CRITICAL papers ✅
+- [ ] Extract entities from remaining high-priority papers (50+ papers)
+- [ ] Achieve >85% extraction accuracy
+
+**Week 4-5:**
+- [ ] `maris/relationship_extractor.py` - Relationship extraction (Week 3-5)
+- [ ] `tests/test_relationship_extraction.py` - Relationship extraction tests (Week 3-5)
+- [ ] Build trophic network subgraph
+- [ ] Extract habitat-service links
+- [ ] Extract MPA-effectiveness relationships
+
+### Phase 4: Bridge Axioms (Weeks 6-7)
+
+**Week 6:**
+- [ ] `maris/bridge_axiom_engine.py` - Bridge axiom application engine (Week 6-7)
+- [ ] `tests/test_bridge_axioms.py` - Bridge axiom tests (Week 6-7)
 - [x] Define BA-001 through BA-012 with coefficients ✅
 - [ ] Implement bridge axioms as inference rules in Semantica
-- [ ] Extract entities from remaining high-priority papers
-- [ ] Build trophic network subgraph
+- [ ] Test axiom pattern matching
+
+**Week 7:**
+- [ ] `maris/validators.py` - Validation utilities (Week 6-7, Week 13-14)
+- [ ] `tests/test_cabo_pulmo_validation.py` - Cabo Pulmo validation tests (Week 6-7, Week 13-14)
+- [x] Validate Cabo Pulmo metrics (463% ±20% tolerance) ✅
 - [ ] Test cascade reasoning (otter → kelp → carbon)
+- [ ] Validate all 12 bridge axioms
 
-### Phase 3: GraphRAG Interface (Weeks 5-6)
+### Phase 5: GraphRAG Query Interface (Weeks 8-10)
 
+**Week 8-9:**
+- [ ] `maris/query_engine.py` - GraphRAG query interface (Week 8-10)
+- [ ] `tests/test_query_engine.py` - Query engine tests (Week 8-10)
+- [ ] Configure Semantica GraphRAG interface
+- [ ] Implement multi-hop reasoning (up to 4 hops)
 - [ ] Implement all 11 sample queries
+
+**Week 10:**
 - [ ] Add confidence scoring to responses
 - [ ] Build provenance visualization
 - [ ] Test TNFD disclosure field population
+- [ ] Validate query latency <5 seconds
 
-### Phase 4: Validation & Demo (Weeks 7-8)
+### Phase 5: Knowledge Graph Construction (Weeks 11-12)
 
+**Week 11:**
+- [ ] `maris/graph_builder.py` - Knowledge graph construction (Week 11-12)
+- [ ] Set up graph database (Neo4j or Semantica native)
+- [ ] Create entity nodes from extracted entities
+- [ ] Create relationship edges
+
+**Week 12:**
+- [ ] Apply bridge axioms as graph inference rules
+- [ ] Build trophic network subgraphs
+- [ ] Create MPA network connectivity graphs
+- [ ] Validate graph integrity
+
+### Phase 6: CLI & Testing (Weeks 13-14)
+
+**Week 13:**
+- [ ] `maris/cli.py` - Command-line interface (Week 13-14)
+- [ ] `tests/test_integration.py` - Integration tests (Week 13-14)
+- [ ] Implement all CLI commands
+- [ ] Test end-to-end pipeline
+
+**Week 14:**
 - [ ] Process remaining papers for entity extraction
-- [x] Validate Cabo Pulmo metrics (463% ±20% tolerance) ✅
 - [ ] Run investor demo narrative
+- [ ] Validate all success criteria
+- [ ] Performance testing and optimization
+
+### Phase 7: Documentation (Week 15)
+
+**Week 15:**
+- [ ] `docs/api_reference.md` - API documentation (Week 15)
+- [ ] `docs/user_guide.md` - User guide (Week 15)
+- [ ] `docs/developer_guide.md` - Developer guide (Week 15)
 - [ ] Document API endpoints
+- [ ] Finalize all documentation
 
 ---
 
