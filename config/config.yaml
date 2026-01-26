@@ -1,0 +1,37 @@
+# MARIS POC Configuration File
+# TIMELINE: Week 1 (Phase 1: Foundation)
+# IMPLEMENTATION PRIORITY: High - Required for system initialization
+# This file contains default configuration values
+# Override with environment variables or .env file
+
+# Semantica Framework Settings
+semantica_api_url: "http://localhost:8000"
+semantica_api_key: null  # Set via SEMANTICA_API_KEY environment variable
+
+# Graph Database Settings
+graph_db_url: "bolt://localhost:7687"
+graph_db_user: "neo4j"
+graph_db_password: "password"  # Set via GRAPH_DB_PASSWORD environment variable
+graph_db_type: "neo4j"  # Options: neo4j, semantica
+
+# Entity Extraction Settings
+extraction_batch_size: 10
+extraction_timeout: 300  # seconds
+extraction_accuracy_target: 0.85
+
+# Bridge Axiom Settings
+axiom_confidence_threshold: 0.7
+uncertainty_propagation_enabled: true
+
+# Query Engine Settings
+max_query_hops: 4
+query_timeout: 5  # seconds
+include_provenance: true
+include_confidence: true
+
+# Validation Settings
+cabo_pulmo_tolerance: 0.20  # ±20%
+
+# Logging Settings
+log_level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR
+log_file: null  # Optional log file path
