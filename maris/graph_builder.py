@@ -1,11 +1,13 @@
 """
 Knowledge graph construction for MARIS POC
 
-TIMELINE: Week 11-12 (Phase 5: Knowledge Graph Construction)
+TIMELINE: Week 6 (Phase 3: Graph Construction & Query Interface via Semantica) - Uses Semantica graph database
 IMPLEMENTATION PRIORITY: Critical - Build knowledge graph before querying
 MILESTONE: Construct complete graph with entities, relationships, and axioms
 
-This module constructs the knowledge graph from extracted entities and relationships.
+This module constructs the knowledge graph in Semantica's native graph database
+from extracted entities and relationships. Uses Semantica graph construction APIs
+for node/edge creation and inference rule application.
 
 GRAPH DATABASE OPTIONS:
 • Neo4j: Property graph database (default)

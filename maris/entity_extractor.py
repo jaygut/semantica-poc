@@ -1,11 +1,13 @@
 """
 Entity extraction pipeline using Semantica LLM-based extraction
 
-TIMELINE: Week 3-5 (Phase 3: Extraction)
+TIMELINE: Week 2 (Phase 1: Foundation & Semantica Integration) - Uses Semantica API for extraction
 IMPLEMENTATION PRIORITY: Critical - Core extraction functionality
 MILESTONE: Extract entities from 50+ papers with >85% accuracy
 
-This module extracts entities from documents using Semantica framework.
+This module extracts entities from documents using Semantica API. All extraction
+operations route through maris.semantica_integration.SemanticaClient for entity
+extraction via Semantica's LLM-based extraction capabilities.
 
 ENTITY TYPES TO EXTRACT:
 • Species

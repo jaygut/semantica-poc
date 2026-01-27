@@ -1,11 +1,13 @@
 """
 Relationship extraction from documents using Semantica
 
-TIMELINE: Week 3-5 (Phase 3: Extraction)
+TIMELINE: Week 3 (Phase 2: Knowledge Extraction & Bridge Axioms via Semantica) - Uses Semantica API
 IMPLEMENTATION PRIORITY: Critical - Extract relationships after entities
 MILESTONE: Build trophic networks and service networks
 
-This module extracts relationships between entities from documents.
+This module extracts relationships between entities from documents using Semantica API.
+All relationship extraction operations route through maris.semantica_integration.SemanticaClient
+for relationship identification and linking via Semantica's extraction capabilities.
 
 RELATIONSHIP TYPES TO EXTRACT:
 • Ecological Relationships:

@@ -1,12 +1,13 @@
 """
 Bridge axiom application engine for MARIS POC
 
-TIMELINE: Week 6-7 (Phase 4: Bridge Axioms)
+TIMELINE: Week 3-4 (Phase 2: Knowledge Extraction & Bridge Axioms via Semantica) - Registers axioms as Semantica inference rules
 IMPLEMENTATION PRIORITY: Critical - Core translation layer
 MILESTONE: Implement all 12 bridge axioms, validate against Cabo Pulmo (±20% tolerance)
 
-This module implements the 12 bridge axioms as inference rules for translating
-ecological data into financial metrics.
+This module implements the 12 bridge axioms as Semantica inference rules for translating
+ecological data into financial metrics. All axioms are registered in Semantica and executed
+via Semantica's inference engine.
 
 BRIDGE AXIOMS (BA-001 through BA-012):
 

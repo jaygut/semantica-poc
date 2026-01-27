@@ -1,11 +1,13 @@
 """
 Command-line interface for MARIS POC
 
-TIMELINE: Week 13-14 (Phase 6: CLI & Testing)
+TIMELINE: Week 7 (Phase 4: Integration, Testing & Demo via Semantica)
 IMPLEMENTATION PRIORITY: High - User interface for all operations
 MILESTONE: All CLI commands functional, demo mode working
 
-This module provides a comprehensive CLI for all MARIS operations.
+This module provides a comprehensive CLI for all MARIS operations. All commands
+integrate with Semantica for entity extraction, relationship extraction, graph construction,
+and GraphRAG query execution.
 
 CLI COMMANDS:
 

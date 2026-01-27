@@ -1,10 +1,12 @@
 """
 Document ingestion and processing for MARIS POC
 
-TIMELINE: Week 2-3 (Phase 2: Data Loading & Processing)
+TIMELINE: Week 2 (Phase 1: Foundation & Semantica Integration) - Uses Semantica document indexing
 IMPLEMENTATION PRIORITY: High - Index documents before extraction
 
-This module handles document ingestion into Semantica document index.
+This module handles document ingestion into Semantica document index. All documents
+are indexed via Semantica API (index_document, index_documents_batch) for retrieval
+and extraction operations.
 
 DOCUMENT REGISTRY:
 • Source: .claude/registry/document_index.json
