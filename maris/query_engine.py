@@ -1,12 +1,13 @@
 """
 GraphRAG query interface for MARIS POC
 
-TIMELINE: Week 8-10 (Phase 4: GraphRAG Query Interface)
+TIMELINE: Week 5 (Phase 3: Graph Construction & Query Interface via Semantica) - Uses Semantica GraphRAG
 IMPLEMENTATION PRIORITY: Critical - Core query functionality
 MILESTONE: Implement all 11 sample queries, query latency <5 seconds
 
 This module provides the query interface for executing natural language queries
-on the knowledge graph with multi-hop reasoning and full provenance.
+on the knowledge graph via Semantica GraphRAG. All queries route through Semantica's
+GraphRAG interface for multi-hop reasoning and full provenance.
 
 QUERY TYPES SUPPORTED:
 

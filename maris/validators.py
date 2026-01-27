@@ -1,7 +1,7 @@
 """
 Validation utilities for MARIS POC
 
-TIMELINE: Week 6-7 (Phase 4: Bridge Axioms) and Week 13-14 (Phase 6: Testing)
+TIMELINE: Week 4 (Phase 2: Knowledge Extraction & Bridge Axioms via Semantica) and Week 7 (Phase 4: Integration, Testing & Demo via Semantica)
 IMPLEMENTATION PRIORITY: High - Validate extraction accuracy and axiom applications
 MILESTONE: Validate Cabo Pulmo predictions, extraction accuracy >85%
 

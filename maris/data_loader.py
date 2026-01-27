@@ -1,10 +1,12 @@
 """
 Data loader for existing Semantica export bundle
 
-TIMELINE: Week 2-3 (Phase 2: Data Loading & Processing)
+TIMELINE: Week 2 (Phase 1: Foundation & Semantica Integration)
 IMPLEMENTATION PRIORITY: High - Load existing export bundle before extraction
 
 This module loads the pre-built Semantica export bundle into the MARIS system.
+The export bundle (entities.jsonld, relationships.json, bridge_axioms.json, document_corpus.json)
+is ingested into Semantica via the Semantica API.
 
 EXPORT BUNDLE FILES:
 • data/semantica_export/entities.jsonld

@@ -1,7 +1,7 @@
 """
 Provenance tracking utilities for MARIS POC
 
-TIMELINE: Week 2-3 (Phase 2: Data Loading & Processing)
+TIMELINE: Week 2 (Phase 1: Foundation & Semantica Integration)
 IMPLEMENTATION PRIORITY: High - Required for all extraction operations
 
 This module handles provenance tracking for all extracted data to ensure audit-grade traceability.

@@ -1,7 +1,7 @@
 """
 Schema loading utilities for MARIS POC
 
-TIMELINE: Week 1-2 (Phase 1: Foundation)
+TIMELINE: Week 1 (Phase 1: Foundation & Semantica Integration)
 IMPLEMENTATION PRIORITY: High - Required before entity/relationship extraction
 
 This module handles loading, validation, and management of MARIS schemas.

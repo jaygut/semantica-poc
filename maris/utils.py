@@ -1,7 +1,7 @@
 """
 Utility functions for MARIS POC
 
-TIMELINE: Week 1 (Phase 1: Foundation)
+TIMELINE: Week 1 (Phase 1: Foundation & Semantica Integration)
 IMPLEMENTATION PRIORITY: High - Required by all other modules
 
 This module provides common utility functions used across the MARIS system.

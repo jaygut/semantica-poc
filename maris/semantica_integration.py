@@ -1,7 +1,7 @@
 """
 Main Semantica framework integration for MARIS POC
 
-TIMELINE: Week 1-2 (Phase 1: Foundation)
+TIMELINE: Week 1 (Phase 1: Foundation & Semantica Integration) - CRITICAL
 IMPLEMENTATION PRIORITY: Critical - Core integration layer for all Semantica operations
 
 This module provides the core integration layer with the Semantica framework.
