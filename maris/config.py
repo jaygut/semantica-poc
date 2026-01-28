@@ -1,5 +1,10 @@
 """
 Configuration management for MARIS POC
+
+Loads settings from:
+1. config/config.yaml
+2. Environment variables (.env)
+3. Default values
 """
 
 import os
@@ -7,7 +12,8 @@ from pathlib import Path
 from typing import Optional
 import yaml
 from dotenv import load_dotenv
-from pydantic import BaseSettings, Field
+from pydantic_settings import BaseSettings
+from pydantic import Field
 
 
 # Load environment variables
@@ -15,39 +21,73 @@ load_dotenv()
 
 
 class Config(BaseSettings):
-    """MARIS configuration settings"""
+    """MARIS configuration settings - minimal and focused"""
     
-    # Semantica Framework Settings
-    semantica_api_url: str = Field(
-        default=os.getenv("SEMANTICA_API_URL", "http://localhost:8000"),
-        description="Semantica API endpoint URL"
-    )
-    semantica_api_key: Optional[str] = Field(
-        default=os.getenv("SEMANTICA_API_KEY"),
-        description="Semantica API key for authentication"
-    )
+    # Project paths
+    project_root: Path = Path(__file__).parent.parent
     
-    # Graph Database Settings
-    graph_db_url: str = Field(
-        default=os.getenv("GRAPH_DB_URL", "bolt://localhost:7687"),
-        description="Graph database connection URL"
-    )
-    graph_db_user: str = Field(
-        default=os.getenv("GRAPH_DB_USER", "neo4j"),
-        description="Graph database username"
-    )
-    graph_db_password: str = Field(
-        default=os.getenv("GRAPH_DB_PASSWORD", "password"),
-        description="Graph database password"
-    )
-    graph_db_type: str = Field(
-        default=os.getenv("GRAPH_DB_TYPE", "neo4j"),
-        description="Graph database type (neo4j, semantica)"
-    )
+    # Groq LLM settings
+    groq_api_key: str = Field(default="", env="GROQ_API_KEY")
+    groq_model: str = Field(default="llama3-70b-8192", env="GROQ_MODEL")
+    groq_temperature: float = 0.1
     
-    # Data Paths
-    project_root: Path = Field(
-        default=Path(__file__).parent.parent,
+    # FalkorDB settings
+    falkordb_host: str = Field(default="localhost", env="FALKORDB_HOST")
+    falkordb_port: int = Field(default=6379, env="FALKORDB_PORT")
+    falkordb_graph_name: str = Field(default="maris_kg", env="FALKORDB_GRAPH_NAME")
+    
+    # Extraction settings
+    extraction_batch_size: int = 10
+    extraction_max_retries: int = 3
+    extraction_confidence_threshold: float = 0.7
+    
+    # GraphRAG settings
+    graphrag_max_hops: int = 4
+    graphrag_include_provenance: bool = True
+    
+    # Logging
+    log_level: str = Field(default="INFO", env="LOG_LEVEL")
+    
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+        case_sensitive = False
+    
+    @classmethod
+    def from_yaml(cls, yaml_path: str | Path = "config/config.yaml") -> "Config":
+        """Load configuration from YAML file"""
+        yaml_path = Path(yaml_path)
+        if not yaml_path.exists():
+            return cls()
+        
+        with open(yaml_path) as f:
+            config_data = yaml.safe_load(f) or {}
+        
+        return cls(**config_data)
+    
+    def validate_api_keys(self) -> None:
+        """Validate required API keys"""
+        if not self.groq_api_key or self.groq_api_key == "your_groq_api_key_here":
+            raise ValueError("GROQ_API_KEY is required. Set it in .env file.")
+
+
+# Global configuration instance
+_config: Optional[Config] = None
+
+
+def get_config() -> Config:
+    """Get or create global configuration instance"""
+    global _config
+    if _config is None:
+        _config = Config.from_yaml()
+    return _config
+
+
+def reload_config(yaml_path: Optional[str | Path] = None) -> Config:
+    """Reload configuration from file"""
+    global _config
+    _config = Config.from_yaml(yaml_path) if yaml_path else Config.from_yaml()
+    return _config
         description="Project root directory"
     )
     schemas_dir: Path = Field(

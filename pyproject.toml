@@ -1,36 +1,61 @@
 [project]
-name = "semantica-poc"
+name = "maris"
 version = "0.1.0"
-description = "MARIS x Semantica POC - Marine Asset Risk Intelligence System"
-readme = "SEMANTICA_HANDOFF_README.md"
+description = "Marine Asset Risk Intelligence System - Semantica POC"
+readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "requests>=2.31.0",
-    "urllib3>=2.0.0",
-    "pypdf>=4.2.0",
+    # Core Framework (provides most functionality)
+    "semantica==0.2.5",
+    
+    # LLM Provider for extraction
+    "groq>=0.4.0",
+    
+    # Graph Database
+    "falkordb>=1.0.0",
+    
+    # Essential utilities
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0",
+    "rich>=13.0.0",
+    "click>=8.1.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
     "black>=23.0.0",
     "ruff>=0.1.0",
+    "mypy>=1.0.0",
 ]
 
 [project.scripts]
+maris = "maris.cli:main"
 fetch-documents = "scripts.fetch_documents:fetch_documents"
 
 [build-system]
-requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.setuptools]
-packages = ["scripts"]
-include-package-data = false
+packages = ["maris", "scripts"]
+include-package-data = true
 
-[tool.uv]
-dev-dependencies = [
-    "pytest>=7.0.0",
-    "black>=23.0.0",
-    "ruff>=0.1.0",
-]
+[tool.hatchling.build.targets.wheel]
+packages = ["maris"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
