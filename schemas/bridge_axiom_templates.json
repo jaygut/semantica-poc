@@ -9,7 +9,7 @@
     {
       "version": "1.1",
       "date": "2026-02-04",
-      "changes": "BA-001: Corrected DOI (was pointing to wrong paper), updated coefficients with verified 2024 source"
+      "changes": "BA-001: Corrected primary DOI (was pointing to wrong paper), updated coefficients with verified 2024 WTP model source (Marcos-Castillo et al.); fixed secondary DOI typo (9207→9198z for Uyarra 2009)"
     }
   ],
   "axioms": [
@@ -39,7 +39,7 @@
         },
         {
           "citation": "Uyarra MC et al. 2009. Environmental Management",
-          "doi": "10.1007/s00267-008-9207-4",
+          "doi": "10.1007/s00267-008-9198-z",
           "finding": "Divers select destinations based on marine life quality and quantity"
         }
       ],

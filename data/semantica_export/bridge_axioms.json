@@ -2,247 +2,314 @@
   "bridge_axioms": [
     {
       "axiom_id": "BA-001",
-      "name": "biomass_tourism_value",
+      "name": "mpa_biomass_dive_tourism_value",
       "domain_from": "ecological",
       "domain_to": "financial",
-      "description": "Higher fish biomass in protected areas increases dive tourism revenue",
-      "formula": "tourism_value = f(fish_biomass, accessibility, infrastructure)",
+      "description": "Fish biomass increases in MPAs drive increased diver willingness-to-pay and tourism revenue",
+      "formula": "tourism_revenue = f(biomass_increase, wtp_curve, infrastructure)",
       "coefficients": {
-        "elasticity": 0.45,
-        "base_value_per_diver": 150
+        "wtp_increase_max_percent": 84,
+        "biomass_contribution_percent": 47,
+        "avg_biomass_increase_percent": 113,
+        "global_additional_revenue_usd_millions": 616
       },
       "evidence_sources": [
-        {"doc_id": "sala_2021_mpa_carbon_food", "support_type": "primary"},
-        {"doc_id": "spalding_2017_coral_tourism_value", "support_type": "secondary"},
-        {"doc_id": "aburto_2024_mppa_framework", "support_type": "calibration"}
+        {
+          "doc_id": "marcos_castillo_2024_dive_tourism_wtp",
+          "doi": "10.1038/s41598-024-83664-1",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "uyarra_2009_diver_preferences",
+          "doi": "10.1007/s00267-008-9198-z",
+          "support_type": "supporting"
+        }
       ],
       "confidence": "high",
-      "validation": "Cabo Pulmo tourism revenue correlates with biomass recovery"
+      "validation": "Full protection \u2192 113% biomass increase \u2192 up to 84% higher WTP \u2192 47% of total revenue improvement"
     },
     {
       "axiom_id": "BA-002",
       "name": "notake_mpa_biomass_multiplier",
-      "domain_from": "governance",
+      "domain_from": "ecological",
       "domain_to": "ecological",
-      "description": "No-take MPAs with NEOLI features achieve predictable biomass increases",
-      "formula": "biomass_ratio = base_ratio * product(neoli_modifiers)",
+      "description": "No-take MPAs accumulate fish biomass relative to unprotected areas",
+      "formula": "biomass_ratio = f(protection_type, enforcement, age)",
       "coefficients": {
-        "base_ratio": 2.7,
-        "neoli_modifiers": {
-          "no_take": 2.0,
-          "enforced": 1.8,
-          "old": 1.5,
-          "large": 1.3,
-          "isolated": 1.2
-        }
+        "biomass_ratio": 6.7,
+        "recovery_rate_per_year": 0.42
       },
       "evidence_sources": [
-        {"doc_id": "edgar_2014_nature_mpa_neoli", "support_type": "primary"},
-        {"doc_id": "hopf_2024_notake_meta", "support_type": "meta_analysis"},
-        {"doc_id": "aburto_2011_cabo_pulmo", "support_type": "calibration"},
-        {"doc_id": "sala_2018_notake_most_effective", "support_type": "supporting"}
+        {
+          "doc_id": "hopf_2024_notake_meta",
+          "doi": "10.1002/eap.3027",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "edgar_2014_nature_mpa_neoli",
+          "doi": "10.1038/nature13022",
+          "support_type": "supporting"
+        }
       ],
       "confidence": "high",
-      "validation": "Cabo Pulmo achieved 4.63x with NEOLI score 4/5"
+      "validation": "10-year-old enforced no-take reserve has 670% of unprotected biomass"
     },
     {
       "axiom_id": "BA-003",
-      "name": "otter_kelp_carbon",
+      "name": "sea_otter_kelp_carbon_cascade",
       "domain_from": "ecological",
-      "domain_to": "climate",
-      "description": "Sea otter presence enables kelp forest carbon sequestration via trophic cascade",
-      "formula": "carbon_seq = otter_density * kelp_area * sequestration_rate",
+      "domain_to": "financial",
+      "description": "Sea otter presence drives trophic cascade increasing kelp carbon storage",
+      "formula": "carbon_storage = otter_presence * npp_multiplier * kelp_area",
       "coefficients": {
-        "carbon_per_otter_ton_yr": 0.002,
-        "kelp_recovery_with_otters": 4.4
+        "npp_multiplier": 12,
+        "carbon_value_usd_million_range": [
+          205,
+          408
+        ]
       },
       "evidence_sources": [
-        {"doc_id": "wilmers_2012_otter_carbon", "support_type": "primary"},
-        {"doc_id": "estes_2021_behavioral_cascade", "support_type": "supporting"},
-        {"doc_id": "eger_2023_kelp_global_value", "support_type": "valuation"}
+        {
+          "doc_id": "wilmers_2012_otter_carbon",
+          "doi": "10.1890/110176",
+          "support_type": "primary"
+        }
       ],
-      "confidence": "medium",
-      "validation": "Documented in Aleutian Islands, expanding to other regions"
+      "confidence": "high",
+      "validation": ""
     },
     {
       "axiom_id": "BA-004",
-      "name": "reef_coastal_protection_value",
+      "name": "coral_reef_flood_protection",
       "domain_from": "ecological",
       "domain_to": "financial",
-      "description": "Coral reefs provide quantifiable flood protection savings",
-      "formula": "protection_value = wave_attenuation * property_exposure * damage_function",
+      "description": "Coral reef structural integrity reduces coastal flood damages",
+      "formula": "flood_protection_value = reef_condition * wave_attenuation * exposure",
       "coefficients": {
-        "wave_energy_dissipation": 0.97,
-        "global_annual_value_billion": 4.0,
-        "loss_per_1m_reef_height": 0.4
+        "global_protection_value_usd_billion": 272,
+        "wave_energy_reduction_percent": 97
       },
       "evidence_sources": [
-        {"doc_id": "beck_2018_coral_flood_protection", "support_type": "primary"},
-        {"doc_id": "storlazzi_2021_florida_pr_restoration", "support_type": "regional"},
-        {"doc_id": "reguero_2025_hybrid_restoration", "support_type": "restoration"}
+        {
+          "doc_id": "beck_2018_coral_flood_protection",
+          "doi": "10.1038/s41467-018-04568-z",
+          "support_type": "primary"
+        }
       ],
       "confidence": "high",
-      "validation": "Model validated against observed flood events"
+      "validation": ""
     },
     {
       "axiom_id": "BA-005",
       "name": "mangrove_flood_protection",
       "domain_from": "ecological",
       "domain_to": "financial",
-      "description": "Mangroves reduce storm surge and wave damage to coastal communities",
-      "formula": "protection_value = mangrove_width * storm_exposure * attenuation_rate",
+      "description": "Mangrove extent and width provide coastal flood protection",
+      "formula": "flood_protection_value = mangrove_area * storm_attenuation",
       "coefficients": {
-        "wave_attenuation_per_100m": 0.66,
-        "surge_reduction_per_km": 0.5
+        "global_protection_value_usd_billion": 65,
+        "value_per_ha_yr_usd": 4185
       },
       "evidence_sources": [
-        {"doc_id": "menendez_2020_mangrove_flood_protection", "support_type": "primary"},
-        {"doc_id": "montgomery_2019_storm_surge_attenuation", "support_type": "supporting"},
-        {"doc_id": "salem_2012_mangrove_meta_valuation", "support_type": "meta_analysis"}
+        {
+          "doc_id": "menendez_2020_mangrove_flood_protection",
+          "doi": "10.1038/s41598-020-61136-6",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "salem_2012_mangrove_meta_valuation",
+          "doi": "10.3390/su4030359",
+          "support_type": "supporting"
+        }
       ],
       "confidence": "high",
-      "validation": "Validated across multiple hurricane events"
+      "validation": ""
     },
     {
       "axiom_id": "BA-006",
-      "name": "ecosystem_service_unit_values",
+      "name": "mangrove_fisheries_production",
       "domain_from": "ecological",
       "domain_to": "financial",
-      "description": "Standard unit values for coastal ecosystem services by habitat type",
-      "formula": "total_value = area * per_hectare_value",
+      "description": "Mangrove extent correlates with adjacent fisheries catches",
+      "formula": "fisheries_value = mangrove_fringe_ha * value_per_ha",
       "coefficients": {
-        "coral_reef_per_ha_usd": 352249,
-        "mangrove_per_ha_usd": 193845,
-        "seagrass_per_ha_usd": 28916,
-        "kelp_per_ha_usd": 19000
+        "value_per_ha_yr_usd": 37500,
+        "species_mangrove_dependent_fraction": 0.32
       },
       "evidence_sources": [
-        {"doc_id": "costanza_2014_global_es_update", "support_type": "primary"},
-        {"doc_id": "barbier_2011_coastal_es_value", "support_type": "methodology"},
-        {"doc_id": "selig_2024_es_valuation_review", "support_type": "review"}
+        {
+          "doc_id": "aburto_2008_mangrove_fisheries",
+          "doi": "10.1073/pnas.0804601105",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "carrasquilla_2025_mangrove_juvenile_fish",
+          "doi": "10.1038/s43247-025-02229-w",
+          "support_type": "supporting"
+        }
       ],
-      "confidence": "medium",
-      "validation": "Benefit transfer approach with acknowledged uncertainties"
+      "confidence": "high",
+      "validation": ""
     },
     {
       "axiom_id": "BA-007",
       "name": "mangrove_carbon_stock",
       "domain_from": "ecological",
-      "domain_to": "climate",
-      "description": "Mangroves store exceptional amounts of carbon in biomass and soil",
-      "formula": "carbon_stock = mangrove_area * carbon_density",
+      "domain_to": "financial",
+      "description": "Mangrove ecosystems store exceptional carbon per hectare",
+      "formula": "carbon_stock = mangrove_condition * carbon_density",
       "coefficients": {
-        "avg_carbon_density_mg_per_ha": 1023,
-        "soil_carbon_fraction": 0.78
+        "undisturbed_mg_c_ha": 1023,
+        "global_stock_pg_c": 6.17
       },
       "evidence_sources": [
-        {"doc_id": "donato_2011_mangrove_carbon", "support_type": "primary"},
-        {"doc_id": "alongi_2014_mangrove_carbon_update", "support_type": "review"},
-        {"doc_id": "adame_2021_mangrove_carbon_national", "support_type": "policy"}
+        {
+          "doc_id": "donato_2011_mangrove_carbon",
+          "doi": "10.1038/ngeo1123",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "murdiyarso_2023_mangrove_emissions",
+          "doi": "10.1186/s13021-023-00233-1",
+          "support_type": "supporting"
+        }
       ],
       "confidence": "high",
-      "validation": "Global synthesis of field measurements"
+      "validation": ""
     },
     {
       "axiom_id": "BA-008",
-      "name": "seagrass_carbon_sequestration",
-      "domain_from": "ecological",
-      "domain_to": "climate",
-      "description": "Seagrass meadows are highly efficient carbon sinks",
-      "formula": "annual_sequestration = seagrass_area * burial_rate",
+      "name": "seagrass_carbon_credit_value",
+      "domain_from": "service",
+      "domain_to": "financial",
+      "description": "Seagrass conservation and restoration generate carbon credit revenue",
+      "formula": "carbon_revenue = project_type * area * credit_price",
       "coefficients": {
-        "carbon_burial_g_per_m2_yr": 138,
-        "global_stock_pg": 19.9
+        "conservation_max_revenue_usd_10yr": 1530000,
+        "net_offset_t_co2e_ha_yr": 0.42
       },
       "evidence_sources": [
-        {"doc_id": "fourqurean_2012_seagrass_carbon_stocks", "support_type": "primary"},
-        {"doc_id": "duarte_2025_seagrass_carbon_credits", "support_type": "carbon_credits"},
-        {"doc_id": "oreska_2020_seagrass_ghg_offset", "support_type": "methodology"}
+        {
+          "doc_id": "duarte_2025_seagrass_carbon_credits",
+          "doi": "10.1038/s44183-025-00111-y",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "oreska_2020_seagrass_ghg_offset",
+          "doi": "10.1038/s41598-020-64094-1",
+          "support_type": "supporting"
+        }
       ],
       "confidence": "high",
-      "validation": "Core Verra blue carbon methodology basis"
+      "validation": ""
     },
     {
       "axiom_id": "BA-009",
-      "name": "connectivity_mpa_effectiveness",
-      "domain_from": "ecological",
-      "domain_to": "governance",
-      "description": "Larval connectivity determines MPA network effectiveness for fisheries",
-      "formula": "network_effectiveness = f(connectivity_matrix, mpa_placement)",
+      "name": "mangrove_restoration_bcr",
+      "domain_from": "service",
+      "domain_to": "financial",
+      "description": "Mangrove restoration yields positive benefit-cost ratios",
+      "formula": "net_benefit = esv_gain - restoration_cost",
       "coefficients": {
-        "optimal_spacing_km": 20,
-        "larval_export_threshold": 0.25
+        "bcr_range": [
+          6.35,
+          15.0
+        ],
+        "global_20yr_net_esv_gain_usd_billion_range": [
+          231,
+          725
+        ]
       },
       "evidence_sources": [
-        {"doc_id": "green_2015_larval_dispersal_reserves", "support_type": "primary"},
-        {"doc_id": "chalifour_2024_transboundary_connectivity", "support_type": "modeling"},
-        {"doc_id": "krueck_2017_connectivity_mpa_placement", "support_type": "optimization"}
+        {
+          "doc_id": "zeng_2025_mangrove_restoration_bcr",
+          "doi": "10.1038/s41467-025-56587-2",
+          "support_type": "primary"
+        }
       ],
-      "confidence": "medium",
-      "validation": "Validated in multiple MPA network designs"
+      "confidence": "high",
+      "validation": ""
     },
     {
       "axiom_id": "BA-010",
-      "name": "thermal_tolerance_resilience",
-      "domain_from": "climate",
-      "domain_to": "ecological",
-      "description": "Coral thermal tolerance increases over time through selection/acclimatization",
-      "formula": "bleaching_probability = f(dhw, thermal_tolerance, local_stress)",
+      "name": "kelp_forest_global_value",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Kelp forests provide substantial ecosystem services globally",
+      "formula": "esv_total = kelp_area * per_ha_value",
       "coefficients": {
-        "tolerance_increase_per_decade": 0.1,
-        "critical_warming_threshold": 2.0
+        "global_value_usd_billion_yr": 500,
+        "value_per_ha_yr_range_usd": [
+          64400,
+          147100
+        ]
       },
       "evidence_sources": [
-        {"doc_id": "lachs_2023_thermal_tolerance", "support_type": "primary"},
-        {"doc_id": "harrison_2025_gbr_recovery", "support_type": "modeling"},
-        {"doc_id": "hoegh_guldberg_2025_seychelles_resilience", "support_type": "time_series"}
+        {
+          "doc_id": "eger_2023_kelp_global_value",
+          "doi": "10.1038/s41467-023-37385-0",
+          "support_type": "primary"
+        }
       ],
-      "confidence": "medium",
-      "validation": "Observed in Palau, Seychelles, GBR"
+      "confidence": "high",
+      "validation": ""
     },
     {
       "axiom_id": "BA-011",
-      "name": "fisheries_spillover",
+      "name": "mpa_climate_resilience",
       "domain_from": "ecological",
-      "domain_to": "financial",
-      "description": "No-take reserves enhance catches in adjacent fishing grounds",
-      "formula": "spillover_benefit = reserve_biomass * export_rate * catch_value",
+      "domain_to": "ecological",
+      "description": "MPAs enhance ecosystem resilience to climate disturbances",
+      "formula": "resilience_multiplier = f(mpa_type, habitat)",
       "coefficients": {
-        "spillover_radius_km": 15,
-        "biomass_export_fraction": 0.1
+        "kelp_recovery_premium_percent": 8.5,
+        "coral_disturbance_reduction_percent": 30
       },
       "evidence_sources": [
-        {"doc_id": "aburto_2011_cabo_pulmo", "support_type": "calibration"},
-        {"doc_id": "gaines_2010_designing_networks", "support_type": "theory"},
-        {"doc_id": "cinner_2025_small_scale_fisheries", "support_type": "global_synthesis"}
+        {
+          "doc_id": "ortiz_villa_2024_mpa_kelp_resilience",
+          "doi": "10.1111/gcb.17477",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "mellin_2016_mpa_coral_resilience",
+          "doi": "10.1111/ele.12598",
+          "support_type": "supporting"
+        }
       ],
-      "confidence": "medium",
-      "validation": "Documented at Cabo Pulmo and other sites"
+      "confidence": "high",
+      "validation": ""
     },
     {
       "axiom_id": "BA-012",
-      "name": "disclosure_biodiversity_dependency",
-      "domain_from": "financial",
-      "domain_to": "governance",
-      "description": "Corporate disclosure of marine biodiversity dependencies under TNFD",
-      "formula": "disclosure_requirement = f(sector, location, dependencies)",
+      "name": "reef_degradation_fisheries_loss",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Coral reef structural degradation reduces fisheries productivity",
+      "formula": "fisheries_loss = structural_degradation * productivity_coeff",
       "coefficients": {
-        "high_dependency_sectors": ["fisheries", "tourism", "coastal_development"],
-        "material_threshold": 0.05
+        "productivity_loss_percent": 35,
+        "loss_range_percent": [
+          25,
+          50
+        ]
       },
       "evidence_sources": [
-        {"doc_id": "tnfd_2023_framework", "support_type": "primary"},
-        {"doc_id": "tnfd_2025_marine_transport", "support_type": "sector_guidance"},
-        {"doc_id": "sbtn_2023_marine_targets", "support_type": "complementary"}
+        {
+          "doc_id": "rogers_2018_reef_fisheries_loss",
+          "doi": "10.1111/1365-2664.13051",
+          "support_type": "primary"
+        }
       ],
       "confidence": "high",
-      "validation": "TNFD v1.0 adopted by 500+ organizations"
+      "validation": ""
     }
   ],
   "export_metadata": {
-    "generated_at": "2026-01-24T10:30:00Z",
-    "version": "1.0",
+    "generated_at": "2026-02-04T16:27:04.794286Z",
+    "source_version": "1.1",
+    "source_updated": "2026-02-04",
     "axiom_count": 12,
-    "average_sources_per_axiom": 3.1
+    "regeneration_reason": "BA-001 DOI correction and coefficient update"
   }
 }
