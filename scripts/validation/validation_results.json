@@ -1,0 +1,88 @@
+[
+  {
+    "test_name": "axiom_schema_compatibility",
+    "passed": true,
+    "message": "All 12 axioms have compatible schema",
+    "details": {
+      "axiom_count": 12
+    }
+  },
+  {
+    "test_name": "coefficient_extraction",
+    "passed": true,
+    "message": "All 12 axioms have extractable coefficients",
+    "details": {
+      "coefficients": {
+        "BA-001": 84,
+        "BA-002": 6.7,
+        "BA-003": 12,
+        "BA-004": 272,
+        "BA-005": 4185,
+        "BA-006": 37500,
+        "BA-007": 1023,
+        "BA-008": 1189,
+        "BA-009": 10.675,
+        "BA-010": 500,
+        "BA-011": 8.5,
+        "BA-012": 35
+      }
+    }
+  },
+  {
+    "test_name": "source_doi_extraction",
+    "passed": true,
+    "message": "All 12 axioms have DOIs (19 total sources)",
+    "details": {
+      "total_sources": 19,
+      "by_axiom": {
+        "BA-001": 2,
+        "BA-002": 2,
+        "BA-003": 1,
+        "BA-004": 1,
+        "BA-005": 2,
+        "BA-006": 2,
+        "BA-007": 2,
+        "BA-008": 2,
+        "BA-009": 1,
+        "BA-010": 1,
+        "BA-011": 2,
+        "BA-012": 1
+      }
+    }
+  },
+  {
+    "test_name": "cabo_pulmo_ba001_calculation",
+    "passed": true,
+    "message": "BA-001 valid: Cabo Pulmo 463% biomass exceeds model avg 113%",
+    "details": {
+      "input_biomass_percent": 463,
+      "wtp_max_percent": 84,
+      "biomass_contribution_percent": 47,
+      "model_avg_biomass_increase": 113,
+      "source_doi": "10.1038/s41598-024-83664-1",
+      "methodology": "WTP demand curve estimation"
+    }
+  },
+  {
+    "test_name": "semantica_import",
+    "passed": true,
+    "message": "Semantica 0.2.6 available with provenance support",
+    "details": {
+      "version": "0.2.6",
+      "available": [
+        "ProvenanceManager",
+        "BridgeAxiom",
+        "SQLiteStorage"
+      ],
+      "missing": []
+    }
+  },
+  {
+    "test_name": "semantica_bridge_axiom_integration",
+    "passed": true,
+    "message": "BridgeAxiom created and applied successfully",
+    "details": {
+      "result": "{'axiom_id': 'BA-001', 'axiom_name': 'mpa_biomass_dive_tourism_value', 'input_entity': 'cabo_pulmo_biomass', 'input_value': 463, 'output_entity': 'cabo_pulmo_biomass_transformed_BA-001', 'output_value': 388.91999999999996, 'coefficient': 0.84, 'confidence': 0.85, 'source_doi': '10.1038/s41598-024-83664-1', 'source_page': 'Methods & Results', 'input_domain': 'ecological', 'output_domain': 'financial'}"
+    }
+  }
+]

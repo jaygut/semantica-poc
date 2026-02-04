@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-02-04T11:11:05.499981",
+  "semantica_version": "0.2.6",
+  "test_status": "PASSED",
+  "axioms_converted": 12,
+  "decision_trace": {
+    "l1_ecological": {
+      "entity": "cabo_pulmo_biomass",
+      "value": 463,
+      "doi": "10.1371/journal.pone.0023601"
+    },
+    "l2_bridge_axioms": [
+      {
+        "axiom": "BA-001",
+        "model": "WTP_demand_curve",
+        "input_biomass_percent": 463,
+        "wtp_max_percent": 84,
+        "biomass_contribution_percent": 47,
+        "doi": "10.1038/s41598-024-83664-1"
+      },
+      {
+        "axiom": "BA-002",
+        "coefficient": 6.7,
+        "doi": "10.1002/eap.3027"
+      }
+    ],
+    "l3_financial": {
+      "entity": "cabo_pulmo_esv",
+      "value_usd_millions": 29.27
+    }
+  }
+}

@@ -3,40 +3,62 @@
     "@vocab": "https://maris.ocean/ontology/"
   },
   "description": "Bridge Axiom Templates for Ecological-Financial Translation",
-  "version": "1.0",
+  "version": "1.1",
+  "last_updated": "2026-02-04",
+  "changelog": [
+    {
+      "version": "1.1",
+      "date": "2026-02-04",
+      "changes": "BA-001: Corrected DOI (was pointing to wrong paper), updated coefficients with verified 2024 source"
+    }
+  ],
   "axioms": [
     {
       "axiom_id": "BA-001",
-      "name": "mpa_biomass_tourism_elasticity",
+      "name": "mpa_biomass_dive_tourism_value",
       "category": "ecological_to_service",
-      "description": "Fish biomass increases in MPAs drive proportional tourism revenue increases",
-      "pattern": "IF biomass_increase(Site, X%) THEN tourism_revenue_increase(Site, X * 0.346%)",
+      "description": "Fish biomass increases in MPAs drive increased diver willingness-to-pay and tourism revenue",
+      "pattern": "IF full_protection(Site) THEN biomass_increase(Site, 113%) AND wtp_increase(Site, 84%) AND revenue_contribution(biomass, 47%)",
       "coefficients": {
-        "elasticity": 0.346,
-        "confidence_interval_95": [0.28, 0.41],
-        "r_squared": 0.67,
-        "sample_size": 45
+        "wtp_increase_for_biomass_max_percent": 84,
+        "biomass_contribution_to_revenue_percent": 47,
+        "biodiversity_contribution_to_revenue_percent": 49,
+        "mpa_name_effect_percent": 4,
+        "average_biomass_increase_full_protection_percent": 113,
+        "average_biomass_increase_std_dev_percent": 133,
+        "global_additional_revenue_usd_millions": 616
       },
       "applicable_habitats": ["coral_reef", "rocky_reef", "kelp_forest"],
       "applicable_contexts": ["dive_tourism", "snorkeling", "ecotourism"],
       "evidence_tier": "T1",
       "sources": [
         {
-          "citation": "Wielgus J et al. 2010. Ecological Economics",
-          "doi": "10.1016/j.ecolecon.2010.01.008",
-          "finding": "Tourism value of marine reserves correlated with fish biomass"
+          "citation": "Marcos-Castillo S et al. 2024. Scientific Reports",
+          "doi": "10.1038/s41598-024-83664-1",
+          "finding": "Global bioeconomic model: divers willing to pay up to 84% more for biomass increases; 47% of economic improvements from biomass gains"
+        },
+        {
+          "citation": "Uyarra MC et al. 2009. Environmental Management",
+          "doi": "10.1007/s00267-008-9207-4",
+          "finding": "Divers select destinations based on marine life quality and quantity"
         }
       ],
       "caveats": [
-        "Assumes tourism infrastructure exists",
-        "Effect may saturate at high biomass levels",
-        "Cultural and accessibility factors also important"
+        "Willingness-to-pay varies by diver experience and destination",
+        "Assumes existing dive tourism infrastructure",
+        "Effect magnitude depends on baseline conditions",
+        "MPA name effect provides immediate value before biological recovery"
       ],
       "example_calculation": {
-        "input": {"biomass_increase_percent": 100},
-        "output": {"tourism_revenue_increase_percent": 34.6},
-        "interpretation": "Doubling fish biomass → 34.6% increase in dive tourism revenue"
-      }
+        "input": {"protection_status": "full_protection", "baseline_biomass": 100},
+        "output": {
+          "expected_biomass_increase_percent": 113,
+          "expected_wtp_increase_percent": "up to 84",
+          "biomass_revenue_contribution_percent": 47
+        },
+        "interpretation": "Full protection → 113% biomass increase → up to 84% higher WTP → 47% of total revenue improvement"
+      },
+      "methodology_note": "Based on willingness-to-pay demand curve estimation, not simple linear elasticity"
     },
 
     {

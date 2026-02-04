@@ -1,0 +1,134 @@
+{
+  "timestamp": "2026-02-04T10:36:23.866032",
+  "chain": {
+    "site": "Cabo Pulmo National Park",
+    "query": "What is the annual ecosystem service value of Cabo Pulmo?",
+    "final_answer": "$29.27M annual ecosystem services",
+    "audit_status": "FULLY_TRACEABLE",
+    "total_confidence": 0.5422,
+    "traces": [
+      {
+        "layer": "L1_Ecological",
+        "entity_type": "Observation",
+        "entity_id": "cabo_pulmo_biomass_recovery",
+        "value": {
+          "biomass_increase_percent": 463,
+          "period": "1999-2009",
+          "unit": "percent"
+        },
+        "source_doi": "10.1371/journal.pone.0023601",
+        "source_page": "Figure 2",
+        "axiom_id": null,
+        "calculation": null,
+        "confidence": 0.95
+      },
+      {
+        "layer": "L1_Ecological",
+        "entity_type": "Observation",
+        "entity_id": "cabo_pulmo_neoli_score",
+        "value": {
+          "neoli_score": 4,
+          "max_score": 5,
+          "criteria_met": [
+            "no_take",
+            "enforced",
+            "old",
+            "large"
+          ]
+        },
+        "source_doi": "10.1038/nature13022",
+        "source_page": "Methods",
+        "axiom_id": null,
+        "calculation": null,
+        "confidence": 0.92
+      },
+      {
+        "layer": "L2_Bridge_Axiom",
+        "entity_type": "BridgeAxiomApplication",
+        "entity_id": "ba001_application_cabo_pulmo",
+        "value": {
+          "input_value": 463,
+          "coefficient": 0.346,
+          "output_value": 160.2,
+          "unit": "percent_tourism_increase"
+        },
+        "source_doi": "10.1016/j.ecolecon.2010.01.008",
+        "source_page": null,
+        "axiom_id": "BA-001",
+        "calculation": "463% biomass \u00d7 0.346 elasticity = 160.2% tourism increase",
+        "confidence": 0.89
+      },
+      {
+        "layer": "L2_Bridge_Axiom",
+        "entity_type": "BridgeAxiomApplication",
+        "entity_id": "ba002_application_cabo_pulmo",
+        "value": {
+          "mpa_type": "no_take",
+          "enforced": true,
+          "age_years": 10,
+          "biomass_ratio": 6.7,
+          "unit": "multiplier_vs_unprotected"
+        },
+        "source_doi": "10.1002/eap.3027",
+        "source_page": null,
+        "axiom_id": "BA-002",
+        "calculation": "No-take + Enforced + 10yr old \u2192 6.7\u00d7 biomass vs unprotected",
+        "confidence": 0.85
+      },
+      {
+        "layer": "L3_Financial",
+        "entity_type": "FinancialMetric",
+        "entity_id": "cabo_pulmo_esv_total",
+        "value": {
+          "total_usd_millions": 29.27,
+          "breakdown": {
+            "tourism_usd_millions": 25.0,
+            "fisheries_spillover_usd_millions": 3.2,
+            "carbon_sequestration_usd_millions": 0.18,
+            "coastal_protection_usd_millions": 0.89
+          },
+          "valuation_method": "benefit_transfer",
+          "application": [
+            "blue_bond_kpi",
+            "tnfd_disclosure",
+            "mpa_effectiveness"
+          ]
+        },
+        "source_doi": null,
+        "source_page": null,
+        "axiom_id": null,
+        "calculation": "Tourism $25.0M + Fisheries $3.2M + Protection $0.89M + Carbon $0.18M = $29.27M",
+        "confidence": 0.82
+      }
+    ]
+  },
+  "validation": {
+    "site": "Cabo Pulmo National Park",
+    "chain_length": 5,
+    "layers_covered": [
+      "L1_Ecological",
+      "L3_Financial",
+      "L2_Bridge_Axiom"
+    ],
+    "axioms_used": [
+      "BA-001",
+      "BA-002"
+    ],
+    "sources_cited": [
+      "10.1371/journal.pone.0023601",
+      "10.1038/nature13022",
+      "10.1016/j.ecolecon.2010.01.008",
+      "10.1002/eap.3027"
+    ],
+    "total_confidence": 0.5422,
+    "audit_status": "FULLY_TRACEABLE",
+    "checks": {
+      "all_layers_present": true,
+      "all_sources_have_dois": true,
+      "all_axioms_sourced": true,
+      "confidence_acceptable": true,
+      "final_answer_validated": true
+    },
+    "all_checks_passed": true
+  }
+}
