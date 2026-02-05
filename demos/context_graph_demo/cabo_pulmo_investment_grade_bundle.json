@@ -1,0 +1,183 @@
+{
+  "metadata": {
+    "title": "Cabo Pulmo Context Graph Analysis",
+    "version": "1.0",
+    "type": "methodology_demonstration",
+    "generated_at": "2026-02-04T19:38:36.430976",
+    "maris_schema_version": "1.1",
+    "methodology": "NOAA-calibrated WTP with propagated CIs",
+    "disclaimer": "This is a methodology demonstration, not investment advice"
+  },
+  "site": {
+    "name": "Cabo Pulmo National Park",
+    "country": "Mexico",
+    "coordinates": {
+      "@type": "geo:Point",
+      "latitude": 23.42,
+      "longitude": -109.42
+    },
+    "area_km2": 71.11,
+    "designation_year": 1995
+  },
+  "ecological_status": {
+    "biomass_ratio": {
+      "central": 4.63,
+      "ci_95": [
+        3.8,
+        5.5
+      ],
+      "measurement_year": 2009,
+      "source_doi": "10.1371/journal.pone.0023601",
+      "staleness_flag": "Data >10 years old; contemporary survey recommended for investment applications"
+    },
+    "neoli_score": 4,
+    "neoli_breakdown": {
+      "no_take": true,
+      "enforced": true,
+      "old": true,
+      "large": false,
+      "isolated": true
+    }
+  },
+  "financial_output": {
+    "raw_esv_usd": 29270000,
+    "noaa_adjusted_esv_usd": 16770000.0,
+    "noaa_adjusted_esv_ci_95_usd": [
+      12477343.412526999,
+      22088574.51403888
+    ],
+    "wtp_adjustment_factor": 0.5,
+    "wtp_adjustment_source": "NOAA Blue Ribbon Panel 1993",
+    "services_breakdown": {
+      "tourism_adjusted_usd": 12500000.0,
+      "fisheries_usd": 3200000,
+      "carbon_usd": 180000,
+      "coastal_protection_usd": 890000
+    }
+  },
+  "risk_assessment": {
+    "climate_resilience": {
+      "disturbance_reduction_percent": 30,
+      "recovery_boost_percent": 20,
+      "source_axiom": "BA-011",
+      "source_doi": "10.1111/gcb.17477"
+    },
+    "degradation_risk": {
+      "productivity_loss_central_percent": 35,
+      "productivity_loss_range_percent": [
+        25,
+        50
+      ],
+      "source_axiom": "BA-012",
+      "source_doi": "10.1111/1365-2664.13051"
+    },
+    "monte_carlo_summary": {
+      "n_simulations": 10000,
+      "mean_usd": 16270277.749747919,
+      "std_usd": 2857345.896350765,
+      "percentiles_usd": {
+        "p5": 11179564.380081268,
+        "p25": 14469493.035671718,
+        "p50": 16423992.562771117,
+        "p75": 18213200.825926118,
+        "p95": 20731812.889794867
+      }
+    }
+  },
+  "comparison_sites": [
+    {
+      "name": "Papahanaumokuakea",
+      "neoli_score": 5,
+      "outcome": "54% apex predators; 54% yellowfin tuna spillover increase (2022)",
+      "lesson": "Full NEOLI compliance correlates with strong ecological outcomes and fishery spillover"
+    },
+    {
+      "name": "Cabo Pulmo",
+      "neoli_score": 4,
+      "outcome": "463% biomass recovery, $14.6M ESV (adjusted)",
+      "lesson": "Strong enforcement may compensate for smaller size"
+    },
+    {
+      "name": "Mesoamerican Reef (partial)",
+      "neoli_score": "1-2",
+      "outcome": "Only 8% of MPAs showed biomass increases",
+      "lesson": "Partial protection shows limited conservation outcomes"
+    }
+  ],
+  "framework_alignment": {
+    "ifc_blue_finance": {
+      "version": "v1.0 (2022)",
+      "sdg14_aligned": true,
+      "gbp_glp_consistent": true,
+      "dnsh_compliant": true,
+      "eligible_use_of_proceeds": [
+        "marine_ecosystem_restoration",
+        "sustainable_tourism_infrastructure",
+        "fisheries_management"
+      ]
+    },
+    "tnfd_leap": {
+      "locate": {
+        "biome": "Marine Shelves",
+        "priority_biodiversity_area": true
+      },
+      "evaluate": {
+        "primary_dependency": "Tourism on reef health (47%)",
+        "primary_impact": "Carbon sequestration (positive)"
+      },
+      "assess": {
+        "physical_risk_acute": "Medium (bleaching)",
+        "physical_risk_chronic": "High (acidification)",
+        "opportunity": "Blue bond issuance $30-50M (illustrative)"
+      },
+      "prepare": {
+        "recommendation": "Maintain NEOLI compliance, consider network expansion"
+      }
+    }
+  },
+  "bridge_axioms_applied": [
+    {
+      "axiom_id": "BA-001",
+      "name": "mpa_biomass_dive_tourism_value",
+      "application": "Tourism WTP calibration",
+      "source_doi": "10.1038/s41598-024-83664-1"
+    },
+    {
+      "axiom_id": "BA-002",
+      "name": "notake_mpa_biomass_multiplier",
+      "application": "NEOLI effectiveness validation",
+      "source_doi": "10.1002/eap.3027"
+    },
+    {
+      "axiom_id": "BA-011",
+      "name": "mpa_climate_resilience",
+      "application": "Climate risk reduction",
+      "source_doi": "10.1111/gcb.17477"
+    },
+    {
+      "axiom_id": "BA-012",
+      "name": "reef_degradation_fisheries_loss",
+      "application": "Degradation risk quantification",
+      "source_doi": "10.1111/1365-2664.13051"
+    }
+  ],
+  "caveats": [
+    "This is a methodology demonstration, not investment advice",
+    "Biomass data from 2009; contemporary survey recommended for investment applications",
+    "Tourism WTP adjusted by NOAA factor of 2; actual value may vary",
+    "Benefit transfer from regional studies; site-specific calibration recommended",
+    "463% recovery claim has methodological limitations; use CI [3.8x, 5.5x]",
+    "Comparison sites selected for illustration; not exhaustive",
+    "Independent audit recommended before any investment decisions"
+  ],
+  "validation_checklist": {
+    "confidence_intervals": true,
+    "provenance_complete": true,
+    "risk_quantified": true,
+    "comparison_sites": true,
+    "framework_alignment": true,
+    "bias_adjustment": true,
+    "staleness_flagged": true,
+    "disclaimer_included": true
+  }
+}
