@@ -1,14 +1,59 @@
 {
   "metadata": {
-    "generated_at": "2026-02-04T11:43:39.884928"
+    "title": "Cabo Pulmo Context Graph Decision Trace",
+    "generated_at": "2026-02-04T11:48:33.832843",
+    "semantica_version": "0.2.6",
+    "maris_schema_version": "1.1"
   },
-  "query": "What explains Cabo Pulmo's 463% biomass recovery?",
+  "query": "What explains Cabo Pulmo's 463% biomass recovery and its financial value?",
   "answer": {
-    "summary": "NEOLI 4/5 + BA-001/BA-002 = $29.27M ESV",
+    "summary": "Cabo Pulmo's 463% biomass recovery is explained by its NEOLI score (4/5) per BA-002, generating $29.27M annual ESV via the WTP model in BA-001.",
+    "confidence": "high",
     "citations": [
       "10.1371/journal.pone.0023601",
       "10.1002/eap.3027",
       "10.1038/s41598-024-83664-1"
     ]
+  },
+  "decision_trace": [
+    {
+      "layer": "L1_Ecological",
+      "entity": "cabo_pulmo_biomass",
+      "value": "463% biomass increase",
+      "source": "Aburto-Oropeza et al. 2011",
+      "doi": "10.1371/journal.pone.0023601"
+    },
+    {
+      "layer": "L2_Bridge_Axiom",
+      "entity": "cabo_pulmo_mpa_effect",
+      "axiom": "BA-002 (NEOLI \u2192 Biomass)",
+      "finding": "NEOLI score 4/5 explains exceptional recovery",
+      "doi": "10.1002/eap.3027"
+    },
+    {
+      "layer": "L2_Bridge_Axiom",
+      "entity": "cabo_pulmo_tourism_value",
+      "axiom": "BA-001 (Biomass \u2192 Tourism WTP)",
+      "finding": "Up to 84% WTP increase; 47% from biomass",
+      "doi": "10.1038/s41598-024-83664-1"
+    },
+    {
+      "layer": "L3_Financial",
+      "entity": "cabo_pulmo_esv",
+      "value": "$29.27M annual ESV",
+      "applications": [
+        "Blue Bond KPI",
+        "TNFD Disclosure"
+      ]
+    }
+  ],
+  "bridge_axioms_used": [
+    "BA-001",
+    "BA-002"
+  ],
+  "provenance_stats": {
+    "entities_tracked": 4,
+    "axioms_applied": 2,
+    "doi_citations": 3
   }
 }
