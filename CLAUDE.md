@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is the **Semantica × MARIS POC** (Proof of Concept) - a project to build an AI-powered knowledge integration system bridging marine ecological science with blue finance. The core deliverable is **MARIS** (Marine Asset Risk Intelligence System), which translates ecological complexity into investment-grade natural capital assets.
 
-**Current Status:** Active development. The repository contains a comprehensive conceptual framework, upgraded SKILLS system, and document registry with 195 verified papers.
+**Current Status:** Active development. The repository contains a comprehensive conceptual framework, upgraded SKILLS system, document registry with 195 verified papers, an investment-grade analysis notebook, and an interactive Streamlit investor dashboard.
 
 ## Quick Start Commands
 
@@ -119,6 +119,15 @@ The system follows a **Three-Layer Translation Model**:
 | `.claude/registry/document_index.json` | Master bibliography (195 papers) |
 | `data/sample_extractions/` | Example entity extractions |
 | `examples/cabo_pulmo_case_study.json` | AAA reference validation site |
+
+### Demos & Dashboard
+
+| File | Purpose |
+|------|---------|
+| `demos/context_graph_demo/cabo_pulmo_investment_grade.ipynb` | Investment-grade analysis notebook (45 cells) |
+| `demos/context_graph_demo/cabo_pulmo_investment_grade_bundle.json` | Exported data bundle for dashboard |
+| `investor_demo/streamlit_app.py` | Interactive investor dashboard (Streamlit, dark mode) |
+| `investor_demo/demo_narrative.md` | 10-minute pitch script |
 
 ### Scripts
 
