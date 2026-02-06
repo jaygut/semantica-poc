@@ -3,9 +3,9 @@
     "title": "Cabo Pulmo Context Graph Analysis",
     "version": "1.0",
     "type": "methodology_demonstration",
-    "generated_at": "2026-02-04T19:38:36.430976",
+    "generated_at": "2026-02-05T20:12:45.171008",
     "maris_schema_version": "1.1",
-    "methodology": "NOAA-calibrated WTP with propagated CIs",
+    "methodology": "Market-price valuation with propagated CIs",
     "disclaimer": "This is a methodology demonstration, not investment advice"
   },
   "site": {
@@ -41,15 +41,15 @@
   },
   "financial_output": {
     "raw_esv_usd": 29270000,
-    "noaa_adjusted_esv_usd": 16770000.0,
-    "noaa_adjusted_esv_ci_95_usd": [
-      12477343.412526999,
-      22088574.51403888
+    "market_price_esv_usd": 29270000,
+    "market_price_esv_ci_95_usd": [
+      21283604.751619868,
+      38849267.81857452
     ],
-    "wtp_adjustment_factor": 0.5,
-    "wtp_adjustment_source": "NOAA Blue Ribbon Panel 1993",
+    "valuation_method": "market_price",
+    "valuation_method_note": "Tourism valued via actual expenditure data, not stated-preference WTP",
     "services_breakdown": {
-      "tourism_adjusted_usd": 12500000.0,
+      "tourism_usd": 25000000,
       "fisheries_usd": 3200000,
       "carbon_usd": 180000,
       "coastal_protection_usd": 890000
@@ -73,14 +73,14 @@
     },
     "monte_carlo_summary": {
       "n_simulations": 10000,
-      "mean_usd": 16270277.749747919,
-      "std_usd": 2857345.896350765,
+      "mean_usd": 28390848.068707414,
+      "std_usd": 4928310.16386794,
       "percentiles_usd": {
-        "p5": 11179564.380081268,
-        "p25": 14469493.035671718,
-        "p50": 16423992.562771117,
-        "p75": 18213200.825926118,
-        "p95": 20731812.889794867
+        "p5": 19580006.5820303,
+        "p25": 25257215.5091028,
+        "p50": 28694763.854231298,
+        "p75": 31737580.175731473,
+        "p95": 36065254.322699904
       }
     }
   },
@@ -94,7 +94,7 @@
     {
       "name": "Cabo Pulmo",
       "neoli_score": 4,
-      "outcome": "463% biomass recovery, $14.6M ESV (adjusted)",
+      "outcome": "463% biomass recovery",
       "lesson": "Strong enforcement may compensate for smaller size"
     },
     {
@@ -131,7 +131,7 @@
         "opportunity": "Blue bond issuance $30-50M (illustrative)"
       },
       "prepare": {
-        "recommendation": "Maintain NEOLI compliance, consider network expansion"
+        "recommendation": "Maintain NEOLI alignment, consider network expansion"
       }
     }
   },
@@ -139,7 +139,7 @@
     {
       "axiom_id": "BA-001",
       "name": "mpa_biomass_dive_tourism_value",
-      "application": "Tourism WTP calibration",
+      "application": "Tourism valuation context",
       "source_doi": "10.1038/s41598-024-83664-1"
     },
     {
@@ -164,7 +164,7 @@
   "caveats": [
     "This is a methodology demonstration, not investment advice",
     "Biomass data from 2009; contemporary survey recommended for investment applications",
-    "Tourism WTP adjusted by NOAA factor of 2; actual value may vary",
+    "Tourism valued via market-price method (actual expenditure); no WTP adjustment applied",
     "Benefit transfer from regional studies; site-specific calibration recommended",
     "463% recovery claim has methodological limitations; use CI [3.8x, 5.5x]",
     "Comparison sites selected for illustration; not exhaustive",
@@ -176,7 +176,7 @@
     "risk_quantified": true,
     "comparison_sites": true,
     "framework_alignment": true,
-    "bias_adjustment": true,
+    "valuation_method_documented": true,
     "staleness_flagged": true,
     "disclaimer_included": true
   }

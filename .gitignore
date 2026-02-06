@@ -44,3 +44,11 @@ data/search_results/
 data/pdf_filename_report.json
 data/run_manifests/
 data/registry_purge_report.json
+
+
+# Code quality (local config)
+.codacy/
+
+# AI IDE rules
+.windsurfrules
+.windsurf/
