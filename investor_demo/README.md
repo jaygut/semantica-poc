@@ -48,7 +48,28 @@ cp ../.env.example ../.env
 # Edit ../.env: set MARIS_LLM_API_KEY to your DeepSeek/Claude/OpenAI key
 ```
 
-> The `.env` file is excluded from git via `.gitignore`. Never commit it. See `.env.example` for all available settings.
+> The `.env` file contains secrets (API keys, database passwords) and is excluded from git via `.gitignore`. Never commit it. See `.env.example` for all available settings.
+
+---
+
+## Data Provenance
+
+Every number displayed in the dashboard traces back to curated, DOI-backed source data. The dashboard does not generate or infer financial figures - it renders pre-computed and graph-queried values that originate from six curated datasets:
+
+| Data Source | File | What It Provides to the Dashboard |
+|-------------|------|-----------------------------------|
+| **Document Registry** | `.claude/registry/document_index.json` | 195 peer-reviewed papers (DOI, title, year, evidence tier) |
+| **Cabo Pulmo Case Study** | `examples/cabo_pulmo_case_study.json` | Site metadata, NEOLI assessment, ecosystem service values ($29.27M ESV), biomass recovery (4.63x), species data, trophic network |
+| **Bridge Axiom Templates** | `schemas/bridge_axiom_templates.json` | 12 axioms with translation coefficients and DOI-backed evidence |
+| **Entity Definitions** | `data/semantica_export/entities.jsonld` | 14 JSON-LD entities (Species, Habitats, Financial Instruments, Frameworks) |
+| **Curated Relationships** | `data/semantica_export/relationships.json` | 15 cross-domain edges with quantification and mechanism |
+| **Investment-Grade Bundle** | `demos/context_graph_demo/cabo_pulmo_investment_grade_bundle.json` | Pre-computed Monte Carlo results, risk scenarios, framework alignment (used by v1 static mode) |
+
+The v2 live mode queries these through the Neo4j graph (populated by `scripts/populate_neo4j.py`). The v1 static mode reads directly from the investment-grade bundle JSON.
+
+**Calibration site model:** Cabo Pulmo National Park is the fully characterized reference site with complete ecosystem service valuations. Comparison sites (Great Barrier Reef, Papahanaumokuakea) have governance metadata only (NEOLI score, area, asset rating) and do not have financial data in the current graph. See the [Developer Guide](../docs/developer_guide.md#calibration-site-model) for details on adding new sites.
+
+---
 
 ## Dashboard Architecture
 
@@ -86,20 +107,26 @@ cp ../.env.example ../.env
 | `api_client.py` | HTTP client wrapping MARIS API endpoints; auto-falls back to precomputed responses |
 | `precomputed_responses.json` | Cached responses for 5 common queries (fallback when API is offline) |
 
+---
+
 ## Strategic Architecture: "The Artifact is the Asset"
 
 The v1 dashboard uses a **static JSON bundle** rather than a live database connection - this is a deliberate architectural choice. In high-stakes investor contexts, zero latency and 100% uptime are non-negotiable. The bundle itself demonstrates that MARIS outputs are portable, immutable, and auditable.
 
-The v2 dashboard extends this with **live querying** - any question the investor asks is answered in real time with full provenance traced through the Neo4j knowledge graph. If the API is unreachable, the dashboard gracefully degrades to precomputed responses.
+The v2 dashboard extends this with **live querying** - any question the investor asks is answered in real time with full provenance traced through the Neo4j knowledge graph. If the API is unreachable, the dashboard gracefully degrades to precomputed responses, maintaining the zero-downtime guarantee.
+
+---
 
 ## Design Principles
 
 - **Dark mode**: Navy/slate palette (`#0B1120` background, `#162039` card gradient)
-- **No tabs**: Single-scroll page keeps the narrative flowing
-- **No emojis**: Professional, sober financial tone
-- **Provenance-first**: Every number traces to a DOI-backed source
-- **Market-price methodology**: Actual expenditure data, not willingness-to-pay
-- **Custom HTML/CSS**: All cards, KPIs, and tables use injected HTML for full visual control
+- **No tabs**: Single-scroll page keeps the narrative flowing from ecology to finance
+- **No emojis**: Professional, sober financial tone appropriate for institutional audiences
+- **Provenance-first**: Every number traces to a DOI-backed source through explicit bridge axioms
+- **Market-price methodology**: Actual expenditure data (not contingent valuation or willingness-to-pay)
+- **Custom HTML/CSS**: All cards, KPIs, and tables use injected HTML for precise visual control
+
+---
 
 ## Dependencies
 
@@ -109,6 +136,6 @@ Core: streamlit, plotly, numpy, pandas, networkx, requests
 
 ## Terminology
 
-- "NEOLI alignment" not "compliance" (we don't claim certification)
+- "NEOLI alignment" not "compliance" (the system does not claim NEOLI certification)
 - "market-price" not "NOAA-adjusted" for Cabo Pulmo tourism
-- ESV = $29.3M, Tourism = $25.0M, Biomass = 4.63x
+- ESV = $29.27M, Tourism = $25.0M, Biomass = 4.63x
