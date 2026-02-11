@@ -45,12 +45,12 @@ _METRIC_KEYWORDS = {
     "protection": r"\b(?:flood.?protect|coastal.?protect)\b",
 }
 
-# Common site name patterns
-_SITE_PATTERNS = [
-    r"\b(cabo\s+pulmo)\b",
-    r"\b(great\s+barrier\s+reef)\b",
-    r"\b(galapagos)\b",
-    r"\b(papah[aā]naumoku[aā]kea)\b",
+# Common site name patterns -> canonical Neo4j node names
+_SITE_PATTERNS: list[tuple[str, str]] = [
+    (r"\b(cabo\s+pulmo)\b", "Cabo Pulmo National Park"),
+    (r"\b(great\s+barrier\s+reef)\b", "Great Barrier Reef Marine Park"),
+    (r"\b(galapagos)\b", "Galapagos Marine Reserve"),
+    (r"\b(papah[aā]naumoku[aā]kea)\b", "Papah\u0101naumoku\u0101kea Marine National Monument"),
 ]
 
 
@@ -96,10 +96,9 @@ class QueryClassifier:
         return {"category": "site_valuation", "site": site, "metrics": metrics, "confidence": 0.3}
 
     def _extract_site(self, text: str) -> str | None:
-        for pat in _SITE_PATTERNS:
-            m = re.search(pat, text, re.IGNORECASE)
-            if m:
-                return m.group(1).title()
+        for pat, canonical in _SITE_PATTERNS:
+            if re.search(pat, text, re.IGNORECASE):
+                return canonical
         return None
 
     def _classify_with_llm(self, question: str, site: str | None, metrics: list[str]) -> dict:
