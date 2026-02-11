@@ -1,0 +1,28 @@
+# MARIS v2 Dependencies
+
+# Core
+neo4j>=5.15
+fastapi>=0.110
+uvicorn>=0.27
+pydantic>=2.5
+httpx>=0.26
+
+# Data processing
+PyMuPDF>=1.23
+numpy>=1.24
+pandas>=2.0
+
+# Embeddings (optional - for vector search)
+# sentence-transformers>=2.3
+
+# Visualization
+streamlit>=1.31
+plotly>=5.18
+networkx>=3.1
+
+# LLM (OpenAI-compatible client - works with DeepSeek, Claude, GPT-4)
+openai>=1.10
+
+# Testing
+pytest>=8.0
+pytest-asyncio>=0.23
