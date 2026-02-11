@@ -16,7 +16,7 @@
 
 This repository contains the **complete knowledge foundation** for a proof-of-concept knowledge graph system that bridges marine ecological science with blue finance frameworks. The goal: enable investors, asset managers, and conservation organizations to make data-driven decisions about marine natural capital with full scientific provenance.
 
-**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 12 fully-evidenced bridge axioms. An **interactive investor dashboard** (Streamlit) and **investment-grade analysis notebook** demonstrate the full MARIS workflow using Cabo Pulmo as a calibration site.
+**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 12 fully-evidenced bridge axioms. A **live MARIS v2 system** (Neo4j knowledge graph + FastAPI query engine + Streamlit dashboard) demonstrates the full end-to-end pipeline: natural language questions are classified, translated to Cypher, executed against the graph, and answered with full provenance and interactive graph visualization. The system also runs in static mode from a pre-computed JSON bundle for zero-downtime investor demos.
 
 **Implementation Timeline:** **8 weeks** - This POC follows a compressed 8-week implementation schedule focused on **Semantica integration** for entity extraction, relationship extraction, graph construction, and GraphRAG query execution. See [Implementation Roadmap](#implementation-roadmap) for detailed week-by-week breakdown.
 
@@ -333,6 +333,103 @@ semantica query "What explains Cabo Pulmo's biomass recovery?" --cite
 
 ---
 
+## MARIS v2 - Live Query System
+
+The v2 layer adds a **live knowledge graph and query engine** on top of the curated knowledge foundation. Users can ask natural-language questions and receive grounded answers with interactive provenance visualization.
+
+### Architecture
+
+```
+User Question (NL)
+        |
+   [Classifier]  -- keyword-first, LLM fallback
+        |
+   [Cypher Template]  -- 6 parameterized templates
+        |
+   [Neo4j Graph]  -- 878 nodes, 101 relationships
+        |
+   [LLM Synthesis]  -- DeepSeek/Claude/GPT-4 (configurable)
+        |
+   Answer + Evidence + Provenance Graph
+```
+
+**Stack:** Neo4j Community 5.x + FastAPI + Streamlit + OpenAI-compatible LLM
+
+### Prerequisites
+
+- **Python 3.11+** with `uv` (recommended) or `pip`
+- **Neo4j** - either [Neo4j Desktop](https://neo4j.com/download/) or Docker
+- **LLM API key** - DeepSeek (default), Claude, or OpenAI
+
+### Environment Setup
+
+```bash
+# 1. Copy the environment template and fill in your API key
+cp .env.example .env
+# Edit .env: set MARIS_LLM_API_KEY to your key
+
+# 2. Install dependencies
+uv venv .venv && source .venv/bin/activate
+uv pip install -r requirements-v2.txt
+```
+
+> **Security:** The `.env` file contains your API keys and is excluded from git via `.gitignore`. Never commit `.env` - use `.env.example` as the template.
+
+### Quick Start (Manual)
+
+```bash
+# 1. Start Neo4j (via Desktop or Docker)
+# Default: bolt://localhost:7687, user: neo4j, password: maris-dev
+
+# 2. Populate the knowledge graph
+python scripts/populate_neo4j.py
+
+# 3. Start the API server
+uvicorn maris.api.main:app --host 0.0.0.0 --port 8000
+
+# 4. Start the dashboard (in a separate terminal)
+cd investor_demo
+streamlit run streamlit_app_v2.py
+```
+
+### Quick Start (Docker Compose)
+
+```bash
+cp .env.example .env
+# Edit .env: set MARIS_LLM_API_KEY
+
+docker-compose up
+# Neo4j: http://localhost:7474
+# API:   http://localhost:8000
+# Dashboard: http://localhost:8501
+```
+
+### API Endpoints
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/api/health` | System health, Neo4j connectivity, graph stats |
+| POST | `/api/query` | Natural-language query with provenance |
+| GET | `/api/site/{name}` | Full site valuation with evidence |
+| GET | `/api/axiom/{id}` | Bridge axiom details and sources |
+| POST | `/api/compare` | Compare multiple sites |
+| POST | `/api/graph/traverse` | Multi-hop graph traversal |
+| GET | `/api/graph/node/{id}` | Single node with relationships |
+
+### Query Categories
+
+The classifier routes questions to parameterized Cypher templates:
+
+| Category | Triggers | Example |
+|----------|----------|---------|
+| `site_valuation` | value, worth, ESV, asset rating | "What is Cabo Pulmo worth?" |
+| `provenance_drilldown` | evidence, source, DOI, research | "What evidence backs the ESV?" |
+| `axiom_explanation` | bridge axiom, BA-001, coefficient | "Explain BA-002" |
+| `comparison` | compare, versus, rank | "Compare to other sites" |
+| `risk_assessment` | risk, climate, threat, decline | "What if protection fails?" |
+
+---
+
 ## Architecture Overview
 
 **Core Framework:** MARIS is built entirely on **Semantica** as the foundational platform for all operations:
@@ -399,10 +496,41 @@ semantica-poc/
 │
 ├── README.md                              # This file
 ├── CLAUDE.md                              # Claude Code instructions
-├── SYSTEM_OVERVIEW.md                     # Detailed architecture docs
 ├── SEMANTICA_HANDOFF_README.md            # Integration guide
-├── BUNDLE_CHECKLIST.md                    # Quick-start checklist
-├── Semantica_POC_Conceptual_Framework.md  # Full conceptual framework (35KB)
+├── .env.example                           # Environment template (copy to .env)
+├── docker-compose.yml                     # One-command deployment (Neo4j + API + Dashboard)
+├── requirements-v2.txt                    # Python dependencies for v2 stack
+│
+├── maris/                                 # ═══ MARIS v2 BACKEND ═══
+│   ├── api/                               # FastAPI application
+│   │   ├── main.py                        # App factory, CORS, router registration
+│   │   ├── models.py                      # Pydantic request/response schemas
+│   │   └── routes/                        # /health, /query, /graph endpoints
+│   ├── graph/                             # Neo4j integration
+│   │   ├── connection.py                  # Driver + session pooling
+│   │   ├── schema.py                      # Constraints and indexes
+│   │   ├── population.py                  # Populate from curated JSON assets
+│   │   └── validation.py                  # Post-population checks
+│   ├── query/                             # NL-to-Cypher pipeline
+│   │   ├── classifier.py                  # Intent detection (keyword + LLM)
+│   │   ├── cypher_templates.py            # 6 parameterized Cypher templates
+│   │   ├── executor.py                    # Template execution + provenance edges
+│   │   ├── generator.py                   # LLM response synthesis
+│   │   └── formatter.py                   # Evidence normalization
+│   ├── axioms/                            # Bridge axiom engine
+│   ├── llm/                               # OpenAI-compatible LLM adapter
+│   ├── ingestion/                         # PDF extraction + graph merging
+│   └── config.py                          # Centralized env-based configuration
+│
+├── investor_demo/                         # ═══ STREAMLIT DASHBOARD ═══
+│   ├── streamlit_app_v2.py                # v2 dashboard (live API + static bundle)
+│   ├── streamlit_app.py                   # v1 dashboard (static bundle only)
+│   ├── components/
+│   │   ├── chat_panel.py                  # Ask MARIS query interface
+│   │   └── graph_explorer.py              # Interactive provenance visualization
+│   ├── api_client.py                      # HTTP client for MARIS API
+│   ├── precomputed_responses.json         # Fallback responses for demo mode
+│   └── README.md                          # Dashboard architecture and usage
 │
 ├── schemas/                               # ═══ INGEST THESE FIRST ═══
 │   ├── entity_schema.json                 # 8 entity types (JSON-LD)
@@ -410,43 +538,31 @@ semantica-poc/
 │   └── bridge_axiom_templates.json        # 12 translation rules
 │
 ├── data/
-│   ├── document_manifest.json             # 195 papers, prioritized
-│   ├── papers/                            # Local fetch cache (gitignored)
-│   ├── sample_extractions/                # ═══ 5 CRITICAL PAPER EXTRACTIONS ═══
-│   │   ├── aburto_2011_extraction.json    # Cabo Pulmo 463% recovery
-│   │   ├── edgar_2014_extraction.json     # NEOLI framework
-│   │   ├── costanza_2014_extraction.json  # Global ES valuation ($125T)
-│   │   ├── hopf_2024_extraction.json      # No-take meta-analysis (2.7×)
-│   │   └── beck_2018_extraction.json      # Coral flood protection ($4B)
-│   └── semantica_export/                  # ═══ SEMANTICA-READY BUNDLE ═══
-│       ├── entities.jsonld                # 14 entities (JSON-LD)
-│       ├── relationships.json             # 15 relationships
-│       ├── bridge_axioms.json             # 12 axioms with evidence
-│       └── document_corpus.json           # Corpus summary
+│   ├── semantica_export/                  # ═══ SEMANTICA-READY BUNDLE ═══
+│   │   ├── entities.jsonld                # 14 entities (JSON-LD)
+│   │   ├── relationships.json             # 15 relationships
+│   │   ├── bridge_axioms.json             # 12 axioms with evidence
+│   │   └── document_corpus.json           # Corpus summary
+│   └── sample_extractions/                # 5 critical paper extractions
 │
-├── examples/
-│   ├── cabo_pulmo_case_study.json         # AAA reference (validation target)
-│   └── sample_queries.md                  # 11 GraphRAG query templates
-│
-├── investor_demo/
-│   ├── streamlit_app.py                   # Interactive investor dashboard (Streamlit)
-│   ├── requirements.txt                   # Dashboard dependencies
-│   ├── README.md                          # Dashboard architecture and usage
-│   └── demo_narrative.md                  # 10-minute pitch script
+├── scripts/
+│   ├── populate_neo4j.py                  # Graph population (schema + data)
+│   ├── demo_healthcheck.py                # Pre-demo system verification
+│   ├── validate_graph.py                  # Post-population integrity checks
+│   └── run_ingestion.py                   # PDF ingestion pipeline
 │
 ├── demos/context_graph_demo/
 │   ├── cabo_pulmo_investment_grade.ipynb   # Investment-grade analysis notebook
 │   └── cabo_pulmo_investment_grade_bundle.json  # Exported data bundle
 │
-└── .claude/                               # Agentic workflow system
-    ├── skills/                            # Domain knowledge
-    │   ├── literature-scout/              # Search & verification
-    │   └── kg-architect/                  # Schema design
-    ├── commands/                          # Workflow entry points
-    ├── agents/                            # Parallel execution specs
-    └── registry/                          # Document database
-        ├── document_index.json            # Master bibliography
-        └── reports/                       # Pipeline reports
+├── docs/
+│   ├── api_reference.md                   # FastAPI endpoint reference
+│   ├── developer_guide.md                 # Development setup and patterns
+│   └── user_guide.md                      # End-user query guide
+│
+└── examples/
+    ├── cabo_pulmo_case_study.json         # AAA reference (validation target)
+    └── sample_queries.md                  # 11 GraphRAG query templates
 ```
 
 ---
@@ -771,13 +887,24 @@ The dashboard is powered by a **static JSON bundle** (`cabo_pulmo_investment_gra
 
 ### Running the Dashboard
 
+**v2 (Live mode - recommended):** Requires Neo4j + API server running (see [MARIS v2 - Live Query System](#maris-v2---live-query-system)):
+
+```bash
+cd investor_demo
+streamlit run streamlit_app_v2.py
+```
+
+This adds **Ask MARIS** (natural-language query chat) and an **interactive Graph Explorer** showing provenance chains pulled live from Neo4j.
+
+**v1 (Static mode - fallback):** No external services needed:
+
 ```bash
 cd investor_demo
 pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-The sidebar includes a **confidence slider** (Conservative P5 / Base Case Median / Optimistic P95) that updates KPI values and highlights the Monte Carlo distribution accordingly.
+Both versions include a **confidence slider** (Conservative P5 / Base Case Median / Optimistic P95) that updates KPI values and highlights the Monte Carlo distribution.
 
 ### Investment-Grade Notebook
 
@@ -1052,6 +1179,21 @@ The system is designed to answer complex, multi-hop questions with full provenan
 | `ai_docs/RECONSTRUCTION_COMPLETE.md` | Pipeline reconstruction report |
 | `.claude/registry/document_index.json` | Full bibliography with metadata (195 papers) |
 
+### MARIS v2 System Files
+
+| File | Purpose |
+|------|---------|
+| `.env.example` | Environment configuration template (copy to `.env`) |
+| `docker-compose.yml` | One-command deployment (Neo4j + API + Dashboard) |
+| `requirements-v2.txt` | Python dependencies for v2 stack |
+| `maris/api/main.py` | FastAPI application factory |
+| `maris/api/models.py` | Pydantic request/response schemas |
+| `maris/query/cypher_templates.py` | 6 parameterized Cypher query templates |
+| `maris/graph/population.py` | Graph population from curated JSON assets |
+| `investor_demo/streamlit_app_v2.py` | v2 dashboard with live API integration |
+| `scripts/populate_neo4j.py` | Idempotent graph population script |
+| `scripts/demo_healthcheck.py` | Pre-demo system verification |
+
 ### Utility Scripts
 
 | Script | Purpose |
@@ -1059,8 +1201,6 @@ The system is designed to answer complex, multi-hop questions with full provenan
 | `scripts/validate_registry.py` | Validate registry structure and statistics |
 | `scripts/enrich_abstracts.py` | Fetch abstracts via CrossRef/OpenAlex/Semantic Scholar |
 | `scripts/add_papers_batch.py` | Batch paper addition to registry |
-| `.claude/skills/literature-scout/scripts/verify_url.py` | URL/DOI verification |
-| `.claude/skills/literature-scout/scripts/update_registry.py` | Registry management |
 
 ---
 

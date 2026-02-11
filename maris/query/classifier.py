@@ -19,8 +19,12 @@ _KEYWORD_RULES: list[tuple[str, list[str]]] = [
         r"\bwhat.+(?:evidence|research|study|studies)\b",
     ]),
     ("axiom_explanation", [
-        r"\b(?:bridge.?axiom|translat|mechanism|how does.+lead to|coefficient)\b",
+        r"\b(?:bridge.?axiom|axiom|coefficient)\b",
         r"\b(?:BA-\d{3})\b",
+    ]),
+    ("provenance_drilldown", [
+        r"\bhow does.+(?:translat|lead to|convert|become)\b",
+        r"\b(?:mechanism|translat)\b",
     ]),
     ("comparison", [
         r"\b(?:compar|versus|vs\.?|differ|rank|benchmark)\b",

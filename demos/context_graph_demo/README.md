@@ -67,7 +67,7 @@ Or run in VS Code with the Jupyter extension.
 | `cabo_pulmo_context_graph.ipynb` | Basic demo notebook |
 | `cabo_pulmo_investment_grade.ipynb` | Investment-grade analysis (recommended) |
 | `cabo_pulmo_decision_trace.json` | Exported decision trace (generated on run) |
-| `cabo_pulmo_investment_grade_bundle.json` | Full investment bundle (generated on run) |
+| `cabo_pulmo_investment_grade_bundle.json` | Full investment bundle (generated on run) - also used by the [investor dashboard](../../investor_demo/README.md) |
 | `README.md` | This file |
 
 ## Requirements

@@ -476,7 +476,7 @@ if not data:
 # API Client (lazy init, cached in session state)
 # ---------------------------------------------------------------------------
 if "maris_client" not in st.session_state:
-    from investor_demo.api_client import get_client
+    from api_client import get_client
     st.session_state.maris_client = get_client()
 
 client = st.session_state.maris_client
@@ -870,7 +870,7 @@ fig_prov.update_layout(
     font=dict(family="Inter", color="#CBD5E1"),
 )
 
-st.plotly_chart(fig_prov, use_container_width=True)
+st.plotly_chart(fig_prov, width="stretch")
 
 # Evidence table
 st.markdown('<div class="subsection-header">Bridge Axiom Evidence</div>', unsafe_allow_html=True)
@@ -921,7 +921,7 @@ with col_chart:
         paper_bgcolor="rgba(0,0,0,0)",
         font=dict(family="Inter", color="#CBD5E1"),
     )
-    st.plotly_chart(fig_bar, use_container_width=True)
+    st.plotly_chart(fig_bar, width="stretch")
 
 with col_ci:
     ci = data["financial_output"]["market_price_esv_ci_95_usd"]
@@ -991,7 +991,7 @@ fig_mc.update_layout(
     font=dict(family="Inter", color="#CBD5E1"),
 )
 
-st.plotly_chart(fig_mc, use_container_width=True)
+st.plotly_chart(fig_mc, width="stretch")
 
 # Risk factor cards
 rc1, rc2 = st.columns(2)
@@ -1085,8 +1085,8 @@ with fw2:
 st.markdown('<div class="section-header">Ask MARIS</div>', unsafe_allow_html=True)
 st.markdown('<div class="section-desc">Query the MARIS knowledge graph in natural language. Every answer traces through bridge axioms to peer-reviewed evidence. Use the quick queries below or type your own question.</div>', unsafe_allow_html=True)
 
-from investor_demo.components.chat_panel import render_chat_panel
-from investor_demo.components.graph_explorer import render_graph_explorer
+from components.chat_panel import render_chat_panel
+from components.graph_explorer import render_graph_explorer
 
 render_chat_panel(client)
 
@@ -1095,7 +1095,7 @@ if st.session_state.get("maris_chat_history"):
     latest = st.session_state.maris_chat_history[-1]
     graph_path = latest.get("response", {}).get("graph_path", [])
     if graph_path:
-        with st.expander("Graph Explorer - Traversal Visualization", expanded=False):
+        with st.expander("Graph Explorer - Traversal Visualization", expanded=True):
             render_graph_explorer(graph_path)
 
 # ---------------------------------------------------------------------------

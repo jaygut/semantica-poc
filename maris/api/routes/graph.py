@@ -113,9 +113,9 @@ def get_site(site_name: str):
             evidence.append(EvidenceItem(
                 doi=e["doi"],
                 doi_url=f"https://doi.org/{e['doi']}",
-                title=e.get("title", ""),
+                title=e.get("title") or "",
                 year=e.get("year"),
-                tier=e.get("tier", ""),
+                tier=e.get("tier") or "",
             ))
 
     return SiteResponse(

@@ -1,103 +1,223 @@
-# MARIS POC API Reference
-
-TIMELINE: Week 8 (Phase 4: Integration, Testing & Demo via Semantica)
-IMPLEMENTATION PRIORITY: Medium - Documentation for completed implementation
+# MARIS API Reference
 
 ## Overview
-This document provides API reference for all MARIS POC modules and functions. All core operations integrate with **Semantica** for entity extraction, relationship extraction, graph construction, and GraphRAG query execution.
 
-## Modules
+The MARIS API is a FastAPI server that exposes the Neo4j knowledge graph through a natural-language query pipeline. All endpoints are prefixed with `/api`.
 
-### maris.config
-Configuration management module:
-- Config class: Main configuration class with all settings
-- get_config(): Get global configuration instance
-- reload_config(): Reload configuration from files
+**Base URL:** `http://localhost:8000`
 
-### maris.semantica_integration
-**Semantica framework integration (CRITICAL - Used by all modules):**
-- SemanticaClient class: Main client for Semantica API
-- Methods: 
-  - Connection: connect(), authenticate(), health_check()
-  - Entity Extraction: extract_entities(), extract_entities_batch()
-  - Relationship Extraction: extract_relationships(), extract_relationships_batch()
-  - Graph Construction: build_graph(), add_entities_to_graph(), add_relationships_to_graph()
-  - Inference Rules: add_inference_rule(), get_inference_rules(), remove_inference_rule()
-  - Query: graphrag_query(), graphrag_query_with_context()
-  - Document Indexing: index_document(), index_documents_batch(), search_documents()
-  - Ontology: get_ontology(), validate_schema()
+## Endpoints
 
-### maris.entity_extractor
-Entity extraction pipeline (uses Semantica API):
-- EntityExtractor class: Extract entities from documents via Semantica
-- Methods: extract_from_document(), extract_batch(), validate_extraction(), generate_report()
-- Integration: All extraction calls routed through maris.semantica_integration.SemanticaClient
+### Health
 
-### maris.relationship_extractor
-Relationship extraction (uses Semantica API):
-- RelationshipExtractor class: Extract relationships from documents via Semantica
-- Methods: extract_from_document(), extract_batch(), build_trophic_network(), validate_extraction()
-- Integration: All extraction calls routed through maris.semantica_integration.SemanticaClient
+#### `GET /api/health`
 
-### maris.bridge_axiom_engine
-Bridge axiom application (uses Semantica inference rules):
-- BridgeAxiomEngine class: Apply bridge axioms as Semantica inference rules
-- Methods: load_axioms(), apply_axiom(), apply_chain(), validate_application()
-- Integration: Bridge axioms registered as Semantica inference rules via add_inference_rule()
+Returns system status including Neo4j connectivity, LLM availability, and graph statistics.
 
-### maris.query_engine
-GraphRAG query interface (uses Semantica GraphRAG):
-- QueryEngine class: Execute queries on knowledge graph via Semantica GraphRAG
-- Methods: query(), query_with_provenance(), generate_reasoning_path(), format_response()
-- Integration: All queries executed through Semantica GraphRAG interface (graphrag_query())
+**Response:**
+```json
+{
+  "status": "healthy",
+  "neo4j_connected": true,
+  "llm_available": true,
+  "graph_stats": {
+    "node_count": 878,
+    "edge_count": 101,
+    "node_types": {"MPA": 3, "EcosystemService": 12, "BridgeAxiom": 12, ...}
+  }
+}
+```
 
-### maris.graph_builder
-Knowledge graph construction (uses Semantica graph database):
-- GraphBuilder class: Build knowledge graph in Semantica's native graph database
-- Methods: build_graph(), add_entities(), add_relationships(), apply_axioms(), validate_graph()
-- Integration: Graph construction uses Semantica's native graph database (or Neo4j integration)
+### Query
 
-### maris.data_loader
-Data loading utilities:
-- DataLoader class: Load Semantica export bundle
-- Methods: load_entities(), load_relationships(), load_axioms(), load_corpus(), validate_data()
+#### `POST /api/query`
 
-### maris.document_processor
-Document ingestion (uses Semantica document indexing):
-- DocumentProcessor class: Ingest documents into Semantica document index
-- Methods: load_registry(), index_documents(), process_batch(), generate_report()
-- Integration: All document indexing via Semantica API (index_document(), index_documents_batch())
+Classify a natural-language question, execute the appropriate Cypher template, and return a grounded answer with provenance.
 
-### maris.provenance
-Provenance tracking:
-- ProvenanceTracker class: Track provenance for all data
-- Methods: create_provenance(), build_chain(), format_citation(), validate_completeness()
+**Request body:**
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `question` | string | required | Natural-language question |
+| `site` | string | null | Optional site name override (auto-extracted from question if omitted) |
+| `include_graph_path` | bool | false | Include structured provenance edges for graph visualization |
+| `max_evidence_sources` | int | 5 | Maximum evidence items to return |
 
-### maris.validators
-Validation utilities:
-- Validation functions: validate_entity_extraction(), validate_relationship_extraction(), validate_bridge_axiom(), validate_cabo_pulmo(), validate_provenance(), generate_validation_report()
+**Example:**
+```json
+{
+  "question": "What is Cabo Pulmo worth?",
+  "site": "Cabo Pulmo National Park",
+  "include_graph_path": true,
+  "max_evidence_sources": 3
+}
+```
 
-### maris.cli
-Command-line interface:
-- CLI commands: setup, load-data, index-docs, extract-entities, extract-relationships, apply-axioms, build-graph, query, validate, demo, status, export
+**Response:**
+```json
+{
+  "answer": "Cabo Pulmo National Park generates an estimated $29.27M...",
+  "confidence": 0.85,
+  "evidence": [
+    {
+      "doi": "10.1371/journal.pone.0023601",
+      "title": "Large Recovery of Fish Biomass...",
+      "year": 2011,
+      "tier": "T1",
+      "page_ref": null,
+      "quote": null
+    }
+  ],
+  "axioms_used": ["BA-001", "BA-002"],
+  "graph_path": [
+    {
+      "from_node": "Cabo Pulmo National Park",
+      "from_type": "MPA",
+      "relationship": "GENERATES",
+      "to_node": "Tourism",
+      "to_type": "EcosystemService"
+    }
+  ],
+  "caveats": ["Single-site study..."],
+  "query_metadata": {
+    "category": "site_valuation",
+    "classification_confidence": 0.75,
+    "template_used": "site_valuation",
+    "response_time_ms": 2340
+  }
+}
+```
 
-## Data Structures
+### Site
 
-### Entity Types
-- Species: Marine species with taxonomic and ecological attributes
-- Habitat: Marine habitat types (coral reef, kelp forest, etc.)
-- MarineProtectedArea: MPA with governance attributes
-- EcosystemService: Ecosystem services with valuation
-- FinancialInstrument: Blue finance instruments
-- DisclosureFramework: Sustainability disclosure frameworks
-- Observation: Scientific observations with provenance
-- BridgeAxiom: Translation rules between domains
+#### `GET /api/site/{site_name}`
+
+Retrieve structured data for a specific MPA.
+
+**Response (`SiteResponse`):**
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | string | Site name |
+| `area_km2` | float | Protected area size |
+| `designation_year` | int | Year of MPA designation |
+| `esv_usd` | float | Annual ecosystem service value |
+| `biomass_ratio` | float | Biomass recovery ratio |
+| `neoli_score` | int | NEOLI alignment score (0-5) |
+| `asset_rating` | string | Investment rating (e.g. "AA") |
+| `services` | list | Ecosystem service breakdown |
+
+### Axiom
+
+#### `GET /api/axiom/{axiom_id}`
+
+Retrieve details for a specific bridge axiom.
+
+**Response (`AxiomResponse`):**
+| Field | Type | Description |
+|-------|------|-------------|
+| `axiom_id` | string | Axiom identifier (e.g. "BA-001") |
+| `name` | string | Human-readable name |
+| `category` | string | Domain category |
+| `description` | string | Plain-English explanation |
+| `coefficients` | dict | Translation coefficients |
+| `evidence` | list | Supporting DOI citations |
+| `applicable_sites` | list | Sites where this axiom applies |
+
+### Compare
+
+#### `POST /api/compare`
+
+Compare multiple MPA sites side by side.
+
+**Request body:**
+```json
+{
+  "site_names": ["Cabo Pulmo National Park", "Papahanaumokuakea"]
+}
+```
+
+**Response (`CompareResponse`):**
+```json
+{
+  "sites": [
+    {"name": "Cabo Pulmo National Park", "esv_usd": 29270000, "biomass_ratio": 4.63, "neoli_score": 4},
+    {"name": "Papahanaumokuakea", "esv_usd": null, "biomass_ratio": null, "neoli_score": 5}
+  ]
+}
+```
+
+### Graph Traversal
+
+#### `POST /api/graph/traverse`
+
+Traverse the knowledge graph from a starting node.
+
+**Request body:**
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `start_name` | string | required | Name of the starting node |
+| `max_hops` | int | 3 | Maximum traversal depth |
+| `result_limit` | int | 50 | Maximum paths to return |
+
+#### `GET /api/graph/node/{element_id}`
+
+Retrieve properties and relationships for a specific node by its Neo4j element ID.
+
+## Query Categories
+
+The classifier maps natural-language questions into one of five categories, each backed by a Cypher template:
+
+| Category | Triggers | What It Returns |
+|----------|----------|-----------------|
+| `site_valuation` | "value", "worth", "ESV", "asset rating" | MPA metadata, services, axioms, evidence |
+| `provenance_drilldown` | "evidence", "provenance", "DOI", "source" | Documentation chain from MPA to sources (1-4 hops) |
+| `axiom_explanation` | "bridge axiom", "BA-001", "coefficient" | Axiom details, evidence, applicable sites, translated services |
+| `comparison` | "compare", "versus", "rank", "benchmark" | Side-by-side MPA metrics (ESV, biomass, NEOLI) |
+| `risk_assessment` | "risk", "degradation", "climate", "threat" | Ecological-to-service axioms, risk factors |
+
+## Graph Schema
+
+### Node Labels
+
+| Label | Key Properties | Description |
+|-------|----------------|-------------|
+| `MPA` | name, area_km2, designation_year, neoli_score, esv_usd | Marine Protected Area |
+| `EcosystemService` | service_name, value_usd, method | Valued ecosystem service |
+| `BridgeAxiom` | axiom_id, name, category, description | Ecological-to-financial translation rule |
+| `Document` | doi, title, year, tier | Peer-reviewed evidence source |
+| `Habitat` | name, condition | Marine habitat type |
+| `Species` | name, common_name, role | Marine species |
 
 ### Relationship Types
-- Ecological: PREYS_ON, CONTROLS_VIA_CASCADE, HABITAT_OF, CONNECTED_TO, INDICATOR_OF
-- Service: PROVIDES_SERVICE, DEPENDS_ON, QUANTIFIED_BY
-- Financial: INFORMS_INSTRUMENT, FUNDED_BY, REPORTS_TO, TRANSLATES_TO
-- Provenance: DERIVED_FROM, SUPPORTS_CLAIM, AGGREGATED_FROM
 
-### Bridge Axioms
-- BA-001 through BA-012: 12 translation rules with coefficients and evidence
+| Relationship | From | To | Description |
+|-------------|------|----|-------------|
+| `GENERATES` | MPA | EcosystemService | MPA produces this service |
+| `APPLIES_TO` | BridgeAxiom | MPA | Axiom is relevant to this site |
+| `TRANSLATES` | BridgeAxiom | EcosystemService | Axiom converts ecology to this service value |
+| `EVIDENCED_BY` | BridgeAxiom | Document | Axiom is backed by this citation |
+| `HAS_HABITAT` | MPA | Habitat | MPA contains this habitat type |
+
+## Error Handling
+
+All endpoints return standard HTTP status codes:
+
+| Code | Meaning |
+|------|---------|
+| 200 | Success |
+| 400 | Bad request (e.g. missing required site name) |
+| 500 | Internal error (e.g. Neo4j unreachable, Cypher execution failed) |
+
+Error responses include a `detail` field with a human-readable message.
+
+## Configuration
+
+The API reads all settings from environment variables. See `.env.example` for the full list. Key variables:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MARIS_API_HOST` | 0.0.0.0 | API bind address |
+| `MARIS_API_PORT` | 8000 | API port |
+| `MARIS_NEO4J_URI` | bolt://localhost:7687 | Neo4j connection URI |
+| `MARIS_LLM_PROVIDER` | deepseek | LLM provider (deepseek, anthropic, openai) |
+| `MARIS_LLM_API_KEY` | - | LLM API key (required) |
+| `MARIS_DEMO_MODE` | false | Use precomputed responses instead of live LLM |

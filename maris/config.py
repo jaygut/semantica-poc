@@ -6,6 +6,10 @@ from dataclasses import dataclass, field
 from os import getenv
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).parent.parent / ".env")
+
 
 @dataclass
 class MARISConfig:

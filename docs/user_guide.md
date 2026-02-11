@@ -1,64 +1,138 @@
-# MARIS POC User Guide
-
-TIMELINE: Week 8 (Phase 4: Integration, Testing & Demo via Semantica)
-IMPLEMENTATION PRIORITY: Medium - User documentation for completed system
+# MARIS User Guide
 
 ## Overview
-This guide explains how to use the MARIS POC system for marine ecological knowledge graph queries. The system is built on **Semantica** for entity extraction, relationship extraction, graph construction, and GraphRAG query execution.
 
-## Installation
-- Install Python dependencies from pyproject.toml
-- Configure Semantica API connection in config/config.yaml or .env
-- Set up graph database (Semantica native graph database recommended, or Neo4j integration)
+MARIS (Marine Asset Risk Intelligence System) translates ecological complexity into investment-grade natural capital assets. This guide covers day-to-day usage of the investor dashboard and the Ask MARIS query interface.
 
-## Quick Start
-1. Initialize system: `maris setup`
-2. Load Semantica export bundle: `maris load-data` (ingests entities, relationships, bridge axioms via Semantica API)
-3. Index documents in Semantica: `maris index-docs`
-4. Extract entities via Semantica: `maris extract-entities`
-5. Extract relationships via Semantica: `maris extract-relationships`
-6. Build graph in Semantica: `maris build-graph`
-7. Query via Semantica GraphRAG: `maris query "What explains Cabo Pulmo's recovery?"`
+## Getting Started
 
-## Common Workflows
+### Prerequisites
 
-### Full Pipeline Setup (All via Semantica)
-- Step 1: Load Semantica export bundle (entities.jsonld, relationships.json, bridge_axioms.json)
-- Step 2: Index document corpus in Semantica
-- Step 3: Extract entities from documents using Semantica API
-- Step 4: Extract relationships using Semantica API
-- Step 5: Register bridge axioms as Semantica inference rules
-- Step 6: Build knowledge graph in Semantica's native graph database
-- Step 7: Execute queries via Semantica GraphRAG interface
+- Python 3.11+
+- Neo4j Community 5.x running locally (or via Docker)
+- An LLM API key (DeepSeek, Claude, or OpenAI)
 
-### Query Examples
-- Impact assessment: "What happens if we establish a no-take MPA?"
-- Financial structuring: "What KPIs should a blue bond use?"
-- Site comparison: "Compare Cabo Pulmo vs Great Barrier Reef"
-- Mechanistic: "How does sea otter presence affect kelp carbon?"
+### First-Time Setup
 
-### Validation
-- Run Cabo Pulmo validation: `maris validate --cabo-pulmo`
-- Check extraction accuracy: `maris validate --extraction`
-- Full validation: `maris validate`
+1. **Configure your environment** - Copy the template and add your credentials:
 
-## Configuration
-- Edit config/config.yaml for default settings
-- Use .env file for sensitive credentials
-- Override with environment variables
+   ```bash
+   cp .env.example .env
+   # Edit .env: set MARIS_NEO4J_PASSWORD and MARIS_LLM_API_KEY
+   ```
 
-## Semantica Integration
+   > The `.env` file contains secrets and is excluded from git via `.gitignore`. Never share or commit it.
 
-All core operations use Semantica:
-- **Entity Extraction**: Uses Semantica API for extraction from documents
-- **Relationship Extraction**: Uses Semantica API for relationship identification
-- **Graph Construction**: Uses Semantica's native graph database
-- **Query Execution**: Uses Semantica GraphRAG interface for multi-hop reasoning
-- **Bridge Axioms**: Registered as Semantica inference rules
+2. **Populate the knowledge graph:**
+
+   ```bash
+   python scripts/populate_neo4j.py
+   ```
+
+3. **Start the API server:**
+
+   ```bash
+   uvicorn maris.api.main:app --host 0.0.0.0 --port 8000
+   ```
+
+4. **Start the dashboard:**
+
+   ```bash
+   cd investor_demo
+   streamlit run streamlit_app_v2.py
+   ```
+
+   The dashboard opens at `http://localhost:8501`.
+
+## Using the Dashboard
+
+### Layout
+
+The dashboard is a single-scroll page with these sections:
+
+| Section | What You See |
+|---------|-------------|
+| **Investment Thesis** | Three-paragraph overview of MARIS, Semantica, and context graphs |
+| **Key Metrics** | 4 KPI cards: Annual ESV, Biomass Recovery, NEOLI Score, Climate Buffer |
+| **Provenance Chain** | Fixed causal graph tracing site data through axioms to financial value |
+| **Bridge Axiom Evidence** | Table mapping 4 axioms to plain-English meanings and DOI citations |
+| **Valuation Composition** | Bar chart of ecosystem service breakdown with confidence intervals |
+| **Risk Profile** | Monte Carlo distribution (10,000 simulations) and risk scenario cards |
+| **Ask MARIS** | Natural-language query chat with provenance-backed answers |
+| **Graph Explorer** | Interactive network visualization of the knowledge graph |
+| **Comparison Sites** | Side-by-side NEOLI ratings for three reference MPAs |
+| **Framework Alignment** | IFC Blue Finance and TNFD LEAP alignment summary |
+| **Caveats** | All methodology caveats for transparency |
+
+### Sidebar
+
+- **Asset information** - Site name, area, designation year
+- **NEOLI alignment** - Breakdown of each NEOLI criterion with visual indicators
+- **Confidence slider** - Switch between Conservative (P5), Base Case (Median), and Optimistic (P95) scenarios
+- **Methodology note** - Data sources and methodology context
+
+### Confidence Levels
+
+The sidebar slider adjusts which Monte Carlo percentile is displayed:
+
+| Level | Percentile | Use Case |
+|-------|-----------|----------|
+| Conservative | P5 | Worst-case for risk assessment |
+| Base Case | Median | Central estimate for standard reporting |
+| Optimistic | P95 | Best-case for opportunity analysis |
+
+## Ask MARIS - Natural-Language Queries
+
+The Ask MARIS panel lets you ask questions about any site in the knowledge graph. Answers include confidence scores, supporting evidence with DOI links, and the bridge axioms used.
+
+### Example Questions
+
+| Question | What You Get |
+|----------|-------------|
+| "What is Cabo Pulmo worth?" | ESV breakdown with service-level values and methodology |
+| "What evidence supports the biomass recovery claim?" | DOI-backed provenance chain from ecological observation to financial output |
+| "Explain bridge axiom BA-001" | Plain-English explanation with coefficients, evidence sources, and applicable sites |
+| "Compare Cabo Pulmo with Papahanaumokuakea" | Side-by-side ESV, biomass, and NEOLI metrics |
+| "What are the risks if coral degrades?" | Risk scenarios with ecosystem service impact estimates |
+
+### Reading the Response
+
+Each answer includes:
+
+- **Confidence badge** - Green (high), amber (medium), or red (low) indicating answer reliability
+- **Axiom tags** - Which bridge axioms were used to derive the answer (e.g. BA-001, BA-002)
+- **Evidence table** - DOI citations with title, year, and evidence tier (T1 = peer-reviewed)
+- **Caveats** - Any methodological limitations that apply
+
+### Graph Explorer
+
+Below each query response (and in the dedicated Graph Explorer section), you can see an interactive network visualization showing:
+
+- **Blue nodes** (top) - Marine Protected Areas
+- **Green nodes** - Ecosystem Services
+- **Orange nodes** - Bridge Axioms
+- **Teal nodes** - Habitats
+- **Gray nodes** (bottom) - Source Documents (DOIs)
+
+Edges show the provenance relationships: which axioms apply to which sites, what services they translate to, and which documents provide evidence.
+
+## Offline / Static Mode
+
+If Neo4j or the API is unavailable, you can run the static dashboard:
+
+```bash
+cd investor_demo
+streamlit run streamlit_app.py
+```
+
+This uses a pre-computed JSON bundle and requires no external services. The Ask MARIS and Graph Explorer features are not available in static mode.
 
 ## Troubleshooting
-- Check Semantica API connection: `maris status --semantica`
-- Verify Semantica graph database connectivity
-- Review logs for Semantica API errors
-- Validate data integrity in Semantica
-- Check Semantica API rate limits and quotas
+
+| Symptom | Solution |
+|---------|----------|
+| Dashboard shows "API unreachable" | Ensure the API server is running: `curl http://localhost:8000/api/health` |
+| Neo4j connection refused | Check Neo4j is running and credentials in `.env` match |
+| LLM errors in Ask MARIS | Verify `MARIS_LLM_API_KEY` in `.env` is valid |
+| Empty graph explorer | Run `python scripts/populate_neo4j.py` to populate the graph |
+| Import errors on dashboard start | Run from inside `investor_demo/` directory: `cd investor_demo && streamlit run streamlit_app_v2.py` |

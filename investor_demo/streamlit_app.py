@@ -794,7 +794,7 @@ fig_prov.update_layout(
     font=dict(family="Inter", color="#CBD5E1"),
 )
 
-st.plotly_chart(fig_prov, use_container_width=True)
+st.plotly_chart(fig_prov, width="stretch")
 
 # Evidence table
 st.markdown('<div class="subsection-header">Bridge Axiom Evidence</div>', unsafe_allow_html=True)
@@ -845,7 +845,7 @@ with col_chart:
         paper_bgcolor="rgba(0,0,0,0)",
         font=dict(family="Inter", color="#CBD5E1"),
     )
-    st.plotly_chart(fig_bar, use_container_width=True)
+    st.plotly_chart(fig_bar, width="stretch")
 
 with col_ci:
     ci = data["financial_output"]["market_price_esv_ci_95_usd"]
@@ -915,7 +915,7 @@ fig_mc.update_layout(
     font=dict(family="Inter", color="#CBD5E1"),
 )
 
-st.plotly_chart(fig_mc, use_container_width=True)
+st.plotly_chart(fig_mc, width="stretch")
 
 # Risk factor cards
 rc1, rc2 = st.columns(2)

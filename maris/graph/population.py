@@ -2,12 +2,12 @@
 Populate Neo4j graph from existing curated data assets.
 
 Sources:
-  1. data/semantica_export/entities.jsonld        - 14 entities
-  2. data/semantica_export/relationships.json      - 15 relationships
-  3. data/semantica_export/bridge_axioms.json      - 12 axioms
-  4. data/semantica_export/document_corpus.json    - 195 doc metadata
-  5. examples/cabo_pulmo_case_study.json           - Full site data
-  6. schemas/bridge_axiom_templates.json           - Axiom coefficients
+  1. .claude/registry/document_index.json          - 195 doc metadata
+  2. data/semantica_export/entities.jsonld          - 14 entities
+  3. data/semantica_export/relationships.json       - 15 curated relationships
+  4. data/semantica_export/bridge_axioms.json       - 12 axioms (export)
+  5. schemas/bridge_axiom_templates.json            - 12 axioms (full coefficients)
+  6. examples/cabo_pulmo_case_study.json            - Full site data
 
 All operations use MERGE (idempotent).
 """
@@ -25,7 +25,7 @@ def _load_json(path: Path) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# 1. Document nodes (from registry + corpus)
+# 1. Document nodes (from registry)
 # ---------------------------------------------------------------------------
 def _populate_documents(session, cfg):
     """Create Document nodes from the document registry."""
@@ -35,9 +35,9 @@ def _populate_documents(session, cfg):
         return 0
 
     registry = _load_json(registry_path)
-    docs = registry.get("documents", [])
+    docs = registry.get("documents", {})
     count = 0
-    for doc in docs:
+    for doc_id, doc in docs.items():
         doi = doc.get("doi")
         if not doi:
             continue
@@ -60,7 +60,7 @@ def _populate_documents(session, cfg):
                 "domain": doc.get("domain", ""),
                 "url": doc.get("url", ""),
                 "abstract": doc.get("abstract", ""),
-                "doc_id": doc.get("id", ""),
+                "doc_id": doc_id,
             },
         )
         count += 1
@@ -69,7 +69,7 @@ def _populate_documents(session, cfg):
 
 
 # ---------------------------------------------------------------------------
-# 2. Species, Habitat, Framework, Concept, FinancialInstrument nodes
+# 2. Entity nodes (Species, MPA, Habitat, EcosystemService, etc.)
 # ---------------------------------------------------------------------------
 def _populate_entities(session, cfg):
     """Create entity nodes from entities.jsonld."""
@@ -361,31 +361,57 @@ def _populate_cabo_pulmo(session, cfg):
             )
             count += 1
 
-    # Create trophic links from food web
+    # Trophic network: use TrophicLevel nodes with correct PREYS_ON direction
+    # In the case study JSON, edges go from prey to predator (energy flow).
+    # PREYS_ON direction: predator -[:PREYS_ON]-> prey
     trophic = cs.get("trophic_network", {})
-    for edge in trophic.get("edges", []):
+    trophic_nodes = {n["id"]: n for n in trophic.get("nodes", [])}
+    for node_id, node in trophic_nodes.items():
         session.run(
             """
-            MERGE (a:TrophicNode {node_id: $from_id})
-            MERGE (b:TrophicNode {node_id: $to_id})
-            MERGE (a)-[:PREYS_ON]->(b)
+            MERGE (t:TrophicLevel {node_id: $node_id})
+            SET t.trophic_level    = $trophic_level,
+                t.functional_group = $functional_group
             """,
-            {"from_id": edge.get("from", ""), "to_id": edge.get("to", "")},
+            {
+                "node_id": node_id,
+                "trophic_level": node.get("trophic_level"),
+                "functional_group": node.get("functional_group", ""),
+            },
+        )
+    for edge in trophic.get("edges", []):
+        # "from" = prey, "to" = predator (energy flow direction in JSON)
+        # So predator PREYS_ON prey: (to)-[:PREYS_ON]->(from)
+        session.run(
+            """
+            MATCH (predator:TrophicLevel {node_id: $predator_id})
+            MATCH (prey:TrophicLevel {node_id: $prey_id})
+            MERGE (predator)-[:PREYS_ON]->(prey)
+            """,
+            {"predator_id": edge.get("to", ""), "prey_id": edge.get("from", "")},
         )
 
-    print(f"  Cabo Pulmo enrichment: {count} nodes/edges merged.")
+    # Link trophic levels to Cabo Pulmo MPA
+    session.run(
+        """
+        MATCH (t:TrophicLevel)
+        MATCH (m:MPA {name: "Cabo Pulmo National Park"})
+        MERGE (t)-[:PART_OF_FOODWEB]->(m)
+        """
+    )
+
+    print(f"  Cabo Pulmo enrichment: {count} nodes/edges merged + trophic network.")
     return count
 
 
 # ---------------------------------------------------------------------------
-# 4. Bridge Axiom nodes
+# 4. Bridge Axiom nodes with comprehensive links
 # ---------------------------------------------------------------------------
 def _populate_bridge_axioms(session, cfg):
-    """Create BridgeAxiom nodes from templates + export, link to evidence Documents."""
+    """Create BridgeAxiom nodes from templates + export, link to evidence, services, habitats."""
     templates = _load_json(cfg.schemas_dir / "bridge_axiom_templates.json")
     export = _load_json(cfg.export_dir / "bridge_axioms.json")
 
-    # Build a lookup from export for extra fields
     export_lookup = {a["axiom_id"]: a for a in export.get("bridge_axioms", [])}
     count = 0
 
@@ -393,7 +419,6 @@ def _populate_bridge_axioms(session, cfg):
         aid = axiom["axiom_id"]
         export_ax = export_lookup.get(aid, {})
 
-        # Serialize coefficients as JSON string for storage
         coefficients_json = json.dumps(axiom.get("coefficients", {}))
         caveats = axiom.get("caveats", [])
 
@@ -409,7 +434,9 @@ def _populate_bridge_axioms(session, cfg):
                 a.evidence_tier       = $tier,
                 a.caveats             = $caveats,
                 a.version             = "1.1",
-                a.confidence          = $confidence
+                a.confidence          = $confidence,
+                a.domain_from         = $domain_from,
+                a.domain_to           = $domain_to
             """,
             {
                 "axiom_id": aid,
@@ -422,13 +449,14 @@ def _populate_bridge_axioms(session, cfg):
                 "tier": axiom.get("evidence_tier", "T1"),
                 "caveats": caveats,
                 "confidence": export_ax.get("confidence", "high"),
+                "domain_from": export_ax.get("domain_from", ""),
+                "domain_to": export_ax.get("domain_to", ""),
             },
         )
         count += 1
 
         # Link axiom -> EVIDENCED_BY -> Document (by DOI)
-        sources = axiom.get("sources", [])
-        for src in sources:
+        for src in axiom.get("sources", []):
             doi = src.get("doi", "")
             if doi:
                 session.run(
@@ -447,7 +475,29 @@ def _populate_bridge_axioms(session, cfg):
                     },
                 )
 
-        # Link axiom -> APPLIES_TO -> MPA (Cabo Pulmo for applicable axioms)
+        # Link axiom -> APPLIES_TO_HABITAT -> Habitat (from applicable_habitats)
+        habitat_map = {
+            "coral_reef": "coral_reef",
+            "kelp_forest": "kelp_forest",
+            "mangrove_forest": "mangrove_forest",
+            "seagrass_meadow": "seagrass_meadow",
+        }
+        for hab_name in axiom.get("applicable_habitats", []):
+            hab_id = habitat_map.get(hab_name)
+            if hab_id:
+                session.run(
+                    """
+                    MATCH (a:BridgeAxiom {axiom_id: $axiom_id})
+                    MATCH (h:Habitat {habitat_id: $hab_id})
+                    MERGE (a)-[:APPLIES_TO_HABITAT]->(h)
+                    """,
+                    {"axiom_id": aid, "hab_id": hab_id},
+                )
+
+        # Link axiom -> APPLIES_TO -> MPA (Cabo Pulmo for relevant axioms)
+        # BA-001 (tourism), BA-002 (biomass), BA-004 (coastal protection),
+        # BA-011 (climate resilience), BA-012 (reef fisheries loss)
+        # are all directly applicable to Cabo Pulmo's coral reef ecosystem
         if aid in ("BA-001", "BA-002", "BA-004", "BA-011", "BA-012"):
             session.run(
                 """
@@ -458,10 +508,9 @@ def _populate_bridge_axioms(session, cfg):
                 {"axiom_id": aid},
             )
 
-        # Link axiom -> TRANSLATES -> EcosystemService (where applicable)
+        # Link axiom -> TRANSLATES -> EcosystemService
         svc_map = {
             "BA-001": "cabo_pulmo_tourism",
-            "BA-002": None,
             "BA-004": "cabo_pulmo_coastal_protection",
             "BA-006": "cabo_pulmo_fisheries_spillover",
             "BA-008": "cabo_pulmo_carbon_sequestration",
@@ -478,12 +527,250 @@ def _populate_bridge_axioms(session, cfg):
                 {"axiom_id": aid, "svc_id": svc_id},
             )
 
-    print(f"  BridgeAxioms: {count} merged with evidence links.")
+    print(f"  BridgeAxioms: {count} merged with evidence + habitat + service links.")
     return count
 
 
 # ---------------------------------------------------------------------------
-# 5. Comparison MPA sites (lightweight)
+# 5. Curated relationships from relationships.json
+# ---------------------------------------------------------------------------
+def _populate_relationships(session, cfg):
+    """Load the 15 curated cross-domain relationships from the export."""
+    data = _load_json(cfg.export_dir / "relationships.json")
+    rels = data.get("relationships", [])
+    count = 0
+
+    # Map relationship subject/object IDs to graph match patterns
+    # These are the @id values from entities.jsonld
+    node_lookup = {
+        "maris:neoli_criteria": ("Concept", "name", "NEOLI Criteria"),
+        "maris:cabo_pulmo_np": ("MPA", "name", "Cabo Pulmo National Park"),
+        "maris:coral_reef": ("Habitat", "habitat_id", "coral_reef"),
+        "maris:kelp_forest": ("Habitat", "habitat_id", "kelp_forest"),
+        "maris:seagrass_meadow": ("Habitat", "habitat_id", "seagrass_meadow"),
+        "maris:mangrove_forest": ("Habitat", "habitat_id", "mangrove_forest"),
+        "maris:flood_protection_coral": ("EcosystemService", "service_id", "flood_protection_coral"),
+        "maris:coastal_wetland_services": ("EcosystemService", "service_id", "coastal_wetland_services"),
+        "maris:blue_bond": ("FinancialInstrument", "instrument_id", "blue_bond"),
+        "maris:parametric_reef_insurance": ("FinancialInstrument", "instrument_id", "parametric_reef_insurance"),
+        "tnfd:leap": ("Framework", "framework_id", "tnfd_leap"),
+        "seea:ecosystem_accounting": ("Framework", "framework_id", "seea_ecosystem_accounting"),
+        "worms:281326": ("Species", "worms_id", 281326),
+        "worms:275789": ("Species", "worms_id", 275789),
+    }
+
+    for rel in rels:
+        subj_id = rel.get("subject", "")
+        obj_id = rel.get("object", "")
+        rel_type = rel.get("type", "RELATED_TO")
+        strength = rel.get("strength", "")
+        quantification = rel.get("quantification", "")
+        mechanism = rel.get("mechanism", "")
+        confidence = rel.get("confidence", "")
+
+        subj_info = node_lookup.get(subj_id)
+        obj_info = node_lookup.get(obj_id)
+
+        if subj_info and obj_info:
+            # Both sides are known entities - create typed relationship
+            s_label, s_key, s_val = subj_info
+            o_label, o_key, o_val = obj_info
+            session.run(
+                f"""
+                MATCH (s:{s_label} {{{s_key}: $s_val}})
+                MATCH (o:{o_label} {{{o_key}: $o_val}})
+                MERGE (s)-[r:{rel_type}]->(o)
+                SET r.quantification = $quant,
+                    r.mechanism      = $mechanism,
+                    r.confidence     = $confidence,
+                    r.strength       = $strength,
+                    r.rel_id         = $rel_id
+                """,
+                {
+                    "s_val": s_val,
+                    "o_val": o_val,
+                    "quant": quantification,
+                    "mechanism": mechanism if isinstance(mechanism, str) else json.dumps(mechanism),
+                    "confidence": confidence,
+                    "strength": strength,
+                    "rel_id": rel.get("id", ""),
+                },
+            )
+            count += 1
+        elif subj_info:
+            # Subject is known, object is an abstract concept - store as property
+            s_label, s_key, s_val = subj_info
+            session.run(
+                f"""
+                MATCH (s:{s_label} {{{s_key}: $s_val}})
+                MERGE (c:Concept {{name: $obj_name}})
+                MERGE (s)-[r:{rel_type}]->(c)
+                SET r.quantification = $quant,
+                    r.mechanism      = $mechanism,
+                    r.confidence     = $confidence,
+                    r.rel_id         = $rel_id
+                """,
+                {
+                    "s_val": s_val,
+                    "obj_name": obj_id.replace("_", " ").title() if "maris:" not in obj_id else obj_id,
+                    "quant": quantification,
+                    "mechanism": mechanism if isinstance(mechanism, str) else json.dumps(mechanism),
+                    "confidence": confidence,
+                    "rel_id": rel.get("id", ""),
+                },
+            )
+            count += 1
+
+        # Link relationship to source documents
+        sources = rel.get("sources", [])
+        if isinstance(rel.get("source"), str):
+            sources = [rel["source"]]
+        for source_id in sources:
+            # Try to match by doc_id pattern
+            session.run(
+                """
+                MATCH (d:Document)
+                WHERE d.doc_id STARTS WITH $source_prefix
+                WITH d LIMIT 1
+                MATCH (c:Concept {name: $concept_name})
+                MERGE (c)-[:CITED_IN]->(d)
+                """,
+                {
+                    "source_prefix": source_id.split("_")[0] if "_" in source_id else source_id,
+                    "concept_name": rel.get("object", "").replace("_", " ").title(),
+                },
+            )
+
+    print(f"  Curated relationships: {count} merged.")
+    return count
+
+
+# ---------------------------------------------------------------------------
+# 6. Cross-domain links (habitat-MPA, habitat-service, framework-MPA, etc.)
+# ---------------------------------------------------------------------------
+def _populate_cross_domain_links(session):
+    """Create the structural relationships that connect entity types."""
+    count = 0
+
+    # Cabo Pulmo HAS_HABITAT coral_reef (primary habitat)
+    session.run(
+        """
+        MATCH (m:MPA {name: "Cabo Pulmo National Park"})
+        MATCH (h:Habitat {habitat_id: "coral_reef"})
+        MERGE (m)-[:HAS_HABITAT]->(h)
+        """
+    )
+    count += 1
+
+    # Habitats PROVIDES ecosystem services (global relationships)
+    habitat_service_links = [
+        ("coral_reef", "flood_protection_coral", "Wave energy dissipation at reef crest (97%)"),
+        ("coral_reef", "cabo_pulmo_tourism", "Reef biodiversity drives dive tourism"),
+        ("coral_reef", "cabo_pulmo_coastal_protection", "Reef structure attenuates wave energy"),
+    ]
+    for hab_id, svc_id, mechanism in habitat_service_links:
+        session.run(
+            """
+            MATCH (h:Habitat {habitat_id: $hab_id})
+            MATCH (es:EcosystemService {service_id: $svc_id})
+            MERGE (h)-[r:PROVIDES]->(es)
+            SET r.mechanism = $mechanism
+            """,
+            {"hab_id": hab_id, "svc_id": svc_id, "mechanism": mechanism},
+        )
+        count += 1
+
+    # Species INHABITS Habitat
+    session.run(
+        """
+        MATCH (s:Species)
+        MATCH (h:Habitat {habitat_id: "coral_reef"})
+        MERGE (s)-[:INHABITS]->(h)
+        """
+    )
+    count += 1
+
+    # NEOLI Concept DETERMINES MPA effectiveness
+    session.run(
+        """
+        MATCH (c:Concept {name: "NEOLI Criteria"})
+        MATCH (m:MPA {name: "Cabo Pulmo National Park"})
+        MERGE (c)-[r:ASSESSED_BY]->(m)
+        SET r.score = 4,
+            r.rating = "4/5 criteria met"
+        """
+    )
+    count += 1
+
+    # Framework APPLICABLE_TO MPA assessments
+    session.run(
+        """
+        MATCH (fw:Framework {framework_id: "tnfd_leap"})
+        MATCH (m:MPA {name: "Cabo Pulmo National Park"})
+        MERGE (fw)-[r:APPLICABLE_TO]->(m)
+        SET r.alignment = "anticipates alignment with TNFD LEAP"
+        """
+    )
+    count += 1
+
+    session.run(
+        """
+        MATCH (fw:Framework {framework_id: "seea_ecosystem_accounting"})
+        MATCH (m:MPA {name: "Cabo Pulmo National Park"})
+        MERGE (fw)-[r:APPLICABLE_TO]->(m)
+        SET r.alignment = "ESV methodology aligned with SEEA EA"
+        """
+    )
+    count += 1
+
+    # Financial instruments APPLICABLE_TO marine conservation
+    session.run(
+        """
+        MATCH (fi:FinancialInstrument {instrument_id: "blue_bond"})
+        MATCH (m:MPA {name: "Cabo Pulmo National Park"})
+        MERGE (fi)-[r:APPLICABLE_TO]->(m)
+        SET r.mechanism = "Debt instrument for marine sustainability projects"
+        """
+    )
+    count += 1
+
+    session.run(
+        """
+        MATCH (fi:FinancialInstrument {instrument_id: "parametric_reef_insurance"})
+        MATCH (h:Habitat {habitat_id: "coral_reef"})
+        MERGE (fi)-[r:PROTECTS]->(h)
+        SET r.mechanism = "Wind speed triggered insurance for rapid reef restoration"
+        """
+    )
+    count += 1
+
+    # Framework GOVERNS FinancialInstrument
+    session.run(
+        """
+        MATCH (fw:Framework {framework_id: "tnfd_leap"})
+        MATCH (fi:FinancialInstrument {instrument_id: "blue_bond"})
+        MERGE (fw)-[r:GOVERNS]->(fi)
+        SET r.mechanism = "TNFD disclosure framework for blue finance instruments"
+        """
+    )
+    count += 1
+
+    # Link comparison MPAs to habitats
+    session.run(
+        """
+        MATCH (m:MPA {name: "Great Barrier Reef Marine Park"})
+        MATCH (h:Habitat {habitat_id: "coral_reef"})
+        MERGE (m)-[:HAS_HABITAT]->(h)
+        """
+    )
+    count += 1
+
+    print(f"  Cross-domain links: {count} merged.")
+    return count
+
+
+# ---------------------------------------------------------------------------
+# 7. Comparison MPA sites
 # ---------------------------------------------------------------------------
 def _populate_comparison_sites(session):
     """Add comparison MPA sites for the demo."""
@@ -525,7 +812,7 @@ def _populate_comparison_sites(session):
 
 
 # ---------------------------------------------------------------------------
-# 6. Provenance edges from case study
+# 8. Provenance edges from case study
 # ---------------------------------------------------------------------------
 def _populate_provenance(session, cfg):
     """Create DERIVED_FROM edges linking MPA to source documents."""
@@ -533,22 +820,52 @@ def _populate_provenance(session, cfg):
     count = 0
     for src in cs.get("provenance", {}).get("data_sources", []):
         doi = src.get("doi", "")
-        if doi:
-            session.run(
-                """
-                MATCH (m:MPA {name: "Cabo Pulmo National Park"})
-                MERGE (d:Document {doi: $doi})
-                MERGE (m)-[r:DERIVED_FROM]->(d)
-                SET r.data_type   = $data_type,
-                    r.access_date = $access_date
-                """,
-                {
-                    "doi": doi,
-                    "data_type": src.get("data_type", ""),
-                    "access_date": src.get("access_date", ""),
-                },
-            )
-            count += 1
+        # Skip placeholder DOIs
+        if not doi or "xxxx" in doi:
+            continue
+        session.run(
+            """
+            MATCH (m:MPA {name: "Cabo Pulmo National Park"})
+            MERGE (d:Document {doi: $doi})
+            MERGE (m)-[r:DERIVED_FROM]->(d)
+            SET r.data_type   = $data_type,
+                r.access_date = $access_date
+            """,
+            {
+                "doi": doi,
+                "data_type": src.get("data_type", ""),
+                "access_date": src.get("access_date", ""),
+            },
+        )
+        count += 1
+
+    # Also link to key provenance documents from case study sources
+    neoli_doi = cs.get("neoli_assessment", {}).get("source", {}).get("doi", "")
+    if neoli_doi:
+        session.run(
+            """
+            MATCH (m:MPA {name: "Cabo Pulmo National Park"})
+            MERGE (d:Document {doi: $doi})
+            MERGE (m)-[r:DERIVED_FROM]->(d)
+            SET r.data_type = "NEOLI assessment"
+            """,
+            {"doi": neoli_doi},
+        )
+        count += 1
+
+    recovery_doi = cs.get("ecological_recovery", {}).get("source", {}).get("doi", "")
+    if recovery_doi:
+        session.run(
+            """
+            MATCH (m:MPA {name: "Cabo Pulmo National Park"})
+            MERGE (d:Document {doi: $doi})
+            MERGE (m)-[r:DERIVED_FROM]->(d)
+            SET r.data_type = "Recovery field data"
+            """,
+            {"doi": recovery_doi},
+        )
+        count += 1
+
     print(f"  Provenance edges: {count} merged.")
     return count
 
@@ -571,6 +888,8 @@ def populate_graph():
         total += _populate_cabo_pulmo(session, cfg)
         total += _populate_bridge_axioms(session, cfg)
         total += _populate_comparison_sites(session)
+        total += _populate_relationships(session, cfg)
+        total += _populate_cross_domain_links(session)
         total += _populate_provenance(session, cfg)
 
     print("=" * 60)

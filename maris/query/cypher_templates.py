@@ -126,10 +126,13 @@ TEMPLATES: dict[str, dict] = {
     "graph_traverse": {
         "name": "graph_traverse",
         "category": "utility",
+        # NOTE: max_hops is substituted via str.replace in executor (Neo4j
+        # does not allow parameters in variable-length path bounds).
         "cypher": """
             MATCH (start)
             WHERE start.name = $start_name
-            MATCH path = (start)-[*1..$max_hops]-(end)
+            MATCH path = (start)-[*1..MAX_HOPS_PLACEHOLDER]-(end)
+            WHERE NOT end:Document
             WITH path, end, [n IN nodes(path) | {labels: labels(n), name: n.name}] AS node_list,
                  [r IN relationships(path) | type(r)] AS rel_list
             RETURN node_list, rel_list

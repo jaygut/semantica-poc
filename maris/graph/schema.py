@@ -13,9 +13,11 @@ SCHEMA_STATEMENTS = [
     "CREATE CONSTRAINT service_id IF NOT EXISTS FOR (es:EcosystemService) REQUIRE es.service_id IS UNIQUE",
     "CREATE CONSTRAINT instrument_id IF NOT EXISTS FOR (fi:FinancialInstrument) REQUIRE fi.instrument_id IS UNIQUE",
     "CREATE CONSTRAINT framework_id IF NOT EXISTS FOR (fw:Framework) REQUIRE fw.framework_id IS UNIQUE",
+    "CREATE CONSTRAINT trophic_node_id IF NOT EXISTS FOR (t:TrophicLevel) REQUIRE t.node_id IS UNIQUE",
 
     # ===== INDEXES =====
     "CREATE INDEX document_tier IF NOT EXISTS FOR (d:Document) ON (d.source_tier)",
+    "CREATE INDEX document_domain IF NOT EXISTS FOR (d:Document) ON (d.domain)",
     "CREATE INDEX species_name IF NOT EXISTS FOR (s:Species) ON (s.scientific_name)",
     "CREATE INDEX mpa_neoli IF NOT EXISTS FOR (m:MPA) ON (m.neoli_score)",
 

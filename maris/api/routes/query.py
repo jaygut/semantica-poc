@@ -59,7 +59,11 @@ def query(request: QueryRequest):
         if m:
             params["axiom_id"] = m.group(0)
         else:
-            raise HTTPException(status_code=400, detail="Axiom ID (e.g. BA-001) required for axiom explanation queries.")
+            # No axiom ID found - fall back to provenance_drilldown with site context
+            category = "provenance_drilldown"
+            if not site:
+                site = "Cabo Pulmo National Park"
+            params["site_name"] = site
     elif category == "comparison":
         if site:
             params["site_names"] = [site]
@@ -81,6 +85,11 @@ def query(request: QueryRequest):
     # 5. Format
     formatted = format_response(raw)
 
+    # 6. Build structured graph_path from actual Neo4j traversal (not LLM text)
+    graph_path = []
+    if request.include_graph_path:
+        graph_path = _executor.get_provenance_edges(category, params)
+
     elapsed_ms = int((time.monotonic() - start) * 1000)
 
     evidence = [EvidenceItem(**e) for e in formatted["evidence"][:request.max_evidence_sources]]
@@ -90,7 +99,7 @@ def query(request: QueryRequest):
         confidence=formatted["confidence"],
         evidence=evidence,
         axioms_used=formatted["axioms_used"],
-        graph_path=formatted["graph_path"] if request.include_graph_path else [],
+        graph_path=graph_path,
         caveats=formatted["caveats"],
         query_metadata=QueryMetadata(
             category=category,

@@ -1,6 +1,7 @@
 # MARIS v2 Dependencies
 
 # Core
+python-dotenv>=1.0
 neo4j>=5.15
 fastapi>=0.110
 uvicorn>=0.27
