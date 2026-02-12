@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "MARIS x Semantica POC - Marine Asset Risk Intelligence System"
 readme = "SEMANTICA_HANDOFF_README.md"
 requires-python = ">=3.10"
+# NOTE: requirements-v2.txt is the primary dependency file with pinned versions.
+# This section is kept for compatibility with pip/uv editable installs.
 dependencies = [
     "requests>=2.31.0",
     "urllib3>=2.0.0",
@@ -13,9 +15,11 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0.0",
-    "black>=23.0.0",
-    "ruff>=0.1.0",
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "httpx>=0.26",
+    "ruff>=0.8",
+    "pytest-cov>=4.0",
 ]
 
 [project.scripts]
@@ -29,9 +33,19 @@ build-backend = "setuptools.build_meta"
 packages = ["scripts"]
 include-package-data = false
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
 [tool.uv]
 dev-dependencies = [
-    "pytest>=7.0.0",
-    "black>=23.0.0",
-    "ruff>=0.1.0",
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "httpx>=0.26",
+    "ruff>=0.8",
+    "pytest-cov>=4.0",
 ]

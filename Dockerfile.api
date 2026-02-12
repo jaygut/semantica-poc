@@ -1,0 +1,31 @@
+# MARIS API - Multi-stage Dockerfile
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+COPY requirements-v2.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements-v2.txt
+
+FROM python:3.11-slim AS runtime
+
+# Non-root user
+RUN groupadd -r maris && useradd -r -g maris -d /app -s /sbin/nologin maris
+
+WORKDIR /app
+
+COPY --from=builder /install /usr/local
+
+# Copy application code and data
+COPY maris/ maris/
+COPY scripts/ scripts/
+COPY data/ data/
+COPY schemas/ schemas/
+COPY examples/ examples/
+COPY .claude/registry/ .claude/registry/
+
+RUN chown -R maris:maris /app
+
+USER maris
+
+EXPOSE 8000
+
+CMD ["uvicorn", "maris.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

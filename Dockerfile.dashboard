@@ -1,0 +1,27 @@
+# MARIS Dashboard - Multi-stage Dockerfile
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+COPY requirements-v2.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements-v2.txt
+
+FROM python:3.11-slim AS runtime
+
+# Non-root user
+RUN groupadd -r maris && useradd -r -g maris -d /app -s /sbin/nologin maris
+
+WORKDIR /app
+
+COPY --from=builder /install /usr/local
+
+# Copy dashboard and demo data
+COPY investor_demo/ investor_demo/
+COPY demos/ demos/
+
+RUN chown -R maris:maris /app
+
+USER maris
+
+EXPOSE 8501
+
+CMD ["streamlit", "run", "investor_demo/streamlit_app_v2.py", "--server.port", "8501", "--server.address", "0.0.0.0"]

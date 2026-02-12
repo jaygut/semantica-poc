@@ -8,7 +8,7 @@ services:
       - "7474:7474"  # HTTP browser
       - "7687:7687"  # Bolt protocol
     environment:
-      NEO4J_AUTH: neo4j/maris-dev
+      NEO4J_AUTH: neo4j/${MARIS_NEO4J_PASSWORD}
       NEO4J_PLUGINS: '[]'
       NEO4J_server_memory_heap_initial__size: 512m
       NEO4J_server_memory_heap_max__size: 1G
@@ -16,10 +16,30 @@ services:
       - neo4j_data:/data
       - neo4j_logs:/logs
     healthcheck:
-      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "maris-dev", "RETURN 1"]
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "${MARIS_NEO4J_PASSWORD}", "RETURN 1"]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: on-failure:3
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+
+  graph-init:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: maris-graph-init
+    environment:
+      MARIS_NEO4J_URI: bolt://neo4j:7687
+      MARIS_NEO4J_USER: neo4j
+      MARIS_NEO4J_PASSWORD: ${MARIS_NEO4J_PASSWORD}
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    command: ["python", "scripts/populate_neo4j.py"]
+    restart: "no"
 
   api:
     build:
@@ -31,16 +51,29 @@ services:
     environment:
       MARIS_NEO4J_URI: bolt://neo4j:7687
       MARIS_NEO4J_USER: neo4j
-      MARIS_NEO4J_PASSWORD: maris-dev
+      MARIS_NEO4J_PASSWORD: ${MARIS_NEO4J_PASSWORD}
       MARIS_LLM_PROVIDER: ${MARIS_LLM_PROVIDER:-deepseek}
       MARIS_LLM_API_KEY: ${MARIS_LLM_API_KEY:-}
       MARIS_LLM_BASE_URL: ${MARIS_LLM_BASE_URL:-https://api.deepseek.com/v1}
       MARIS_LLM_MODEL: ${MARIS_LLM_MODEL:-deepseek-chat}
+      MARIS_API_KEY: ${MARIS_API_KEY:-}
+      MARIS_DEMO_MODE: ${MARIS_DEMO_MODE:-false}
     depends_on:
       neo4j:
         condition: service_healthy
-    command: >
-      sh -c "python scripts/populate_neo4j.py && uvicorn maris.api.main:app --host 0.0.0.0 --port 8000"
+      graph-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: on-failure:3
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   dashboard:
     build:
@@ -52,8 +85,19 @@ services:
     environment:
       MARIS_API_URL: http://api:8000
     depends_on:
-      - api
-    command: streamlit run investor_demo/streamlit_app_v2.py --server.port 8501 --server.address 0.0.0.0
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: on-failure:3
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
 volumes:
   neo4j_data:

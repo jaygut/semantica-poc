@@ -1,0 +1,11 @@
+.env
+.git
+.venv
+__pycache__
+tests/
+*.pyc
+.claude/
+ai_docs/
+*.md
+!investor_demo/*.md
+.github/

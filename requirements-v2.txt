@@ -1,12 +1,18 @@
 # MARIS v2 Dependencies
+# This is the primary requirements file. pyproject.toml exists for legacy
+# compatibility but requirements-v2.txt is the source of truth for pinned deps.
 
 # Core
 python-dotenv>=1.0
-neo4j>=5.15
-fastapi>=0.110
+neo4j==5.27.0
+fastapi==0.115.6
 uvicorn>=0.27
-pydantic>=2.5
+pydantic==2.10.4
 httpx>=0.26
+
+# HTTP (used by enrich scripts, API client)
+requests>=2.31
+urllib3>=2.0
 
 # Data processing
 PyMuPDF>=1.23
@@ -17,13 +23,12 @@ pandas>=2.0
 # sentence-transformers>=2.3
 
 # Visualization
-streamlit>=1.31
+streamlit==1.41.1
 plotly>=5.18
 networkx>=3.1
 
 # LLM (OpenAI-compatible client - works with DeepSeek, Claude, GPT-4)
-openai>=1.10
+openai==1.59.9
 
-# Testing
-pytest>=8.0
-pytest-asyncio>=0.23
+# Rate limiting
+slowapi>=0.1.9
