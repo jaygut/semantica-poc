@@ -14,7 +14,7 @@ Every year, billions of dollars in potential conservation finance sits on the si
 
 *"How do I know this marine conservation project will actually deliver ecological and financial returns?"*
 
-The data exists—scattered across thousands of scientific papers, databases, and monitoring programs. But it's fragmented, incompatible, and often incomprehensible to financial decision-makers.
+The data exists - scattered across thousands of scientific papers, databases, and monitoring programs. But it's fragmented, incompatible, and often incomprehensible to financial decision-makers.
 
 **We've built the bridge.**
 
@@ -67,9 +67,9 @@ Ecological Data → Ecosystem Services → Financial Metrics
 - Every fact linked to source with SHA-256 checksums
 
 **Step 2: Bridge Axioms**
-- We've identified 12 core "translation rules" that connect ecology to finance
+- We've identified 16 core "translation rules" that connect ecology to finance
 - Example: Beck et al. 2018 shows coral reefs prevent $272 billion in annual flood damages
-- Example: Hopf et al. 2024 shows no-take MPAs achieve 670% higher fish biomass
+- Example: Hopf et al. 2024 shows no-take MPAs achieve biomass 670% of unprotected levels (6.70x ratio)
 
 **Step 3: GraphRAG Queries**
 - Ask natural language questions

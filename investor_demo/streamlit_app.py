@@ -441,7 +441,7 @@ AXIOM_INFO = {
         "citation": "Marcos-Castillo et al. 2024",
     },
     "BA-002": {
-        "meaning": "No-take marine reserves accumulate 670% higher fish biomass compared to unprotected areas",
+        "meaning": "No-take marine reserves accumulate biomass to 670% of unprotected levels (global meta-analysis of 82 MPAs; Cabo Pulmo observed 463%)",
         "citation": "Hopf et al. 2024",
     },
     "BA-011": {
@@ -669,7 +669,7 @@ node_map = {n[0]: (n[2], n[3]) for n in nodes}
 edges = [
     ("site",      "neoli",      "assessed as", False),
     ("site",      "biomass",    "observed", False),
-    ("neoli",     "biomass",    "BA-002: No-take reserves\naccumulate 670% biomass", True),
+    ("neoli",     "biomass",    "BA-002: No-take reserves\naccumulate 4.63x biomass", True),
     ("biomass",   "tourism",    "BA-001: Biomass drives\ntourism value (+84% WTP)", True),
     ("biomass",   "fisheries",  "Spillover to\nadjacent fisheries", False),
     ("biomass",   "carbon",     "Reef-associated\nblue carbon", False),

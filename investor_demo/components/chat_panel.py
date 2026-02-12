@@ -258,7 +258,7 @@ def _confidence_breakdown_html(breakdown: dict) -> str:
     for label, key in factors:
         val = breakdown.get(key, 0.0)
         pct = int(val * 100)
-        bar_color = "#66BB6A" if val >= 0.8 else "#FFA726" if val >= 0.5 else "#EF5350"
+        bar_color = "#66BB6A" if val >= 0.8 else "#FFA726" if val >= 0.6 else "#EF5350"
         rows += (
             f"<tr>"
             f'<td style="padding:6px 12px;color:#94A3B8;font-size:13px;border-bottom:1px solid #1E2D48">{label}</td>'

@@ -505,7 +505,7 @@ AXIOM_INFO = {
         "citation": "Marcos-Castillo et al. 2024",
     },
     "BA-002": {
-        "meaning": "No-take marine reserves accumulate 670% higher fish biomass compared to unprotected areas",
+        "meaning": "No-take marine reserves accumulate biomass to 670% of unprotected levels (global meta-analysis of 82 MPAs; Cabo Pulmo observed 463%)",
         "citation": "Hopf et al. 2024",
     },
     "BA-011": {
@@ -517,8 +517,8 @@ AXIOM_INFO = {
         "citation": "Rogers et al. 2018",
     },
     "BA-013": {
-        "meaning": "Seagrass meadows sequester carbon at 0.84 tCO2/ha/yr, 35x faster than tropical rainforests",
-        "citation": "Mazarrasa et al. 2025",
+        "meaning": "Seagrass meadows sequester carbon at 0.84 tCO2/ha/yr through sediment burial of approximately 20% of net primary production",
+        "citation": "Gomis et al. 2025",
     },
     "BA-014": {
         "meaning": "Blue carbon sequestration generates tradeable credits at $15-50 per tCO2 under voluntary market standards",
@@ -552,16 +552,30 @@ with st.sidebar:
             unsafe_allow_html=True,
         )
 
-    # Asset info
+    # Dual-site architecture
+    st.markdown("### Characterized Sites")
     site = data["site"]
     neoli = data["ecological_status"]
     st.markdown(f"""
 **{site['name']}**
-{site['country']} - {site['area_km2']} km2
-Established {site['designation_year']}
+{site['country']} - {site['area_km2']} km2 - Est. {site['designation_year']}
+Tourism-dominant - $29.27M ESV
 """)
+    st.markdown("""
+**Shark Bay World Heritage Area**
+Australia - 23,000 km2 - Est. 1991
+Carbon-dominant - $21.5M ESV
+""")
+    st.markdown(
+        '<div style="font-size:13px;color:#94A3B8;line-height:1.5;margin-top:4px;margin-bottom:16px;'
+        'padding:10px 12px;background:rgba(91,155,213,0.08);border-radius:6px;border:1px solid rgba(91,155,213,0.15)">'
+        'Dual-site architecture proves the framework is habitat-agnostic: '
+        'coral reef (tourism) vs seagrass (carbon).'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
-    # NEOLI breakdown
+    # NEOLI breakdown (Cabo Pulmo - the primary dashboard site)
     st.markdown("### NEOLI Alignment")
     breakdown = neoli["neoli_breakdown"]
     neoli_items = [
@@ -590,6 +604,7 @@ Established {site['designation_year']}
     st.markdown(f"<span style='font-size:13px;color:#64748B'>Methodology: {data['metadata']['methodology']}</span>", unsafe_allow_html=True)
     st.markdown(f"<span style='font-size:13px;color:#64748B'>Generated: {data['metadata']['generated_at'].split('T')[0]}</span>", unsafe_allow_html=True)
     st.markdown(f"<span style='font-size:13px;color:#64748B'>Schema: v{data['metadata']['maris_schema_version']}</span>", unsafe_allow_html=True)
+    st.markdown("<span style='font-size:13px;color:#64748B'>Sites: 2 characterized, 2 comparison</span>", unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
 # Compute selected scenario value
@@ -761,7 +776,7 @@ node_map = {n[0]: (n[2], n[3]) for n in nodes}
 edges = [
     ("site",      "neoli",      "assessed as", False),
     ("site",      "biomass",    "observed", False),
-    ("neoli",     "biomass",    "BA-002: No-take reserves\naccumulate 670% biomass", True),
+    ("neoli",     "biomass",    "BA-002: No-take reserves\naccumulate 4.63x biomass", True),
     ("biomass",   "tourism",    "BA-001: Biomass drives\ntourism value (+84% WTP)", True),
     ("biomass",   "fisheries",  "Spillover to\nadjacent fisheries", False),
     ("biomass",   "carbon",     "Reef-associated\nblue carbon", False),

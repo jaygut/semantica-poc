@@ -18,8 +18,9 @@ def render_roadmap_section():
     )
     st.markdown(
         '<div class="section-desc">'
-        "Cabo Pulmo demonstrates the full provenance chain for one deeply "
-        "characterized site. The same infrastructure scales to any marine "
+        "Cabo Pulmo and Shark Bay demonstrate the full provenance chain for two "
+        "deeply characterized sites with contrasting ESV profiles - tourism-dominant "
+        "versus carbon-dominant. The same infrastructure scales to any marine "
         "habitat by ingesting authoritative global databases and applying "
         "bridge axiom translation automatically."
         "</div>",
@@ -145,7 +146,7 @@ infrastructure for this layer.
 <li><strong>Confidence intervals</strong> &middot; 95% CI on every output</li>
 </ul>
 <p style="margin-top:12px;color:#94A3B8;font-size:15px">
-12 axioms today, extensible to any marine habitat type.
+16 axioms today, extensible to any marine habitat type.
 </p>
 </div>
 """,
@@ -184,9 +185,9 @@ No public database provides this layer.
             """
 <div class="risk-card risk-card-green" style="height:100%">
 <h4>Phase 1 &middot; Reference Site (Current)</h4>
-<p><strong>1 fully characterized site</strong> with complete provenance
-from field measurement to financial output. 195 papers, 12 bridge
-axioms, 878 graph nodes.</p>
+<p><strong>2 fully characterized sites</strong> with complete provenance
+from field measurement to financial output. 195 papers, 16 bridge
+axioms, 893 graph nodes.</p>
 </div>
 """,
             unsafe_allow_html=True,

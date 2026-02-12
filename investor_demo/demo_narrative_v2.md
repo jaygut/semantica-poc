@@ -86,7 +86,7 @@ Then scroll to framework alignment section:
 
 ## 8:30 - 9:30 | The Differentiator
 
-> "What you've seen today isn't another LLM wrapper putting a chat interface on unstructured data. The intelligence comes from the knowledge graph - 12 bridge axioms that translate ecological states to financial values, each backed by multiple peer-reviewed studies."
+> "What you've seen today isn't another LLM wrapper putting a chat interface on unstructured data. The intelligence comes from the knowledge graph - 16 bridge axioms that translate ecological states to financial values, each backed by multiple peer-reviewed studies."
 
 **Action:** Show bridge axiom cards if time permits.
 

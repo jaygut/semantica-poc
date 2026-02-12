@@ -81,11 +81,11 @@
 
 > "Shark Bay, Western Australia. The world's largest seagrass meadow - 4,800 square kilometers. UNESCO World Heritage since 1991."
 
-> "Look at the service breakdown. Where Cabo Pulmo was 85% tourism, Shark Bay is 56% carbon sequestration - $12.1 million per year in blue carbon credit potential. The seagrass sequesters 0.84 tonnes of CO2 per hectare per year, 35 times faster than tropical rainforest."
+> "Look at the service breakdown. Where Cabo Pulmo was 85% tourism, Shark Bay is 56% carbon sequestration - $12.1 million per year in blue carbon credit potential. The seagrass sequesters 0.84 tonnes of CO2 per hectare per year through sediment burial - Gomis et al. 2025, Nature Communications."
 
 **Action:** Point to the carbon-dominant ESV profile. Note the different bridge axioms: BA-013, BA-014.
 
-> "Different axioms activated. BA-013 converts seagrass extent to carbon sequestration rate - from Mazarrasa 2025, published in Nature Communications. BA-014 converts sequestration to voluntary carbon credit value at $15-50 per tonne."
+> "Different axioms activated. BA-013 converts seagrass extent to carbon sequestration rate - from Gomis 2025, published in Nature Communications. BA-014 converts sequestration to voluntary carbon credit value at $15-50 per tonne."
 
 > "Same graph infrastructure. Same provenance standards. Completely different financial product - this one feeds into Verra VCS carbon credits, not dive tourism."
 
@@ -179,7 +179,7 @@
 | Shark Bay total ESV | ~$21.5M/yr | Market-price + carbon credit |
 | Shark Bay carbon value | ~$12.1M/yr | 480K ha x 0.84 tCO2/ha/yr x $30 |
 | Shark Bay seagrass extent | 4,800 km2 | UNESCO/Strydom 2023 |
-| Carbon sequestration rate | 0.84 tCO2/ha/yr | Mazarrasa et al. 2025 |
+| Carbon sequestration rate | 0.84 tCO2/ha/yr | Gomis et al. 2025 |
 | 2011 heatwave seagrass loss | 36% | Arias-Ortiz et al. 2018 |
 | CO2 emission from loss | 2-9 Tg CO2 | Arias-Ortiz et al. 2018 |
 | Carbon credit price range | $15-50/tCO2 | Verra VCS voluntary market |
