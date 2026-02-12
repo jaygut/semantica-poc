@@ -10,6 +10,7 @@ Provides:
 import hashlib
 import logging
 import re
+import threading
 import time
 import uuid
 from collections import defaultdict
@@ -93,6 +94,7 @@ def require_api_key(
 # ---------------------------------------------------------------------------
 
 _rate_buckets: dict[str, list[float]] = defaultdict(list)
+_rate_lock = threading.Lock()
 
 def _check_rate_limit(key: str, max_requests: int, window_seconds: int = 60):
     """Enforce a sliding-window rate limit per key.
@@ -100,18 +102,19 @@ def _check_rate_limit(key: str, max_requests: int, window_seconds: int = 60):
     Raises 429 if the caller has exceeded ``max_requests`` within the
     rolling ``window_seconds`` window.
     """
-    now = time.monotonic()
-    bucket = _rate_buckets[key]
-    # Prune expired entries
-    _rate_buckets[key] = [ts for ts in bucket if now - ts < window_seconds]
-    bucket = _rate_buckets[key]
+    with _rate_lock:
+        now = time.monotonic()
+        bucket = _rate_buckets[key]
+        # Prune expired entries
+        _rate_buckets[key] = [ts for ts in bucket if now - ts < window_seconds]
+        bucket = _rate_buckets[key]
 
-    if len(bucket) >= max_requests:
-        raise HTTPException(
-            status_code=429,
-            detail=f"Rate limit exceeded. Max {max_requests} requests per {window_seconds}s.",
-        )
-    bucket.append(now)
+        if len(bucket) >= max_requests:
+            raise HTTPException(
+                status_code=429,
+                detail=f"Rate limit exceeded. Max {max_requests} requests per {window_seconds}s.",
+            )
+        bucket.append(now)
 
 
 def rate_limit_query(request: Request, api_key: str = Depends(require_api_key)):

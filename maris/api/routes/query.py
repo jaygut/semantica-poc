@@ -102,6 +102,9 @@ def query(request: QueryRequest):
         axioms_used=formatted["axioms_used"],
         graph_path=graph_path,
         caveats=formatted["caveats"],
+        verified_claims=formatted.get("verified_claims", []),
+        unverified_claims=formatted.get("unverified_claims", []),
+        confidence_breakdown=formatted.get("confidence_breakdown"),
         query_metadata=QueryMetadata(
             category=category,
             classification_confidence=classification.get("confidence", 0.0),

@@ -2,7 +2,7 @@
   "responses": {
     "What is this site worth?": {
       "answer": "Cabo Pulmo National Park generates an estimated $29.27M/year in ecosystem services [CI: $21.28M - $38.85M], derived from four service categories:\n\n- Tourism: $25.0M/year (BA-001, market-price method) [Marcos-Castillo et al. 2024, DOI: 10.1038/s41598-024-83664-1]\n- Fisheries spillover: $3.2M/year (BA-002) [Hopf et al. 2024, DOI: 10.1002/eap.3027]\n- Coastal protection: $890K/year (BA-004) [Beck et al. 2018, DOI: 10.1038/s41467-018-04568-z]\n- Carbon sequestration: $180K/year (BA-008) [Duarte et al. 2025, DOI: 10.1038/s44183-025-00111-y]\n\nThis valuation uses market-price methods for tourism and fisheries, and avoided-cost methods for protection and carbon. All values include confidence intervals derived from the underlying studies.",
-      "confidence": 0.87,
+      "confidence": 0.3792,
       "evidence": [
         {
           "doi": "10.1038/s41598-024-83664-1",
@@ -40,26 +40,95 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-004", "BA-008"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-008"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Tourism", "to_type": "EcosystemService"},
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Fisheries Spillover", "to_type": "EcosystemService"},
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Coastal Protection", "to_type": "EcosystemService"},
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Carbon Sequestration", "to_type": "EcosystemService"},
-        {"from_node": "Tourism", "from_type": "EcosystemService", "relationship": "VALUED_BY", "to_node": "BA-001", "to_type": "BridgeAxiom"},
-        {"from_node": "Fisheries Spillover", "from_type": "EcosystemService", "relationship": "VALUED_BY", "to_node": "BA-002", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Hopf et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries Spillover",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Tourism",
+          "from_type": "EcosystemService",
+          "relationship": "VALUED_BY",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "Fisheries Spillover",
+          "from_type": "EcosystemService",
+          "relationship": "VALUED_BY",
+          "to_node": "BA-002",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Hopf et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Tourism valuation uses market-price method, not WTP-adjusted",
         "Biomass data from 2009 - contemporary survey recommended",
         "Carbon estimate is conservative (reef-associated only)"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3792,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.76,
+        "sample_factor": 0.5528,
+        "explanation": "High-quality peer-reviewed sources; oldest data is 17 years old (2009); 5 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "$25.0M (Tourism)",
+        "$3.2M (Fisheries)",
+        "$180K (Carbon sequestration)",
+        "$890K (Coastal protection)"
+      ],
+      "unverified_claims": []
     },
     "What is the ESV of Cabo Pulmo?": {
       "answer": "The total Ecosystem Service Value (ESV) of Cabo Pulmo National Park is $29.27M/year, calculated using market-price methodology across four service categories:\n\n- Tourism: $25.0M/year - Based on 45,000 annual visitors at $556 average expenditure [Marcos-Castillo et al. 2024]\n- Fisheries spillover: $3.2M/year - Larval export and adult spillover to adjacent fishing grounds [Hopf et al. 2024]\n- Coastal protection: $890K/year - Wave energy reduction by reef structures [Beck et al. 2018]\n- Carbon sequestration: $180K/year - Reef-associated blue carbon storage [Duarte et al. 2025]\n\nThe 95% confidence interval is $21.28M - $38.85M, derived from Monte Carlo simulation (10,000 runs) that propagates uncertainty from each source study.",
-      "confidence": 0.87,
+      "confidence": 0.3429,
       "evidence": [
         {
           "doi": "10.1038/s41598-024-83664-1",
@@ -90,24 +159,83 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-004", "BA-008"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-008"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Tourism", "to_type": "EcosystemService"},
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Fisheries Spillover", "to_type": "EcosystemService"},
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Coastal Protection", "to_type": "EcosystemService"},
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Carbon Sequestration", "to_type": "EcosystemService"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Hopf et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries Spillover",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Hopf et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Tourism valuation uses market-price method, not WTP-adjusted",
         "Biomass data from 2009 - contemporary survey recommended",
         "Carbon estimate is conservative (reef-associated only)"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3429,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.76,
+        "sample_factor": 0.5,
+        "explanation": "High-quality peer-reviewed sources; oldest data is 17 years old (2009); 4 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "$25.0M (Tourism)",
+        "$3.2M (Fisheries)",
+        "$180K (Carbon sequestration)",
+        "$890K (Coastal protection)"
+      ],
+      "unverified_claims": [
+        "$556"
       ]
     },
     "How much are ecosystem services worth at Cabo Pulmo?": {
       "answer": "Cabo Pulmo National Park's ecosystem services are valued at $29.27M/year (market-price methodology), broken down as:\n\n- Tourism: $25.0M/year (85.4% of total) - The dominant service, driven by 4.63x biomass recovery attracting dive tourism\n- Fisheries spillover: $3.2M/year (10.9%) - Larval export and adult fish movement to adjacent waters\n- Coastal protection: $890K/year (3.0%) - Reef structure reduces wave energy reaching shore\n- Carbon sequestration: $180K/year (0.6%) - Reef-associated carbon storage\n\nThe tourism dominance reflects Cabo Pulmo's strong biomass recovery (4.63x, CI [3.8x, 5.5x]) and its reputation as a world-class dive destination. Monte Carlo simulation (10,000 runs) yields a median of ~$28.7M with P5 of ~$19.6M and P95 of ~$36.1M.",
-      "confidence": 0.87,
+      "confidence": 0.2009,
       "evidence": [
         {
           "doi": "10.1038/s41598-024-83664-1",
@@ -124,22 +252,68 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-004", "BA-008"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-008"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Tourism", "to_type": "EcosystemService"},
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Fisheries Spillover", "to_type": "EcosystemService"},
-        {"from_node": "Tourism", "from_type": "EcosystemService", "relationship": "VALUED_BY", "to_node": "BA-001", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries Spillover",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Tourism",
+          "from_type": "EcosystemService",
+          "relationship": "VALUED_BY",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Tourism valuation uses market-price method, not WTP-adjusted",
         "Services not double-counted - each traces to independent bridge axiom",
         "Biomass data from 2009 - contemporary survey recommended"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2009,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.76,
+        "sample_factor": 0.2929,
+        "explanation": "High-quality peer-reviewed sources; oldest data is 17 years old (2009); 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "$25.0M (Tourism)",
+        "$3.2M (Fisheries)",
+        "$180K (Carbon sequestration)",
+        "$890K (Coastal protection)",
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": []
     },
     "What is the total annual value?": {
       "answer": "The total annual ecosystem service value for Cabo Pulmo National Park is $29.27M/year (market-price methodology).\n\nThis breaks down into four service categories, each backed by a bridge axiom with peer-reviewed evidence:\n\n- Tourism: $25.0M/year via BA-001 (biomass-to-tourism elasticity)\n- Fisheries: $3.2M/year via BA-002 (no-take reserve spillover)\n- Coastal protection: $890K/year via BA-004 (reef flood protection)\n- Carbon: $180K/year via BA-008 (blue carbon sequestration)\n\nMonte Carlo analysis (10,000 simulations) gives a median of ~$28.7M, with a downside case (P5) of ~$19.6M and upside (P95) of ~$36.1M.",
-      "confidence": 0.87,
+      "confidence": 0.2273,
       "evidence": [
         {
           "doi": "10.1038/s41598-024-83664-1",
@@ -156,22 +330,67 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-004", "BA-008"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-008"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Tourism", "to_type": "EcosystemService"},
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Fisheries Spillover", "to_type": "EcosystemService"},
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Coastal Protection", "to_type": "EcosystemService"},
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Carbon Sequestration", "to_type": "EcosystemService"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries Spillover",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        }
       ],
       "caveats": [
         "Tourism valuation uses market-price method, not WTP-adjusted",
         "Monte Carlo assumes normal distributions - tail risk may be understated",
         "Values are annual and do not account for temporal ESV trends"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2273,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "$25.0M (Tourism)",
+        "$3.2M (Fisheries)",
+        "$180K (Carbon sequestration)",
+        "$890K (Coastal protection)"
+      ],
+      "unverified_claims": []
     },
     "What is the asset rating for Cabo Pulmo?": {
       "answer": "Cabo Pulmo National Park holds an AAA asset rating with a composite score of 0.90. This rating is derived from:\n\n**NEOLI alignment (4/5 criteria met):**\n- No-take: Yes - Full no-take enforcement since 1995\n- Enforced: Yes - Active patrol and community-based enforcement\n- Old: Yes - 29 years of continuous protection\n- Large: No - 71 km2 falls below the 100 km2 threshold\n- Isolated: Yes - Deep water channels provide natural isolation\n\n**Supporting metrics:**\n- Biomass recovery: 4.63x (CI [3.8x, 5.5x]) - Among the highest documented recovery ratios globally\n- ESV: $29.27M/year - Substantial economic return from protection\n- Evidence quality: 92% T1 (peer-reviewed) sources\n\nThe rating methodology maps NEOLI criteria scores, ecological state measurements, and financial outputs through bridge axiom BA-011 (NEOLI-to-asset-rating mapping). Source: Edgar et al. 2014 (DOI: 10.1038/nature13022).",
-      "confidence": 0.91,
+      "confidence": 0.2273,
       "evidence": [
         {
           "doi": "10.1038/nature13022",
@@ -188,22 +407,64 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-011"],
+      "axioms_used": [
+        "BA-011"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "ASSESSED_AS", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "NEOLI 4/5", "from_type": "GovernanceScore", "relationship": "MAPS_TO", "to_node": "BA-011", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-011", "from_type": "BridgeAxiom", "relationship": "PRODUCES", "to_node": "AAA Rating (0.90)", "to_type": "FinancialValue"},
-        {"from_node": "BA-011", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Edgar et al. 2014", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "NEOLI 4/5",
+          "from_type": "GovernanceScore",
+          "relationship": "MAPS_TO",
+          "to_node": "BA-011",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "PRODUCES",
+          "to_node": "AAA Rating (0.90)",
+          "to_type": "FinancialValue"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Edgar et al. 2014",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Rating methodology is MARIS-internal, not externally certified",
         "NEOLI alignment, not NEOLI compliance - we do not claim NEOLI certification",
         "Size criterion (Large) not met - 71 km2 vs 100 km2 threshold"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2273,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "4.63x (biomass ratio)",
+        "4/5 (NEOLI criteria met)",
+        "AAA (asset rating)",
+        "0.90 (composite score)"
+      ],
+      "unverified_claims": []
     },
     "Why should I trust the ESV number?": {
       "answer": "The $29.27M ESV for Cabo Pulmo is trustworthy because every component traces to peer-reviewed sources through documented bridge axioms:\n\n1. **Full provenance chain**: Each service value links through a bridge axiom (BA-001 through BA-008) to a specific peer-reviewed coefficient. No black-box models.\n\n2. **Market-price methodology**: Tourism ($25.0M) uses actual visitor expenditure data, not stated-preference willingness-to-pay. This is the most conservative, defensible method.\n\n3. **Propagated uncertainty**: The 95% CI [$21.28M - $38.85M] is derived from 10,000 Monte Carlo simulations incorporating parameter uncertainty from each source study.\n\n4. **Independent validation**: Biomass recovery (4.63x, CI [3.8x, 5.5x]) cross-validates against Edgar et al. 2014's NEOLI framework predictions.\n\n5. **Staleness flagged**: We explicitly flag that biomass data is from 2009 and recommend contemporary surveys for investment applications.\n\nThe infrastructure is designed so an auditor can independently verify every claim by following DOI links to the original papers.",
-      "confidence": 0.91,
+      "confidence": 0.3249,
       "evidence": [
         {
           "doi": "10.1371/journal.pone.0023601",
@@ -234,24 +495,79 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-004", "BA-008"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-008"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "ASSESSED_AS", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "NEOLI 4/5", "from_type": "GovernanceScore", "relationship": "PREDICTS", "to_node": "Biomass 4.63x", "to_type": "EcologicalState"},
-        {"from_node": "Biomass 4.63x", "from_type": "EcologicalState", "relationship": "TRANSLATES_VIA", "to_node": "BA-001", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "PRODUCES", "to_node": "Tourism $25.0M", "to_type": "FinancialValue"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Hopf et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "NEOLI 4/5",
+          "from_type": "GovernanceScore",
+          "relationship": "PREDICTS",
+          "to_node": "Biomass 4.63x",
+          "to_type": "EcologicalState"
+        },
+        {
+          "from_node": "Biomass 4.63x",
+          "from_type": "EcologicalState",
+          "relationship": "TRANSLATES_VIA",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "PRODUCES",
+          "to_node": "Tourism $25.0M",
+          "to_type": "FinancialValue"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Hopf et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "This is a methodology demonstration, not investment advice",
         "Independent audit recommended before any investment decisions",
         "Biomass data from 2009 - contemporary survey recommended for investment applications"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3249,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.76,
+        "sample_factor": 0.5,
+        "explanation": "High-quality peer-reviewed sources; oldest data is 17 years old (2009); 4 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "$25.0M (Tourism)",
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": []
     },
     "What is the evidence for the tourism value?": {
       "answer": "The tourism value of $25.0M/year for Cabo Pulmo is supported by a direct evidence chain:\n\n**Primary source:** Marcos-Castillo et al. 2024 (DOI: 10.1038/s41598-024-83664-1) provides the tourism valuation framework for marine reserves, establishing:\n- 45,000 annual visitors to Cabo Pulmo\n- $556 average visitor expenditure\n- Market-price methodology (actual spending, not hypothetical WTP)\n\n**Supporting evidence:**\n- Aburto-Oropeza et al. 2011 (DOI: 10.1371/journal.pone.0023601) documents the 4.63x biomass recovery that drives dive tourism demand\n- Bridge axiom BA-001 quantifies the biomass-to-tourism elasticity at 0.346 (a 100% biomass increase corresponds to a 34.6% tourism value increase)\n\n**Methodology choice:** Market-price was selected over willingness-to-pay (WTP) methods because it relies on observed expenditure data rather than hypothetical survey responses. This is the more conservative and auditor-friendly approach.\n\nThe complete provenance chain runs: MPA -> Biomass Recovery -> BA-001 (elasticity coefficient) -> Tourism Value -> DOI Evidence.",
-      "confidence": 0.89,
+      "confidence": 0.2504,
       "evidence": [
         {
           "doi": "10.1038/s41598-024-83664-1",
@@ -268,22 +584,63 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001"],
+      "axioms_used": [
+        "BA-001"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "OBSERVED", "to_node": "Biomass 4.63x", "to_type": "EcologicalState"},
-        {"from_node": "Biomass 4.63x", "from_type": "EcologicalState", "relationship": "TRANSLATES_VIA", "to_node": "BA-001", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "PRODUCES", "to_node": "Tourism $25.0M", "to_type": "FinancialValue"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "OBSERVED",
+          "to_node": "Biomass 4.63x",
+          "to_type": "EcologicalState"
+        },
+        {
+          "from_node": "Biomass 4.63x",
+          "from_type": "EcologicalState",
+          "relationship": "TRANSLATES_VIA",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "PRODUCES",
+          "to_node": "Tourism $25.0M",
+          "to_type": "FinancialValue"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Tourism valuation uses market-price method, not WTP-adjusted",
         "Visitor count and expenditure data from regional tourism surveys",
         "Tourism value may fluctuate with external factors (travel restrictions, economic conditions)"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2504,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.2929,
+        "explanation": "High-quality peer-reviewed sources; recent data (2024-2025); 2 supporting sources"
+      },
+      "verified_claims": [
+        "$25.0M (Tourism)",
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": [
+        "$556"
       ]
     },
     "Show me the provenance chain": {
       "answer": "The MARIS provenance chain for Cabo Pulmo traces every financial claim back to peer-reviewed field data through four layers:\n\n**Layer 1 - Site (Ecological Field Data):**\nCabo Pulmo National Park, established 1995, 71 km2 no-take marine reserve in Mexico's Gulf of California.\n\n**Layer 2 - Ecological State (Measured Outcomes):**\n- Biomass recovery: 4.63x over baseline (CI [3.8x, 5.5x]) [Aburto-Oropeza et al. 2011]\n- NEOLI alignment: 4/5 criteria met [Edgar et al. 2014]\n\n**Layer 3 - Bridge Axioms (Translation Rules):**\n- BA-001: Biomass -> Tourism value (elasticity 0.346) [Marcos-Castillo et al. 2024]\n- BA-002: No-take MPA -> Biomass recovery [Hopf et al. 2024]\n- BA-004: Reef structure -> Coastal flood protection [Beck et al. 2018]\n- BA-008: Reef area -> Carbon sequestration [Duarte et al. 2025]\n\n**Layer 4 - Financial Metrics (Output):**\n- Total ESV: $29.27M/year (market-price)\n- Asset rating: AAA (composite 0.90)\n- 95% CI: $21.28M - $38.85M\n\nEvery arrow in this chain has a DOI. An auditor can independently verify each step by following the DOI links to the original publications.",
-      "confidence": 0.91,
+      "confidence": 0.3592,
       "evidence": [
         {
           "doi": "10.1371/journal.pone.0023601",
@@ -321,25 +678,88 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-004", "BA-008"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-008"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "OBSERVED", "to_node": "Biomass 4.63x", "to_type": "EcologicalState"},
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "ASSESSED_AS", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "Biomass 4.63x", "from_type": "EcologicalState", "relationship": "TRANSLATES_VIA", "to_node": "BA-001", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "PRODUCES", "to_node": "Tourism $25.0M", "to_type": "FinancialValue"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Hopf et al. 2024", "to_type": "Document"},
-        {"from_node": "BA-004", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Beck et al. 2018", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "OBSERVED",
+          "to_node": "Biomass 4.63x",
+          "to_type": "EcologicalState"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "Biomass 4.63x",
+          "from_type": "EcologicalState",
+          "relationship": "TRANSLATES_VIA",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "PRODUCES",
+          "to_node": "Tourism $25.0M",
+          "to_type": "FinancialValue"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Hopf et al. 2024",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-004",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Beck et al. 2018",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Provenance chain is complete for Cabo Pulmo; comparison sites have governance metadata only",
         "Some axioms use benefit-transfer coefficients from regional (not site-specific) studies",
         "Biomass data from 2009 - contemporary survey recommended"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3592,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.76,
+        "sample_factor": 0.5528,
+        "explanation": "High-quality peer-reviewed sources; oldest data is 17 years old (2009); 5 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "4.63x (biomass ratio)",
+        "4/5 (NEOLI criteria met)",
+        "AAA (asset rating)",
+        "0.90 (composite score)"
+      ],
+      "unverified_claims": []
     },
     "What DOIs support the valuation?": {
       "answer": "The Cabo Pulmo $29.27M ESV valuation is supported by the following peer-reviewed sources, each backing a specific bridge axiom:\n\n**Tourism ($25.0M/year) - BA-001:**\n- DOI: 10.1038/s41598-024-83664-1 - Marcos-Castillo et al. (2024), Tourism valuation framework for marine reserves [T1]\n\n**Biomass recovery (4.63x) - BA-002:**\n- DOI: 10.1371/journal.pone.0023601 - Aburto-Oropeza et al. (2011), Large recovery of fish biomass in a no-take marine reserve [T1]\n\n**Fisheries spillover ($3.2M/year) - BA-002:**\n- DOI: 10.1002/eap.3027 - Hopf et al. (2024), Fisheries spillover from no-take marine reserves [T1]\n\n**Coastal protection ($890K/year) - BA-004:**\n- DOI: 10.1038/s41467-018-04568-z - Beck et al. (2018), The global flood protection savings from coral reefs [T1]\n\n**Carbon sequestration ($180K/year) - BA-008:**\n- DOI: 10.1038/s44183-025-00111-y - Duarte et al. (2025), Marine blue carbon strategies [T1]\n\n**NEOLI framework (asset rating):**\n- DOI: 10.1038/nature13022 - Edgar et al. (2014), Global conservation outcomes depend on marine protected areas with five key features [T1]\n\nAll six sources are T1 (peer-reviewed journal articles), the highest evidence tier.",
-      "confidence": 0.93,
+      "confidence": 0.506,
       "evidence": [
         {
           "doi": "10.1038/s41598-024-83664-1",
@@ -384,23 +804,75 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-004", "BA-008"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-008"
+      ],
       "graph_path": [
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Aburto-Oropeza et al. 2011", "to_type": "Document"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Hopf et al. 2024", "to_type": "Document"},
-        {"from_node": "BA-004", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Beck et al. 2018", "to_type": "Document"},
-        {"from_node": "BA-008", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Duarte et al. 2025", "to_type": "Document"}
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Aburto-Oropeza et al. 2011",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Hopf et al. 2024",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-004",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Beck et al. 2018",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-008",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Duarte et al. 2025",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "All listed sources are T1 (peer-reviewed) - highest evidence tier",
         "Some coefficients use benefit-transfer from regional studies",
         "Full bibliography of 195 papers available in the MARIS document registry"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.506,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.5918,
+        "explanation": "High-quality peer-reviewed sources; recent data (2024-2025); 6 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "$25.0M (Tourism)",
+        "$3.2M (Fisheries)",
+        "$180K (Carbon sequestration)",
+        "$890K (Coastal protection)",
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": []
     },
     "How reliable is this data?": {
       "answer": "The reliability of MARIS data for Cabo Pulmo is built on multiple layers of verification:\n\n**Evidence quality:**\n- 92% of the 195-paper library is T1 (peer-reviewed journal articles)\n- All six key DOIs backing the $29.27M valuation are T1\n- Bridge axiom coefficients come from studies published in Nature, PLOS ONE, and Ecological Applications\n\n**Uncertainty quantification:**\n- Every value carries a 95% confidence interval, not just a point estimate\n- Monte Carlo simulation (10,000 runs) propagates uncertainty from each source study\n- ESV range: $21.28M - $38.85M (median ~$28.7M)\n- Biomass CI: [3.8x, 5.5x] around central 4.63x\n\n**Known limitations (explicitly flagged):**\n- Biomass data is from 2009 - a contemporary survey is recommended\n- Tourism uses market-price method (conservative, but may miss non-market values)\n- Carbon estimate is conservative (reef-associated only, excludes seagrass)\n- Some axiom coefficients use benefit-transfer from regional studies\n\n**What makes it trustworthy:**\nMARIS does not hide uncertainty. Every caveat is surfaced, every confidence interval propagated, and every claim traceable to a DOI. This transparency is the system's core design principle.",
-      "confidence": 0.88,
+      "confidence": 0.1903,
       "evidence": [
         {
           "doi": "10.1371/journal.pone.0023601",
@@ -417,21 +889,58 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-004", "BA-008", "BA-011"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-008",
+        "BA-011"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "ASSESSED_AS", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Aburto-Oropeza et al. 2011", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Aburto-Oropeza et al. 2011",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Biomass data from 2009 - contemporary survey recommended for investment decisions",
         "Some coefficients transferred from regional studies, not Cabo Pulmo-specific",
         "This is methodology demonstration infrastructure, not investment advice"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.1903,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.76,
+        "sample_factor": 0.2929,
+        "explanation": "High-quality peer-reviewed sources; oldest data is 17 years old (2009); 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": []
     },
     "How does biomass translate to tourism?": {
       "answer": "The biomass-to-tourism translation works through Bridge Axiom BA-001, which quantifies the relationship between fish biomass and dive tourism willingness-to-pay:\n\n**The mechanism:**\nCabo Pulmo's 4.63x biomass recovery (from 0.5 to 2.8 tonnes/ha over 10 years) directly drives tourism demand. Divers will pay up to 84% more to visit sites with healthy reef biomass compared to degraded sites.\n\n**The coefficient:**\nBA-001 uses an elasticity of 0.346 from Marcos-Castillo et al. 2024 (DOI: 10.1038/s41598-024-83664-1). This means a 100% increase in fish biomass corresponds to a 34.6% increase in tourism value.\n\n**Applied to Cabo Pulmo:**\n- Biomass increase: 463%\n- Predicted tourism increase: ~160% (463% x 0.346)\n- Actual tourism growth: ~400% ($5M to $25.0M)\n- The actual increase exceeds the model prediction, suggesting additional reputation and word-of-mouth effects\n\n**Current valuation:**\n- 45,000 annual visitors x $556 average spending = $25.0M/year\n- Method: market-price (actual expenditure data, not WTP-adjusted)\n\nThe conservative market-price approach anchors the estimate to observed spending rather than hypothetical willingness-to-pay.",
-      "confidence": 0.89,
+      "confidence": 0.3613,
       "evidence": [
         {
           "doi": "10.1038/s41598-024-83664-1",
@@ -455,23 +964,71 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001"],
+      "axioms_used": [
+        "BA-001"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "OBSERVED", "to_node": "Biomass 4.63x", "to_type": "EcologicalState"},
-        {"from_node": "Biomass 4.63x", "from_type": "EcologicalState", "relationship": "TRANSLATES_VIA", "to_node": "BA-001", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "COEFFICIENT", "to_node": "Elasticity 0.346", "to_type": "Parameter"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "PRODUCES", "to_node": "Tourism $25.0M", "to_type": "FinancialValue"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "OBSERVED",
+          "to_node": "Biomass 4.63x",
+          "to_type": "EcologicalState"
+        },
+        {
+          "from_node": "Biomass 4.63x",
+          "from_type": "EcologicalState",
+          "relationship": "TRANSLATES_VIA",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "COEFFICIENT",
+          "to_node": "Elasticity 0.346",
+          "to_type": "Parameter"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "PRODUCES",
+          "to_node": "Tourism $25.0M",
+          "to_type": "FinancialValue"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Elasticity coefficient transferred from regional studies",
         "Actual tourism growth exceeds model - additional factors at play",
         "Market-price method used, not WTP-adjusted"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3613,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.4226,
+        "explanation": "High-quality peer-reviewed sources; recent data (2024-2025); 3 supporting sources"
+      },
+      "verified_claims": [
+        "$25.0M (Tourism)",
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": [
+        "$5M",
+        "$556"
       ]
     },
     "Tell me more about BA-001": {
       "answer": "**Bridge Axiom BA-001: MPA Biomass-Dive Tourism Value**\n\nBA-001 is the primary translation rule converting fish biomass measurements into tourism economic value.\n\n**Translation:** Fish biomass -> Tourism willingness-to-pay\n**Key coefficient:** Elasticity of 0.346 (a 100% biomass increase yields 34.6% higher tourism value)\n**Maximum effect:** Divers will pay up to 84% more at high-biomass sites vs. degraded sites\n\n**How it works at Cabo Pulmo:**\n1. Biomass recovery measured at 4.63x (463% increase from baseline)\n2. BA-001 elasticity predicts ~160% tourism value increase\n3. Actual tourism revenue: $25.0M/year from 45,000 annual visitors\n4. Method: market-price (observed expenditure, not hypothetical WTP)\n\n**Primary source:** Marcos-Castillo et al. 2024 (DOI: 10.1038/s41598-024-83664-1)\n**Supporting source:** Aburto-Oropeza et al. 2011 (DOI: 10.1371/journal.pone.0023601) for the biomass recovery measurement\n\n**Confidence:** High - based on T1 peer-reviewed evidence with documented methodology. The conservative market-price approach likely understates the true economic contribution.",
-      "confidence": 0.89,
+      "confidence": 0.2504,
       "evidence": [
         {
           "doi": "10.1038/s41598-024-83664-1",
@@ -488,22 +1045,61 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001"],
+      "axioms_used": [
+        "BA-001"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "OBSERVED", "to_node": "Biomass 4.63x", "to_type": "EcologicalState"},
-        {"from_node": "Biomass 4.63x", "from_type": "EcologicalState", "relationship": "TRANSLATES_VIA", "to_node": "BA-001", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "COEFFICIENT", "to_node": "Elasticity 0.346", "to_type": "Parameter"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "OBSERVED",
+          "to_node": "Biomass 4.63x",
+          "to_type": "EcologicalState"
+        },
+        {
+          "from_node": "Biomass 4.63x",
+          "from_type": "EcologicalState",
+          "relationship": "TRANSLATES_VIA",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "COEFFICIENT",
+          "to_node": "Elasticity 0.346",
+          "to_type": "Parameter"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Elasticity coefficient from regional studies, not Cabo Pulmo-specific",
         "Actual tourism growth exceeds model predictions",
         "Market-price method used, not WTP-adjusted"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2504,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.2929,
+        "explanation": "High-quality peer-reviewed sources; recent data (2024-2025); 2 supporting sources"
+      },
+      "verified_claims": [
+        "$25.0M (Tourism)",
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": []
     },
     "What is bridge axiom BA-002?": {
       "answer": "**Bridge Axiom BA-002: No-Take MPA Biomass Recovery**\n\nBA-002 quantifies the relationship between no-take marine protection and fish biomass recovery.\n\n**Translation:** No-take MPA status -> Biomass accumulation over time\n**Key finding:** No-take marine reserves accumulate 670% higher fish biomass compared to unprotected areas\n**Recovery arc:** 4.63x recovery ratio over a 10-year no-take period (for Cabo Pulmo specifically)\n\n**Cabo Pulmo application:**\n1. Baseline biomass: ~0.5 tonnes/ha (pre-protection)\n2. Current biomass: ~2.8 tonnes/ha (after 29 years of no-take protection)\n3. Recovery ratio: 4.63x (CI [3.8x, 5.5x])\n4. This recovery drives all downstream ecosystem service valuations\n\n**Primary source:** Aburto-Oropeza et al. 2011 (DOI: 10.1371/journal.pone.0023601)\n**Supporting source:** Hopf et al. 2024 (DOI: 10.1002/eap.3027) for fisheries spillover effects\n\n**Downstream effects:** BA-002's biomass output feeds directly into BA-001 (tourism value), fisheries spillover calculations, and trophic cascade assessments. It is the foundational ecological measurement for the entire valuation chain.",
-      "confidence": 0.90,
+      "confidence": 0.1903,
       "evidence": [
         {
           "doi": "10.1371/journal.pone.0023601",
@@ -520,22 +1116,60 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-002"],
+      "axioms_used": [
+        "BA-002"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "OBSERVED", "to_node": "Biomass 4.63x", "to_type": "EcologicalState"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "APPLIES_TO", "to_node": "Cabo Pulmo National Park", "to_type": "MPA"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Aburto-Oropeza et al. 2011", "to_type": "Document"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Hopf et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "OBSERVED",
+          "to_node": "Biomass 4.63x",
+          "to_type": "EcologicalState"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Cabo Pulmo National Park",
+          "to_type": "MPA"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Aburto-Oropeza et al. 2011",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Hopf et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Recovery trajectory is site-specific - other MPAs may recover at different rates",
         "Biomass data from 2009 - contemporary survey recommended",
         "670% figure is a global meta-analysis average; Cabo Pulmo's 463% is site-specific"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.1903,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.76,
+        "sample_factor": 0.2929,
+        "explanation": "High-quality peer-reviewed sources; oldest data is 17 years old (2009); 2 supporting sources"
+      },
+      "verified_claims": [
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": []
     },
     "How do bridge axioms work?": {
       "answer": "Bridge axioms are the core translation mechanism in MARIS. Each one converts a measurable ecological state into a quantified financial value using peer-reviewed coefficients.\n\n**Structure of a bridge axiom:**\n1. **Input:** An ecological measurement (e.g., biomass ratio, NEOLI score, reef area)\n2. **Coefficient:** A peer-reviewed translation factor (e.g., elasticity, avoided-cost rate)\n3. **Output:** A financial metric (e.g., tourism value, fisheries yield, carbon value)\n4. **Evidence:** DOI-backed source papers that establish the coefficient\n5. **Confidence interval:** Propagated uncertainty from source studies\n\n**The 12 MARIS bridge axioms:**\n- BA-001: Fish biomass -> Tourism value (elasticity 0.346)\n- BA-002: No-take MPA -> Biomass recovery (4.63x over 10 years)\n- BA-003: Coral reef area -> Carbon sequestration value\n- BA-004: Coastal habitat -> Flood protection value\n- BA-005: Species diversity -> Insurance value\n- BA-006: Reef filtering -> Water quality value\n- BA-007: Marine biodiversity -> Bioprospecting value\n- BA-008: Fish biomass -> Sustainable fisheries yield\n- BA-009: Apex predators -> Trophic cascade multiplier\n- BA-010: MPA spacing -> Larval connectivity\n- BA-011: NEOLI criteria -> Asset rating\n- BA-012: TNFD ecosystem data -> Disclosure readiness\n\n**Why bridge axioms matter:** They make the \"black box\" transparent. Instead of an opaque model that produces a number, each axiom is an individually auditable step that can be challenged, updated, or replaced as new research emerges.",
-      "confidence": 0.92,
+      "confidence": 0.2154,
       "evidence": [
         {
           "doi": "10.1038/s41598-024-83664-1",
@@ -552,22 +1186,71 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-003", "BA-004", "BA-005", "BA-006", "BA-007", "BA-008", "BA-009", "BA-010", "BA-011", "BA-012"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-003",
+        "BA-004",
+        "BA-005",
+        "BA-006",
+        "BA-007",
+        "BA-008",
+        "BA-009",
+        "BA-010",
+        "BA-011",
+        "BA-012"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "OBSERVED", "to_node": "Biomass 4.63x", "to_type": "EcologicalState"},
-        {"from_node": "Biomass 4.63x", "from_type": "EcologicalState", "relationship": "TRANSLATES_VIA", "to_node": "BA-001", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "PRODUCES", "to_node": "Tourism $25.0M", "to_type": "FinancialValue"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "OBSERVED",
+          "to_node": "Biomass 4.63x",
+          "to_type": "EcologicalState"
+        },
+        {
+          "from_node": "Biomass 4.63x",
+          "from_type": "EcologicalState",
+          "relationship": "TRANSLATES_VIA",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "PRODUCES",
+          "to_node": "Tourism $25.0M",
+          "to_type": "FinancialValue"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Only 4 of 12 axioms are actively used in the Cabo Pulmo valuation",
         "Remaining axioms are defined but await site-specific data for application",
         "Axiom coefficients may be updated as new research is published"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2154,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 2 supporting sources"
+      },
+      "verified_claims": [
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": []
     },
     "What are the axiom coefficients?": {
       "answer": "The key axiom coefficients used in the Cabo Pulmo valuation are:\n\n**BA-001 (Biomass -> Tourism):**\n- Elasticity: 0.346 (100% biomass increase = 34.6% tourism value increase)\n- Maximum WTP premium: 84% at high-biomass sites\n- Source: Marcos-Castillo et al. 2024 (DOI: 10.1038/s41598-024-83664-1)\n\n**BA-002 (No-take -> Biomass Recovery):**\n- Recovery ratio: 4.63x at Cabo Pulmo (CI [3.8x, 5.5x])\n- Global meta-analysis: 670% higher biomass in no-take reserves\n- Source: Aburto-Oropeza et al. 2011 (DOI: 10.1371/journal.pone.0023601)\n\n**BA-004 (Reef -> Coastal Protection):**\n- Wave energy reduction per meter of reef crest\n- Applied via avoided-cost method\n- Source: Beck et al. 2018 (DOI: 10.1038/s41467-018-04568-z)\n\n**BA-008 (Reef -> Carbon Value):**\n- Calcification rate per hectare\n- Conservative estimate (reef-associated only)\n- Source: Duarte et al. 2025 (DOI: 10.1038/s44183-025-00111-y)\n\n**BA-011 (NEOLI -> Asset Rating):**\n- Composite score 0-1 based on 5 NEOLI criteria\n- Cabo Pulmo: 0.90 (AAA) with 4/5 criteria met\n- Source: Edgar et al. 2014 (DOI: 10.1038/nature13022)\n\nAll coefficients carry documented confidence intervals that propagate through Monte Carlo simulation.",
-      "confidence": 0.88,
+      "confidence": 0.3613,
       "evidence": [
         {
           "doi": "10.1038/s41598-024-83664-1",
@@ -591,22 +1274,67 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-004", "BA-008", "BA-011"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-008",
+        "BA-011"
+      ],
       "graph_path": [
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "COEFFICIENT", "to_node": "Elasticity 0.346", "to_type": "Parameter"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "COEFFICIENT", "to_node": "Recovery 4.63x", "to_type": "Parameter"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Aburto-Oropeza et al. 2011", "to_type": "Document"}
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "COEFFICIENT",
+          "to_node": "Elasticity 0.346",
+          "to_type": "Parameter"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "COEFFICIENT",
+          "to_node": "Recovery 4.63x",
+          "to_type": "Parameter"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Aburto-Oropeza et al. 2011",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Some coefficients are benefit-transfer from regional studies",
         "Confidence intervals vary by axiom - check individual axiom details",
         "Coefficients should be updated as new research becomes available"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3613,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.4226,
+        "explanation": "High-quality peer-reviewed sources; recent data (2024-2025); 3 supporting sources"
+      },
+      "verified_claims": [
+        "4.63x (biomass ratio)",
+        "4/5 (NEOLI criteria met)",
+        "AAA (asset rating)",
+        "0.90 (composite score)"
+      ],
+      "unverified_claims": []
     },
     "What if protection fails?": {
       "answer": "If protection fails at Cabo Pulmo, the financial impact is quantified through two bridge axioms:\n\n**Immediate impact (BA-012 - Degradation Risk):**\n- 35% loss in fisheries productivity (range: 25-50%)\n- Direct loss: ~$1.12M/year from fisheries alone\n- Source: Rogers et al. 2018 (DOI: 10.1111/1365-2664.13051)\n\n**Cascading effects:**\n- Tourism revenue at severe risk - degraded reefs lose visitor appeal\n- At 35% degradation, estimated tourism loss: $8.75M - $12.5M/year\n- Coastal protection value declines as reef structural complexity decreases\n- Carbon sequestration capacity reduced\n\n**Climate vulnerability without protection (BA-011):**\n- Currently, the MPA provides a 30% reduction in climate disturbance impact\n- Without protection, disturbance recovery takes 20% longer\n- Source: Ortiz-Villa et al. 2024 (DOI: 10.1111/gcb.17477)\n\n**Total downside scenario:**\n- Monte Carlo P5 (worst-case): $19.58M/year (vs. $29.27M base)\n- Potential loss: $9.69M/year or 33% of current ESV\n- Without any protection: losses could exceed 50% of current ESV over a decade\n\nThis risk quantification is itself a feature of the infrastructure - investors can price protection failure into their models.",
-      "confidence": 0.84,
+      "confidence": 0.3412,
       "evidence": [
         {
           "doi": "10.1111/1365-2664.13051",
@@ -630,25 +1358,88 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-011", "BA-012"],
+      "axioms_used": [
+        "BA-011",
+        "BA-012"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "ASSESSED_AS", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "NEOLI 4/5", "from_type": "GovernanceScore", "relationship": "RISK_IF_LOST", "to_node": "BA-012", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-012", "from_type": "BridgeAxiom", "relationship": "PREDICTS", "to_node": "35% Productivity Loss", "to_type": "RiskOutcome"},
-        {"from_node": "NEOLI 4/5", "from_type": "GovernanceScore", "relationship": "PROVIDES", "to_node": "BA-011", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-011", "from_type": "BridgeAxiom", "relationship": "QUANTIFIES", "to_node": "30% Disturbance Buffer", "to_type": "ResilienceBenefit"},
-        {"from_node": "BA-012", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Rogers et al. 2018", "to_type": "Document"},
-        {"from_node": "BA-011", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Ortiz-Villa et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "NEOLI 4/5",
+          "from_type": "GovernanceScore",
+          "relationship": "RISK_IF_LOST",
+          "to_node": "BA-012",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-012",
+          "from_type": "BridgeAxiom",
+          "relationship": "PREDICTS",
+          "to_node": "35% Productivity Loss",
+          "to_type": "RiskOutcome"
+        },
+        {
+          "from_node": "NEOLI 4/5",
+          "from_type": "GovernanceScore",
+          "relationship": "PROVIDES",
+          "to_node": "BA-011",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "QUANTIFIES",
+          "to_node": "30% Disturbance Buffer",
+          "to_type": "ResilienceBenefit"
+        },
+        {
+          "from_node": "BA-012",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Rogers et al. 2018",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Ortiz-Villa et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Degradation estimates based on benefit transfer from regional studies",
         "Tourism loss estimate is modeled, not observed at Cabo Pulmo",
         "Cascading effects may compound - linear estimates may understate total risk"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3412,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.4226,
+        "explanation": "High-quality peer-reviewed sources; recent data (2024-2025); 3 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)"
+      ],
+      "unverified_claims": [
+        "$1.12M",
+        "$8.75M",
+        "$12.5M",
+        "$19.58M",
+        "$9.69M"
       ]
     },
     "What are the climate risks?": {
       "answer": "Climate risks to Cabo Pulmo's ecosystem service values are quantified through bridge axioms BA-011 and BA-012:\n\n**Current climate resilience (BA-011):**\n- The MPA provides a 30% reduction in climate disturbance impact compared to unprotected sites\n- Recovery from disturbance events is 20% faster within the MPA\n- Source: Ortiz-Villa et al. 2024 (DOI: 10.1111/gcb.17477)\n\n**Climate risk factors:**\n- Ocean warming: Coral bleaching risk increases with 1.5C+ warming scenarios\n- Ocean acidification: Threatens reef calcification and structural integrity\n- Storm intensity: More severe hurricanes threaten reef structures\n- Sea level rise: Changes in reef-depth dynamics\n\n**Financial implications:**\n- With current MPA protection: ESV maintains at $29.27M/year (base case)\n- Under climate stress without protection: potential 35% fisheries loss, tourism decline\n- Monte Carlo P5 (downside case): ~$19.6M/year\n- Gap represents ~$9.7M/year in climate-vulnerable value\n\n**Protection as climate insurance:**\nThe MPA's no-take status functions as a climate resilience buffer. Protected reefs have higher structural complexity and biodiversity, enabling faster recovery from acute climate events. This resilience premium is quantified by BA-011.",
-      "confidence": 0.82,
+      "confidence": 0.2365,
       "evidence": [
         {
           "doi": "10.1111/gcb.17477",
@@ -665,22 +1456,63 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-011", "BA-012"],
+      "axioms_used": [
+        "BA-011",
+        "BA-012"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "ASSESSED_AS", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "NEOLI 4/5", "from_type": "GovernanceScore", "relationship": "PROVIDES", "to_node": "BA-011", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-011", "from_type": "BridgeAxiom", "relationship": "QUANTIFIES", "to_node": "30% Disturbance Buffer", "to_type": "ResilienceBenefit"},
-        {"from_node": "BA-011", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Ortiz-Villa et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "NEOLI 4/5",
+          "from_type": "GovernanceScore",
+          "relationship": "PROVIDES",
+          "to_node": "BA-011",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "QUANTIFIES",
+          "to_node": "30% Disturbance Buffer",
+          "to_type": "ResilienceBenefit"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Ortiz-Villa et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Climate projections are scenario-dependent and carry high uncertainty",
         "Resilience buffer percentage from meta-analysis, not Cabo Pulmo-specific",
         "Long-term climate impacts may exceed historical precedent"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2365,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.2929,
+        "explanation": "High-quality peer-reviewed sources; recent data (2024-2025); 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)"
+      ],
+      "unverified_claims": [
+        "$9.7M"
       ]
     },
     "What happens if the MPA is degraded?": {
       "answer": "MPA degradation at Cabo Pulmo would trigger cascading losses across all four ecosystem service categories:\n\n**Fisheries impact (BA-012):**\n- Central estimate: 35% productivity loss (range 25-50%)\n- Annual loss: ~$1.12M (from $3.2M fisheries value)\n- Mechanism: Loss of no-take protection reduces spawning biomass, decreasing larval export and adult spillover\n- Source: Rogers et al. 2018 (DOI: 10.1111/1365-2664.13051)\n\n**Tourism impact:**\n- Degraded reefs lose dive tourism appeal rapidly\n- Estimated tourism loss at 35% degradation: $8.75M - $12.5M/year\n- Mechanism: Declining fish biomass and coral cover reduce visitor willingness-to-pay and visitation rates\n\n**Coastal protection impact:**\n- Reef structural degradation reduces wave attenuation capacity\n- Estimated reduction: proportional to reef complexity loss\n- Mechanism: Live coral provides more structural complexity than dead reef framework\n\n**Carbon impact:**\n- Degraded reefs may become net carbon sources rather than sinks\n- Mechanism: Dissolution of dead reef framework releases stored carbon\n\n**Total downside:** Monte Carlo P5 scenario models ~$19.6M/year, representing a $9.7M annual loss from the $29.27M base case. Full MPA abandonment could push losses beyond 50% over a decade.",
-      "confidence": 0.83,
+      "confidence": 0.2935,
       "evidence": [
         {
           "doi": "10.1111/1365-2664.13051",
@@ -704,22 +1536,67 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-011", "BA-012"],
+      "axioms_used": [
+        "BA-011",
+        "BA-012"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "ASSESSED_AS", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "NEOLI 4/5", "from_type": "GovernanceScore", "relationship": "RISK_IF_LOST", "to_node": "BA-012", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-012", "from_type": "BridgeAxiom", "relationship": "PREDICTS", "to_node": "35% Productivity Loss", "to_type": "RiskOutcome"},
-        {"from_node": "BA-012", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Rogers et al. 2018", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "NEOLI 4/5",
+          "from_type": "GovernanceScore",
+          "relationship": "RISK_IF_LOST",
+          "to_node": "BA-012",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-012",
+          "from_type": "BridgeAxiom",
+          "relationship": "PREDICTS",
+          "to_node": "35% Productivity Loss",
+          "to_type": "RiskOutcome"
+        },
+        {
+          "from_node": "BA-012",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Rogers et al. 2018",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Tourism loss is modeled, not observed at Cabo Pulmo",
         "Cascading effects may be non-linear - compounding could worsen outcomes",
         "Recovery from degradation may take decades even with reinstated protection"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2935,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.4226,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 3 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "$3.2M (Fisheries)"
+      ],
+      "unverified_claims": [
+        "$1.12M",
+        "$8.75M",
+        "$12.5M",
+        "$9.7M"
       ]
     },
     "What is the downside scenario?": {
       "answer": "The downside scenario for Cabo Pulmo is quantified through Monte Carlo simulation (10,000 runs):\n\n**P5 (5th percentile) - Severe downside:**\n- ESV drops to ~$19.6M/year (33% below base case of $29.27M)\n- Loss of ~$9.7M in annual ecosystem service value\n\n**Key risk drivers modeled:**\n1. Climate shocks: Coral bleaching events reduce biomass and reef structure\n2. Protection failure: Loss of enforcement leading to illegal fishing (BA-012: 35% fisheries loss)\n3. Tourism sensitivity: External shocks (pandemics, travel restrictions) reducing visitation\n4. Market volatility: Changes in visitor expenditure patterns\n\n**Distribution summary:**\n- P5 (downside): ~$19.6M/year\n- P25: ~$24.2M/year\n- Median (P50): ~$28.7M/year\n- P75: ~$33.5M/year\n- P95 (upside): ~$36.1M/year\n- Standard deviation: ~$4.7M\n\n**Risk mitigation factors:**\n- BA-011 quantifies a 30% climate disturbance reduction from MPA protection\n- 29 years of enforcement track record provides governance stability\n- Community-based management model adds social resilience\n\nThe Monte Carlo incorporates parameter uncertainty from all source studies, propagating confidence intervals through each bridge axiom transformation.",
-      "confidence": 0.85,
+      "confidence": 0.2935,
       "evidence": [
         {
           "doi": "10.1111/1365-2664.13051",
@@ -743,22 +1620,68 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-011", "BA-012"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-011",
+        "BA-012"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "ASSESSED_AS", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "NEOLI 4/5", "from_type": "GovernanceScore", "relationship": "RISK_IF_LOST", "to_node": "BA-012", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-012", "from_type": "BridgeAxiom", "relationship": "PREDICTS", "to_node": "35% Productivity Loss", "to_type": "RiskOutcome"},
-        {"from_node": "BA-011", "from_type": "BridgeAxiom", "relationship": "QUANTIFIES", "to_node": "30% Disturbance Buffer", "to_type": "ResilienceBenefit"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "NEOLI 4/5",
+          "from_type": "GovernanceScore",
+          "relationship": "RISK_IF_LOST",
+          "to_node": "BA-012",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-012",
+          "from_type": "BridgeAxiom",
+          "relationship": "PREDICTS",
+          "to_node": "35% Productivity Loss",
+          "to_type": "RiskOutcome"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "QUANTIFIES",
+          "to_node": "30% Disturbance Buffer",
+          "to_type": "ResilienceBenefit"
+        }
       ],
       "caveats": [
         "Monte Carlo assumes approximately normal distributions - extreme tail events may be understated",
         "Correlation between risk factors not fully modeled - compound events possible",
         "Downside scenario does not model complete MPA collapse"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2935,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.4226,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 3 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)"
+      ],
+      "unverified_claims": [
+        "$9.7M",
+        "$24.2M",
+        "$33.5M",
+        "$4.7M"
       ]
     },
     "Compare to other sites": {
       "answer": "Cabo Pulmo's performance compared to reference sites demonstrates the NEOLI framework's predictive power:\n\n**Cabo Pulmo National Park (NEOLI 4/5) - AAA**\n- Biomass: 4.63x recovery\n- ESV: $29.27M/year\n- Rating: AAA (composite score 0.90)\n- Strengths: No-take, Enforced, Old (29yr), Isolated\n- Gap: Not Large (71 km2 < 100 km2 threshold)\n\n**Papahanaumokuakea (NEOLI 5/5)**\n- Biomass: 54% apex predators by weight\n- Spillover: 54% yellowfin tuna spillover increase (2022)\n- Full NEOLI alignment correlates with strong ecological outcomes\n- Demonstrates what maximum protection achieves\n\n**Mesoamerican Reef - partial protection (NEOLI 1-2/5)**\n- Only 8% of MPAs showed biomass increases\n- Partial protection shows limited conservation outcomes\n- Demonstrates that weak governance undermines ecological and financial returns\n\n**Key insight for investors:** NEOLI score is the strongest predictor of MPA success. Each additional NEOLI criterion met correlates with measurably better ecological and financial outcomes. Cabo Pulmo at 4/5 represents the high end of achievable results for a site below the size threshold.",
-      "confidence": 0.82,
+      "confidence": 0.328,
       "evidence": [
         {
           "doi": "10.1038/nature13022",
@@ -782,23 +1705,71 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "RATED", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "Papahanaumokuakea", "from_type": "MPA", "relationship": "RATED", "to_node": "NEOLI 5/5", "to_type": "GovernanceScore"},
-        {"from_node": "Mesoamerican Reef", "from_type": "MPA", "relationship": "RATED", "to_node": "NEOLI 1-2/5", "to_type": "GovernanceScore"},
-        {"from_node": "NEOLI 4/5", "from_type": "GovernanceScore", "relationship": "CORRELATES_WITH", "to_node": "4.63x Biomass", "to_type": "EcologicalState"},
-        {"from_node": "NEOLI 5/5", "from_type": "GovernanceScore", "relationship": "CORRELATES_WITH", "to_node": "54% Apex Predators", "to_type": "EcologicalState"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "RATED",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "Papahanaumokuakea",
+          "from_type": "MPA",
+          "relationship": "RATED",
+          "to_node": "NEOLI 5/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "Mesoamerican Reef",
+          "from_type": "MPA",
+          "relationship": "RATED",
+          "to_node": "NEOLI 1-2/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "NEOLI 4/5",
+          "from_type": "GovernanceScore",
+          "relationship": "CORRELATES_WITH",
+          "to_node": "4.63x Biomass",
+          "to_type": "EcologicalState"
+        },
+        {
+          "from_node": "NEOLI 5/5",
+          "from_type": "GovernanceScore",
+          "relationship": "CORRELATES_WITH",
+          "to_node": "54% Apex Predators",
+          "to_type": "EcologicalState"
+        }
       ],
       "caveats": [
         "Comparison sites selected for illustration, not exhaustive",
         "Papahanaumokuakea and Mesoamerican Reef ESV not directly comparable due to scale differences",
         "NEOLI framework validated at global scale but individual site outcomes vary"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.328,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.4226,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 3 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "4.63x (biomass ratio)",
+        "AAA (asset rating)",
+        "0.90 (composite score)"
+      ],
+      "unverified_claims": []
     },
     "How does Cabo Pulmo compare to the Great Barrier Reef?": {
       "answer": "Cabo Pulmo and the Great Barrier Reef Marine Park represent different scales and models of marine protection:\n\n**Cabo Pulmo National Park:**\n- Area: 71 km2\n- NEOLI alignment: 4/5 (No-take, Enforced, Old, Isolated; not Large)\n- Asset rating: AAA (composite 0.90)\n- ESV: $29.27M/year (fully characterized with bridge axiom provenance)\n- Biomass: 4.63x recovery ratio\n- Key strength: Community-managed no-take reserve with complete scientific provenance\n\n**Great Barrier Reef Marine Park:**\n- Area: 344,400 km2\n- NEOLI alignment: 3/5 (Large, Old, Enforced; partial no-take, not Isolated)\n- Asset rating: AA (governance metadata only in MARIS)\n- ESV: Not characterized in MARIS (governance metadata only by design)\n- Key strength: Scale - the world's largest coral reef system\n\n**Why the comparison is limited:** MARIS currently has full provenance-backed financial data only for Cabo Pulmo. The Great Barrier Reef has governance metadata (area, NEOLI score, designation year) but no ecosystem service valuations in the graph. This is by design - the POC demonstrates the complete provenance chain for one deeply characterized site.\n\n**NEOLI insight:** Cabo Pulmo's higher NEOLI score (4/5 vs 3/5) reflects its stricter no-take status and ecological isolation, correlating with its exceptional biomass recovery.",
-      "confidence": 0.78,
+      "confidence": 0.2273,
       "evidence": [
         {
           "doi": "10.1038/nature13022",
@@ -815,21 +1786,56 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-011"],
+      "axioms_used": [
+        "BA-011"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "RATED", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "Great Barrier Reef Marine Park", "from_type": "MPA", "relationship": "RATED", "to_node": "NEOLI 3/5", "to_type": "GovernanceScore"},
-        {"from_node": "BA-011", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Edgar et al. 2014", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "RATED",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "Great Barrier Reef Marine Park",
+          "from_type": "MPA",
+          "relationship": "RATED",
+          "to_node": "NEOLI 3/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Edgar et al. 2014",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "GBR financial data not in MARIS - governance metadata only by design",
         "NEOLI scores reflect different protection models, not overall quality",
         "Scale differences make direct ESV comparison inappropriate without normalization"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2273,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "4.63x (biomass ratio)",
+        "AAA (asset rating)",
+        "0.90 (composite score)"
+      ],
+      "unverified_claims": []
     },
     "What about Papahanaumokuakea?": {
       "answer": "Papahanaumokuakea Marine National Monument is a reference site in MARIS with governance metadata:\n\n**Site profile:**\n- Area: 1,510,000 km2 (one of the world's largest marine protected areas)\n- NEOLI alignment: 5/5 (all five criteria met)\n- Asset rating: AAA\n- Designation: 2006 (expanded 2016)\n- Location: Northwestern Hawaiian Islands\n\n**Ecological outcomes (from literature):**\n- 54% apex predators by weight - one of the highest proportions documented globally\n- 54% yellowfin tuna spillover increase documented in 2022\n- Near-pristine coral reef ecosystems with minimal human impact\n\n**Why limited data in MARIS:**\nMARIS currently contains governance metadata only for Papahanaumokuakea (area, NEOLI score, designation year, asset rating). Full ecosystem service valuations with bridge axiom provenance chains have not been computed. This is by design - the POC demonstrates the complete methodology using Cabo Pulmo as the reference site.\n\n**NEOLI insight:** Papahanaumokuakea's 5/5 NEOLI alignment (the maximum possible) demonstrates what full protection achieves ecologically. Its apex predator biomass composition confirms the NEOLI framework's predictive power for conservation outcomes.",
-      "confidence": 0.76,
+      "confidence": 0.3881,
       "evidence": [
         {
           "doi": "10.1038/nature13022",
@@ -839,20 +1845,46 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-011"],
+      "axioms_used": [
+        "BA-011"
+      ],
       "graph_path": [
-        {"from_node": "Papahanaumokuakea Marine National Monument", "from_type": "MPA", "relationship": "RATED", "to_node": "NEOLI 5/5", "to_type": "GovernanceScore"},
-        {"from_node": "BA-011", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Edgar et al. 2014", "to_type": "Document"}
+        {
+          "from_node": "Papahanaumokuakea Marine National Monument",
+          "from_type": "MPA",
+          "relationship": "RATED",
+          "to_node": "NEOLI 5/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Edgar et al. 2014",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Governance metadata only - no ESV computed for this site",
         "Financial data for Papahanaumokuakea is outside current MARIS scope",
         "Ecological data from published literature, not MARIS graph queries"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3881,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.5,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 1 supporting source"
+      },
+      "verified_claims": [
+        "AAA (asset rating)"
+      ],
+      "unverified_claims": []
     },
     "Tell me more about BA-003": {
       "answer": "**Bridge Axiom BA-003: Reef Carbon Sequestration**\n\nBA-003 quantifies the relationship between coral reef area and carbon sequestration value.\n\n**Translation:** Coral reef area (hectares) -> Carbon sequestration value (USD/year)\n**Mechanism:** Coral calcification processes and reef-associated primary production sequester atmospheric carbon\n**Method:** Carbon value calculated using calcification rate per hectare and social cost of carbon\n\n**Application to Cabo Pulmo:**\n- Reef area contributes to the $180K/year carbon sequestration value\n- This is a conservative estimate covering reef-associated carbon only\n- Seagrass and mangrove carbon (blue carbon) is excluded from the current estimate\n\n**Important notes:**\n- BA-003 defines the reef-to-carbon translation; BA-008 applies the fisheries-specific yield model\n- The carbon value is the smallest of the four ecosystem service categories (0.6% of total ESV)\n- Reef carbon sequestration is an active area of research with evolving estimates\n\nBA-003 is defined in the bridge axiom templates but its contribution to Cabo Pulmo's total ESV is relatively minor compared to tourism (BA-001) and fisheries (BA-002).",
-      "confidence": 0.80,
+      "confidence": 0.3676,
       "evidence": [
         {
           "doi": "10.1038/s44183-025-00111-y",
@@ -862,22 +1894,60 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-003"],
+      "axioms_used": [
+        "BA-003"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "HAS_HABITAT", "to_node": "Coral Reef", "to_type": "Habitat"},
-        {"from_node": "Coral Reef", "from_type": "Habitat", "relationship": "PROVIDES", "to_node": "Carbon Sequestration", "to_type": "EcosystemService"},
-        {"from_node": "BA-003", "from_type": "BridgeAxiom", "relationship": "TRANSLATES", "to_node": "Carbon Sequestration", "to_type": "EcosystemService"},
-        {"from_node": "BA-003", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Duarte et al. 2025", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "HAS_HABITAT",
+          "to_node": "Coral Reef",
+          "to_type": "Habitat"
+        },
+        {
+          "from_node": "Coral Reef",
+          "from_type": "Habitat",
+          "relationship": "PROVIDES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-003",
+          "from_type": "BridgeAxiom",
+          "relationship": "TRANSLATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-003",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Duarte et al. 2025",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Carbon estimate is conservative - reef-associated only, excludes seagrass/mangrove",
         "Carbon sequestration rates in coral reef literature are still debated",
         "Social cost of carbon varies significantly by regulatory framework"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3676,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.5,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 1 supporting source"
+      },
+      "verified_claims": [
+        "$180K (Carbon sequestration)"
+      ],
+      "unverified_claims": []
     },
     "What is the confidence level?": {
       "answer": "Confidence levels in MARIS are built from multiple sources of uncertainty, propagated through each bridge axiom:\n\n**Overall ESV confidence:**\n- Central estimate: $29.27M/year\n- 95% confidence interval: $21.28M - $38.85M\n- Monte Carlo simulations: 10,000 runs\n- Median: ~$28.7M, P5: ~$19.6M, P95: ~$36.1M\n\n**By component:**\n- Tourism ($25.0M): High confidence - based on observed market-price data and documented visitor counts\n- Fisheries ($3.2M): Medium-high confidence - spillover coefficient from regional meta-analysis\n- Coastal protection ($890K): Medium confidence - global avoided-cost model applied locally\n- Carbon ($180K): Medium confidence - conservative estimate, active research area\n\n**By data source:**\n- Biomass recovery (4.63x): High confidence (CI [3.8x, 5.5x]) - direct field measurement\n- NEOLI alignment (4/5): High confidence - binary criteria clearly documented\n- Axiom coefficients: Medium-high - peer-reviewed but some benefit-transfer\n\n**How MARIS handles uncertainty:**\nRather than presenting a single number, MARIS propagates uncertainty through every calculation step. Each bridge axiom's coefficient carries its own confidence interval, and these are combined through Monte Carlo simulation to produce the overall distribution. This approach makes uncertainty transparent and auditable.",
-      "confidence": 0.88,
+      "confidence": 0.2154,
       "evidence": [
         {
           "doi": "10.1371/journal.pone.0023601",
@@ -894,21 +1964,61 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002", "BA-004", "BA-008"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-008"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "GENERATES", "to_node": "Tourism", "to_type": "EcosystemService"},
-        {"from_node": "Tourism", "from_type": "EcosystemService", "relationship": "VALUED_BY", "to_node": "BA-001", "to_type": "BridgeAxiom"},
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Tourism",
+          "from_type": "EcosystemService",
+          "relationship": "VALUED_BY",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Confidence intervals assume approximately normal distributions",
         "Correlation between risk factors not fully modeled",
         "Monte Carlo does not model extreme tail events (black swan scenarios)"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2154,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "$25.0M (Tourism)",
+        "$3.2M (Fisheries)",
+        "$180K (Carbon sequestration)",
+        "$890K (Coastal protection)",
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": []
     },
     "How recent is this data?": {
       "answer": "The data underlying MARIS valuations spans from 2011 to 2025, with most key sources published in 2024:\n\n**Most recent sources (2024-2025):**\n- Marcos-Castillo et al. 2024 - Tourism valuation framework (DOI: 10.1038/s41598-024-83664-1)\n- Hopf et al. 2024 - Fisheries spillover (DOI: 10.1002/eap.3027)\n- Ortiz-Villa et al. 2024 - Climate resilience (DOI: 10.1111/gcb.17477)\n- Duarte et al. 2025 - Blue carbon strategies (DOI: 10.1038/s44183-025-00111-y)\n\n**Foundational sources (older but still canonical):**\n- Aburto-Oropeza et al. 2011 - Biomass recovery measurement (DOI: 10.1371/journal.pone.0023601)\n- Edgar et al. 2014 - NEOLI framework (DOI: 10.1038/nature13022)\n- Beck et al. 2018 - Coral reef flood protection (DOI: 10.1038/s41467-018-04568-z)\n\n**Known staleness flags:**\n- The biomass recovery ratio (4.63x) is based on field data from 2009. MARIS explicitly flags this and recommends a contemporary survey for investment applications.\n- The NEOLI framework (2014) is still the standard in the field and has not been superseded.\n\n**Library currency:** The full 195-paper library includes publications through 2025. 92% are T1 (peer-reviewed).\n\nMARIS is designed to flag data staleness transparently, letting investors assess temporal risk alongside financial risk.",
-      "confidence": 0.90,
+      "confidence": 0.2746,
       "evidence": [
         {
           "doi": "10.1038/s41598-024-83664-1",
@@ -932,20 +2042,47 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-001", "BA-002"],
+      "axioms_used": [
+        "BA-001",
+        "BA-002"
+      ],
       "graph_path": [
-        {"from_node": "BA-001", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Marcos-Castillo et al. 2024", "to_type": "Document"},
-        {"from_node": "BA-002", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Aburto-Oropeza et al. 2011", "to_type": "Document"}
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Aburto-Oropeza et al. 2011",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "Biomass field data from 2009 - contemporary survey recommended",
         "Data currency varies by component - tourism data is current, biomass is older",
         "MARIS flags staleness explicitly rather than hiding it"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2746,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.76,
+        "sample_factor": 0.4226,
+        "explanation": "High-quality peer-reviewed sources; oldest data is 17 years old (2009); 3 supporting sources"
+      },
+      "verified_claims": [
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": []
     },
     "What about sites not in the system?": {
       "answer": "MARIS currently contains detailed financial data for one fully characterized site (Cabo Pulmo National Park) and governance metadata for two comparison sites (Great Barrier Reef Marine Park and Papahanaumokuakea Marine National Monument).\n\n**For sites not in the system:**\n- MARIS cannot generate ecosystem service valuations for sites without characterized data\n- The bridge axiom framework (BA-001 through BA-012) is designed to be transferable to new sites\n- Adding a new MPA requires: case study data (NEOLI scores, biomass measurements, service values), bridge axiom calibration, and population into the Neo4j graph\n\n**What would be needed for a new site:**\n1. NEOLI criteria assessment (5 binary criteria)\n2. Biomass survey data (baseline and current)\n3. Ecosystem service measurements (tourism visitation, fisheries data, reef extent)\n4. Peer-reviewed sources for each measurement (to maintain provenance chain)\n\n**Current scope is intentional:**\nThe POC demonstrates the full provenance-first methodology on one deeply characterized site rather than providing shallow coverage of many sites. This approach prioritizes auditability and depth over breadth. Scaling to additional sites is an infrastructure extension, not a methodology change.\n\n**Comparison sites (GBR, Papahanaumokuakea):**\nThese have governance metadata only - NEOLI scores, area, designation year, and asset ratings. No ecosystem service valuations are computed for them. Queries about their financial data will return empty results by design.",
-      "confidence": 0.85,
+      "confidence": 0.3881,
       "evidence": [
         {
           "doi": "10.1038/nature13022",
@@ -957,19 +2094,47 @@
       ],
       "axioms_used": [],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "RATED", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "Great Barrier Reef Marine Park", "from_type": "MPA", "relationship": "RATED", "to_node": "NEOLI 3/5", "to_type": "GovernanceScore"},
-        {"from_node": "Papahanaumokuakea Marine National Monument", "from_type": "MPA", "relationship": "RATED", "to_node": "NEOLI 5/5", "to_type": "GovernanceScore"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "RATED",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "Great Barrier Reef Marine Park",
+          "from_type": "MPA",
+          "relationship": "RATED",
+          "to_node": "NEOLI 3/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "Papahanaumokuakea Marine National Monument",
+          "from_type": "MPA",
+          "relationship": "RATED",
+          "to_node": "NEOLI 5/5",
+          "to_type": "GovernanceScore"
+        }
       ],
       "caveats": [
         "Only Cabo Pulmo has full financial provenance data",
         "Adding new sites requires field data and peer-reviewed evidence",
         "Comparison sites have governance metadata only - by design"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3881,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.5,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 1 supporting source"
+      },
+      "verified_claims": [],
+      "unverified_claims": []
     },
     "What is NEOLI?": {
       "answer": "NEOLI is a framework for predicting marine protected area (MPA) conservation outcomes, established by Edgar et al. 2014 in Nature (DOI: 10.1038/nature13022). The name is an acronym for five key features that predict MPA success:\n\n**N - No-take:** Complete prohibition on extractive activities (fishing, harvesting)\n**E - Enforced:** Active surveillance and enforcement of regulations\n**O - Old:** At least 10 years of continuous protection\n**L - Large:** Area exceeds 100 km2\n**I - Isolated:** Geographically separated from fished areas by deep water or distance\n\n**How MARIS uses NEOLI:**\n- Bridge axiom BA-011 maps NEOLI criteria to an asset rating (0-1 composite score)\n- Cabo Pulmo scores 4/5 (meets No-take, Enforced, Old, Isolated; does not meet Large at 71 km2)\n- This 4/5 score maps to an AAA rating with composite score 0.90\n\n**Why NEOLI matters for investors:**\nEdgar et al. found that MPAs meeting all five NEOLI criteria had significantly better conservation outcomes than those meeting fewer criteria. This makes NEOLI a strong predictor of ecological - and therefore financial - performance for marine assets.\n\n**Important terminology:** MARIS uses \"NEOLI alignment\" rather than \"NEOLI compliance,\" as the system does not claim NEOLI certification. The framework is used as a predictive indicator, not a certification standard.",
-      "confidence": 0.93,
+      "confidence": 0.3881,
       "evidence": [
         {
           "doi": "10.1038/nature13022",
@@ -979,17 +2144,50 @@
           "tier": "T1"
         }
       ],
-      "axioms_used": ["BA-011"],
+      "axioms_used": [
+        "BA-011"
+      ],
       "graph_path": [
-        {"from_node": "Cabo Pulmo National Park", "from_type": "MPA", "relationship": "ASSESSED_AS", "to_node": "NEOLI 4/5", "to_type": "GovernanceScore"},
-        {"from_node": "BA-011", "from_type": "BridgeAxiom", "relationship": "MAPS_TO", "to_node": "AAA Rating (0.90)", "to_type": "FinancialValue"},
-        {"from_node": "BA-011", "from_type": "BridgeAxiom", "relationship": "EVIDENCED_BY", "to_node": "Edgar et al. 2014", "to_type": "Document"}
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "MAPS_TO",
+          "to_node": "AAA Rating (0.90)",
+          "to_type": "FinancialValue"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Edgar et al. 2014",
+          "to_type": "Document"
+        }
       ],
       "caveats": [
         "NEOLI alignment, not NEOLI compliance - MARIS does not claim certification",
         "NEOLI was validated at global scale - individual site outcomes may vary",
         "The 100 km2 Large threshold is debated in recent literature"
-      ]
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3881,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.5,
+        "explanation": "High-quality peer-reviewed sources; data spans multiple years (mixed currency); 1 supporting source"
+      },
+      "verified_claims": [
+        "AAA (asset rating)",
+        "0.90 (composite score)"
+      ],
+      "unverified_claims": []
     }
   }
 }

@@ -20,6 +20,7 @@ def format_response(raw_response: dict) -> dict:
         "caveats": raw_response.get("caveats", []),
         "verified_claims": raw_response.get("verified_claims", []),
         "unverified_claims": raw_response.get("unverified_claims", []),
+        "confidence_breakdown": raw_response.get("confidence_breakdown"),
     }
 
 

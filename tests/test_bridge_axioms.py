@@ -1,22 +1,186 @@
-"""
-Unit tests for bridge axiom engine
+"""Tests for bridge axiom schema validation and confidence propagation."""
 
-TIMELINE: Week 6-7 (Phase 4: Bridge Axioms) - Develop alongside bridge_axiom_engine.py
-IMPLEMENTATION PRIORITY: High - Validate axiom applications against Cabo Pulmo
+import json
+import math
+import re
+from pathlib import Path
 
-Test cases to implement:
-- Test bridge axiom loading from templates
-- Test axiom pattern matching
-- Test context matching (habitat applicability)
-- Test coefficient calculations for each axiom
-- Test uncertainty propagation through axiom chains
-- Test axiom chaining (multi-hop reasoning)
-- Test axiom application error handling
-- Test axiom validation against Cabo Pulmo (±20% tolerance)
-- Test NEOLI score calculation (BA-002)
-- Test biomass-tourism elasticity (BA-001)
-- Test otter-kelp-carbon cascade (BA-003)
-- Test all 12 bridge axioms individually
-- Test axiom application with invalid contexts
-- Test confidence score calculation
-"""
+import pytest
+
+from maris.axioms.engine import BridgeAxiomEngine
+from maris.axioms.confidence import propagate_ci, propagate_ci_multiplicative
+
+TEMPLATES_PATH = Path("schemas/bridge_axiom_templates.json")
+
+
+@pytest.fixture
+def axiom_data():
+    with open(TEMPLATES_PATH) as f:
+        return json.load(f)
+
+
+@pytest.fixture
+def engine():
+    return BridgeAxiomEngine(templates_path=TEMPLATES_PATH)
+
+
+# ---- Schema completeness ----
+
+
+class TestAxiomSchemaCompleteness:
+    def test_all_12_axioms_exist(self, axiom_data):
+        """All 12 bridge axioms BA-001 through BA-012 must be present."""
+        axioms = axiom_data["axioms"]
+        assert len(axioms) == 12
+        ids = {a["axiom_id"] for a in axioms}
+        for i in range(1, 13):
+            assert f"BA-{i:03d}" in ids
+
+    def test_required_fields_present(self, axiom_data):
+        """Each axiom must have axiom_id, name, coefficients, applicable_habitats."""
+        required = {"axiom_id", "name", "coefficients", "applicable_habitats"}
+        for axiom in axiom_data["axioms"]:
+            missing = required - set(axiom.keys())
+            assert not missing, f"{axiom['axiom_id']} missing fields: {missing}"
+
+    def test_axiom_ids_format(self, axiom_data):
+        """All axiom IDs must match BA-NNN format."""
+        pattern = re.compile(r"^BA-\d{3}$")
+        for axiom in axiom_data["axioms"]:
+            assert pattern.match(axiom["axiom_id"]), (
+                f"Invalid axiom ID format: {axiom['axiom_id']}"
+            )
+
+    def test_ba001_through_ba004_research_grounded(self, axiom_data):
+        """BA-001 to BA-004 coefficients should be research_grounded."""
+        research_ids = {"BA-001", "BA-002", "BA-003", "BA-004"}
+        for axiom in axiom_data["axioms"]:
+            if axiom["axiom_id"] not in research_ids:
+                continue
+            for key, coeff in axiom["coefficients"].items():
+                if isinstance(coeff, dict) and "uncertainty_type" in coeff:
+                    assert coeff["uncertainty_type"] == "research_grounded", (
+                        f"{axiom['axiom_id']}.{key} should be research_grounded, "
+                        f"got {coeff['uncertainty_type']}"
+                    )
+
+
+# ---- Coefficient bounds ----
+
+
+class TestCoefficientBounds:
+    def test_ci_bounds_ordering(self, axiom_data):
+        """For every coefficient with ci_low and ci_high, ci_low < value < ci_high."""
+        for axiom in axiom_data["axioms"]:
+            for key, coeff in axiom["coefficients"].items():
+                if not isinstance(coeff, dict):
+                    continue
+                # Handle nested dicts (e.g., wave_energy_reduction_percent.healthy_reef)
+                items_to_check = []
+                if "value" in coeff and "ci_low" in coeff and "ci_high" in coeff:
+                    items_to_check.append((f"{axiom['axiom_id']}.{key}", coeff))
+                else:
+                    for sub_key, sub_val in coeff.items():
+                        if (
+                            isinstance(sub_val, dict)
+                            and "value" in sub_val
+                            and "ci_low" in sub_val
+                            and "ci_high" in sub_val
+                        ):
+                            items_to_check.append(
+                                (f"{axiom['axiom_id']}.{key}.{sub_key}", sub_val)
+                            )
+
+                for label, c in items_to_check:
+                    assert c["ci_low"] <= c["value"], (
+                        f"{label}: ci_low ({c['ci_low']}) > value ({c['value']})"
+                    )
+                    assert c["value"] <= c["ci_high"], (
+                        f"{label}: value ({c['value']}) > ci_high ({c['ci_high']})"
+                    )
+                    # At least one bound must be strictly different
+                    assert c["ci_low"] < c["ci_high"], (
+                        f"{label}: ci_low ({c['ci_low']}) == ci_high ({c['ci_high']})"
+                    )
+
+
+# ---- Engine operations ----
+
+
+class TestBridgeAxiomEngine:
+    def test_engine_get_axiom(self, engine):
+        """engine.get_axiom('BA-001') returns a dict with axiom_id."""
+        axiom = engine.get_axiom("BA-001")
+        assert axiom is not None
+        assert axiom["axiom_id"] == "BA-001"
+
+    def test_engine_get_axiom_none(self, engine):
+        """engine.get_axiom('BA-999') returns None."""
+        assert engine.get_axiom("BA-999") is None
+
+    def test_engine_list_all(self, engine):
+        """list_all() returns all 12 axioms."""
+        all_axioms = engine.list_all()
+        assert len(all_axioms) == 12
+
+    def test_engine_list_applicable_coral_reef(self, engine):
+        """Axioms applicable to coral_reef include BA-004 and BA-012."""
+        applicable = engine.list_applicable("coral_reef")
+        ids = {a["axiom_id"] for a in applicable}
+        assert "BA-004" in ids
+        assert "BA-012" in ids
+
+    def test_engine_list_applicable_all_habitat(self, engine):
+        """BA-002 applies to 'all' habitats and should match any query."""
+        applicable = engine.list_applicable("any_random_habitat")
+        ids = {a["axiom_id"] for a in applicable}
+        assert "BA-002" in ids
+
+
+# ---- Confidence propagation ----
+
+
+class TestConfidencePropagation:
+    def test_propagate_ci_additive(self):
+        """Additive CI propagation with known values."""
+        values = [
+            {"value": 100, "ci_low": 80, "ci_high": 120},
+            {"value": 200, "ci_low": 170, "ci_high": 230},
+        ]
+        result = propagate_ci(values)
+        assert result["total"] == 300
+        # RSS: low = 300 - sqrt((100-80)^2 + (200-170)^2) = 300 - sqrt(400+900) = 300 - 36.06
+        expected_low = 300 - math.sqrt(20**2 + 30**2)
+        expected_high = 300 + math.sqrt(20**2 + 30**2)
+        assert abs(result["ci_low"] - expected_low) < 0.01
+        assert abs(result["ci_high"] - expected_high) < 0.01
+
+    def test_propagate_ci_empty(self):
+        """propagate_ci([]) returns zeros."""
+        result = propagate_ci([])
+        assert result["total"] == 0.0
+        assert result["ci_low"] == 0.0
+        assert result["ci_high"] == 0.0
+
+    def test_propagate_ci_multiplicative(self):
+        """Multiplicative CI propagation with known values."""
+        values = [
+            {"value": 10, "ci_low": 8, "ci_high": 12},
+            {"value": 5, "ci_low": 4, "ci_high": 6},
+        ]
+        result = propagate_ci_multiplicative(values)
+        assert result["total"] == 50  # 10 * 5
+        # Relative uncertainties: low = (10-8)/10=0.2, (5-4)/5=0.2
+        # Combined relative low = sqrt(0.04+0.04) = sqrt(0.08) ~ 0.2828
+        combined_rel = math.sqrt(0.2**2 + 0.2**2)
+        expected_low = 50 * (1 - combined_rel)
+        expected_high = 50 * (1 + combined_rel)
+        assert abs(result["ci_low"] - expected_low) < 0.01
+        assert abs(result["ci_high"] - expected_high) < 0.01
+
+    def test_propagate_ci_multiplicative_empty(self):
+        """propagate_ci_multiplicative([]) returns zeros."""
+        result = propagate_ci_multiplicative([])
+        assert result["total"] == 0.0
+        assert result["ci_low"] == 0.0
+        assert result["ci_high"] == 0.0

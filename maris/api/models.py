@@ -51,6 +51,9 @@ class QueryResponse(BaseModel):
     axioms_used: list[str] = []
     graph_path: list[dict] = []
     caveats: list[str] = []
+    verified_claims: list[str] = []
+    unverified_claims: list[str] = []
+    confidence_breakdown: dict | None = None
     query_metadata: QueryMetadata = QueryMetadata()
 
 

@@ -3,6 +3,7 @@
 import json
 import logging
 import math
+import os
 import re
 from pathlib import Path
 
@@ -33,36 +34,43 @@ _STOPWORDS = frozenset({
 class LiveAPIClient:
     """Connects to the MARIS FastAPI backend."""
 
-    def __init__(self, base_url: str = _DEFAULT_API):
+    def __init__(self, base_url: str = _DEFAULT_API, api_key: str | None = None):
         self.base_url = base_url.rstrip("/")
         self.is_live = True
+        self._api_key = api_key or os.environ.get("MARIS_API_KEY", "")
+
+    def _headers(self) -> dict:
+        h: dict[str, str] = {}
+        if self._api_key:
+            h["Authorization"] = f"Bearer {self._api_key}"
+        return h
 
     def query(self, question: str, site: str | None = None) -> dict:
         import requests
 
         payload = {"question": question, "site": site, "include_graph_path": True}
-        resp = requests.post(f"{self.base_url}/api/query", json=payload, timeout=30)
+        resp = requests.post(f"{self.base_url}/api/query", json=payload, headers=self._headers(), timeout=30)
         resp.raise_for_status()
         return resp.json()
 
     def get_health(self) -> dict:
         import requests
 
-        resp = requests.get(f"{self.base_url}/api/health", timeout=5)
+        resp = requests.get(f"{self.base_url}/api/health", headers=self._headers(), timeout=5)
         resp.raise_for_status()
         return resp.json()
 
     def get_axiom(self, axiom_id: str) -> dict:
         import requests
 
-        resp = requests.get(f"{self.base_url}/api/axiom/{axiom_id}", timeout=10)
+        resp = requests.get(f"{self.base_url}/api/axiom/{axiom_id}", headers=self._headers(), timeout=10)
         resp.raise_for_status()
         return resp.json()
 
     def get_site(self, site_name: str) -> dict:
         import requests
 
-        resp = requests.get(f"{self.base_url}/api/site/{site_name}", timeout=10)
+        resp = requests.get(f"{self.base_url}/api/site/{site_name}", headers=self._headers(), timeout=10)
         resp.raise_for_status()
         return resp.json()
 
@@ -72,6 +80,7 @@ class LiveAPIClient:
         resp = requests.post(
             f"{self.base_url}/api/compare",
             json={"site_names": sites},
+            headers=self._headers(),
             timeout=15,
         )
         resp.raise_for_status()
@@ -188,7 +197,7 @@ def get_client() -> LiveAPIClient | StaticBundleClient:
         resp = requests.get(f"{_DEFAULT_API}/api/health", timeout=3)
         if resp.status_code == 200:
             logger.info("Connected to MARIS API at %s", _DEFAULT_API)
-            return LiveAPIClient()
+            return LiveAPIClient(api_key=os.environ.get("MARIS_API_KEY", ""))
     except Exception:
         pass
 

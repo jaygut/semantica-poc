@@ -3,6 +3,7 @@
 import json
 import logging
 
+from maris.axioms.confidence import calculate_response_confidence
 from maris.llm.adapter import LLMAdapter
 from maris.llm.prompts import RESPONSE_SYNTHESIS_PROMPT
 from maris.query.validators import (
@@ -12,6 +13,15 @@ from maris.query.validators import (
 )
 
 logger = logging.getLogger(__name__)
+
+# Map query category to inference hop count for confidence scoring
+_CATEGORY_HOPS = {
+    "site_valuation": 1,
+    "provenance_drilldown": 2,
+    "axiom_explanation": 2,
+    "comparison": 1,
+    "risk_assessment": 3,
+}
 
 
 class ResponseGenerator:
@@ -58,4 +68,48 @@ class ResponseGenerator:
         validated.setdefault("axioms_used", raw["axioms_used"])
         validated.setdefault("graph_path", raw["graph_path"])
 
+        # Replace LLM self-stated confidence with composite grounded score
+        try:
+            evidence_nodes = _extract_evidence_nodes(graph_context)
+            n_hops = _CATEGORY_HOPS.get(category, 1)
+            breakdown = calculate_response_confidence(
+                evidence_nodes, n_hops=n_hops
+            )
+            validated["confidence"] = breakdown["composite"]
+            validated["confidence_breakdown"] = breakdown
+        except Exception:
+            logger.warning(
+                "Composite confidence scoring failed, keeping LLM confidence",
+                exc_info=True,
+            )
+
         return validated
+
+
+def _extract_evidence_nodes(graph_context: dict) -> list[dict]:
+    """Extract evidence-like dicts from graph_context results.
+
+    Looks for items with source_tier, doi, year, or confidence properties
+    in the top-level results list and in nested evidence lists.
+    """
+    nodes: list[dict] = []
+    results = graph_context.get("results", [])
+    if not isinstance(results, list):
+        return nodes
+
+    _EVIDENCE_KEYS = {"source_tier", "tier", "doi", "year", "confidence"}
+
+    for item in results:
+        if not isinstance(item, dict):
+            continue
+        # Check the item itself
+        if _EVIDENCE_KEYS & item.keys():
+            nodes.append(item)
+        # Check nested evidence lists
+        for val in item.values():
+            if isinstance(val, list):
+                for sub in val:
+                    if isinstance(sub, dict) and (_EVIDENCE_KEYS & sub.keys()):
+                        nodes.append(sub)
+
+    return nodes

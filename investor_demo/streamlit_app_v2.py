@@ -1001,15 +1001,22 @@ st.caption(f"*Biomass data: {biomass_year} | Tourism data: 2024 | ESV total: mar
 st.markdown('<div class="section-desc" style="margin-top:24px">**Parameter Sensitivity** - Which inputs drive ESV uncertainty most? One-at-a-time (OAT) analysis varies each service value by +/-20% while holding others constant.</div>', unsafe_allow_html=True)
 
 # Build tornado data from the ecosystem services
-_esv_services = data.get("ecosystem_services", {})
 _svc_list = []
-if isinstance(_esv_services, dict):
-    for _svc_key in ["tourism", "fisheries_spillover", "carbon_sequestration", "coastal_protection"]:
-        _svc_data = _esv_services.get(_svc_key, {})
-        if isinstance(_svc_data, dict) and _svc_data.get("annual_value_usd"):
+_fin_breakdown = data.get("financial_output", {}).get("services_breakdown", {})
+if _fin_breakdown:
+    for _svc_key, _svc_val in _fin_breakdown.items():
+        if isinstance(_svc_val, (int, float)) and _svc_val > 0 and _svc_key.endswith("_usd"):
             _svc_list.append({
-                "name": _svc_key.replace("_", " ").title(),
-                "value": _svc_data["annual_value_usd"],
+                "name": _svc_key.removesuffix("_usd").replace("_", " ").title(),
+                "value": _svc_val,
+            })
+else:
+    _esv_services_list = data.get("ecosystem_services", {}).get("services", [])
+    for _svc_item in _esv_services_list:
+        if isinstance(_svc_item, dict) and _svc_item.get("annual_value_usd"):
+            _svc_list.append({
+                "name": _svc_item.get("service_type", "Unknown").replace("_", " ").title(),
+                "value": _svc_item["annual_value_usd"],
             })
 
 if _svc_list:
