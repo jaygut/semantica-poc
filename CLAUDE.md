@@ -23,7 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 │  QueryClassifier  -- keyword-first with LLM fallback                             │
 │       |              (5 categories: valuation, provenance, axiom, comparison,     │
 │       v               risk)                                                      │
-│  CypherTemplates  -- 6 parameterized templates, never raw string interpolation   │
+│  CypherTemplates  -- 8 parameterized templates, never raw string interpolation   │
 │       |                                                                          │
 │       v                                                                          │
 │  QueryExecutor    -- Neo4j bolt driver, parameterized queries only               │
@@ -70,7 +70,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 # 1. Configure environment (copy template, add your credentials)
 cp .env.example .env
-# Edit .env: set MARIS_NEO4J_PASSWORD and MARIS_LLM_API_KEY
+# Edit .env: set MARIS_NEO4J_PASSWORD, MARIS_LLM_API_KEY, and MARIS_API_KEY
 
 # 2. Install dependencies
 uv pip install -r requirements-v2.txt
@@ -98,6 +98,7 @@ python scripts/demo_healthcheck.py
 # Test a live query
 curl -X POST http://localhost:8000/api/query \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $MARIS_API_KEY" \
   -d '{"question": "What is Cabo Pulmo worth?", "include_graph_path": true}'
 ```
 
@@ -153,15 +154,52 @@ The graph is populated from **six curated data sources** through an 8-stage idem
 
 ## API Endpoints
 
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| GET | `/api/health` | System status: Neo4j connectivity, LLM availability, graph statistics |
-| POST | `/api/query` | Primary endpoint: NL question -> classified Cypher -> grounded answer with provenance |
-| GET | `/api/site/{site_name}` | Structured site data (full for Cabo Pulmo, governance-only for comparison sites) |
-| GET | `/api/axiom/{axiom_id}` | Bridge axiom details: coefficients, evidence, applicable sites |
-| POST | `/api/compare` | Side-by-side MPA comparison |
-| POST | `/api/graph/traverse` | Graph traversal from a starting node (1-6 hops) |
-| GET | `/api/graph/node/{element_id}` | Node properties and relationships by Neo4j element ID |
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| GET | `/api/health` | No | System status: Neo4j connectivity, LLM availability, graph statistics |
+| POST | `/api/query` | Yes | Primary endpoint: NL question -> classified Cypher -> grounded answer with provenance |
+| GET | `/api/site/{site_name}` | Yes | Structured site data (full for Cabo Pulmo, governance-only for comparison sites) |
+| GET | `/api/axiom/{axiom_id}` | Yes | Bridge axiom details: coefficients, evidence, applicable sites |
+| POST | `/api/compare` | Yes | Side-by-side MPA comparison |
+| POST | `/api/graph/traverse` | Yes | Graph traversal from a starting node (1-6 hops) |
+| GET | `/api/graph/node/{element_id}` | Yes | Node properties and relationships by Neo4j element ID |
+
+---
+
+## Authentication
+
+All endpoints except `/api/health` require a Bearer token via the `Authorization` header:
+
+```
+Authorization: Bearer <MARIS_API_KEY>
+```
+
+Authentication is implemented in `maris/api/auth.py`. When `MARIS_DEMO_MODE=true`, authentication is bypassed for development and demos.
+
+**Rate Limiting:** In-memory sliding-window rate limiting is applied per API key:
+- `/api/query`: 30 requests per minute
+- All other endpoints: 60 requests per minute
+
+Exceeding the limit returns HTTP 429. Rate limit headers are included in responses.
+
+---
+
+## Testing
+
+The project includes a comprehensive test suite with 177 tests covering all core modules.
+
+```bash
+# Install dev dependencies
+pip install -r requirements-dev.txt
+
+# Run all tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ --cov=maris --cov-report=term-missing
+```
+
+Tests are organized by module in `tests/` with shared fixtures in `conftest.py`. CI runs automatically on push and PR to `main` via GitHub Actions (`.github/workflows/ci.yml`): linting with ruff, then pytest.
 
 ---
 
@@ -172,6 +210,7 @@ maris/
   api/                          # FastAPI server
     main.py                     # App factory, CORS, router registration
     models.py                   # Pydantic v2 request/response schemas
+    auth.py                     # Bearer token auth, rate limiting, request tracing
     routes/
       health.py                 # GET /api/health
       query.py                  # POST /api/query - full NL-to-answer pipeline
@@ -183,10 +222,11 @@ maris/
     validation.py               # Post-population integrity checks
   query/                        # NL-to-Cypher pipeline
     classifier.py               # Two-tier: keyword regex + LLM fallback
-    cypher_templates.py         # 6 parameterized Cypher templates by category
+    cypher_templates.py         # 8 parameterized Cypher templates by category
     executor.py                 # Template execution + provenance edge extraction
     generator.py                # LLM response synthesis from graph context
     formatter.py                # Structured output: confidence, evidence, caveats
+    validators.py              # LLM response validation, claim verification, DOI checks
   llm/                          # LLM abstraction
     adapter.py                  # OpenAI-compatible client (DeepSeek, Claude, GPT-4)
     prompts.py                  # System prompts for classification and generation
@@ -194,6 +234,7 @@ maris/
     engine.py                   # Axiom application and chaining
     confidence.py               # Multiplicative confidence interval propagation
     monte_carlo.py              # Monte Carlo ESV simulation (10,000 runs)
+    sensitivity.py            # OAT sensitivity analysis, tornado plot data
   ingestion/                    # Document ingestion pipeline
     pdf_extractor.py            # PDF text extraction
     llm_extractor.py            # LLM-based entity/relationship extraction
@@ -208,7 +249,7 @@ investor_demo/
   components/
     chat_panel.py               # Ask MARIS query UI with markdown, confidence badges, evidence
     graph_explorer.py           # Plotly network graph with semantic layering
-  precomputed_responses.json    # Cached responses for 5 common queries (API fallback)
+  precomputed_responses.json    # Cached responses for 27 common queries (API fallback)
   demo_narrative.md             # 10-minute pitch script (v1)
   demo_narrative_v2.md          # Updated pitch script (v2)
 
@@ -220,6 +261,22 @@ scripts/
   validate_registry.py          # Registry validation with auto-fix
   enrich_abstracts.py           # 5-tier abstract enrichment cascade
   fetch_documents.py            # Document fetcher with retry logic
+
+tests/
+  conftest.py                       # Shared fixtures (graph results, LLM responses, mock config)
+  test_api_endpoints.py             # API route tests with auth validation
+  test_bridge_axioms.py             # Bridge axiom computation tests
+  test_cabo_pulmo_validation.py     # Cabo Pulmo reference data integrity
+  test_classifier.py                # Query classification accuracy
+  test_confidence.py                # Composite confidence model tests
+  test_cypher_templates.py          # Template parameterization and LIMIT tests
+  test_entity_extraction.py         # Entity extraction pipeline tests
+  test_integration.py               # End-to-end pipeline integration tests
+  test_monte_carlo.py               # Monte Carlo simulation tests
+  test_population.py                # Graph population pipeline tests
+  test_query_engine.py              # Query execution and response formatting
+  test_relationship_extraction.py   # Relationship extraction tests
+  test_validators.py                # LLM response validation tests
 ```
 
 ---
@@ -255,6 +312,11 @@ scripts/
 | `docker-compose.yml` | Neo4j + API + Dashboard one-command startup |
 | `requirements-v2.txt` | Full v2 dependencies (FastAPI, neo4j, streamlit, etc.) |
 | `investor_demo/requirements.txt` | Minimal v1 dependencies |
+| `Dockerfile.api` | Multi-stage API container (python:3.11-slim, non-root) |
+| `Dockerfile.dashboard` | Multi-stage dashboard container |
+| `.dockerignore` | Docker build exclusions |
+| `requirements-dev.txt` | Test and lint dependencies (pytest, ruff, httpx) |
+| `.github/workflows/ci.yml` | GitHub Actions CI: lint + test pipeline |
 
 ### Documentation
 
@@ -284,6 +346,8 @@ All settings use `MARIS_` prefix. Copy `.env.example` to `.env` and configure:
 | `MARIS_DEMO_MODE` | false | true = use precomputed responses (no LLM calls) |
 | `MARIS_ENABLE_LIVE_GRAPH` | true | Enable Neo4j graph explorer in dashboard |
 | `MARIS_ENABLE_CHAT` | true | Enable Ask MARIS chat panel |
+| `MARIS_API_KEY` | - | Bearer token for API authentication (required unless MARIS_DEMO_MODE=true) |
+| `MARIS_CORS_ORIGINS` | http://localhost:8501 | Comma-separated list of allowed CORS origins |
 
 **Security:** `.env` contains secrets and is excluded from git via `.gitignore`. Never commit it.
 
@@ -291,7 +355,7 @@ All settings use `MARIS_` prefix. Copy `.env.example` to `.env` and configure:
 
 ## Query Classification System
 
-The `QueryClassifier` (`maris/query/classifier.py`) maps natural-language questions into five categories. Each category is backed by a parameterized Cypher template.
+The `QueryClassifier` (`maris/query/classifier.py`) maps natural-language questions into five categories. Each category is backed by a parameterized Cypher template. There are 8 templates total (5 core + 3 utility).
 
 | Category | Keyword Triggers | What the Template Returns |
 |----------|-----------------|--------------------------|
@@ -474,3 +538,7 @@ These MUST be followed in all code, documentation, and generated content:
 | Live query pipeline | End-to-end NL-to-answer | Working |
 | Graph population | 878 nodes, 101 edges | Complete |
 | Dashboard (live + static) | Both modes operational | Working |
+| Test suite | 177 tests passing | Complete |
+| API authentication | Bearer token + rate limiting | Complete |
+| Docker builds | Multi-stage API + Dashboard | Complete |
+| CI pipeline | GitHub Actions (lint + test) | Complete |
