@@ -648,7 +648,8 @@ st.caption(f"*{data['metadata']['disclaimer']}*")
 # ---------------------------------------------------------------------------
 # 2. Investment Thesis
 # ---------------------------------------------------------------------------
-n_axioms = len(data["bridge_axioms_applied"])
+n_axioms_site = len(data["bridge_axioms_applied"])
+n_axioms_system = 16  # Total bridge axioms in MARIS (12 core + 4 blue carbon)
 esv_total = data["financial_output"]["market_price_esv_usd"]
 
 st.markdown(f"""
@@ -657,7 +658,7 @@ st.markdown(f"""
 <div class="thesis-body">
 <strong>MARIS</strong> (Marine Asset Risk Intelligence System) is the marine-domain intelligence layer
 that converts ecological field data into investment-grade financial metrics. It contains 195 curated
-papers, <strong>{n_axioms} bridge axioms</strong> (quantitative translation rules that convert
+papers, <strong>{n_axioms_system} bridge axioms</strong> (quantitative translation rules that convert
 ecological measurements into financial estimates, each with documented coefficients and 95%
 confidence intervals), and 8 entity schemas covering species, habitats, MPAs, and ecosystem services.
 <br><br>
