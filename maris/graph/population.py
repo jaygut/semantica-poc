@@ -685,8 +685,8 @@ def _populate_bridge_axioms(session, cfg):
             )
 
         # Link blue carbon axioms -> APPLIES_TO -> Shark Bay
-        # BA-013 (seagrass carbon stock), BA-014 (seagrass nursery),
-        # BA-015 (heatwave permanence risk), BA-016 (seagrass coastal protection)
+        # BA-013 (seagrass carbon sequestration rate), BA-014 (carbon stock to credit value),
+        # BA-015 (habitat loss carbon emission), BA-016 (MPA carbon permanence)
         if aid in ("BA-013", "BA-014", "BA-015", "BA-016"):
             session.run(
                 """
@@ -705,7 +705,7 @@ def _populate_bridge_axioms(session, cfg):
             "BA-008": "cabo_pulmo_carbon_sequestration",
             "BA-012": "cabo_pulmo_fisheries_spillover",
             "BA-013": "shark_bay_carbon_sequestration",
-            "BA-014": "shark_bay_fisheries",
+            "BA-014": "shark_bay_carbon_sequestration",
             "BA-016": "shark_bay_coastal_protection",
         }
         svc_id = svc_map.get(aid)

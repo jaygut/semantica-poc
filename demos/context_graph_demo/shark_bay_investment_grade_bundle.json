@@ -14,7 +14,7 @@
     "coordinates": {
       "@type": "geo:Point",
       "latitude": -25.97,
-      "longitude": 113.85
+      "longitude": 113.86
     },
     "area_km2": 23000,
     "designation_year": 1991
@@ -22,7 +22,7 @@
   "ecological_status": {
     "seagrass_extent_km2": 4800,
     "seagrass_species_count": 12,
-    "dominant_species": "Amphibolis antarctica",
+    "dominant_species": "Posidonia australis",
     "carbon_sequestration_rate": {
       "central_tCO2_ha_yr": 0.84,
       "ci_95": [0.56, 1.12],
