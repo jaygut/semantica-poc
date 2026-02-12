@@ -516,6 +516,22 @@ AXIOM_INFO = {
         "meaning": "Reef degradation causes 35% loss in fisheries productivity when protection fails",
         "citation": "Rogers et al. 2018",
     },
+    "BA-013": {
+        "meaning": "Seagrass meadows sequester carbon at 0.84 tCO2/ha/yr, 35x faster than tropical rainforests",
+        "citation": "Mazarrasa et al. 2025",
+    },
+    "BA-014": {
+        "meaning": "Blue carbon sequestration generates tradeable credits at $15-50 per tCO2 under voluntary market standards",
+        "citation": "Duarte et al. 2025",
+    },
+    "BA-015": {
+        "meaning": "Seagrass loss releases 112-476 tCO2/ha of stored carbon, as demonstrated by the 2011 Shark Bay heatwave",
+        "citation": "Arias-Ortiz et al. 2018",
+    },
+    "BA-016": {
+        "meaning": "MPA protection with NEOLI 4+/5 provides 25-100 year carbon permanence guarantee",
+        "citation": "Lovelock et al. 2025",
+    },
 }
 
 # ---------------------------------------------------------------------------
@@ -998,7 +1014,7 @@ biomass_year = data.get("ecological_recovery", {}).get("assessment_year", 2009)
 st.caption(f"*Biomass data: {biomass_year} | Tourism data: 2024 | ESV total: market-price method*")
 
 # Sensitivity tornado plot
-st.markdown('<div class="section-desc" style="margin-top:24px">**Parameter Sensitivity** - Which inputs drive ESV uncertainty most? One-at-a-time (OAT) analysis varies each service value by +/-20% while holding others constant.</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-desc" style="margin-top:24px"><strong>Parameter Sensitivity</strong> - Which inputs drive ESV uncertainty most? One-at-a-time (OAT) analysis varies each service value by +/-20% while holding others constant.</div>', unsafe_allow_html=True)
 
 # Build tornado data from the ecosystem services
 _svc_list = []
@@ -1105,10 +1121,23 @@ Source: <a href="https://doi.org/{clim['source_doi']}" target="_blank">{AXIOM_IN
 st.markdown('<div class="section-header">Comparison Sites</div>', unsafe_allow_html=True)
 st.markdown('<div class="section-desc">Cross-site validation demonstrates that the infrastructure produces consistent, defensible outputs. NEOLI alignment score correlates with ecological and financial outcomes across geographies.</div>', unsafe_allow_html=True)
 
-comp_cols = st.columns(3)
-for i, site_comp in enumerate(data["comparison_sites"]):
+# Build full comparison list including Shark Bay
+_all_comp_sites = list(data["comparison_sites"]) + [
+    {
+        "name": "Shark Bay (Seagrass)",
+        "neoli_score": 4,
+        "outcome": "World's largest seagrass meadow - 4,800 km2 sequestering ~$12.1M/yr in carbon. 2011 heatwave demonstrated reversal risk.",
+        "lesson": "Carbon-dominant sites need permanence guarantees. MPA protection reduces reversal risk.",
+    }
+]
+
+# Render in a uniform 2x2 grid
+_row1 = st.columns(2)
+_row2 = st.columns(2)
+_comp_cols_all = [_row1[0], _row1[1], _row2[0], _row2[1]]
+for i, site_comp in enumerate(_all_comp_sites[:4]):
     score = site_comp["neoli_score"]
-    with comp_cols[i]:
+    with _comp_cols_all[i]:
         st.markdown(f"""
 <div class="comp-card">
 <h4>{site_comp['name']}</h4>

@@ -48,7 +48,9 @@ class LiveAPIClient:
     def query(self, question: str, site: str | None = None) -> dict:
         import requests
 
-        payload = {"question": question, "site": site, "include_graph_path": True}
+        payload: dict = {"question": question, "include_graph_path": True}
+        if site:
+            payload["site"] = site
         resp = requests.post(f"{self.base_url}/api/query", json=payload, headers=self._headers(), timeout=30)
         resp.raise_for_status()
         return resp.json()

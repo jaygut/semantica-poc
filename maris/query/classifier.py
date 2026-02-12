@@ -34,12 +34,16 @@ _KEYWORD_RULES: list[tuple[str, list[str]]] = [
     ("axiom_explanation", [
         r"\b(?:bridge.?axiom|axiom|coefficient)\b",
         r"\b(?:BA-\d{3})\b",
+        r"\b(?:seagrass|blue.?carbon).*(?:sequester|carbon|mechanism|how)\b",
+        r"\bhow\b.*\b(?:seagrass|mangrove)\b.*\b(?:sequester|carbon|store)\b",
     ]),
     ("comparison", [
         r"\b(?:compar|versus|vs\.?|differ|rank|benchmark)\b",
     ]),
     ("risk_assessment", [
-        r"\b(?:risk|degrad|scenario|what.?if|climate|threat|loss|decline|vulnerab)\b",
+        r"\b(?:risk|degrad|scenario|climate|threat|loss|lost|decline|vulnerab)\b",
+        r"\bwhat\b.*\bif\b",
+        r"\bwhat\s+happens\b",
     ]),
 ]
 
@@ -62,6 +66,7 @@ _SITE_PATTERNS: list[tuple[str, str]] = [
     (r"\b(?:galapagos)\b", "Galapagos Marine Reserve"),
     (r"\b(?:papah[aā]naumoku[aā]kea|PMNM)\b",
      "Papah\u0101naumoku\u0101kea Marine National Monument"),
+    (r"\b(?:shark\s+bay|SB)\b", "Shark Bay World Heritage Area"),
 ]
 
 # Canonical names list for fuzzy matching fallback

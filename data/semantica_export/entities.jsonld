@@ -145,13 +145,57 @@
       "definition": "UN statistical framework for organizing ecosystem data and measuring services",
       "adoption_year": 2021,
       "sdg_indicator": "15.9.1"
+    },
+    {
+      "@type": "Concept",
+      "@id": "maris:blue_carbon_stock",
+      "name": "Blue Carbon Stock",
+      "definition": "Organic carbon stored in coastal and marine ecosystems including seagrass meadows, mangroves, and salt marshes, accumulated over centennial to millennial timescales in sediment soils",
+      "measurement_unit": "tCO2/ha",
+      "global_seagrass_soil_stock_Mg_Corg_ha_top30cm": 24.2,
+      "global_seagrass_soil_stock_range_Mg_Corg_ha": [12.4, 44.9],
+      "global_seagrass_soil_stock_top1m_tCO2eq_ha": 520,
+      "sources": ["krause_2025_seagrass_carbon_stocks", "gomis_2025_seagrass_blue_carbon"]
+    },
+    {
+      "@type": "Framework",
+      "@id": "verra:vm0033",
+      "name": "Verra VCS VM0033",
+      "definition": "Methodology for Tidal Wetland and Seagrass Restoration under the Verified Carbon Standard, quantifying net GHG emission reductions and removals from restoring tidal wetlands",
+      "version": "2.1",
+      "version_date": "2023-09-04",
+      "applicability": "Tidal wetland systems including tidal forests, tidal marshes, and seagrass meadows globally",
+      "standard": "Verified Carbon Standard (VCS)",
+      "marine_guidance_available": true
+    },
+    {
+      "@type": "FinancialInstrument",
+      "@id": "maris:voluntary_carbon_credit",
+      "name": "Voluntary Carbon Credit",
+      "definition": "Tradable certificate representing one metric tonne of CO2 equivalent reduced, avoided, or removed from the atmosphere, verified under standards such as Verra VCS",
+      "market_price_range_usd": [15, 50],
+      "blue_carbon_benchmark_usd_per_tCO2e": 29.30,
+      "benchmark_source": "S&P Global Platts DBC-1, August 2025",
+      "verification_standards": ["Verra VCS", "Gold Standard", "Plan Vivo"]
+    },
+    {
+      "@type": "EcosystemService",
+      "@id": "maris:seagrass_carbon_sequestration",
+      "name": "Seagrass Carbon Sequestration",
+      "category": "regulating",
+      "definition": "Carbon dioxide removal and long-term storage by seagrass meadows through photosynthetic fixation and burial of organic carbon in sediment soils",
+      "sequestration_rate_tCO2_ha_yr": 0.84,
+      "sequestration_rate_note": "Conservative estimate for verified carbon credit projects accounting for additionality, leakage, and buffer deductions. Natural gross rates can exceed 4 tCO2/ha/yr (Gomis et al. 2025).",
+      "net_offset_tCO2e_ha_yr": 0.42,
+      "net_offset_source": "Oreska et al. 2020",
+      "sources": ["gomis_2025_seagrass_blue_carbon", "oreska_2020_seagrass_ghg_offset"]
     }
   ],
   "export_metadata": {
     "generated_at": "2026-01-24T10:30:00Z",
-    "version": "1.0",
+    "version": "1.1",
     "source": "MARIS Pipeline",
     "document_count": 195,
-    "entity_count": 14
+    "entity_count": 18
   }
 }

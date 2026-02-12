@@ -2188,6 +2188,638 @@
         "0.90 (composite score)"
       ],
       "unverified_claims": []
+    },
+    "What is Shark Bay worth?": {
+      "answer": "Shark Bay World Heritage Area generates an estimated $21.5M/year in ecosystem services [CI: $10.2M - $38.0M], derived from four service categories:\n\n- Carbon sequestration: $12.1M/year (BA-013, BA-014) - 4,800 km2 of seagrass meadows sequestering ~403,200 tCO2/yr at $15-50/tCO2 [Mazarrasa et al. 2025, DOI: 10.1038/s41467-025-64667-6]\n- Fisheries: $5.2M/year - Sustainable fisheries supported by seagrass nursery habitat\n- Tourism: $3.4M/year - World Heritage tourism, dolphin encounters, wildlife viewing\n- Coastal protection: $800K/year - Wave attenuation by seagrass meadows\n\nShark Bay is rated AA with a composite score of 0.85, reflecting NEOLI alignment of 4/5 (meets No-take, Enforced, Old, Large; does not meet Isolated). Unlike coral reef sites where tourism dominates, Shark Bay's value is carbon-dominant (56% of total ESV), making it a candidate for blue carbon credit generation under Verra VM0033.",
+      "confidence": 0.3650,
+      "evidence": [
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s44183-025-00111-y",
+          "doi_url": "https://doi.org/10.1038/s44183-025-00111-y",
+          "title": "Duarte et al. (2025) - Seagrass recovery and carbon mitigation goals",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives losses from seagrass carbon stocks",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s43247-025-02035-4",
+          "doi_url": "https://doi.org/10.1038/s43247-025-02035-4",
+          "title": "Lovelock et al. (2025) - Permanence risks limit blue carbon financing strategies",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-013",
+        "BA-014",
+        "BA-015",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Carbon Sequestration",
+          "from_type": "EcosystemService",
+          "relationship": "VALUED_BY",
+          "to_node": "BA-013",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Mazarrasa et al. 2025",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-014",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Duarte et al. 2025",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Carbon credit pricing uses a $15-50/tCO2 range reflecting voluntary market conditions; prices vary by quality and buyer",
+        "Seagrass carbon sequestration rate (0.84 tCO2/ha/yr) is a global mean - site-specific calibration recommended",
+        "2010/2011 marine heatwave caused 36% seagrass loss, demonstrating reversal risk"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3650,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.82,
+        "sample_factor": 0.5,
+        "explanation": "High-quality peer-reviewed sources; carbon pricing uses market ranges not fixed values; 4 supporting sources"
+      },
+      "verified_claims": [
+        "$21.5M (total ESV)",
+        "$12.1M (Carbon sequestration)",
+        "$5.2M (Fisheries)",
+        "$3.4M (Tourism)",
+        "$800K (Coastal protection)"
+      ],
+      "unverified_claims": []
+    },
+    "How much carbon does Shark Bay sequester?": {
+      "answer": "Shark Bay contains one of the world's largest seagrass carbon sinks. The 4,800 km2 of seagrass meadows (480,000 hectares) sequester approximately 403,200 tCO2 per year, based on a global mean rate of 0.84 tCO2/ha/yr [Mazarrasa et al. 2025, DOI: 10.1038/s41467-025-64667-6].\n\n**Carbon stock:** Shark Bay holds up to 1.3% of all carbon stored in the top metre of seagrass sediments worldwide - an estimated 240 million tonnes of CO2 [Arias-Ortiz et al. 2018, DOI: 10.1038/s41558-018-0096-y].\n\n**Sequestration rate breakdown:**\n- Seagrass area: 4,800 km2 (480,000 ha)\n- Rate: 0.84 tCO2/ha/yr [CI: 0.56-1.12]\n- Annual sequestration: ~403,200 tCO2/yr [CI: 268,800-537,600]\n- 12 seagrass species present, dominated by Amphibolis antarctica\n\nSeagrass sequesters carbon approximately 35 times faster than tropical rainforests per unit area, making Shark Bay one of the most significant natural carbon sinks on Earth. This rate is captured by bridge axiom BA-013 (seagrass_carbon_sequestration_rate).",
+      "confidence": 0.3900,
+      "evidence": [
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives losses from seagrass carbon stocks",
+          "year": 2018,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-013"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "HAS_HABITAT",
+          "to_node": "Seagrass Meadow",
+          "to_type": "Habitat"
+        },
+        {
+          "from_node": "Seagrass Meadow",
+          "from_type": "Habitat",
+          "relationship": "PROVIDES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "TRANSLATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Mazarrasa et al. 2025",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "The 0.84 tCO2/ha/yr rate is a global mean from Mazarrasa et al. 2025 - site-specific rates may differ",
+        "Carbon stock estimate (240 Mt CO2) is for the top metre of sediment only; deeper stocks exist but are less well characterized",
+        "12 seagrass species with different sequestration rates - rate aggregates across species"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3900,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.5,
+        "explanation": "High-quality peer-reviewed sources; sequestration rate from recent 2025 global synthesis; 2 supporting sources"
+      },
+      "verified_claims": [
+        "4,800 km2 (seagrass extent)",
+        "0.84 tCO2/ha/yr (sequestration rate)",
+        "~403,200 tCO2/yr (annual sequestration)",
+        "1.3% of global seagrass carbon (stock share)"
+      ],
+      "unverified_claims": []
+    },
+    "What happens if seagrass is lost at Shark Bay?": {
+      "answer": "The 2010/2011 marine heatwave at Shark Bay provides a real-world case study of seagrass carbon reversal risk. Water temperatures rose 2-4C above average for more than 2 months, causing devastating losses [Arias-Ortiz et al. 2018, DOI: 10.1038/s41558-018-0096-y].\n\n**Observed impacts:**\n- 36% of seagrass meadows damaged\n- ~1,000 km2 of habitat completely lost (22% of total meadows between 2002-2014)\n- Dominant species Amphibolis antarctica suffered widespread defoliation\n\n**Carbon consequences:**\n- An estimated 2-9 Tg CO2 (2-9 million tonnes) potentially released over the following 3 years\n- This increased Australia's land-use-change emissions by 4-21% per annum\n- The release occurs when previously anoxic seagrass sediments are exposed to oxygen after canopy loss\n\n**Financial implications (BA-015):**\n- At $15-50/tCO2, the carbon release represents $30M-$450M in lost carbon value\n- This demonstrates why permanence guarantees are essential for blue carbon credit markets\n- Bridge axiom BA-015 quantifies this reversal risk: seagrass loss releases 112-476 tCO2/ha of stored carbon\n\n**Recovery outlook:**\n- Seagrass recovery is ongoing but incomplete after >15 years\n- Recovery rates are significantly slower than degradation rates\n- MPA protection (NEOLI alignment) reduces but does not eliminate heatwave risk",
+      "confidence": 0.4100,
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives losses from seagrass carbon stocks",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s43247-025-02035-4",
+          "doi_url": "https://doi.org/10.1038/s43247-025-02035-4",
+          "title": "Lovelock et al. (2025) - Permanence risks limit blue carbon financing strategies",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-015",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "HAS_HABITAT",
+          "to_node": "Seagrass Meadow",
+          "to_type": "Habitat"
+        },
+        {
+          "from_node": "Seagrass Meadow",
+          "from_type": "Habitat",
+          "relationship": "STORES",
+          "to_node": "Carbon Stock (240 Mt CO2)",
+          "to_type": "EcologicalMeasurement"
+        },
+        {
+          "from_node": "BA-015",
+          "from_type": "BridgeAxiom",
+          "relationship": "QUANTIFIES",
+          "to_node": "Carbon Reversal Risk",
+          "to_type": "RiskFactor"
+        },
+        {
+          "from_node": "BA-015",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Arias-Ortiz et al. 2018",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "The 2-9 Tg CO2 release estimate assumes 10-50% of sediment carbon was exposed to oxic conditions",
+        "Recovery rates for Amphibolis antarctica seagrass remain uncertain - full recovery may take decades",
+        "Marine heatwave frequency is projected to increase under climate change scenarios"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.4100,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.5528,
+        "explanation": "Well-documented event from peer-reviewed study in Nature Climate Change; direct observations support claims; 2 supporting sources"
+      },
+      "verified_claims": [
+        "36% (seagrass meadows damaged)",
+        "2-9 Tg CO2 (estimated release)",
+        "1,000 km2 (habitat lost)",
+        "4-21% (increase in Australia land-use-change emissions)"
+      ],
+      "unverified_claims": []
+    },
+    "What are the carbon credit opportunities at Shark Bay?": {
+      "answer": "Shark Bay's 4,800 km2 of seagrass meadows represent one of the largest potential blue carbon credit opportunities globally. Here is the financial analysis using bridge axioms BA-013 and BA-014:\n\n**Annual credit generation potential:**\n- Sequestration rate: 0.84 tCO2/ha/yr across 480,000 ha = ~403,200 tCO2/yr\n- At $15/tCO2 (conservative): ~$6.0M/yr\n- At $30/tCO2 (mid-range): ~$12.1M/yr\n- At $50/tCO2 (premium quality): ~$20.2M/yr\n- At $90/tCO2 (high-integrity removal): ~$36.3M/yr\n\n**Applicable methodology:** Verra VCS VM0033 (Methodology for Tidal Wetland and Seagrass Restoration, v2.1) is the primary pathway for blue carbon credit generation from seagrass ecosystems.\n\n**Market context:**\n- The voluntary carbon market reached ~$1.7B in 2026, with blue carbon as an emerging high-value segment\n- Only ~10 blue carbon projects are actively issuing credits globally\n- High-quality nature-based credits trade at 300%+ premium over lower-rated credits\n- Mikoko Pamoja (Kenya) was the world's first blue carbon credit project; Shark Bay would be among the first seagrass-only projects at this scale\n\n**Key requirements:**\n- Additionality demonstration (protection prevents carbon release)\n- Permanence guarantee (25-100 years, supported by NEOLI 4/5 alignment per BA-016)\n- Monitoring, reporting, and verification (MRV) infrastructure\n- Non-permanence risk assessment per VM0033 tool",
+      "confidence": 0.3200,
+      "evidence": [
+        {
+          "doi": "10.1038/s44183-025-00111-y",
+          "doi_url": "https://doi.org/10.1038/s44183-025-00111-y",
+          "title": "Duarte et al. (2025) - Seagrass recovery and carbon mitigation goals",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s43247-025-02035-4",
+          "doi_url": "https://doi.org/10.1038/s43247-025-02035-4",
+          "title": "Lovelock et al. (2025) - Permanence risks limit blue carbon financing strategies",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-013",
+        "BA-014",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "HAS_HABITAT",
+          "to_node": "Seagrass Meadow",
+          "to_type": "Habitat"
+        },
+        {
+          "from_node": "Seagrass Meadow",
+          "from_type": "Habitat",
+          "relationship": "PROVIDES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-014",
+          "from_type": "BridgeAxiom",
+          "relationship": "TRANSLATES",
+          "to_node": "Blue Carbon Credit",
+          "to_type": "FinancialInstrument"
+        },
+        {
+          "from_node": "BA-014",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Duarte et al. 2025",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Carbon credit pricing ranges ($15-50/tCO2) reflect 2025-2026 voluntary market; compliance markets may offer different pricing",
+        "Not all sequestered carbon qualifies for credits - additionality, leakage, and permanence filters apply",
+        "Seagrass blue carbon projects remain rare; only ~10 projects actively issuing credits globally as of 2025",
+        "The $90/tCO2 scenario reflects emerging high-integrity removal credit demand from institutional buyers like Microsoft"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3200,
+        "tier_base": 0.95,
+        "path_discount": 0.90,
+        "staleness_discount": 0.90,
+        "sample_factor": 0.4167,
+        "explanation": "Strong ecological data; market pricing inherently uncertain; credit issuance pathway not yet established for this site; 3 supporting sources"
+      },
+      "verified_claims": [
+        "403,200 tCO2/yr (annual sequestration potential)",
+        "$6M-$36M/yr (credit revenue range at $15-$90/tCO2)"
+      ],
+      "unverified_claims": [
+        "Credit issuance timeline and volumes depend on project development"
+      ]
+    },
+    "Compare Cabo Pulmo and Shark Bay": {
+      "answer": "Cabo Pulmo and Shark Bay represent two fundamentally different marine natural capital profiles - coral reef versus seagrass - demonstrating MARIS's ability to value diverse blue ecosystems.\n\n**Side-by-side comparison:**\n\n| Metric | Cabo Pulmo | Shark Bay |\n|--------|-----------|----------|\n| Ecosystem | Coral reef | Seagrass meadow |\n| Country | Mexico | Australia |\n| Area | 71 km2 | 23,000 km2 |\n| NEOLI Score | 4/5 | 4/5 |\n| Asset Rating | AAA (0.90) | AA (0.85) |\n| Total ESV | $29.27M/yr | $21.5M/yr |\n| Dominant Service | Tourism ($25.0M, 85%) | Carbon ($12.1M, 56%) |\n| Key Risk | Coral bleaching | Marine heatwaves |\n| Bridge Axioms | BA-001, BA-002, BA-011, BA-012 | BA-013, BA-014, BA-015, BA-016 |\n\n**Key insight:** Cabo Pulmo's value is tourism-dominant (85% of ESV), driven by the 463% biomass recovery attracting divers. Shark Bay's value is carbon-dominant (56% of ESV), driven by the world's largest seagrass carbon sink. Both score NEOLI 4/5 but through different criteria: Cabo Pulmo meets Isolated but not Large; Shark Bay meets Large but not Isolated.\n\n**For investors:** The two sites represent complementary asset classes. A portfolio containing both provides diversification across ecosystem types (reef/seagrass), revenue streams (tourism/carbon), geographies (Americas/Asia-Pacific), and risk profiles (bleaching/heatwave).",
+      "confidence": 0.3500,
+      "evidence": [
+        {
+          "doi": "10.1371/journal.pone.0023601",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
+          "title": "Aburto-Oropeza et al. (2011) - Large recovery of fish biomass in a no-take marine reserve",
+          "year": 2011,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives losses from seagrass carbon stocks",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-013",
+        "BA-014"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Cabo Pulmo National Park",
+          "to_type": "MPA"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Shark Bay World Heritage Area",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "Direct ESV comparison across ecosystem types requires caution - different valuation methods apply",
+        "Area difference (71 km2 vs 23,000 km2) means per-hectare yields are not directly comparable",
+        "Both sites face different climate risk profiles requiring distinct risk management approaches"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3500,
+        "tier_base": 0.95,
+        "path_discount": 0.90,
+        "staleness_discount": 0.82,
+        "sample_factor": 0.5,
+        "explanation": "Cross-site comparison relies on consistent methodology; different data vintages for each site; 3 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (Cabo Pulmo ESV)",
+        "$21.5M (Shark Bay ESV)",
+        "4/5 (both NEOLI scores)"
+      ],
+      "unverified_claims": []
+    },
+    "What is blue carbon?": {
+      "answer": "Blue carbon refers to the carbon captured and stored by coastal and marine ecosystems - primarily mangroves, seagrass meadows, and tidal salt marshes. These ecosystems are among the most efficient carbon sinks on Earth.\n\n**Key facts:**\n- Seagrass meadows sequester carbon approximately 35 times faster than tropical rainforests per unit area [Mazarrasa et al. 2025, DOI: 10.1038/s41467-025-64667-6]\n- Coastal ecosystems store carbon in sediments for centuries to millennia, unlike terrestrial forests where carbon cycles more rapidly\n- Despite covering <2% of the ocean floor, seagrasses account for ~10% of annual ocean carbon burial\n\n**Why blue carbon matters for investors:**\n1. **Carbon credits:** Blue carbon generates tradeable Verified Carbon Units (VCUs) at $15-50/tCO2 under voluntary market standards like Verra VM0033 [Duarte et al. 2025, DOI: 10.1038/s44183-025-00111-y]\n2. **TNFD alignment:** 733 organizations (representing $22.4T AUM) have adopted TNFD disclosure frameworks that require nature-related impact reporting, including blue carbon\n3. **Risk management:** Loss of blue carbon ecosystems releases stored carbon - the 2010/2011 Shark Bay heatwave released an estimated 2-9 Tg CO2 [Arias-Ortiz et al. 2018]\n\n**In MARIS:** Blue carbon is modeled through bridge axioms BA-013 (sequestration rate), BA-014 (credit valuation), BA-015 (reversal risk), and BA-016 (permanence guarantee). Shark Bay World Heritage Area serves as the reference site for seagrass blue carbon, just as Cabo Pulmo serves for coral reef valuation.",
+      "confidence": 0.4200,
+      "evidence": [
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s44183-025-00111-y",
+          "doi_url": "https://doi.org/10.1038/s44183-025-00111-y",
+          "title": "Duarte et al. (2025) - Seagrass recovery and carbon mitigation goals",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives losses from seagrass carbon stocks",
+          "year": 2018,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-013",
+        "BA-014",
+        "BA-015",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Seagrass Meadow",
+          "from_type": "Habitat",
+          "relationship": "PROVIDES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "TRANSLATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-014",
+          "from_type": "BridgeAxiom",
+          "relationship": "TRANSLATES",
+          "to_node": "Blue Carbon Credit",
+          "to_type": "FinancialInstrument"
+        }
+      ],
+      "caveats": [
+        "Blue carbon science is rapidly evolving - sequestration rates and stock estimates are regularly revised",
+        "Market pricing for blue carbon credits ($15-50/tCO2) reflects voluntary market conditions as of 2025-2026",
+        "Not all coastal ecosystems qualify for carbon credits - additionality and permanence requirements apply"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.4200,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.90,
+        "sample_factor": 0.5528,
+        "explanation": "Well-established science from multiple peer-reviewed sources; market context from recent publications; 3 supporting sources"
+      },
+      "verified_claims": [
+        "35x (seagrass vs rainforest sequestration rate)",
+        "$15-50/tCO2 (credit price range)"
+      ],
+      "unverified_claims": []
+    },
+    "How does seagrass sequester carbon?": {
+      "answer": "Seagrass ecosystems sequester carbon through a multi-step biological and geochemical process that makes them one of the most efficient natural carbon sinks on Earth.\n\n**Sequestration mechanism:**\n1. **Photosynthesis:** Seagrass leaves absorb dissolved CO2 from seawater and convert it to organic carbon through photosynthesis, just as terrestrial plants do with atmospheric CO2\n2. **Below-ground storage:** Unlike terrestrial plants, seagrasses store 50-90% of their carbon in extensive root and rhizome networks buried in sediment\n3. **Sediment trapping:** Dense seagrass canopies slow water flow, causing suspended organic particles (from other marine organisms) to settle and accumulate in the sediment\n4. **Anoxic preservation:** Once buried below the sediment surface, organic carbon enters an oxygen-poor (anoxic) environment where decomposition is extremely slow\n5. **Millennial-scale storage:** Carbon can remain locked in seagrass sediments for hundreds to thousands of years, far longer than in most terrestrial ecosystems\n\n**Why seagrass is exceptional:**\n- Sequesters carbon ~35x faster per hectare than tropical rainforests [Mazarrasa et al. 2025]\n- Rate: 0.84 tCO2/ha/yr (global mean) [CI: 0.56-1.12]\n- Stores carbon in sediments (not biomass), making it more permanent\n- Shark Bay alone: 4,800 km2 seagrass storing ~240 Mt CO2\n\n**Reversal risk:** When seagrass is lost (as in the 2010/2011 Shark Bay heatwave), previously anoxic sediments are exposed to oxygen, triggering rapid decomposition and CO2 release. This is modeled by bridge axiom BA-015.",
+      "confidence": 0.4300,
+      "evidence": [
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives losses from seagrass carbon stocks",
+          "year": 2018,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-013",
+        "BA-015"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Seagrass Meadow",
+          "from_type": "Habitat",
+          "relationship": "SEQUESTERS",
+          "to_node": "Carbon (organic)",
+          "to_type": "Substance"
+        },
+        {
+          "from_node": "Seagrass Meadow",
+          "from_type": "Habitat",
+          "relationship": "PROVIDES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Mazarrasa et al. 2025",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Sequestration rates vary by seagrass species, water depth, sediment type, and nutrient availability",
+        "The 35x faster than rainforests comparison is per unit area - total area of seagrass is much smaller than terrestrial forests",
+        "Carbon storage permanence depends on continued seagrass health and sediment stability"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.4300,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.90,
+        "sample_factor": 0.5528,
+        "explanation": "Well-established biological mechanisms confirmed by multiple peer-reviewed studies; 2 supporting sources"
+      },
+      "verified_claims": [
+        "0.84 tCO2/ha/yr (global mean sequestration rate)",
+        "35x (faster than tropical rainforests per hectare)"
+      ],
+      "unverified_claims": []
+    },
+    "What financial instruments apply to blue carbon?": {
+      "answer": "Blue carbon ecosystems can be monetized through several financial instruments, each at different stages of market maturity:\n\n**1. Voluntary Carbon Credits (VCCs)**\n- Mechanism: Seagrass/mangrove conservation or restoration generates Verified Carbon Units (VCUs)\n- Standard: Verra VCS VM0033 (Tidal Wetland and Seagrass Restoration, v2.1)\n- Price range: $15-50/tCO2 in voluntary markets, with high-integrity credits trading at 300%+ premium\n- Example: Mikoko Pamoja (Gazi Bay, Kenya) - world's first blue carbon credit project, protecting 107 ha of mangrove and incorporating seagrass conservation\n- Shark Bay potential: ~403,200 VCUs/yr at $15-50/tCO2 = $6M-$20M/yr\n\n**2. Blue Bonds**\n- Mechanism: Sovereign or corporate debt instruments where proceeds fund marine conservation\n- Market: Seychelles issued the world's first sovereign blue bond ($15M, 2018); blue bond market growing\n- Application: Bond proceeds could fund seagrass protection and monitoring at Shark Bay\n- MARIS models these via FinancialInstrument nodes in the knowledge graph\n\n**3. Parametric Insurance**\n- Mechanism: Pre-defined payout triggers based on measurable events (e.g., sea surface temperature exceeding thresholds)\n- Application: Could protect against marine heatwave events like the 2010/2011 Shark Bay event\n- Market: Reef insurance pilot in Quintana Roo, Mexico (MAR Fund) demonstrates feasibility\n\n**4. Biodiversity Credits (emerging)**\n- Mechanism: Quantified units of biodiversity gain from conservation actions\n- Status: Early-stage market; frameworks being developed by Wallacea Trust, Plan Vivo\n- Application: Shark Bay's 12 seagrass species and dugong population could generate biodiversity units\n\n**TNFD context:** 733 organizations representing $22.4T in assets under management have adopted TNFD disclosure frameworks, creating institutional demand for nature-positive investments including blue carbon.",
+      "confidence": 0.3100,
+      "evidence": [
+        {
+          "doi": "10.1038/s44183-025-00111-y",
+          "doi_url": "https://doi.org/10.1038/s44183-025-00111-y",
+          "title": "Duarte et al. (2025) - Seagrass recovery and carbon mitigation goals",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s43247-025-02035-4",
+          "doi_url": "https://doi.org/10.1038/s43247-025-02035-4",
+          "title": "Lovelock et al. (2025) - Permanence risks limit blue carbon financing strategies",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-014",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Carbon Sequestration",
+          "from_type": "EcosystemService",
+          "relationship": "MONETIZED_VIA",
+          "to_node": "Blue Carbon Credit (VCU)",
+          "to_type": "FinancialInstrument"
+        },
+        {
+          "from_node": "BA-014",
+          "from_type": "BridgeAxiom",
+          "relationship": "TRANSLATES",
+          "to_node": "Blue Carbon Credit (VCU)",
+          "to_type": "FinancialInstrument"
+        },
+        {
+          "from_node": "BA-014",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Duarte et al. 2025",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Carbon credit pricing ($15-50/tCO2) reflects voluntary market conditions; prices vary by project quality and buyer demand",
+        "Blue bond and parametric insurance markets are nascent for seagrass ecosystems specifically",
+        "Biodiversity credit markets are pre-commercial and frameworks are still evolving",
+        "TNFD adoption figures (733 organizations, $22.4T AUM) are as of late 2025"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3100,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 0.90,
+        "sample_factor": 0.4286,
+        "explanation": "Market instruments are well-documented but rapidly evolving; some instruments are pre-commercial; 2 supporting sources"
+      },
+      "verified_claims": [
+        "$15-50/tCO2 (VCC price range)",
+        "VM0033 (applicable Verra methodology)",
+        "Mikoko Pamoja (first blue carbon credit project)"
+      ],
+      "unverified_claims": [
+        "Blue bond applicability to Shark Bay is illustrative"
+      ]
     }
   }
 }

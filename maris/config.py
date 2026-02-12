@@ -71,6 +71,15 @@ class MARISConfig:
         return Path(self.project_root) / "examples" / "cabo_pulmo_case_study.json"
 
     @property
+    def shark_bay_case_study_path(self) -> Path:
+        return Path(self.project_root) / "examples" / "shark_bay_case_study.json"
+
+    @property
+    def case_study_paths(self) -> list[Path]:
+        """All case study files for multi-site population."""
+        return [self.case_study_path, self.shark_bay_case_study_path]
+
+    @property
     def registry_path(self) -> Path:
         return Path(self.project_root) / ".claude" / "registry" / "document_index.json"
 

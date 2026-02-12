@@ -49,7 +49,11 @@ class ResponseGenerator:
             graph_context=context_str,
         )
 
-        result = self._llm.complete_json([{"role": "user", "content": prompt}])
+        try:
+            result = self._llm.complete_json([{"role": "user", "content": prompt}])
+        except Exception:
+            logger.exception("LLM complete_json failed for category=%s", category)
+            return empty_result_response()
 
         # Normalise into expected shape
         raw = {

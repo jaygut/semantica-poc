@@ -51,7 +51,8 @@ def query(request: QueryRequest):
     params: dict = {}
     if category in ("site_valuation", "provenance_drilldown", "risk_assessment"):
         if not site:
-            raise HTTPException(status_code=400, detail="Site name required for this query type. Provide 'site' or mention a site in your question.")
+            # Default to primary reference site for general questions
+            site = "Cabo Pulmo National Park"
         params["site_name"] = site
     elif category == "axiom_explanation":
         # Try to extract axiom ID from question
@@ -60,16 +61,31 @@ def query(request: QueryRequest):
         if m:
             params["axiom_id"] = m.group(0)
         else:
-            # No axiom ID found - fall back to provenance_drilldown with site context
-            category = "provenance_drilldown"
-            if not site:
-                site = "Cabo Pulmo National Park"
-            params["site_name"] = site
+            # Infer axiom from question context
+            q_lower = request.question.lower()
+            if any(kw in q_lower for kw in ("seagrass", "blue carbon", "sequester")):
+                params["axiom_id"] = "BA-013"
+            elif any(kw in q_lower for kw in ("permanence", "reversal", "heatwave")):
+                params["axiom_id"] = "BA-016"
+            else:
+                # No axiom ID found - fall back to provenance_drilldown with site context
+                category = "provenance_drilldown"
+                if not site:
+                    site = "Cabo Pulmo National Park"
+                params["site_name"] = site
     elif category == "comparison":
-        if site:
+        # Use multi-site list from classifier when available
+        sites = classification.get("sites", [])
+        if len(sites) >= 2:
+            params["site_names"] = sites
+        elif site:
             params["site_names"] = [site]
         else:
-            params["site_names"] = ["Cabo Pulmo National Park"]
+            # Default to all fully characterized sites
+            params["site_names"] = [
+                "Cabo Pulmo National Park",
+                "Shark Bay World Heritage Area",
+            ]
 
     # 3. Execute Cypher
     graph_result = _executor.execute(category, params)
@@ -77,14 +93,22 @@ def query(request: QueryRequest):
         raise HTTPException(status_code=500, detail=graph_result["error"])
 
     # 4. Generate response via LLM
-    raw = _generator.generate(
-        question=request.question,
-        graph_context=graph_result,
-        category=category,
-    )
+    try:
+        raw = _generator.generate(
+            question=request.question,
+            graph_context=graph_result,
+            category=category,
+        )
+    except Exception:
+        logger.exception("Response generation failed for category=%s", category)
+        raise HTTPException(status_code=500, detail="Response generation failed")
 
     # 5. Format
-    formatted = format_response(raw)
+    try:
+        formatted = format_response(raw)
+    except Exception:
+        logger.exception("Response formatting failed")
+        raise HTTPException(status_code=500, detail="Response formatting failed")
 
     # 6. Build structured graph_path from actual Neo4j traversal (not LLM text)
     graph_path = []

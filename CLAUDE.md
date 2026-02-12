@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **MARIS** (Marine Asset Risk Intelligence System) is a provenance-first knowledge graph that creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. Built on the Semantica framework, it is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
 
-**Current Status:** Production-ready POC deployed on `main` with Tier 1/Tier 2 hardening complete. The system comprises a Neo4j knowledge graph (878 nodes, 101 edges), a FastAPI query engine with Bearer token authentication and rate limiting, natural-language-to-Cypher classification with LLM response validation, and an investor-facing Streamlit dashboard with interactive graph visualization. The document library contains 195 verified papers, 12 fully-evidenced bridge axioms (v1.2 with uncertainty quantification), and a Semantica-ready export bundle. Backed by a 220-test suite with GitHub Actions CI, multi-stage Docker builds, and a composite confidence model. The system also runs in static mode from a pre-computed JSON bundle (27 precomputed responses) for zero-downtime investor demos.
+**Current Status:** Production-ready POC deployed on `main` with Blue Carbon Extension complete. The system comprises a Neo4j knowledge graph (893 nodes, 132 edges) spanning two fully characterized MPA sites (Cabo Pulmo and Shark Bay), a FastAPI query engine with Bearer token authentication and rate limiting, natural-language-to-Cypher classification with LLM response validation, and an investor-facing Streamlit dashboard with interactive graph visualization. The document library contains 195 verified papers, 16 fully-evidenced bridge axioms (v1.3 with blue carbon axioms BA-013 through BA-016 and uncertainty quantification), and a Semantica-ready export bundle. Backed by a 220-test suite with GitHub Actions CI, multi-stage Docker builds, and a composite confidence model. The system also runs in static mode from a pre-computed JSON bundle (35 precomputed responses) for zero-downtime investor demos.
 
 ---
 
@@ -42,8 +42,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 │                         chat and interactive graph explorer                       │
 │                                                                                  │
 │  Three-Layer Translation Model:                                                  │
-│  ECOLOGICAL DATA  -->  BRIDGE AXIOMS (12 rules)  -->  FINANCIAL METRICS          │
-│  Species, Habitats     BA-001 through BA-012         Blue bonds, TNFD,           │
+│  ECOLOGICAL DATA  -->  BRIDGE AXIOMS (16 rules)  -->  FINANCIAL METRICS          │
+│  Species, Habitats     BA-001 through BA-016         Blue bonds, TNFD,           │
 │  MPAs, Observations    DOI-backed coefficients       Credits, Insurance          │
 │                                                                                  │
 │  Every claim traceable to DOI + evidence tier + bridge axiom                     │
@@ -55,7 +55,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| Knowledge Graph | Neo4j Community 5.x | 878 nodes, 101 edges; bolt://localhost:7687 |
+| Knowledge Graph | Neo4j Community 5.x | 893 nodes, 132 edges; bolt://localhost:7687 |
 | API Server | FastAPI + Uvicorn | 7 REST endpoints; http://localhost:8000 |
 | Dashboard | Streamlit 1.54 | Dark-mode investor UI; http://localhost:8501 |
 | LLM | DeepSeek V3 (default) | Query classification and response synthesis |
@@ -122,7 +122,7 @@ Uses the pre-computed bundle at `demos/context_graph_demo/cabo_pulmo_investment_
 
 ## Knowledge Graph Data Lineage
 
-The graph is populated from **six curated data sources** through an 8-stage idempotent pipeline (`scripts/populate_neo4j.py`). All operations use MERGE (safe to re-run).
+The graph is populated from **seven curated data sources** through an idempotent pipeline (`scripts/populate_neo4j.py`). All operations use MERGE (safe to re-run).
 
 ### Source Datasets
 
@@ -131,13 +131,14 @@ The graph is populated from **six curated data sources** through an 8-stage idem
 | 1 | Document Registry | `.claude/registry/document_index.json` | 195 Document nodes (DOI, title, year, evidence tier) |
 | 2 | Entity Definitions | `data/semantica_export/entities.jsonld` | 14 JSON-LD entities: Species, MPA, Habitat, EcosystemService, FinancialInstrument, Framework, Concept |
 | 3 | Cabo Pulmo Case Study | `examples/cabo_pulmo_case_study.json` | MPA enrichment (NEOLI, biomass, ESV), EcosystemService values, Species nodes, TrophicLevel food web, GENERATES edges |
-| 4 | Bridge Axiom Templates + Evidence | `schemas/bridge_axiom_templates.json` + `data/semantica_export/bridge_axioms.json` | 12 BridgeAxiom nodes; EVIDENCED_BY, APPLIES_TO, TRANSLATES edges |
-| 5 | Curated Relationships | `data/semantica_export/relationships.json` | 15 cross-domain edges with quantification, mechanism, confidence |
-| 6 | Comparison Sites | Hardcoded in `maris/graph/population.py` | Great Barrier Reef, Papahanaumokuakea MPA nodes (governance metadata only) |
+| 4 | Shark Bay Case Study | `examples/shark_bay_case_study.json` | Second fully characterized MPA: seagrass carbon, fisheries, tourism, coastal protection; EcosystemService values, GENERATES edges |
+| 5 | Bridge Axiom Templates + Evidence | `schemas/bridge_axiom_templates.json` + `data/semantica_export/bridge_axioms.json` | 16 BridgeAxiom nodes (BA-001 through BA-016); EVIDENCED_BY, APPLIES_TO, TRANSLATES edges |
+| 6 | Curated Relationships | `data/semantica_export/relationships.json` | 15 cross-domain edges with quantification, mechanism, confidence |
+| 7 | Comparison Sites | Hardcoded in `maris/graph/population.py` | Great Barrier Reef, Papahanaumokuakea MPA nodes (governance metadata only) |
 
-### Calibration Site Model
+### Fully Characterized Sites
 
-**Cabo Pulmo National Park** is the fully characterized reference site (AAA-rated) with complete financial data:
+**Cabo Pulmo National Park** (Mexico) - coral reef-dominated, tourism-driven ESV:
 
 | Property | Value | Source |
 |----------|-------|--------|
@@ -148,7 +149,20 @@ The graph is populated from **six curated data sources** through an 8-stage idem
 | Asset rating | AAA (composite 0.90) | Derived from NEOLI + ESV + CI |
 | Monte Carlo | Median ~$28.7M, P5 ~$19.6M, P95 ~$36.1M | 10,000 simulations |
 
-**Comparison sites** (Great Barrier Reef, Papahanaumokuakea) have governance metadata only (area, designation year, NEOLI score, asset rating) - no ecosystem service valuations. This is by design: the POC demonstrates the full provenance chain for one deeply characterized site.
+**Shark Bay World Heritage Area** (Australia) - seagrass-dominated, carbon-driven ESV:
+
+| Property | Value | Source |
+|----------|-------|--------|
+| Total ESV | $21.5M/year (market-price) | shark_bay_case_study.json |
+| Carbon sequestration | $12.1M (0.84 tCO2/ha/yr, $30/tonne) | Arias-Ortiz et al. 2018 |
+| Fisheries | $5.2M (MSC-certified prawn fishery) | Market-price method |
+| Tourism | $3.4M (108K visitors/year) | Tourism WA data |
+| Coastal protection | $0.8M (40% wave reduction) | Avoided cost method |
+| Seagrass extent | 4,800 km2 (world's largest) | Direct survey |
+| NEOLI score | 4/5 criteria met | Edgar et al. 2014 framework |
+| Area | 23,000 km2 | UNESCO designation |
+
+**Comparison sites** (Great Barrier Reef, Papahanaumokuakea) have governance metadata only (area, designation year, NEOLI score, asset rating) - no ecosystem service valuations. The POC demonstrates the full provenance chain for two deeply characterized sites with contrasting ESV profiles: tourism-dominant (Cabo Pulmo) vs. carbon-dominant (Shark Bay).
 
 ---
 
@@ -249,7 +263,7 @@ investor_demo/
   components/
     chat_panel.py               # Ask MARIS query UI with markdown, confidence badges, evidence
     graph_explorer.py           # Plotly network graph with semantic layering
-  precomputed_responses.json    # Cached responses for 27 common queries (API fallback)
+  precomputed_responses.json    # Cached responses for 35 common queries (API fallback)
   demo_narrative.md             # 10-minute pitch script (v1)
   demo_narrative_v2.md          # Updated pitch script (v2)
 
@@ -290,7 +304,8 @@ tests/
 |------|---------|
 | `.claude/registry/document_index.json` | Master bibliography (195 papers with DOI, tier, domain) |
 | `examples/cabo_pulmo_case_study.json` | AAA reference site: NEOLI, biomass, ESV, species, trophic network |
-| `schemas/bridge_axiom_templates.json` | 12 bridge axioms with translation coefficients and DOI evidence |
+| `examples/shark_bay_case_study.json` | Second reference site: seagrass carbon, fisheries, tourism, coastal protection |
+| `schemas/bridge_axiom_templates.json` | 16 bridge axioms with translation coefficients and DOI evidence |
 | `data/semantica_export/entities.jsonld` | 14 JSON-LD entities (WoRMS, FishBase, TNFD URIs) |
 | `data/semantica_export/relationships.json` | 15 cross-domain edges with quantification and mechanism |
 | `data/semantica_export/bridge_axioms.json` | Axiom evidence mapping for graph population |
@@ -302,7 +317,7 @@ tests/
 |------|---------|
 | `schemas/entity_schema.json` | 8 entity types (JSON-LD format) |
 | `schemas/relationship_schema.json` | 14 relationship types + inference rules |
-| `schemas/bridge_axiom_templates.json` | 12 translation rules with coefficients |
+| `schemas/bridge_axiom_templates.json` | 16 translation rules with coefficients |
 | `schemas/registry_schema.json` | Document validation schema |
 
 ### Infrastructure
@@ -364,11 +379,11 @@ The `QueryClassifier` (`maris/query/classifier.py`) maps natural-language questi
 |----------|-----------------|--------------------------|
 | `site_valuation` | value, worth, ESV, asset rating | MPA metadata, ecosystem service values, bridge axioms with evidence |
 | `provenance_drilldown` | evidence, provenance, DOI, source | Multi-hop path from MPA through axioms to source Documents |
-| `axiom_explanation` | bridge axiom, BA-001, coefficient | Axiom details, translation coefficients, evidence sources |
+| `axiom_explanation` | bridge axiom, BA-001, coefficient, seagrass, blue carbon | Axiom details, translation coefficients, evidence sources |
 | `comparison` | compare, versus, rank, benchmark | Side-by-side MPA metrics |
 | `risk_assessment` | risk, degradation, climate, threat | Ecological-to-service axioms, risk factors, confidence intervals |
 
-**Site name resolution:** The classifier maps common names to canonical Neo4j node names (e.g., "Cabo Pulmo" -> "Cabo Pulmo National Park"). Patterns are defined in `_SITE_PATTERNS` in `classifier.py`.
+**Site name resolution:** The classifier maps common names to canonical Neo4j node names (e.g., "Cabo Pulmo" -> "Cabo Pulmo National Park", "Shark Bay" -> "Shark Bay World Heritage Area"). Patterns are defined in `_SITE_PATTERNS` in `classifier.py`. The query endpoint infers axiom IDs for mechanism questions (e.g., "How does seagrass sequester carbon?" -> BA-013).
 
 ---
 
@@ -378,16 +393,16 @@ The `QueryClassifier` (`maris/query/classifier.py`) maps natural-language questi
 
 | Label | Merge Key | Count | Description |
 |-------|-----------|-------|-------------|
-| Document | doi | 828 | Peer-reviewed evidence sources from 195-paper registry |
-| BridgeAxiom | axiom_id | 12 | Ecological-to-financial translation rules |
+| Document | doi | 829 | Peer-reviewed evidence sources from 195-paper registry |
+| BridgeAxiom | axiom_id | 16 | Ecological-to-financial translation rules (12 core + 4 blue carbon) |
+| EcosystemService | service_name | 11 | Valued services (Tourism, Fisheries, Carbon, Coastal Protection, etc.) |
 | TrophicLevel | name | 10 | Food web nodes (apex predator, mesopredator, etc.) |
-| Concept | name | 8 | Domain concepts (NEOLI Criteria, etc.) |
-| EcosystemService | service_name | 6 | Valued services (Tourism, Fisheries, Carbon, etc.) |
+| Concept | name | 10 | Domain concepts (NEOLI Criteria, Blue Carbon, etc.) |
 | Habitat | habitat_id | 4 | Marine habitats (coral reef, kelp, seagrass, mangrove) |
-| MPA | name | 3 | Marine Protected Areas |
+| MPA | name | 4 | Marine Protected Areas (Cabo Pulmo, Shark Bay, GBR, Papahanaumokuakea) |
 | Species | worms_id | 3 | Marine species with WoRMS identifiers |
-| FinancialInstrument | instrument_id | 2 | Blue bond, parametric reef insurance |
-| Framework | framework_id | 2 | TNFD LEAP, SEEA |
+| FinancialInstrument | instrument_id | 3 | Blue bond, parametric reef insurance, carbon credit |
+| Framework | framework_id | 3 | TNFD LEAP, SEEA, Verra VCS |
 
 ### Relationship Types
 
@@ -412,22 +427,26 @@ The `QueryClassifier` (`maris/query/classifier.py`) maps natural-language questi
 
 ## Bridge Axioms
 
-Bridge axioms are the core translation mechanism - each converts an ecological state measurement into a financial value through peer-reviewed coefficients.
+Bridge axioms are the core translation mechanism - each converts an ecological state measurement into a financial value through peer-reviewed coefficients. The original 12 axioms cover coral reef and general MPA translations; BA-013 through BA-016 extend coverage to blue carbon and seagrass ecosystems.
 
 | Axiom | Name | Translation | Key Coefficient |
 |-------|------|-------------|-----------------|
 | BA-001 | mpa_biomass_dive_tourism_value | Fish biomass -> Tourism WTP | Up to 84% higher WTP per unit biomass |
-| BA-002 | notake_mpa_biomass_recovery | No-take MPA -> Biomass recovery | 4.63x over 10-year recovery arc |
-| BA-003 | reef_carbon_sequestration | Coral reef area -> Carbon value | Calcification rate per hectare |
-| BA-004 | habitat_coastal_flood_protection | Coastal habitat -> Flood protection | Wave energy reduction per meter reef |
-| BA-005 | biodiversity_reef_insurance | Species diversity -> Insurance value | Reef complexity index |
-| BA-006 | water_quality_regulation_value | Reef filtering -> Water quality | Nutrient cycling per hectare |
-| BA-007 | genetic_bioprospecting_value | Marine biodiversity -> Biotech potential | Patent-to-species ratio |
-| BA-008 | sustainable_fisheries_value | Fish biomass -> Fisheries yield | Maximum sustainable yield model |
-| BA-009 | trophic_cascade_multiplier | Apex predator -> Ecosystem health | Top-down trophic control |
-| BA-010 | mpa_network_connectivity | MPA spacing -> Larval connectivity | Dispersal distance model |
-| BA-011 | neoli_asset_rating_mapping | NEOLI criteria -> Asset rating | Composite 0-1 score |
-| BA-012 | tnfd_leap_disclosure | Ecosystem data -> TNFD reporting | 4-phase LEAP framework |
+| BA-002 | notake_mpa_biomass_multiplier | No-take MPA -> Biomass recovery | 4.63x over 10-year recovery arc |
+| BA-003 | sea_otter_kelp_carbon_cascade | Kelp forest area -> Carbon value | Otter-mediated trophic cascade |
+| BA-004 | coral_reef_flood_protection | Coral reef -> Flood protection | Wave energy reduction per meter reef |
+| BA-005 | mangrove_flood_protection | Mangrove -> Flood protection | Coastal defense value per hectare |
+| BA-006 | mangrove_fisheries_production | Mangrove -> Fisheries yield | Nursery habitat production function |
+| BA-007 | mangrove_carbon_stock | Mangrove -> Carbon stock | Tonnes CO2/ha stored |
+| BA-008 | seagrass_carbon_credit_value | Seagrass -> Carbon credits | Credit value per hectare |
+| BA-009 | mangrove_restoration_bcr | Restoration -> Benefit-cost ratio | BCR multiplier |
+| BA-010 | kelp_forest_global_value | Kelp forest -> Global value | Per-hectare ESV estimate |
+| BA-011 | mpa_climate_resilience | MPA -> Climate resilience | Resilience index composite |
+| BA-012 | reef_degradation_fisheries_loss | Reef degradation -> Fisheries loss | Revenue decline per degradation unit |
+| BA-013 | seagrass_carbon_sequestration_rate | Seagrass area -> Carbon sequestration | 0.84 tCO2/ha/yr (Arias-Ortiz 2018) |
+| BA-014 | carbon_stock_to_credit_value | Carbon stock -> Credit value | $30/tonne (Verra VCS VM0033) |
+| BA-015 | habitat_loss_carbon_emission | Habitat loss -> Carbon emission | 294 tCO2/ha released (Arias-Ortiz 2018) |
+| BA-016 | mpa_protection_carbon_permanence | MPA protection -> Carbon permanence | Buffer pool discount for reversal risk |
 
 ---
 
@@ -504,10 +523,11 @@ These MUST be followed in all code, documentation, and generated content:
 
 ### Adding a New MPA Site
 
-1. Create a case study JSON following the structure of `examples/cabo_pulmo_case_study.json`
-2. Add a population function in `maris/graph/population.py` (pattern: `_populate_cabo_pulmo()`)
+1. Create a case study JSON following the structure of `examples/cabo_pulmo_case_study.json` or `examples/shark_bay_case_study.json`
+2. Add a population function in `maris/graph/population.py` (pattern: `_populate_cabo_pulmo()` or `_populate_shark_bay()`)
 3. Add the site's canonical name to `_SITE_PATTERNS` in `maris/query/classifier.py`
-4. Run `python scripts/populate_neo4j.py` to load the new site
+4. Add the case study path to `MARISConfig.case_study_paths` in `maris/config.py`
+5. Run `python scripts/populate_neo4j.py` to load the new site
 
 ### Adding a New Bridge Axiom
 
@@ -537,9 +557,12 @@ These MUST be followed in all code, documentation, and generated content:
 | DOI coverage | 100% | 90.3% |
 | Abstract coverage | >=80% | 67.2% |
 | Cabo Pulmo ESV accuracy | +/-20% of published | $29.27M (within range) |
-| Bridge axiom evidence | 12 axioms x 3+ sources | Complete |
+| Shark Bay ESV accuracy | +/-20% of published | $21.5M (within range) |
+| Bridge axiom evidence | 16 axioms x 3+ sources | Complete |
+| Dual-site characterization | 2 fully characterized MPAs | Complete (Cabo Pulmo + Shark Bay) |
+| Blue carbon axioms | BA-013 through BA-016 | Complete |
 | Live query pipeline | End-to-end NL-to-answer | Working |
-| Graph population | 878 nodes, 101 edges | Complete |
+| Graph population | 893 nodes, 132 edges | Complete |
 | Dashboard (live + static) | Both modes operational | Working |
 | Test suite | 220 tests passing | Complete |
 | API authentication | Bearer token + rate limiting | Complete |

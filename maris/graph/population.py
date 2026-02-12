@@ -5,9 +5,10 @@ Sources:
   1. .claude/registry/document_index.json          - 195 doc metadata
   2. data/semantica_export/entities.jsonld          - 14 entities
   3. data/semantica_export/relationships.json       - 15 curated relationships
-  4. data/semantica_export/bridge_axioms.json       - 12 axioms (export)
-  5. schemas/bridge_axiom_templates.json            - 12 axioms (full coefficients)
-  6. examples/cabo_pulmo_case_study.json            - Full site data
+  4. data/semantica_export/bridge_axioms.json       - axioms (export)
+  5. schemas/bridge_axiom_templates.json            - axioms (full coefficients)
+  6. examples/cabo_pulmo_case_study.json            - Full site data (Cabo Pulmo)
+  7. examples/shark_bay_case_study.json             - Full site data (Shark Bay)
 
 All operations use MERGE (idempotent).
 """
@@ -421,6 +422,165 @@ def _populate_cabo_pulmo(session, cfg):
 
 
 # ---------------------------------------------------------------------------
+# 3b. Shark Bay enrichment (seagrass, carbon, services, species)
+# ---------------------------------------------------------------------------
+def _populate_shark_bay(session, cfg):
+    """Enrich Shark Bay MPA node with case study data and create service/species nodes."""
+    sb_path = cfg.shark_bay_case_study_path
+    if not sb_path.exists():
+        print("  WARNING: shark_bay_case_study.json not found, skipping Shark Bay.")
+        return 0
+
+    cs = _load_json(sb_path)
+    count = 0
+
+    site = cs.get("site", {})
+    neoli = cs.get("neoli_assessment", {})
+    eco = cs.get("ecological_status", {})
+    rating = cs.get("asset_quality_rating", {})
+
+    # Compute data freshness status
+    measurement_year = eco.get("assessment_year", 2018)
+    import datetime as _dt
+    _current_year = _dt.datetime.now().year
+    _data_age = _current_year - measurement_year
+    if _data_age <= 5:
+        data_freshness = "current"
+    elif _data_age <= 10:
+        data_freshness = "aging"
+    else:
+        data_freshness = "stale"
+
+    session.run(
+        """
+        MERGE (m:MPA {name: $name})
+        SET m.country          = $country,
+            m.lat              = $lat,
+            m.lon              = $lon,
+            m.area_km2         = $area_km2,
+            m.seagrass_extent_km2 = $seagrass_extent,
+            m.designation_year = $designation_year,
+            m.neoli_score      = $neoli_score,
+            m.neoli_no_take    = $no_take,
+            m.neoli_enforced   = $enforced,
+            m.neoli_old        = $old,
+            m.neoli_large      = $large,
+            m.neoli_isolated   = $isolated,
+            m.primary_habitat  = $primary_habitat,
+            m.dominant_species = $dominant_species,
+            m.carbon_stock_tCO2_per_ha = $carbon_stock,
+            m.sequestration_rate_tCO2_per_ha_yr = $seq_rate,
+            m.heatwave_loss_percent = $heatwave_loss,
+            m.asset_rating     = $asset_rating,
+            m.asset_score      = $asset_score,
+            m.total_esv_usd    = $total_esv,
+            m.data_freshness_status = $freshness,
+            m.last_validated_date   = $validated_date
+        """,
+        {
+            "name": "Shark Bay World Heritage Area",
+            "country": site.get("country", "Australia"),
+            "lat": site.get("coordinates", {}).get("latitude", -25.97),
+            "lon": site.get("coordinates", {}).get("longitude", 113.86),
+            "area_km2": site.get("area_km2", 23000),
+            "seagrass_extent": site.get("seagrass_extent_km2", 4800),
+            "designation_year": site.get("designation_year", 1991),
+            "neoli_score": neoli.get("neoli_score", 4),
+            "no_take": neoli.get("criteria", {}).get("no_take", {}).get("value", True),
+            "enforced": neoli.get("criteria", {}).get("enforced", {}).get("value", True),
+            "old": neoli.get("criteria", {}).get("old", {}).get("value", True),
+            "large": neoli.get("criteria", {}).get("large", {}).get("value", True),
+            "isolated": neoli.get("criteria", {}).get("isolated", {}).get("value", False),
+            "primary_habitat": eco.get("primary_habitat", "seagrass_meadow"),
+            "dominant_species": eco.get("dominant_species", "Posidonia australis"),
+            "carbon_stock": eco.get("metrics", {}).get("carbon_stock", {}).get("stock_tCO2_per_ha", 294),
+            "seq_rate": eco.get("metrics", {}).get("sequestration", {}).get("rate_tCO2_per_ha_yr", 0.84),
+            "heatwave_loss": eco.get("metrics", {}).get("heatwave_impact", {}).get("seagrass_loss_percent", 36),
+            "asset_rating": rating.get("rating", "AA"),
+            "asset_score": rating.get("composite_score", 0.81),
+            "total_esv": cs.get("ecosystem_services", {}).get("total_annual_value_usd", 21500000),
+            "freshness": data_freshness,
+            "validated_date": eco.get("last_validated_date", ""),
+        },
+    )
+    count += 1
+
+    # Create EcosystemService nodes from case study services
+    services = cs.get("ecosystem_services", {}).get("services", [])
+    for svc in services:
+        svc_type = svc.get("service_type", "")
+        service_id = f"shark_bay_{svc_type}"
+        session.run(
+            """
+            MERGE (es:EcosystemService {service_id: $service_id})
+            SET es.service_name     = $name,
+                es.service_type     = $svc_type,
+                es.category         = $category,
+                es.annual_value_usd = $value,
+                es.valuation_method = $method
+            """,
+            {
+                "service_id": service_id,
+                "name": svc_type.replace("_", " ").title(),
+                "svc_type": svc_type,
+                "category": svc.get("service_category", ""),
+                "value": svc.get("annual_value_usd"),
+                "method": svc.get("valuation_method", ""),
+            },
+        )
+        # Link MPA -> GENERATES -> EcosystemService
+        session.run(
+            """
+            MATCH (m:MPA {name: "Shark Bay World Heritage Area"})
+            MATCH (es:EcosystemService {service_id: $service_id})
+            MERGE (m)-[g:GENERATES]->(es)
+            SET g.total_usd_yr = $value,
+                g.method       = $method
+            """,
+            {
+                "service_id": service_id,
+                "value": svc.get("annual_value_usd"),
+                "method": svc.get("valuation_method", ""),
+            },
+        )
+        count += 1
+
+    # Link Shark Bay to seagrass habitat
+    session.run(
+        """
+        MATCH (m:MPA {name: "Shark Bay World Heritage Area"})
+        MATCH (h:Habitat {habitat_id: "seagrass_meadow"})
+        MERGE (m)-[:HAS_HABITAT]->(h)
+        """
+    )
+    count += 1
+
+    # Create provenance edges
+    for src in cs.get("provenance", {}).get("data_sources", []):
+        doi = src.get("doi", "")
+        if not doi or "xxxx" in doi:
+            continue
+        session.run(
+            """
+            MATCH (m:MPA {name: "Shark Bay World Heritage Area"})
+            MERGE (d:Document {doi: $doi})
+            MERGE (m)-[r:DERIVED_FROM]->(d)
+            SET r.data_type   = $data_type,
+                r.access_date = $access_date
+            """,
+            {
+                "doi": doi,
+                "data_type": src.get("data_type", ""),
+                "access_date": src.get("access_date", ""),
+            },
+        )
+        count += 1
+
+    print(f"  Shark Bay enrichment: {count} nodes/edges merged.")
+    return count
+
+
+# ---------------------------------------------------------------------------
 # 4. Bridge Axiom nodes with comprehensive links
 # ---------------------------------------------------------------------------
 def _populate_bridge_axioms(session, cfg):
@@ -524,6 +684,19 @@ def _populate_bridge_axioms(session, cfg):
                 {"axiom_id": aid},
             )
 
+        # Link blue carbon axioms -> APPLIES_TO -> Shark Bay
+        # BA-013 (seagrass carbon stock), BA-014 (seagrass nursery),
+        # BA-015 (heatwave permanence risk), BA-016 (seagrass coastal protection)
+        if aid in ("BA-013", "BA-014", "BA-015", "BA-016"):
+            session.run(
+                """
+                MATCH (a:BridgeAxiom {axiom_id: $axiom_id})
+                MATCH (m:MPA {name: "Shark Bay World Heritage Area"})
+                MERGE (a)-[:APPLIES_TO]->(m)
+                """,
+                {"axiom_id": aid},
+            )
+
         # Link axiom -> TRANSLATES -> EcosystemService
         svc_map = {
             "BA-001": "cabo_pulmo_tourism",
@@ -531,6 +704,9 @@ def _populate_bridge_axioms(session, cfg):
             "BA-006": "cabo_pulmo_fisheries_spillover",
             "BA-008": "cabo_pulmo_carbon_sequestration",
             "BA-012": "cabo_pulmo_fisheries_spillover",
+            "BA-013": "shark_bay_carbon_sequestration",
+            "BA-014": "shark_bay_fisheries",
+            "BA-016": "shark_bay_coastal_protection",
         }
         svc_id = svc_map.get(aid)
         if svc_id:
@@ -902,6 +1078,7 @@ def populate_graph():
         total += _populate_documents(session, cfg)
         total += _populate_entities(session, cfg)
         total += _populate_cabo_pulmo(session, cfg)
+        total += _populate_shark_bay(session, cfg)
         total += _populate_bridge_axioms(session, cfg)
         total += _populate_comparison_sites(session)
         total += _populate_relationships(session, cfg)

@@ -1,0 +1,384 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "site": {
+    "@type": "MarineProtectedArea",
+    "@id": "mpa:shark_bay_wha",
+    "name": "Shark Bay World Heritage Area",
+    "country": "Australia",
+    "region": "Gascoyne, Western Australia",
+    "coordinates": {
+      "@type": "geo:Point",
+      "latitude": -25.97,
+      "longitude": 113.86
+    },
+    "area_km2": 23000,
+    "seagrass_extent_km2": 4800,
+    "designation_year": 1991,
+    "governance": {
+      "management_authority": "DBCA (Department of Biodiversity, Conservation and Attractions)",
+      "management_plan_year": 2008,
+      "community_engagement": "high",
+      "local_support": "strong",
+      "indigenous_partnership": "Malgana Aboriginal Corporation joint management (ILUA 2024)"
+    }
+  },
+
+  "neoli_assessment": {
+    "@type": "NEOLIAssessment",
+    "assessment_date": "2024",
+    "criteria": {
+      "no_take": {
+        "value": true,
+        "notes": "Sanctuary zones with full no-take protection within the Marine Park"
+      },
+      "enforced": {
+        "value": true,
+        "notes": "Active compliance monitoring by DBCA and Parks and Wildlife"
+      },
+      "old": {
+        "value": true,
+        "notes": "33 years since World Heritage listing (>10 year threshold)"
+      },
+      "large": {
+        "value": true,
+        "notes": "23,000 km2 (>100 km2 threshold)"
+      },
+      "isolated": {
+        "value": false,
+        "notes": "Open coastline with limited natural barriers to adjacent waters"
+      }
+    },
+    "neoli_score": 4,
+    "effectiveness_rating": "high",
+    "source": {
+      "citation": "Edgar et al. 2014 Nature",
+      "doi": "10.1038/nature13022"
+    }
+  },
+
+  "ecological_status": {
+    "@type": "EcologicalAssessment",
+    "primary_habitat": "seagrass_meadow",
+    "dominant_species": "Posidonia australis",
+    "seagrass_species_count": 12,
+    "assessment_year": 2018,
+    "last_validated_date": "2026-02-11",
+    "metrics": {
+      "carbon_stock": {
+        "total_Tg_Corg": 45,
+        "uncertainty_Tg_Corg": 23,
+        "top_meter_range_kg_Corg_per_m2": [4, 30],
+        "stock_tCO2_per_ha": 294,
+        "notes": "Largest C stock reported for any seagrass ecosystem - up to 1.3% of global seagrass sediment C"
+      },
+      "sequestration": {
+        "rate_tCO2_per_ha_yr": 0.84,
+        "total_Gg_C_yr": 200,
+        "uncertainty_Gg_C_yr": 55,
+        "range_Gg_C_yr": [65, 527],
+        "notes": "Represents 9% of C sequestered by Australia's vegetated coastal ecosystems"
+      },
+      "heatwave_impact": {
+        "event_year": 2011,
+        "temperature_anomaly_C": "2-4",
+        "seagrass_loss_percent": 36,
+        "co2_emission_Tg": [2, 9],
+        "emission_notes": "Increased Australia's land-use change emissions by 4-21% per annum over three years",
+        "recovery_status": "partial - uneven across bay, some areas showing good recovery by 2018"
+      }
+    },
+    "source": {
+      "citation": "Arias-Ortiz et al. 2018 Nature Climate Change",
+      "doi": "10.1038/s41558-018-0096-y"
+    }
+  },
+
+  "ecosystem_services": {
+    "@type": "EcosystemServiceBundle",
+    "last_validated_date": "2026-02-11",
+    "services": [
+      {
+        "@type": "EcosystemService",
+        "service_type": "carbon_sequestration",
+        "service_category": "regulating",
+        "annual_value_usd": 12100000,
+        "valuation_method": "market_price",
+        "measurement_year": 2024,
+        "beneficiaries": ["global_climate", "carbon_credit_buyers", "blue_bond_investors"],
+        "metrics": {
+          "sequestration_rate_tCO2_per_ha_yr": 0.84,
+          "seagrass_extent_km2": 4800,
+          "carbon_price_usd_per_tonne": 30,
+          "total_stock_tCO2_per_ha": 294,
+          "methodology": "Verra VCS VM0033 for tidal wetland and seagrass restoration"
+        },
+        "source": {
+          "citation": "Arias-Ortiz et al. 2018 Nature Climate Change",
+          "doi": "10.1038/s41558-018-0096-y"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "fisheries",
+        "service_category": "provisioning",
+        "annual_value_usd": 5200000,
+        "valuation_method": "market_price",
+        "measurement_year": 2022,
+        "beneficiaries": ["commercial_fishers", "regional_economy", "export_markets"],
+        "metrics": {
+          "primary_species": ["western_king_prawn", "blue_swimmer_crab", "scallops"],
+          "fishery_status": "MSC certified (prawn fishery)",
+          "seagrass_nursery_dependency": "high - seagrass meadows serve as critical nursery habitat"
+        },
+        "notes": "Shark Bay prawn fishery is WA's largest and third most valuable commercial fishery in the state"
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "tourism",
+        "service_category": "cultural",
+        "annual_value_usd": 3400000,
+        "valuation_method": "market_price",
+        "measurement_year": 2022,
+        "beneficiaries": ["local_community", "tourism_operators", "hospitality"],
+        "metrics": {
+          "annual_visitors": 108000,
+          "key_attractions": ["Monkey Mia dolphin interaction", "World Heritage interpretation", "kayaking", "fishing charters"],
+          "world_heritage_premium": true
+        },
+        "notes": "Visitor numbers based on Tourism WA 2014-2016 average; increasing trend post-2020"
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "coastal_protection",
+        "service_category": "regulating",
+        "annual_value_usd": 800000,
+        "valuation_method": "avoided_cost",
+        "measurement_year": 2022,
+        "metrics": {
+          "wave_energy_reduction_percent": 40,
+          "protected_coastline_km": 350,
+          "seagrass_stabilization": "Extensive Posidonia meadows stabilize sediments and reduce wave energy"
+        },
+        "notes": "Seagrass meadows provide wave attenuation and sediment stabilization along the bay's coastline"
+      }
+    ],
+    "total_annual_value_usd": 21500000
+  },
+
+  "asset_quality_rating": {
+    "@type": "MARISRating",
+    "rating": "AA",
+    "rating_date": "2024-06-15",
+    "rating_rationale": {
+      "ecological_condition": {
+        "score": 0.85,
+        "weight": 0.40,
+        "notes": "World's largest seagrass carbon stock but demonstrated heatwave vulnerability"
+      },
+      "governance_effectiveness": {
+        "score": 0.90,
+        "weight": 0.25,
+        "notes": "UNESCO World Heritage listing, strong multi-agency governance, Indigenous co-management"
+      },
+      "financial_sustainability": {
+        "score": 0.75,
+        "weight": 0.20,
+        "notes": "Carbon-dominant revenue profile with emerging blue carbon credit potential"
+      },
+      "risk_factors": {
+        "score": 0.65,
+        "weight": 0.15,
+        "notes": "Demonstrated heatwave vulnerability (36% seagrass loss in 2011); permanence risk for carbon credits"
+      }
+    },
+    "composite_score": 0.81,
+    "confidence_level": "high"
+  },
+
+  "key_species": [
+    {
+      "@type": "Species",
+      "scientific_name": "Posidonia australis",
+      "common_name": "Fibre-ball weed (Australian seagrass)",
+      "role_in_ecosystem": "dominant_habitat_former",
+      "carbon_relevance": "primary carbon stock species - single clone spans 180 km, world's largest known plant",
+      "notes": "4,500 years old polyploid clone discovered in 2022"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Dugong dugon",
+      "common_name": "Dugong",
+      "iucn_status": "Vulnerable",
+      "population_estimate": "10,000-14,000",
+      "role_in_ecosystem": "keystone_herbivore",
+      "seagrass_dependency": "obligate seagrass grazer",
+      "notes": "Approximately 10% of global dugong population; population declined after 2011 heatwave seagrass loss"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Tursiops aduncus",
+      "common_name": "Indo-Pacific bottlenose dolphin",
+      "role_in_ecosystem": "apex_predator",
+      "notes": "Monkey Mia dolphin interaction program - major tourism driver"
+    }
+  ],
+
+  "risk_assessment": {
+    "@type": "RiskProfile",
+    "overall_risk_level": "moderate-high",
+    "risk_factors": [
+      {
+        "risk_type": "marine_heatwave",
+        "severity": "high",
+        "likelihood": "increasing",
+        "evidence": "2011 heatwave caused 36% seagrass loss and 2-9 Tg CO2 emissions; frequency increasing under climate change",
+        "source_doi": "10.1038/s41558-018-0096-y"
+      },
+      {
+        "risk_type": "permanence_risk",
+        "severity": "moderate",
+        "likelihood": "moderate",
+        "evidence": "Carbon stored in seagrass sediments can be released upon disturbance; 2011 event demonstrated this risk"
+      },
+      {
+        "risk_type": "climate_change",
+        "severity": "high",
+        "likelihood": "high",
+        "evidence": "Warming Indian Ocean increases heatwave frequency and intensity; Shark Bay is at the thermal limit for some seagrass species"
+      }
+    ],
+    "mitigation": {
+      "governance": "UNESCO World Heritage status provides international protection framework",
+      "monitoring": "Long-term research programs (Shark Bay Ecosystem Research Project) track recovery",
+      "adaptation": "Joint management with Malgana Traditional Owners incorporates traditional ecological knowledge"
+    }
+  },
+
+  "bridge_axiom_applications": [
+    {
+      "axiom_id": "BA-013",
+      "application": "Seagrass carbon stock valuation via blue carbon methodology",
+      "calculation": {
+        "seagrass_extent_km2": 4800,
+        "carbon_stock_tCO2_per_ha": 294,
+        "sequestration_rate_tCO2_per_ha_yr": 0.84,
+        "carbon_price_usd": 30,
+        "annual_sequestration_value_usd": 12100000,
+        "notes": "Based on Verra VCS VM0033 methodology; conservative carbon price assumption"
+      }
+    },
+    {
+      "axiom_id": "BA-014",
+      "application": "Seagrass habitat to fisheries nursery value",
+      "calculation": {
+        "seagrass_extent_km2": 4800,
+        "nursery_species": ["western_king_prawn", "blue_swimmer_crab"],
+        "fishery_value_usd": 5200000,
+        "seagrass_dependency_coefficient": 0.65,
+        "notes": "High proportion of commercial catch depends on seagrass nursery habitat"
+      }
+    },
+    {
+      "axiom_id": "BA-015",
+      "application": "Heatwave vulnerability and carbon permanence risk",
+      "calculation": {
+        "historical_loss_percent": 36,
+        "co2_emission_range_Tg": [2, 9],
+        "recovery_timeline_years": "7+ (partial by 2018)",
+        "permanence_discount_factor": 0.15,
+        "notes": "Demonstrated reversal risk requires permanence buffer in carbon credit calculations"
+      }
+    },
+    {
+      "axiom_id": "BA-016",
+      "application": "Seagrass extent to coastal protection value",
+      "calculation": {
+        "seagrass_extent_km2": 4800,
+        "wave_attenuation_percent": 40,
+        "protected_coastline_km": 350,
+        "annual_protection_value_usd": 800000,
+        "notes": "Avoided-cost method based on seagrass wave energy reduction"
+      }
+    }
+  ],
+
+  "framework_alignment": {
+    "tnfd_leap": {
+      "status": "anticipates alignment with TNFD LEAP framework",
+      "phases": {
+        "locate": "Shark Bay World Heritage Area - 23,000 km2, UNESCO-listed",
+        "evaluate": "4,800 km2 seagrass with 294 tCO2/ha stock; heatwave vulnerability documented",
+        "assess": "$21.5M annual ESV; AA asset rating; moderate-high risk profile",
+        "prepare": "Carbon credit potential via VCS VM0033; blue bond eligibility"
+      }
+    },
+    "ifc_blue_finance": {
+      "status": "aligned with IFC Blue Finance principles",
+      "relevance": "Seagrass carbon credits and sustainable fisheries meet blue bond criteria"
+    },
+    "verra_vcs_vm0033": {
+      "status": "methodology applicable",
+      "relevance": "Tidal wetland and seagrass restoration methodology applicable to Shark Bay carbon accounting"
+    }
+  },
+
+  "provenance": {
+    "data_sources": [
+      {
+        "source": "Arias-Ortiz et al. 2018",
+        "doi": "10.1038/s41558-018-0096-y",
+        "data_type": "Primary field data - carbon stocks and heatwave impacts",
+        "access_date": "2026-02-11"
+      },
+      {
+        "source": "Mazarrasa et al. 2025",
+        "doi": "10.1038/s41467-025-64667-6",
+        "data_type": "Global seagrass blue carbon stocks and production estimates",
+        "access_date": "2026-02-11"
+      },
+      {
+        "source": "Roca et al. 2025",
+        "doi": "10.1038/s41467-025-59204-4",
+        "data_type": "Global seagrass carbon stock variability and loss emissions",
+        "access_date": "2026-02-11"
+      },
+      {
+        "source": "Strydom et al. 2023",
+        "doi": "10.5194/essd-15-511-2023",
+        "data_type": "Global seagrass meadow structure, biomass and production dataset",
+        "access_date": "2026-02-11"
+      }
+    ],
+    "compilation_date": "2026-02-11",
+    "compiled_by": "MARIS POC Team"
+  },
+
+  "caveats": [
+    "Carbon sequestration values are sensitive to carbon price assumptions ($30/tCO2 used); actual market prices vary by registry and vintage",
+    "The 2011 marine heatwave demonstrated that seagrass carbon stocks face permanence risk - stored carbon can be released upon disturbance",
+    "Fisheries values are approximate and based on publicly available data for the Shark Bay region; actual catch values fluctuate annually",
+    "Tourism revenue estimates are conservative and based on regional visitor data; direct attribution to the marine ecosystem is approximate",
+    "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
+  ],
+
+  "demo_value": {
+    "why_shark_bay_for_demo": [
+      "World's largest seagrass carbon stock - compelling blue carbon narrative",
+      "Demonstrated climate vulnerability (2011 heatwave) provides risk case study",
+      "Carbon-dominant ESV profile contrasts with Cabo Pulmo's tourism-dominant profile",
+      "UNESCO World Heritage status provides governance credibility",
+      "Active blue carbon research program with peer-reviewed data (Arias-Ortiz 2018)"
+    ],
+    "investor_story": "Shark Bay holds the world's largest seagrass carbon stock, storing up to 1.3% of all seagrass sediment carbon globally. At $21.5M/year in ecosystem services - dominated by $12.1M in carbon sequestration value - it represents a premier blue carbon investment opportunity. However, the 2011 marine heatwave, which destroyed 36% of seagrass and released 2-9 Tg CO2, demonstrates the permanence risk that investors must price into carbon credit instruments. MARIS rates Shark Bay AA - strong fundamentals with material climate risk.",
+    "key_demo_queries": [
+      "What is Shark Bay's carbon sequestration value?",
+      "How does Shark Bay compare to Cabo Pulmo?",
+      "What are the climate risks for Shark Bay's seagrass?",
+      "What evidence supports Shark Bay's blue carbon estimates?"
+    ]
+  }
+}

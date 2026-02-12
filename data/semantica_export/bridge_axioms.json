@@ -303,13 +303,125 @@
       ],
       "confidence": "high",
       "validation": ""
+    },
+    {
+      "axiom_id": "BA-013",
+      "name": "seagrass_carbon_sequestration_rate",
+      "domain_from": "ecological",
+      "domain_to": "service",
+      "description": "Seagrass meadows sequester atmospheric CO2 through photosynthetic fixation and long-term burial of organic carbon in anoxic sediment soils",
+      "formula": "sequestration_tCO2_yr = seagrass_area_ha * sequestration_rate * condition_factor",
+      "coefficients": {
+        "sequestration_rate_tCO2_ha_yr": 0.84,
+        "gross_npp_kg_C_ha_yr": 5833,
+        "burial_efficiency_fraction": 0.20
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "gomis_2025_seagrass_blue_carbon",
+          "doi": "10.1038/s41467-025-64667-6",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "krause_2025_seagrass_carbon_stocks",
+          "doi": "10.1038/s41467-025-59204-4",
+          "support_type": "supporting"
+        },
+        {
+          "doc_id": "strydom_2023_seagrass_dataset",
+          "doi": "10.5194/essd-15-511-2023",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "high",
+      "validation": "100 ha healthy seagrass -> ~84 tCO2/yr sequestered (range 40-180 tCO2/yr)"
+    },
+    {
+      "axiom_id": "BA-014",
+      "name": "carbon_stock_to_credit_value",
+      "domain_from": "service",
+      "domain_to": "financial",
+      "description": "Seagrass carbon sequestration generates revenue through voluntary carbon credit markets",
+      "formula": "annual_credit_revenue = sequestration_tCO2_yr * credit_price_usd_per_tCO2",
+      "coefficients": {
+        "price_per_tCO2_usd": 30,
+        "net_offset_tCO2e_ha_yr": 0.42
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "duarte_2025_seagrass_carbon_credits",
+          "doi": "10.1038/s44183-025-00111-y",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "oreska_2020_seagrass_ghg_offset",
+          "doi": "10.1038/s41598-020-64094-1",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "high",
+      "validation": "84 tCO2/yr at $30/tCO2 = $2,520/yr gross credit revenue"
+    },
+    {
+      "axiom_id": "BA-015",
+      "name": "habitat_loss_carbon_emission",
+      "domain_from": "ecological",
+      "domain_to": "service",
+      "description": "Seagrass habitat loss exposes stored sediment carbon to remineralization and CO2 emissions",
+      "formula": "emission_tCO2 = lost_area_ha * soil_carbon_stock_tCO2_ha * remineralization_fraction",
+      "coefficients": {
+        "emission_factor_tCO2_per_ha": 294,
+        "soil_carbon_stock_top1m_tCO2_ha": 520,
+        "remineralization_fraction": 0.53
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "arias_ortiz_2018_shark_bay_heatwave",
+          "doi": "10.1038/s41558-018-0096-y",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "krause_2025_seagrass_carbon_stocks",
+          "doi": "10.1038/s41467-025-59204-4",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "high",
+      "validation": "1,000 ha seagrass loss -> ~294,000 tCO2 emitted (range 112,000-476,000 tCO2)"
+    },
+    {
+      "axiom_id": "BA-016",
+      "name": "mpa_protection_carbon_permanence",
+      "domain_from": "ecological",
+      "domain_to": "ecological",
+      "description": "MPA designation reduces permanence risk for blue carbon stocks by mitigating direct anthropogenic threats",
+      "formula": "permanence_years = f(mpa_type, enforcement, governance_stability, climate_risk)",
+      "coefficients": {
+        "permanence_years": 50,
+        "socioeconomic_risk_fraction": 0.85,
+        "climate_risk_heatwave_loss_fraction": 0.36
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "lovelock_2025_permanence_risks",
+          "doi": "10.1038/s43247-025-02035-4",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "duarte_2025_seagrass_carbon_credits",
+          "doi": "10.1038/s44183-025-00111-y",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "medium",
+      "validation": "Well-governed no-take MPA provides ~50-year carbon permanence (range 25-100 years)"
     }
   ],
   "export_metadata": {
-    "generated_at": "2026-02-04T16:27:04.794286Z",
-    "source_version": "1.1",
-    "source_updated": "2026-02-04",
-    "axiom_count": 12,
-    "regeneration_reason": "BA-001 DOI correction and coefficient update"
+    "generated_at": "2026-02-11T12:00:00Z",
+    "source_version": "1.3",
+    "source_updated": "2026-02-11",
+    "axiom_count": 16,
+    "regeneration_reason": "Added BA-013 through BA-016 blue carbon axioms with research-grounded coefficients"
   }
 }

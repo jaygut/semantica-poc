@@ -5,11 +5,12 @@ import streamlit as st
 
 
 QUICK_QUERIES = [
-    "What is this site worth?",
+    "What is Cabo Pulmo worth?",
+    "What is Shark Bay worth?",
+    "Compare Cabo Pulmo and Shark Bay",
     "Why should I trust the ESV number?",
-    "How does biomass translate to tourism?",
-    "What if protection fails?",
-    "Compare to other sites",
+    "How does seagrass sequester carbon?",
+    "What happens if seagrass is lost at Shark Bay?",
 ]
 
 
@@ -165,11 +166,16 @@ def render_chat_panel(client):
         unsafe_allow_html=True,
     )
 
-    # Render quick query buttons in a row
-    cols = st.columns(len(QUICK_QUERIES))
-    for i, q in enumerate(QUICK_QUERIES):
-        with cols[i]:
+    # Render quick query buttons in two rows of 3
+    _qrow1 = st.columns(3)
+    for i, q in enumerate(QUICK_QUERIES[:3]):
+        with _qrow1[i]:
             if st.button(q, key=f"quick_{i}", use_container_width=True):
+                _submit_query(client, q)
+    _qrow2 = st.columns(3)
+    for i, q in enumerate(QUICK_QUERIES[3:]):
+        with _qrow2[i]:
+            if st.button(q, key=f"quick_{i + 3}", use_container_width=True):
                 _submit_query(client, q)
 
     # Custom text input (using form to clear on submit and avoid rerun loop)
@@ -188,9 +194,53 @@ def render_chat_panel(client):
         _render_response(entry, i)
 
 
+_SITE_DETECT = [
+    ("cabo pulmo", "Cabo Pulmo National Park"),
+    ("shark bay", "Shark Bay World Heritage Area"),
+    ("great barrier reef", "Great Barrier Reef Marine Park"),
+]
+
+_COMPARISON_KEYWORDS = ("compare", "versus", "vs", "differ")
+
+
+def _detect_site(question: str) -> str | None:
+    """Detect site name from question text for explicit API parameter.
+
+    Returns None for comparison queries (let server handle multi-site)
+    and for general mechanism questions (no specific site needed).
+    """
+    q_lower = question.lower()
+
+    # Don't override site for comparison queries - server handles multi-site
+    if any(kw in q_lower for kw in _COMPARISON_KEYWORDS):
+        return None
+
+    # Don't force a site for general mechanism questions
+    if any(kw in q_lower for kw in ("how does", "how do", "what is blue carbon")):
+        sites_found = sum(1 for pat, _ in _SITE_DETECT if pat in q_lower)
+        if sites_found == 0:
+            return None
+
+    for pattern, canonical in _SITE_DETECT:
+        if pattern in q_lower:
+            return canonical
+    return None
+
+
 def _submit_query(client, question: str):
     """Submit a query and store the result in session state."""
-    response = client.query(question, site="Cabo Pulmo National Park")
+    site = _detect_site(question)
+    try:
+        response = client.query(question, site=site)
+    except Exception:
+        # Graceful fallback: return a structured error response
+        response = {
+            "answer": "The live query service is temporarily unavailable. Please try again or use a different query.",
+            "confidence": 0.0,
+            "evidence": [],
+            "axioms_used": [],
+            "caveats": ["Live API error - response generated from fallback"],
+        }
     st.session_state.maris_chat_history.append(
         {"question": question, "response": response}
     )

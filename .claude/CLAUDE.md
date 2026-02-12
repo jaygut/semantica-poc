@@ -8,11 +8,12 @@ This directory contains the agentic workflow system, document registry, and skil
 
 | Component | Status | Details |
 |-----------|--------|---------|
-| Neo4j Knowledge Graph | Running | 878 nodes, 101 edges, bolt://localhost:7687 |
+| Neo4j Knowledge Graph | Running | 893 nodes, 132 edges, bolt://localhost:7687 |
 | FastAPI Query Engine | Running | 7 endpoints, http://localhost:8000 |
-| Streamlit Dashboard | Running | Dark-mode investor UI, http://localhost:8501 |
-| Document Library | Complete | 195 papers, 92% T1, 12 bridge axioms |
-| Semantica Export | Complete | 14 entities, 15 relationships, 12 axioms |
+| Streamlit Dashboard | Running | Dark-mode dual-site investor UI, http://localhost:8501 |
+| Document Library | Complete | 195 papers, 92% T1, 16 bridge axioms |
+| Semantica Export | Complete | 14 entities, 15 relationships, 16 axioms |
+| Characterized Sites | 2 | Cabo Pulmo ($29.27M ESV) + Shark Bay ($21.5M ESV) |
 
 ### Document Library Metrics
 
@@ -22,14 +23,14 @@ This directory contains the agentic workflow system, document registry, and skil
 | T1 (Peer-reviewed) | 92% | 92% |
 | DOI Coverage | 100% | 90.3% |
 | Abstract Coverage | 80% | 67.2% |
-| Bridge Axioms with 3+ sources | 12 | 12 |
+| Bridge Axioms with 3+ sources | 16 | 16 |
 | Semantica Export Files | 4 | 4 |
 
 ---
 
 ## How the Agentic System Feeds the Live Graph
 
-The agentic workflow (commands, skills, scripts) is the curation layer that produces the six data sources consumed by the Neo4j population pipeline. The flow is:
+The agentic workflow (commands, skills, scripts) is the curation layer that produces the seven data sources consumed by the Neo4j population pipeline. The flow is:
 
 ```
 Agentic Curation Layer                     Live System Layer
@@ -46,13 +47,14 @@ Agentic Curation Layer                     Live System Layer
                         ──> bridge_axioms.json ────────┤
                                                       │
 cabo_pulmo_case_study.json ────────────────────────────┤
-bridge_axiom_templates.json ───────────────────────────┤
+shark_bay_case_study.json ─────────────────────────────┤
+bridge_axiom_templates.json (16 axioms) ───────────────┤
                                                       │
                                                       v
                                           scripts/populate_neo4j.py
                                                       │
                                                       v
-                                          Neo4j (878 nodes, 101 edges)
+                                          Neo4j (893 nodes, 132 edges)
                                                       │
                                                       v
                                           FastAPI ──> Streamlit Dashboard
@@ -93,7 +95,7 @@ bridge_axiom_templates.json ─────────────────�
     kg_ready/                      # Extracted knowledge for graph population
     reports/                       # Pipeline execution reports
 
-tests/                               # Test suite (177 tests)
+tests/                               # Test suite (220 tests)
   conftest.py                        # Shared fixtures
   test_api_endpoints.py              # API route tests with auth validation
   test_bridge_axioms.py              # Bridge axiom computation tests
@@ -194,7 +196,7 @@ The curated data is exported in four files for Semantica ingestion and also cons
 |--------|--------|----------|----------|
 | Entities | JSON-LD | 14 entities with WoRMS/FishBase/TNFD URIs | `data/semantica_export/entities.jsonld` |
 | Relationships | JSON | 15 typed edges with provenance | `data/semantica_export/relationships.json` |
-| Bridge Axioms | JSON | 12 axioms with evidence mapping | `data/semantica_export/bridge_axioms.json` |
+| Bridge Axioms | JSON | 16 axioms with evidence mapping | `data/semantica_export/bridge_axioms.json` |
 | Document Corpus | JSON | 195-paper library summary | `data/semantica_export/document_corpus.json` |
 
 ---
@@ -225,7 +227,7 @@ The curated data is exported in four files for Semantica ingestion and also cons
 
 ## Testing and CI
 
-The project includes 177 tests in `tests/` covering query classification, Cypher templates, graph population, bridge axioms, Monte Carlo simulation, confidence modeling, LLM response validation, and API endpoints. Shared fixtures are in `tests/conftest.py`.
+The project includes 220 tests in `tests/` covering query classification, Cypher templates, graph population, bridge axioms, Monte Carlo simulation, confidence modeling, LLM response validation, and API endpoints. Shared fixtures are in `tests/conftest.py`.
 
 CI runs on push/PR to `main` via GitHub Actions (`.github/workflows/ci.yml`):
 1. **Lint**: `ruff check maris/ tests/`

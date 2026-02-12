@@ -140,11 +140,50 @@
       "mechanism": "Corporate nature-related risk disclosure",
       "source": "tnfd_2023_framework",
       "confidence": "high"
+    },
+    {
+      "id": "rel_016",
+      "type": "SEQUESTERS_CARBON",
+      "subject": "maris:seagrass_meadow",
+      "object": "maris:blue_carbon_stock",
+      "quantification": "Median 24.2 Mg Corg/ha in top 30cm; global seagrass NPP 5,833 kg C/ha/yr",
+      "mechanism": "Photosynthetic carbon fixation and burial in anoxic sediment soils over centennial to millennial timescales",
+      "sources": ["gomis_2025_seagrass_blue_carbon", "krause_2025_seagrass_carbon_stocks"],
+      "confidence": "high"
+    },
+    {
+      "id": "rel_017",
+      "type": "GENERATES_CREDITS",
+      "subject": "maris:seagrass_carbon_sequestration",
+      "object": "maris:voluntary_carbon_credit",
+      "quantification": "Net offset 0.42 tCO2e/ha/yr for restoration; conservation projects up to $1.53M/10yr for 100ha",
+      "mechanism": "Verified carbon sequestration and avoided emissions from seagrass conservation/restoration quantified under VCS methodology",
+      "sources": ["duarte_2025_seagrass_carbon_credits", "oreska_2020_seagrass_ghg_offset"],
+      "confidence": "high"
+    },
+    {
+      "id": "rel_018",
+      "type": "VERIFIED_BY",
+      "subject": "maris:voluntary_carbon_credit",
+      "object": "verra:vm0033",
+      "mechanism": "VM0033 v2.1 provides standardized methodology for quantifying GHG reductions from tidal wetland and seagrass restoration",
+      "source": "verra_vm0033_v2_1",
+      "confidence": "high"
+    },
+    {
+      "id": "rel_019",
+      "type": "PERMANENCE_RISK",
+      "subject": "marine_heatwave",
+      "object": "maris:seagrass_meadow",
+      "quantification": "36% of Shark Bay seagrass damaged by 2010/2011 marine heatwave; 2-9 Tg CO2 released over 3 years",
+      "mechanism": "Thermal stress causes seagrass dieback, exposing sediment carbon stocks to oxic conditions and remineralization",
+      "sources": ["arias_ortiz_2018_shark_bay_heatwave", "lovelock_2025_permanence_risks"],
+      "confidence": "high"
     }
   ],
   "export_metadata": {
     "generated_at": "2026-01-24T10:30:00Z",
-    "version": "1.0",
-    "relationship_count": 15
+    "version": "1.1",
+    "relationship_count": 19
   }
 }
