@@ -20,7 +20,7 @@ The system is designed for blue bond underwriters, conservation finance analysts
 
    ```bash
    cp .env.example .env
-   # Edit .env: set MARIS_NEO4J_PASSWORD and MARIS_LLM_API_KEY
+   # Edit .env: set MARIS_NEO4J_PASSWORD, MARIS_LLM_API_KEY, and MARIS_API_KEY
    ```
 
    > **Security:** The `.env` file contains database passwords and API keys. It is excluded from version control via `.gitignore` and must never be shared or committed.
@@ -79,13 +79,30 @@ The dashboard is a single-scroll, dark-mode page designed for investor-facing pr
 
 ### Confidence Levels
 
-The confidence slider adjusts which Monte Carlo percentile drives the headline ESV figure:
+MARIS uses two distinct confidence models:
+
+**Monte Carlo ESV Confidence** - Statistical uncertainty in ecosystem service values. The confidence slider adjusts which percentile drives the headline ESV figure, based on confidence interval propagation across 10,000 simulations:
 
 | Level | Percentile | ESV Estimate | Use Case |
 |-------|-----------|-------------|----------|
 | Conservative | P5 | ~$19.6M | Worst-case for risk assessment and stress testing |
 | Base Case | Median (P50) | ~$28.7M | Central estimate for standard reporting and bond sizing |
 | Optimistic | P95 | ~$36.1M | Best-case for opportunity analysis and upside framing |
+
+**Answer-Level Confidence** - A composite score shown on Ask MARIS responses, computed as:
+
+```
+composite = tier_base * path_discount * staleness_discount * sample_factor
+```
+
+| Factor | What It Measures | Values |
+|--------|-----------------|--------|
+| tier_base | Evidence quality of source documents | T1=0.95, T2=0.80, T3=0.65, T4=0.50 |
+| path_discount | Inference chain length (graph hops) | Decreases with longer provenance paths |
+| staleness_discount | Age of underlying data | Penalizes older measurements |
+| sample_factor | Number of independent sources | More sources increase confidence |
+
+Each factor is independently auditable, so investors can see exactly why a particular answer received its confidence score.
 
 ---
 
@@ -118,6 +135,8 @@ Each answer includes:
 
 **Comparison sites** (Great Barrier Reef, Papahanaumokuakea) have governance metadata (NEOLI score, area, asset rating) but not full ecosystem service valuations. Queries about their financial value will note the absence of site-specific valuation data.
 
+When the API is unavailable, Ask MARIS falls back to 27 precomputed responses covering all 5 query categories (valuation, provenance, axiom, comparison, risk). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
+
 ### Graph Explorer
 
 The interactive network visualization shows the provenance chain as a layered graph:
@@ -129,6 +148,32 @@ The interactive network visualization shows the provenance chain as a layered gr
 - **Gray nodes** (bottom layer) - Source Documents (peer-reviewed papers by DOI)
 
 Edges show provenance relationships: GENERATES (MPA -> service), TRANSLATES (axiom -> service), EVIDENCED_BY (axiom -> paper), APPLIES_TO (axiom -> MPA).
+
+---
+
+## Data Freshness Indicators
+
+The dashboard displays freshness badges next to data-dependent metrics, indicating the age of the underlying measurements:
+
+| Badge | Color | Meaning |
+|-------|-------|---------|
+| **Current** | Green | Data is 5 years old or less |
+| **Aging** | Yellow | Data is between 5 and 10 years old |
+| **Stale** | Red | Data is more than 10 years old |
+
+Freshness is derived from the `measurement_year` property on MPA nodes in the knowledge graph. Stale data carries a higher staleness_discount penalty in the answer-level confidence model (see Confidence Levels above), signaling to investors that the underlying measurements may warrant updated field surveys.
+
+---
+
+## Sensitivity Analysis
+
+The dashboard includes a tornado plot showing which ecosystem service parameters have the greatest impact on total ESV. This uses One-at-a-Time (OAT) methodology:
+
+- Each service parameter is perturbed by +/-10% and +/-20% from its base value
+- The resulting change in total ESV is measured for each perturbation
+- Parameters are ranked by their impact magnitude in the tornado plot
+
+The dominant parameter is typically Tourism ($25.0M), which accounts for the largest share of total ESV. This analysis helps investors understand which service values are most critical to monitor and where updated field data would most reduce valuation uncertainty.
 
 ---
 
@@ -155,3 +200,5 @@ This uses a pre-computed JSON bundle (`demos/context_graph_demo/cabo_pulmo_inves
 | Empty graph explorer | Run `python scripts/populate_neo4j.py` to load data into Neo4j |
 | Import errors on dashboard start | Ensure you are running from inside the `investor_demo/` directory |
 | Queries return empty for non-Cabo Pulmo sites | Expected behavior - only the calibration site has full ESV data (see Site Coverage above) |
+| **401 Unauthorized** from API | API key is missing or invalid. Set `MARIS_API_KEY` in `.env` and include `Authorization: Bearer <key>` header in requests |
+| **429 Rate Limited** | Too many requests. The API allows 30 queries/minute and 60 other requests/minute per API key. Wait and retry |

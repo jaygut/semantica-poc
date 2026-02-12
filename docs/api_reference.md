@@ -10,13 +10,32 @@ All endpoints are prefixed with `/api`. The server reads configuration from envi
 
 ---
 
+## Authentication
+
+All endpoints except `GET /api/health` require a Bearer token in the `Authorization` header:
+
+```
+Authorization: Bearer <MARIS_API_KEY>
+```
+
+Set the `MARIS_API_KEY` environment variable to configure the expected token. When `MARIS_DEMO_MODE=true`, authentication is bypassed so investor demos can run without token configuration.
+
+**Error responses:**
+
+| HTTP Code | Condition |
+|-----------|-----------|
+| 401 Unauthorized | Missing or invalid Bearer token |
+| 429 Too Many Requests | Rate limit exceeded (see [Rate Limiting](#rate-limiting)) |
+
+---
+
 ## Endpoints
 
 ### Health
 
 #### `GET /api/health`
 
-Returns system status including Neo4j connectivity, LLM availability, and graph statistics. Use this for pre-demo verification and monitoring.
+Returns system status including Neo4j connectivity, LLM availability, and graph statistics. Use this for pre-demo verification and monitoring. This endpoint does not require authentication.
 
 **Response (`HealthResponse`):**
 ```json
@@ -49,7 +68,11 @@ Returns system status including Neo4j connectivity, LLM availability, and graph 
 
 #### `POST /api/query`
 
-The primary endpoint. Classifies a natural-language question, selects a Cypher template, executes it against Neo4j, and returns a grounded answer with provenance.
+The primary endpoint. Classifies a natural-language question, selects a Cypher template, executes it against Neo4j, and returns a grounded answer with provenance. Requires authentication (returns 401/429 on failure).
+
+**Input validation:**
+- `question` must not exceed 500 characters (returns 400 Bad Request if exceeded)
+- `site` name validation: alphanumeric characters, spaces, hyphens, apostrophes, and periods only
 
 **Request body (`QueryRequest`):**
 
@@ -122,7 +145,7 @@ The primary endpoint. Classifies a natural-language question, selects a Cypher t
 
 #### `GET /api/site/{site_name}`
 
-Retrieve structured data for a specific MPA. Returns full metadata for the calibration site (Cabo Pulmo); returns governance metadata only for comparison sites.
+Retrieve structured data for a specific MPA. Returns full metadata for the calibration site (Cabo Pulmo); returns governance metadata only for comparison sites. Requires authentication (returns 401/429 on failure).
 
 **Response (`SiteResponse`):**
 
@@ -145,7 +168,7 @@ Retrieve structured data for a specific MPA. Returns full metadata for the calib
 
 #### `GET /api/axiom/{axiom_id}`
 
-Retrieve details for a specific bridge axiom, including its translation coefficients, DOI-backed evidence sources, and the sites and ecosystem services it applies to.
+Retrieve details for a specific bridge axiom, including its translation coefficients, DOI-backed evidence sources, and the sites and ecosystem services it applies to. Requires authentication (returns 401/429 on failure).
 
 **Response (`AxiomResponse`):**
 
@@ -165,7 +188,7 @@ Retrieve details for a specific bridge axiom, including its translation coeffici
 
 #### `POST /api/compare`
 
-Compare multiple MPA sites side by side. Returns whatever data is available for each site.
+Compare multiple MPA sites side by side. Returns whatever data is available for each site. Requires authentication (returns 401/429 on failure).
 
 **Request body (`CompareRequest`):**
 ```json
@@ -192,19 +215,19 @@ Compare multiple MPA sites side by side. Returns whatever data is available for 
 
 #### `POST /api/graph/traverse`
 
-Traverse the knowledge graph from a starting node. Useful for exploring provenance chains beyond the pre-defined query templates.
+Traverse the knowledge graph from a starting node. Useful for exploring provenance chains beyond the pre-defined query templates. Requires authentication (returns 401/429 on failure).
 
 **Request body (`TraverseRequest`):**
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `start_name` | string | required | Name of the starting node |
-| `max_hops` | int | 3 | Maximum traversal depth (1-6) |
+| `max_hops` | int | 3 | Maximum traversal depth (1-6). Values outside this range return 400 Bad Request. |
 | `result_limit` | int | 50 | Maximum paths to return |
 
 #### `GET /api/graph/node/{element_id}`
 
-Retrieve all properties and relationships for a specific node by its Neo4j element ID. Returns the node's labels, properties, and a list of connected neighbors with relationship types and directions.
+Retrieve all properties and relationships for a specific node by its Neo4j element ID. Returns the node's labels, properties, and a list of connected neighbors with relationship types and directions. Requires authentication (returns 401/429 on failure).
 
 ---
 
@@ -232,9 +255,9 @@ The Neo4j graph uses the following node labels and relationship types. All nodes
 
 | Label | Merge Key | Key Properties | Description |
 |-------|-----------|----------------|-------------|
-| `MPA` | `name` | area_km2, designation_year, neoli_score, total_esv_usd, biomass_ratio, asset_rating | Marine Protected Area |
+| `MPA` | `name` | area_km2, designation_year, neoli_score, total_esv_usd, biomass_ratio, asset_rating, biomass_measurement_year, last_validated_date, data_freshness_status | Marine Protected Area |
 | `EcosystemService` | `service_name` or `service_id` | annual_value_usd, valuation_method, ci_low, ci_high | Valued ecosystem service (e.g. Tourism, Fisheries, Carbon Sequestration) |
-| `BridgeAxiom` | `axiom_id` | name, category, description, pattern, coefficients_json, confidence, evidence_tier | Ecological-to-financial translation rule with peer-reviewed coefficients |
+| `BridgeAxiom` | `axiom_id` | name, category, description, pattern, coefficients_json, confidence, evidence_tier, ci_low, ci_high, distribution, study_sample_size, effect_size_type | Ecological-to-financial translation rule with peer-reviewed coefficients and uncertainty quantification |
 | `Document` | `doi` | title, year, source_tier, domain, abstract | Peer-reviewed evidence source from the 195-paper registry |
 | `Habitat` | `habitat_id` or `name` | condition | Marine habitat type (coral reef, kelp forest, seagrass meadow, mangrove forest) |
 | `Species` | `worms_id` or `name` | common_name, trophic_level, role_in_ecosystem, commercial_importance | Marine species with WoRMS taxonomic identifiers |
@@ -269,10 +292,25 @@ The Neo4j graph uses the following node labels and relationship types. All nodes
 | HTTP Code | Meaning |
 |-----------|---------|
 | 200 | Success |
-| 400 | Bad request - e.g. site name required for valuation queries but not provided or detected |
+| 400 | Bad request - invalid input (question too long, invalid site name, max_hops out of range) |
+| 401 | Unauthorized - missing or invalid Bearer token |
+| 429 | Too Many Requests - rate limit exceeded |
 | 500 | Internal error - Neo4j unreachable, Cypher execution failed, or LLM error |
 
 Error responses include a `detail` field with a human-readable message.
+
+---
+
+## Rate Limiting
+
+API requests are rate-limited per API key using an in-memory sliding window:
+
+| Endpoint | Limit |
+|----------|-------|
+| `POST /api/query` | 30 requests/minute |
+| All other endpoints | 60 requests/minute |
+
+When the rate limit is exceeded, the API returns `429 Too Many Requests`. Every response includes an `X-Request-ID` header for end-to-end request tracing and correlation with server logs.
 
 ---
 
@@ -290,6 +328,8 @@ The API reads all settings from environment variables with `MARIS_` prefix. Copy
 | `MARIS_LLM_PROVIDER` | deepseek | LLM provider: deepseek, anthropic, or openai |
 | `MARIS_LLM_API_KEY` | - | LLM API key (required for live queries) |
 | `MARIS_LLM_MODEL` | deepseek-chat | Model identifier |
-| `MARIS_DEMO_MODE` | false | When true, uses precomputed responses instead of live LLM calls |
+| `MARIS_DEMO_MODE` | false | When true, uses precomputed responses instead of live LLM calls and bypasses authentication |
+| `MARIS_API_KEY` | - | Bearer token for API authentication (required unless demo mode is enabled) |
+| `MARIS_CORS_ORIGINS` | http://localhost:8501 | Allowed CORS origins (comma-separated for multiple) |
 
 > **Security:** The `.env` file contains secrets and must never be committed. It is excluded via `.gitignore`.

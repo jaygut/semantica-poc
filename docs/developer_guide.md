@@ -15,7 +15,7 @@ User Question (natural language)
  QueryClassifier  -- keyword-first with LLM fallback
      |              (5 categories: valuation, provenance, axiom, comparison, risk)
      v
- CypherTemplates  -- 6 parameterized templates, never raw string interpolation
+ CypherTemplates  -- 8 templates (5 core + 3 utility), never raw string interpolation
      |
      v
  QueryExecutor    -- Neo4j bolt driver, parameterized queries only
@@ -37,6 +37,7 @@ maris/
   api/                        # FastAPI server
     main.py                   # App factory, CORS, router registration
     models.py                 # Pydantic v2 request/response schemas
+    auth.py                   # Bearer token auth, rate limiting (30/min query, 60/min other), input validation, request tracing (X-Request-ID), hashed IP logging
     routes/
       health.py               # GET /api/health - Neo4j + LLM status + graph stats
       query.py                # POST /api/query - full NL-to-answer pipeline
@@ -48,7 +49,8 @@ maris/
     validation.py             # Post-population integrity checks
   query/                      # NL-to-Cypher pipeline
     classifier.py             # Two-tier classification: keyword regex + LLM fallback
-    cypher_templates.py       # 6 parameterized Cypher templates by category
+    cypher_templates.py       # 8 Cypher templates (5 core + 3 utility) by category
+    validators.py             # LLM response validation: schema checks, confidence bounds, DOI format, numerical claim verification, robust JSON extraction
     executor.py               # Template execution + provenance edge extraction
     generator.py              # LLM response synthesis from graph context
     formatter.py              # Structured output: confidence, evidence, caveats
@@ -59,6 +61,7 @@ maris/
     engine.py                 # Axiom application and chaining
     confidence.py             # Multiplicative confidence interval propagation
     monte_carlo.py            # Monte Carlo ESV simulation (10,000 runs)
+    sensitivity.py            # OAT sensitivity analysis for ESV simulations, tornado plot data generation
   ingestion/                  # Document ingestion pipeline
     pdf_extractor.py          # PDF text extraction
     llm_extractor.py          # LLM-based entity/relationship extraction
@@ -287,11 +290,102 @@ def _init_components():
 
 ### Parameterized Cypher Templates
 
-All graph queries use parameterized Cypher templates (never string interpolation). Six templates are defined in `maris/query/cypher_templates.py`, each mapped to a classifier category. The executor substitutes validated parameters via the Neo4j driver's parameter binding.
+All graph queries use parameterized Cypher templates (never string interpolation). Eight templates are defined in `maris/query/cypher_templates.py` - five core templates mapped to classifier categories plus three utility templates (node_detail, graph_traverse, graph_stats). All templates include `LIMIT $result_limit` (configurable, max 1000). The executor substitutes validated parameters via the Neo4j driver's parameter binding.
 
 ### LLM Adapter
 
 The `LLMAdapter` wraps an OpenAI-compatible HTTP client. DeepSeek, Claude, and OpenAI are supported by changing `MARIS_LLM_PROVIDER` in `.env`. The adapter exposes `complete()` for text responses and `complete_json()` for structured JSON output.
+
+### Authentication and Authorization
+
+API security is implemented in `maris/api/auth.py`:
+
+- **Bearer token flow:** The `require_api_key` FastAPI dependency validates requests against `MARIS_API_KEY`. When `MARIS_DEMO_MODE=true`, authentication is bypassed so investor demos can run without token configuration.
+- **Input validation:** Three validators are exposed as reusable functions:
+  - `validate_question()` - enforces a 500-character maximum for query text
+  - `validate_site_name()` - allows alphanumeric characters, spaces, hyphens, apostrophes, and periods only
+  - `validate_axiom_id()` - requires the `BA-NNN` format (e.g. BA-001)
+- **Rate limiting:** In-memory sliding window per API key. `/api/query` is limited to 30 requests/minute; all other endpoints allow 60 requests/minute. Returns 429 when exceeded.
+- **Request tracing:** Every response includes an `X-Request-ID` header for end-to-end tracing. Client IP addresses are hashed (SHA-256) before logging to preserve privacy while enabling abuse detection.
+
+### LLM Response Validation
+
+The `maris/query/validators.py` module implements a 5-step validation pipeline that runs on every LLM-generated response before it reaches the user:
+
+1. **Schema validation** - Verifies required fields (answer, confidence, evidence, caveats) are present and correctly typed
+2. **Confidence bounds enforcement** - Clamps the confidence score to the [0, 1] range
+3. **Evidence DOI format checks** - Validates that DOI strings match the expected `10.NNNN/...` pattern
+4. **Numerical claim verification** - Extracts numerical claims from the answer text and cross-checks them against the graph context that was provided to the LLM. Unverified claims trigger caveat injection.
+5. **Caveat injection** - Appends caveats for any claims that could not be verified against graph data
+
+**Robust JSON extraction:** LLM responses sometimes arrive malformed. The validator uses a 5-tier fallback strategy: (1) code-fence extraction, (2) direct JSON parse, (3) brace extraction, (4) truncated-JSON repair, (5) structured error response.
+
+**Empty result protection:** Before calling the LLM, `is_graph_context_empty()` checks whether the Cypher query returned meaningful data. If the graph context is empty, the system returns a structured "no data available" response without incurring an LLM call.
+
+### Confidence Model
+
+The confidence model in `maris/axioms/confidence.py` computes a composite score from four independently auditable factors:
+
+```
+composite = tier_base * path_discount * staleness_discount * sample_factor
+```
+
+| Factor | Description | Range |
+|--------|-------------|-------|
+| `tier_base` | Evidence quality: T1=0.95, T2=0.80, T3=0.65, T4=0.50. Multiple independent DOIs are combined multiplicatively; corroborating sources use max. | 0.50 - 0.95 |
+| `path_discount` | Graph distance penalty: -5% per hop from source to claim, with a floor of 0.1. | 0.10 - 1.00 |
+| `staleness_discount` | Data age penalty: no penalty for data <=5 years old, -2% per year beyond that, floor of 0.3. If no year information is available, defaults to 0.85. | 0.30 - 1.00 |
+| `sample_factor` | Source diversity: `1 - 1/sqrt(n)` where n is the number of independent sources. A single source yields 0.5. | 0.50 - 1.00 |
+
+This replaces the earlier simple `min()` aggregation with a transparent, decomposable formula. The model is inspired by the GRADE framework (evidence certainty grading), the IPCC likelihood scale, and knowledge-graph confidence propagation techniques.
+
+The function returns a breakdown dict containing the composite score, each individual factor, and a human-readable explanation string suitable for display in the dashboard.
+
+### Data Freshness Tracking
+
+MPA nodes in the knowledge graph carry freshness metadata to flag aging data:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `biomass_measurement_year` | int | Year of the most recent biomass measurement |
+| `data_freshness_status` | string | Computed status: "current" (<=5 years old), "aging" (<=10 years), or "stale" (>10 years) |
+| `last_validated_date` | string | ISO date when the data was last verified against source publications |
+
+Freshness status is computed during the population pipeline in `maris/graph/population.py`. Graph validation (`scripts/validate_graph.py`) warns on missing `biomass_measurement_year` and flags stale data. The staleness status feeds directly into the confidence model via the `staleness_discount` factor described above.
+
+### Sensitivity Analysis
+
+The `maris/axioms/sensitivity.py` module implements one-at-a-time (OAT) sensitivity analysis for ESV Monte Carlo simulations. OAT is justified here because the ESV model is additive (total ESV = sum of independent service values), so interaction effects between parameters are negligible.
+
+**Methodology:**
+
+- Each ecosystem service value is perturbed by configurable percentages (default: 10% and 20%) in both positive and negative directions
+- For 12 parameters with 2 perturbation levels and 2 directions, this produces 49 model runs (48 perturbations + 1 baseline)
+- Impact on total ESV is recorded for each perturbation
+
+**Output:**
+
+| Field | Description |
+|-------|-------------|
+| `tornado_plot_data` | Service parameters sorted by impact magnitude, suitable for direct visualization |
+| `dominant_parameter` | The single parameter with the largest influence on total ESV |
+| `methodology_justification` | Text explaining why OAT is appropriate for this model structure |
+
+The output is designed to be directly interpretable by investors and underwriters without requiring statistical expertise.
+
+### Bridge Axiom Uncertainty Quantification
+
+Bridge axiom templates (v1.2) now include uncertainty quantification fields alongside the existing coefficient data:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ci_low` | float | Lower bound of the confidence interval for the primary coefficient |
+| `ci_high` | float | Upper bound of the confidence interval |
+| `distribution` | string | Statistical distribution assumption: "triangular" or "lognormal" |
+| `study_sample_size` | int | Number of observations in the source study |
+| `effect_size_type` | string | Type of effect size reported (e.g. "cohens_d", "ratio", "percentage") |
+
+These fields feed into the Monte Carlo simulation and sensitivity analysis to produce defensible uncertainty bounds for investor-facing outputs.
 
 ---
 
@@ -324,7 +418,7 @@ The `LLMAdapter` wraps an OpenAI-compatible HTTP client. DeepSeek, Claude, and O
 
 ### Adding a New Bridge Axiom
 
-1. Add the axiom definition to `schemas/bridge_axiom_templates.json` with coefficients, applicable habitats, and DOI-backed sources
+1. Add the axiom definition to `schemas/bridge_axiom_templates.json` with coefficients, applicable habitats, DOI-backed sources, and uncertainty fields (see below)
 2. Add the evidence mapping to `data/semantica_export/bridge_axioms.json`
 3. Run `python scripts/populate_neo4j.py` to create the BridgeAxiom node and evidence edges
 
@@ -332,13 +426,72 @@ The `LLMAdapter` wraps an OpenAI-compatible HTTP client. DeepSeek, Claude, and O
 
 ## Testing
 
-### API Health Check
+### Test Suite
+
+The project includes 177 tests across 13 test files in the `tests/` directory. Tests cover the full stack: query classification, Cypher template generation, LLM response validation, confidence model, sensitivity analysis, API endpoints, and graph population.
+
+**Setup and execution:**
+
+```bash
+# Install dev dependencies
+pip install -r requirements-dev.txt
+
+# Run all tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ -v --cov=maris
+```
+
+**Test directory layout:**
+
+```
+tests/
+  conftest.py           # Shared fixtures: sample_graph_result, sample_llm_response,
+                        #   sample_services, mock_neo4j, mock_config
+  test_classifier.py    # Query classification (keyword + LLM fallback)
+  test_cypher.py        # Cypher template generation and parameterization
+  test_executor.py      # Query execution against mock Neo4j
+  test_generator.py     # LLM response synthesis
+  test_formatter.py     # Response formatting and structure
+  test_validators.py    # LLM response validation pipeline
+  test_confidence.py    # Composite confidence model
+  test_sensitivity.py   # OAT sensitivity analysis
+  test_monte_carlo.py   # Monte Carlo ESV simulation
+  test_auth.py          # Authentication, rate limiting, input validation
+  test_api.py           # FastAPI endpoint integration tests
+  test_population.py    # Graph population pipeline
+  test_config.py        # Configuration loading
+```
+
+**Key fixtures** (defined in `conftest.py`):
+
+| Fixture | Purpose |
+|---------|---------|
+| `sample_graph_result` | Mock Neo4j query result for testing downstream pipeline |
+| `sample_llm_response` | Well-formed LLM JSON response for validation tests |
+| `sample_services` | Ecosystem service list for Monte Carlo and sensitivity tests |
+| `mock_neo4j` | Patched Neo4j driver that returns predictable results |
+| `mock_config` | Config object with test-safe defaults (no real connections) |
+
+### CI Pipeline
+
+The project uses GitHub Actions (`.github/workflows/ci.yml`) for continuous integration on every push and pull request to `main`:
+
+1. **Lint** - Runs `ruff` for code style and import order checks
+2. **Test** - Runs the full pytest suite (177 tests)
+
+Dev dependencies are specified in `requirements-dev.txt`: pytest>=8.0, pytest-asyncio>=0.23, httpx>=0.26, ruff>=0.8, pytest-cov>=4.0.
+
+### Manual Verification
+
+**API health check:**
 
 ```bash
 curl http://localhost:8000/api/health
 ```
 
-### Query End-to-End
+**Query end-to-end:**
 
 ```bash
 curl -X POST http://localhost:8000/api/query \
@@ -348,7 +501,7 @@ curl -X POST http://localhost:8000/api/query \
 
 Expected: JSON response with `answer`, `confidence` >= 0.5, `evidence` array with DOIs, `axioms_used`, and `graph_path` edges.
 
-### Graph Validation
+**Graph validation:**
 
 ```bash
 python scripts/validate_graph.py
