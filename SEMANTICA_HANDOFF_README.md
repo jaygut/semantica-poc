@@ -37,10 +37,27 @@ semantica-poc/
 ├── SEMANTICA_HANDOFF_README.md          # This file
 ├── Semantica_POC_Conceptual_Framework.md # Full conceptual architecture
 │
+├── maris/
+│   ├── api/
+│   │   ├── main.py                      # FastAPI app factory
+│   │   ├── models.py                    # Pydantic v2 request/response schemas
+│   │   ├── auth.py                      # Bearer token authentication + rate limiting
+│   │   └── routes/                      # health, query, graph endpoints
+│   ├── query/
+│   │   ├── classifier.py               # NL question classifier (keyword + LLM)
+│   │   ├── cypher_templates.py          # Parameterized Cypher templates
+│   │   └── validators.py               # LLM response validation pipeline
+│   ├── axioms/
+│   │   ├── engine.py                    # Bridge axiom computation
+│   │   ├── confidence.py               # Multiplicative CI propagation
+│   │   ├── monte_carlo.py              # 10,000-run ESV simulation
+│   │   └── sensitivity.py              # OAT sensitivity analysis + tornado plots
+│   └── graph/                           # Neo4j connection, population, validation
+│
 ├── schemas/
 │   ├── entity_schema.json               # JSON-LD entity definitions
 │   ├── relationship_schema.json         # Relationship type definitions
-│   └── bridge_axiom_templates.json      # Ecological → Financial bridges
+│   └── bridge_axiom_templates.json      # Ecological -> Financial bridges (v1.2)
 │
 ├── data/
 │   ├── document_manifest.json           # Prioritized literature list (195 papers)
@@ -51,8 +68,14 @@ semantica-poc/
 │   ├── cabo_pulmo_case_study.json       # Reference site calibration data
 │   └── sample_queries.md                # GraphRAG query examples
 │
-└── investor_demo/
-    └── demo_narrative.md                # Investor pitch narrative
+├── tests/                               # 177-test suite (unit + integration)
+│
+├── investor_demo/
+│   └── demo_narrative.md                # Investor pitch narrative
+│
+├── Dockerfile.api                       # Multi-stage API build (non-root)
+├── Dockerfile.dashboard                 # Multi-stage dashboard build (non-root)
+└── .github/workflows/ci.yml            # GitHub Actions CI pipeline
 ```
 
 ---
@@ -177,9 +200,9 @@ semantica-poc/
 
 ---
 
-## 🔗 Bridge Axiom Templates
+## 🔗 Bridge Axiom Templates (v1.2)
 
-These are the critical **ecological → financial translation rules** that power the system:
+These are the critical **ecological -> financial translation rules** that power the system. Version 1.2 added uncertainty quantification fields to all axiom coefficients: `ci_low`, `ci_high`, `distribution`, `study_sample_size`, and `effect_size_type`. These fields enable Monte Carlo propagation and sensitivity analysis across the full ESV computation.
 
 ### Template 1: MPA Biomass-Tourism Link
 ```json
@@ -370,6 +393,16 @@ FINANCIAL IMPLICATION: Otter conservation → Potential kelp carbon credits
 
 ## 🛠️ Technical Implementation Notes
 
+### API Authentication
+
+All API endpoints except `GET /api/health` require Bearer token authentication. Set `MARIS_API_KEY` in your environment and include the header:
+
+```
+Authorization: Bearer <your-api-key>
+```
+
+Authentication is skipped when `MARIS_DEMO_MODE=true`. Rate limits apply: 30 queries/minute and 60 other requests/minute per API key.
+
 ### Recommended Stack (Suggestions for Semantica)
 
 1. **Entity Extraction**
@@ -425,6 +458,31 @@ class MarisSemanticaPipeline:
             include_provenance=True
         )
 ```
+
+---
+
+## Security and Testing
+
+### Authentication and Rate Limiting
+
+- Bearer token authentication on all API endpoints (except health check)
+- Rate limiting: 30 queries/minute, 60 other requests/minute per API key
+- Authentication is bypassed in demo mode (`MARIS_DEMO_MODE=true`)
+
+### Test Suite
+
+- 177 tests covering unit and integration scenarios
+- CI pipeline via GitHub Actions (`.github/workflows/ci.yml`)
+- Tests validate graph population, query classification, axiom computation, API endpoints, and response formatting
+
+### Production Deployment
+
+- Multi-stage Docker builds (`Dockerfile.api`, `Dockerfile.dashboard`) with non-root runtime users
+- Docker Compose orchestration for Neo4j + API + Dashboard
+
+### LLM Response Validation
+
+- `maris/query/validators.py` implements a validation pipeline that checks LLM-generated responses for hallucination, ensuring answers are grounded in graph evidence before returning to users
 
 ---
 

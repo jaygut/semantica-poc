@@ -45,8 +45,13 @@ Copy the template and add your LLM API key:
 
 ```bash
 cp ../.env.example ../.env
-# Edit ../.env: set MARIS_LLM_API_KEY to your DeepSeek/Claude/OpenAI key
+# Edit ../.env: set MARIS_LLM_API_KEY and MARIS_API_KEY
 ```
+
+| Variable | Purpose |
+|----------|---------|
+| `MARIS_LLM_API_KEY` | API key for your LLM provider (DeepSeek, Claude, or OpenAI) |
+| `MARIS_API_KEY` | Bearer token for authenticating with the MARIS API |
 
 > The `.env` file contains secrets (API keys, database passwords) and is excluded from git via `.gitignore`. Never commit it. See `.env.example` for all available settings.
 
@@ -104,8 +109,8 @@ The v2 live mode queries these through the Neo4j graph (populated by `scripts/po
 | `streamlit_app_v2.py` | Main dashboard - CSS, layout, data sections |
 | `components/chat_panel.py` | Ask MARIS query UI with markdown rendering, confidence badges, evidence tables |
 | `components/graph_explorer.py` | Plotly network graph with semantic layering (MPA -> Habitat -> Services -> Axioms -> Sources) |
-| `api_client.py` | HTTP client wrapping MARIS API endpoints; auto-falls back to precomputed responses |
-| `precomputed_responses.json` | Cached responses for 5 common queries (fallback when API is offline) |
+| `api_client.py` | HTTP client wrapping MARIS API endpoints; passes Bearer token if `MARIS_API_KEY` is configured; auto-falls back to precomputed responses via TF-IDF keyword matching |
+| `precomputed_responses.json` | Cached responses for 27 queries across all 5 categories (fallback when API is offline) |
 
 ---
 
@@ -113,7 +118,25 @@ The v2 live mode queries these through the Neo4j graph (populated by `scripts/po
 
 The v1 dashboard uses a **static JSON bundle** rather than a live database connection - this is a deliberate architectural choice. In high-stakes investor contexts, zero latency and 100% uptime are non-negotiable. The bundle itself demonstrates that MARIS outputs are portable, immutable, and auditable.
 
-The v2 dashboard extends this with **live querying** - any question the investor asks is answered in real time with full provenance traced through the Neo4j knowledge graph. If the API is unreachable, the dashboard gracefully degrades to precomputed responses, maintaining the zero-downtime guarantee.
+The v2 dashboard extends this with **live querying** - any question the investor asks is answered in real time with full provenance traced through the Neo4j knowledge graph. If the API is unreachable, the dashboard gracefully degrades to 27 precomputed responses (covering all 5 query categories), maintaining the zero-downtime guarantee. The `StaticBundleClient` uses TF-IDF-style keyword overlap scoring (with IDF weighting, geometric mean normalization, and a 0.3 similarity threshold) to match user questions to the best precomputed response. This replaced the earlier SequenceMatcher approach for more robust matching.
+
+---
+
+## Sensitivity Analysis
+
+The dashboard includes a tornado plot component showing parameter sensitivity for total ESV. Each ecosystem service parameter is perturbed using One-at-a-Time (OAT) methodology at +/-10% and +/-20% to identify which services drive the most variance in the headline valuation. Tourism ($25.0M) is typically the dominant parameter.
+
+---
+
+## Data Freshness
+
+The dashboard displays freshness badges next to data-dependent metrics:
+
+- **Current** (green) - measurement data is 5 years old or less
+- **Aging** (yellow) - measurement data is between 5 and 10 years old
+- **Stale** (red) - measurement data is more than 10 years old
+
+Freshness is derived from the `measurement_year` property on MPA nodes and feeds into the staleness_discount factor in the confidence scoring model.
 
 ---
 
