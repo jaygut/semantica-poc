@@ -238,6 +238,18 @@ def _populate_cabo_pulmo(session, cfg):
     recovery = cs.get("ecological_recovery", {}).get("metrics", {}).get("fish_biomass", {})
     rating = cs.get("asset_quality_rating", {})
 
+    # Compute data freshness status from measurement year
+    measurement_year = cs.get("ecological_recovery", {}).get("assessment_year", 2009)
+    import datetime as _dt
+    _current_year = _dt.datetime.now().year
+    _data_age = _current_year - measurement_year
+    if _data_age <= 5:
+        data_freshness = "current"
+    elif _data_age <= 10:
+        data_freshness = "aging"
+    else:
+        data_freshness = "stale"
+
     session.run(
         """
         MERGE (m:MPA {name: $name})
@@ -258,7 +270,9 @@ def _populate_cabo_pulmo(session, cfg):
             m.biomass_measurement_year = $measurement_year,
             m.asset_rating     = $asset_rating,
             m.asset_score      = $asset_score,
-            m.total_esv_usd    = $total_esv
+            m.total_esv_usd    = $total_esv,
+            m.data_freshness_status = $freshness,
+            m.last_validated_date   = $validated_date
         """,
         {
             "name": "Cabo Pulmo National Park",
@@ -276,10 +290,12 @@ def _populate_cabo_pulmo(session, cfg):
             "biomass_ratio": recovery.get("recovery_ratio", 4.63),
             "ci_low": recovery.get("confidence_interval_95", [3.8])[0],
             "ci_high": recovery.get("confidence_interval_95", [None, 5.5])[1],
-            "measurement_year": cs.get("ecological_recovery", {}).get("assessment_year", 2009),
+            "measurement_year": measurement_year,
             "asset_rating": rating.get("rating", "AAA"),
             "asset_score": rating.get("composite_score", 0.90),
             "total_esv": cs.get("ecosystem_services", {}).get("total_annual_value_usd", 29270000),
+            "freshness": data_freshness,
+            "validated_date": cs.get("ecological_recovery", {}).get("last_validated_date", ""),
         },
     )
     count += 1

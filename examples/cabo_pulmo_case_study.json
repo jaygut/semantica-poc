@@ -62,6 +62,7 @@
     "@type": "RecoveryTrajectory",
     "baseline_year": 1999,
     "assessment_year": 2009,
+    "last_validated_date": "2026-02-11",
     "duration_years": 10,
     "metrics": {
       "fish_biomass": {
@@ -70,6 +71,7 @@
         "recovery_ratio": 4.63,
         "recovery_percent": 463,
         "confidence_interval_95": [3.8, 5.5],
+        "measurement_year": 2009,
         "comparison": "Highest documented recovery in Gulf of California"
       },
       "apex_predator_density": {
@@ -101,6 +103,7 @@
 
   "ecosystem_services": {
     "@type": "EcosystemServiceBundle",
+    "last_validated_date": "2026-02-11",
     "services": [
       {
         "@type": "EcosystemService",
@@ -108,6 +111,7 @@
         "service_category": "cultural",
         "annual_value_usd": 25000000,
         "valuation_method": "market_price",
+        "measurement_year": 2024,
         "beneficiaries": ["local_community", "dive_operators", "hotels"],
         "metrics": {
           "annual_visitors": 45000,
@@ -125,6 +129,7 @@
         "service_category": "provisioning",
         "annual_value_usd": 3200000,
         "valuation_method": "market_price",
+        "measurement_year": 2011,
         "beneficiaries": ["artisanal_fishers", "regional_fisheries"],
         "metrics": {
           "spillover_radius_km": 15,
@@ -138,6 +143,7 @@
         "service_category": "regulating",
         "annual_value_usd": 180000,
         "valuation_method": "avoided_cost",
+        "measurement_year": 2018,
         "metrics": {
           "carbon_stock_tonnes": 4500,
           "sequestration_rate_tonnes_yr": 45,
@@ -151,6 +157,7 @@
         "service_category": "regulating",
         "annual_value_usd": 890000,
         "valuation_method": "avoided_cost",
+        "measurement_year": 2018,
         "metrics": {
           "wave_energy_reduction_percent": 85,
           "protected_coastline_km": 12,

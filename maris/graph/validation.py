@@ -1,5 +1,7 @@
 """Graph validation queries - verify population integrity."""
 
+from datetime import datetime
+
 from maris.graph.connection import get_driver, get_config
 
 VALIDATION_QUERIES = {
@@ -47,7 +49,50 @@ VALIDATION_QUERIES = {
         """,
         "description": "Total ESV for Cabo Pulmo",
     },
+    "data_freshness": {
+        "cypher": """
+            MATCH (m:MPA)
+            RETURN m.name AS site,
+                   m.biomass_measurement_year AS measurement_year,
+                   m.data_freshness_status AS freshness_status,
+                   m.last_validated_date AS last_validated
+            ORDER BY m.name
+        """,
+        "description": "MPA data freshness status",
+    },
 }
+
+
+def _check_data_age(results: dict, current_year: int | None = None) -> dict:
+    """Check data age for all MPA nodes. Returns warnings and errors."""
+    if current_year is None:
+        current_year = datetime.now().year
+
+    warnings = []
+    errors = []
+
+    freshness_records = results.get("data_freshness", [])
+    for rec in freshness_records:
+        site = rec.get("site", "Unknown")
+        meas_year = rec.get("measurement_year")
+
+        if meas_year is None:
+            warnings.append(f"{site}: no measurement_year recorded")
+            continue
+
+        age = current_year - meas_year
+        if age > 10:
+            errors.append(
+                f"{site}: biomass data is {age} years old (from {meas_year}) - "
+                f"exceeds 10-year threshold. Update required."
+            )
+        elif age > 5:
+            warnings.append(
+                f"{site}: biomass data is {age} years old (from {meas_year}) - "
+                f"exceeds 5-year freshness threshold."
+            )
+
+    return {"warnings": warnings, "errors": errors}
 
 
 def validate_graph(verbose: bool = True) -> dict:
@@ -88,6 +133,10 @@ def validate_graph(verbose: bool = True) -> dict:
         total = esv_records[0].get("total_esv_usd", 0) or 0
         checks["esv_in_range"] = 21_000_000 <= total <= 39_000_000
 
+    # Data age checks
+    age_results = _check_data_age(results)
+    checks["no_data_age_errors"] = len(age_results["errors"]) == 0
+
     if verbose:
         print("\n" + "=" * 60)
         print("VALIDATION CHECKS:")
@@ -96,7 +145,23 @@ def validate_graph(verbose: bool = True) -> dict:
             print(f"  [{status}] {check}")
             if not passed:
                 all_pass = False
+
+        # Print data age warnings and errors
+        if age_results["warnings"]:
+            print("\nDATA AGE WARNINGS:")
+            for w in age_results["warnings"]:
+                print(f"  [WARN] {w}")
+        if age_results["errors"]:
+            print("\nDATA AGE ERRORS:")
+            for e in age_results["errors"]:
+                print(f"  [ERROR] {e}")
+
         print("=" * 60)
         print(f"Overall: {'ALL CHECKS PASSED' if all_pass else 'SOME CHECKS FAILED'}")
 
-    return {"checks": checks, "results": results, "all_pass": all_pass}
+    return {
+        "checks": checks,
+        "results": results,
+        "all_pass": all_pass,
+        "data_age": age_results,
+    }
