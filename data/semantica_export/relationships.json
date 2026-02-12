@@ -6,7 +6,7 @@
       "subject": "maris:neoli_criteria",
       "object": "mpa_conservation_success",
       "strength": "strong",
-      "quantification": "MPAs meeting all 5 criteria have 670% higher biomass",
+      "quantification": "MPAs meeting all 5 criteria have biomass 670% of unprotected levels (6.70x ratio)",
       "source": "edgar_2014",
       "confidence": "high"
     },
@@ -89,7 +89,7 @@
       "type": "CARBON_SEQUESTRATION",
       "subject": "maris:seagrass_meadow",
       "object": "blue_carbon",
-      "quantification": "35x faster carbon capture than tropical rainforest",
+      "quantification": "0.84 tCO2/ha/yr sediment burial rate (Gomis et al. 2025)",
       "sources": ["fourqurean_2012", "duarte_2013"],
       "confidence": "high"
     },

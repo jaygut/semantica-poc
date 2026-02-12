@@ -1098,7 +1098,7 @@
       "unverified_claims": []
     },
     "What is bridge axiom BA-002?": {
-      "answer": "**Bridge Axiom BA-002: No-Take MPA Biomass Recovery**\n\nBA-002 quantifies the relationship between no-take marine protection and fish biomass recovery.\n\n**Translation:** No-take MPA status -> Biomass accumulation over time\n**Key finding:** No-take marine reserves accumulate 670% higher fish biomass compared to unprotected areas\n**Recovery arc:** 4.63x recovery ratio over a 10-year no-take period (for Cabo Pulmo specifically)\n\n**Cabo Pulmo application:**\n1. Baseline biomass: ~0.5 tonnes/ha (pre-protection)\n2. Current biomass: ~2.8 tonnes/ha (after 29 years of no-take protection)\n3. Recovery ratio: 4.63x (CI [3.8x, 5.5x])\n4. This recovery drives all downstream ecosystem service valuations\n\n**Primary source:** Aburto-Oropeza et al. 2011 (DOI: 10.1371/journal.pone.0023601)\n**Supporting source:** Hopf et al. 2024 (DOI: 10.1002/eap.3027) for fisheries spillover effects\n\n**Downstream effects:** BA-002's biomass output feeds directly into BA-001 (tourism value), fisheries spillover calculations, and trophic cascade assessments. It is the foundational ecological measurement for the entire valuation chain.",
+      "answer": "**Bridge Axiom BA-002: No-Take MPA Biomass Recovery**\n\nBA-002 quantifies the relationship between no-take marine protection and fish biomass recovery.\n\n**Translation:** No-take MPA status -> Biomass accumulation over time\n**Key finding:** No-take marine reserves accumulate biomass to 670% of unprotected levels (6.70x ratio)\n**Recovery arc:** 4.63x recovery ratio over a 10-year no-take period (for Cabo Pulmo specifically)\n\n**Cabo Pulmo application:**\n1. Baseline biomass: ~0.5 tonnes/ha (pre-protection)\n2. Current biomass: ~2.8 tonnes/ha (after 29 years of no-take protection)\n3. Recovery ratio: 4.63x (CI [3.8x, 5.5x])\n4. This recovery drives all downstream ecosystem service valuations\n\n**Primary source:** Aburto-Oropeza et al. 2011 (DOI: 10.1371/journal.pone.0023601)\n**Supporting source:** Hopf et al. 2024 (DOI: 10.1002/eap.3027) for fisheries spillover effects\n\n**Downstream effects:** BA-002's biomass output feeds directly into BA-001 (tourism value), fisheries spillover calculations, and trophic cascade assessments. It is the foundational ecological measurement for the entire valuation chain.",
       "confidence": 0.1903,
       "evidence": [
         {
@@ -1231,7 +1231,7 @@
         }
       ],
       "caveats": [
-        "Only 4 of 12 axioms are actively used in the Cabo Pulmo valuation",
+        "Only 4 of 16 axioms are actively used in the Cabo Pulmo valuation",
         "Remaining axioms are defined but await site-specific data for application",
         "Axiom coefficients may be updated as new research is published"
       ],
@@ -1249,7 +1249,7 @@
       "unverified_claims": []
     },
     "What are the axiom coefficients?": {
-      "answer": "The key axiom coefficients used in the Cabo Pulmo valuation are:\n\n**BA-001 (Biomass -> Tourism):**\n- Elasticity: 0.346 (100% biomass increase = 34.6% tourism value increase)\n- Maximum WTP premium: 84% at high-biomass sites\n- Source: Marcos-Castillo et al. 2024 (DOI: 10.1038/s41598-024-83664-1)\n\n**BA-002 (No-take -> Biomass Recovery):**\n- Recovery ratio: 4.63x at Cabo Pulmo (CI [3.8x, 5.5x])\n- Global meta-analysis: 670% higher biomass in no-take reserves\n- Source: Aburto-Oropeza et al. 2011 (DOI: 10.1371/journal.pone.0023601)\n\n**BA-004 (Reef -> Coastal Protection):**\n- Wave energy reduction per meter of reef crest\n- Applied via avoided-cost method\n- Source: Beck et al. 2018 (DOI: 10.1038/s41467-018-04568-z)\n\n**BA-008 (Reef -> Carbon Value):**\n- Calcification rate per hectare\n- Conservative estimate (reef-associated only)\n- Source: Duarte et al. 2025 (DOI: 10.1038/s44183-025-00111-y)\n\n**BA-011 (NEOLI -> Asset Rating):**\n- Composite score 0-1 based on 5 NEOLI criteria\n- Cabo Pulmo: 0.90 (AAA) with 4/5 criteria met\n- Source: Edgar et al. 2014 (DOI: 10.1038/nature13022)\n\nAll coefficients carry documented confidence intervals that propagate through Monte Carlo simulation.",
+      "answer": "The key axiom coefficients used in the Cabo Pulmo valuation are:\n\n**BA-001 (Biomass -> Tourism):**\n- Elasticity: 0.346 (100% biomass increase = 34.6% tourism value increase)\n- Maximum WTP premium: 84% at high-biomass sites\n- Source: Marcos-Castillo et al. 2024 (DOI: 10.1038/s41598-024-83664-1)\n\n**BA-002 (No-take -> Biomass Recovery):**\n- Recovery ratio: 4.63x at Cabo Pulmo (CI [3.8x, 5.5x])\n- Global meta-analysis: biomass reaches 670% of unprotected levels in no-take reserves (6.70x ratio)\n- Source: Aburto-Oropeza et al. 2011 (DOI: 10.1371/journal.pone.0023601)\n\n**BA-004 (Reef -> Coastal Protection):**\n- Wave energy reduction per meter of reef crest\n- Applied via avoided-cost method\n- Source: Beck et al. 2018 (DOI: 10.1038/s41467-018-04568-z)\n\n**BA-008 (Reef -> Carbon Value):**\n- Calcification rate per hectare\n- Conservative estimate (reef-associated only)\n- Source: Duarte et al. 2025 (DOI: 10.1038/s44183-025-00111-y)\n\n**BA-011 (NEOLI -> Asset Rating):**\n- Composite score 0-1 based on 5 NEOLI criteria\n- Cabo Pulmo: 0.90 (AAA) with 4/5 criteria met\n- Source: Edgar et al. 2014 (DOI: 10.1038/nature13022)\n\nAll coefficients carry documented confidence intervals that propagate through Monte Carlo simulation.",
       "confidence": 0.3613,
       "evidence": [
         {
@@ -2190,13 +2190,13 @@
       "unverified_claims": []
     },
     "What is Shark Bay worth?": {
-      "answer": "Shark Bay World Heritage Area generates an estimated $21.5M/year in ecosystem services [CI: $10.2M - $38.0M], derived from four service categories:\n\n- Carbon sequestration: $12.1M/year (BA-013, BA-014) - 4,800 km2 of seagrass meadows sequestering ~403,200 tCO2/yr at $15-50/tCO2 [Mazarrasa et al. 2025, DOI: 10.1038/s41467-025-64667-6]\n- Fisheries: $5.2M/year - Sustainable fisheries supported by seagrass nursery habitat\n- Tourism: $3.4M/year - World Heritage tourism, dolphin encounters, wildlife viewing\n- Coastal protection: $800K/year - Wave attenuation by seagrass meadows\n\nShark Bay is rated AA with a composite score of 0.85, reflecting NEOLI alignment of 4/5 (meets No-take, Enforced, Old, Large; does not meet Isolated). Unlike coral reef sites where tourism dominates, Shark Bay's value is carbon-dominant (56% of total ESV), making it a candidate for blue carbon credit generation under Verra VM0033.",
+      "answer": "Shark Bay World Heritage Area generates an estimated $21.5M/year in ecosystem services [CI: $10.2M - $38.0M], derived from four service categories:\n\n- Carbon sequestration: $12.1M/year (BA-013, BA-014) - 4,800 km2 of seagrass meadows sequestering ~403,200 tCO2/yr at $15-50/tCO2 [Gomis et al. 2025, DOI: 10.1038/s41467-025-64667-6]\n- Fisheries: $5.2M/year - Sustainable fisheries supported by seagrass nursery habitat\n- Tourism: $3.4M/year - World Heritage tourism, dolphin encounters, wildlife viewing\n- Coastal protection: $800K/year - Wave attenuation by seagrass meadows\n\nShark Bay is rated AA with a composite score of 0.81, reflecting NEOLI alignment of 4/5 (meets No-take, Enforced, Old, Large; does not meet Isolated). Unlike coral reef sites where tourism dominates, Shark Bay's value is carbon-dominant (56% of total ESV), making it a candidate for blue carbon credit generation under Verra VM0033.",
       "confidence": 0.3650,
       "evidence": [
         {
           "doi": "10.1038/s41467-025-64667-6",
           "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
-          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "title": "Gomis et al. (2025) - Global estimates of seagrass blue carbon stocks",
           "year": 2025,
           "tier": "T1"
         },
@@ -2268,7 +2268,7 @@
           "from_node": "BA-013",
           "from_type": "BridgeAxiom",
           "relationship": "EVIDENCED_BY",
-          "to_node": "Mazarrasa et al. 2025",
+          "to_node": "Gomis et al. 2025",
           "to_type": "Document"
         },
         {
@@ -2302,13 +2302,13 @@
       "unverified_claims": []
     },
     "How much carbon does Shark Bay sequester?": {
-      "answer": "Shark Bay contains one of the world's largest seagrass carbon sinks. The 4,800 km2 of seagrass meadows (480,000 hectares) sequester approximately 403,200 tCO2 per year, based on a global mean rate of 0.84 tCO2/ha/yr [Mazarrasa et al. 2025, DOI: 10.1038/s41467-025-64667-6].\n\n**Carbon stock:** Shark Bay holds up to 1.3% of all carbon stored in the top metre of seagrass sediments worldwide - an estimated 240 million tonnes of CO2 [Arias-Ortiz et al. 2018, DOI: 10.1038/s41558-018-0096-y].\n\n**Sequestration rate breakdown:**\n- Seagrass area: 4,800 km2 (480,000 ha)\n- Rate: 0.84 tCO2/ha/yr [CI: 0.56-1.12]\n- Annual sequestration: ~403,200 tCO2/yr [CI: 268,800-537,600]\n- 12 seagrass species present, dominated by Amphibolis antarctica\n\nSeagrass sequesters carbon approximately 35 times faster than tropical rainforests per unit area, making Shark Bay one of the most significant natural carbon sinks on Earth. This rate is captured by bridge axiom BA-013 (seagrass_carbon_sequestration_rate).",
+      "answer": "Shark Bay contains one of the world's largest seagrass carbon sinks. The 4,800 km2 of seagrass meadows (480,000 hectares) sequester approximately 403,200 tCO2 per year, based on a global mean rate of 0.84 tCO2/ha/yr [Gomis et al. 2025, DOI: 10.1038/s41467-025-64667-6].\n\n**Carbon stock:** Shark Bay holds up to 1.3% of all carbon stored in the top metre of seagrass sediments worldwide - an estimated 240 million tonnes of CO2 [Arias-Ortiz et al. 2018, DOI: 10.1038/s41558-018-0096-y].\n\n**Sequestration rate breakdown:**\n- Seagrass area: 4,800 km2 (480,000 ha)\n- Rate: 0.84 tCO2/ha/yr [CI: 0.56-1.12]\n- Annual sequestration: ~403,200 tCO2/yr [CI: 268,800-537,600]\n- 12 seagrass species present, dominated by Amphibolis antarctica\n\nThe sediment burial rate of 0.84 tCO2/ha/yr reflects approximately 20% of seagrass net primary production being permanently sequestered [Gomis et al. 2025]. This makes Shark Bay one of the most significant natural carbon sinks on Earth. This rate is captured by bridge axiom BA-013 (seagrass_carbon_sequestration_rate).",
       "confidence": 0.3900,
       "evidence": [
         {
           "doi": "10.1038/s41467-025-64667-6",
           "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
-          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "title": "Gomis et al. (2025) - Global estimates of seagrass blue carbon stocks",
           "year": 2025,
           "tier": "T1"
         },
@@ -2349,12 +2349,12 @@
           "from_node": "BA-013",
           "from_type": "BridgeAxiom",
           "relationship": "EVIDENCED_BY",
-          "to_node": "Mazarrasa et al. 2025",
+          "to_node": "Gomis et al. 2025",
           "to_type": "Document"
         }
       ],
       "caveats": [
-        "The 0.84 tCO2/ha/yr rate is a global mean from Mazarrasa et al. 2025 - site-specific rates may differ",
+        "The 0.84 tCO2/ha/yr rate is a global mean from Gomis et al. 2025 - site-specific rates may differ",
         "Carbon stock estimate (240 Mt CO2) is for the top metre of sediment only; deeper stocks exist but are less well characterized",
         "12 seagrass species with different sequestration rates - rate aggregates across species"
       ],
@@ -2462,7 +2462,7 @@
         {
           "doi": "10.1038/s41467-025-64667-6",
           "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
-          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "title": "Gomis et al. (2025) - Global estimates of seagrass blue carbon stocks",
           "year": 2025,
           "tier": "T1"
         },
@@ -2532,7 +2532,7 @@
       ]
     },
     "Compare Cabo Pulmo and Shark Bay": {
-      "answer": "Cabo Pulmo and Shark Bay represent two fundamentally different marine natural capital profiles - coral reef versus seagrass - demonstrating MARIS's ability to value diverse blue ecosystems.\n\n**Side-by-side comparison:**\n\n| Metric | Cabo Pulmo | Shark Bay |\n|--------|-----------|----------|\n| Ecosystem | Coral reef | Seagrass meadow |\n| Country | Mexico | Australia |\n| Area | 71 km2 | 23,000 km2 |\n| NEOLI Score | 4/5 | 4/5 |\n| Asset Rating | AAA (0.90) | AA (0.85) |\n| Total ESV | $29.27M/yr | $21.5M/yr |\n| Dominant Service | Tourism ($25.0M, 85%) | Carbon ($12.1M, 56%) |\n| Key Risk | Coral bleaching | Marine heatwaves |\n| Bridge Axioms | BA-001, BA-002, BA-011, BA-012 | BA-013, BA-014, BA-015, BA-016 |\n\n**Key insight:** Cabo Pulmo's value is tourism-dominant (85% of ESV), driven by the 463% biomass recovery attracting divers. Shark Bay's value is carbon-dominant (56% of ESV), driven by the world's largest seagrass carbon sink. Both score NEOLI 4/5 but through different criteria: Cabo Pulmo meets Isolated but not Large; Shark Bay meets Large but not Isolated.\n\n**For investors:** The two sites represent complementary asset classes. A portfolio containing both provides diversification across ecosystem types (reef/seagrass), revenue streams (tourism/carbon), geographies (Americas/Asia-Pacific), and risk profiles (bleaching/heatwave).",
+      "answer": "Cabo Pulmo and Shark Bay represent two fundamentally different marine natural capital profiles - coral reef versus seagrass - demonstrating MARIS's ability to value diverse blue ecosystems.\n\n**Side-by-side comparison:**\n\n| Metric | Cabo Pulmo | Shark Bay |\n|--------|-----------|----------|\n| Ecosystem | Coral reef | Seagrass meadow |\n| Country | Mexico | Australia |\n| Area | 71 km2 | 23,000 km2 |\n| NEOLI Score | 4/5 | 4/5 |\n| Asset Rating | AAA (0.90) | AA (0.81) |\n| Total ESV | $29.27M/yr | $21.5M/yr |\n| Dominant Service | Tourism ($25.0M, 85%) | Carbon ($12.1M, 56%) |\n| Key Risk | Coral bleaching | Marine heatwaves |\n| Bridge Axioms | BA-001, BA-002, BA-011, BA-012 | BA-013, BA-014, BA-015, BA-016 |\n\n**Key insight:** Cabo Pulmo's value is tourism-dominant (85% of ESV), driven by the 463% biomass recovery attracting divers. Shark Bay's value is carbon-dominant (56% of ESV), driven by the world's largest seagrass carbon sink. Both score NEOLI 4/5 but through different criteria: Cabo Pulmo meets Isolated but not Large; Shark Bay meets Large but not Isolated.\n\n**For investors:** The two sites represent complementary asset classes. A portfolio containing both provides diversification across ecosystem types (reef/seagrass), revenue streams (tourism/carbon), geographies (Americas/Asia-Pacific), and risk profiles (bleaching/heatwave).",
       "confidence": 0.3500,
       "evidence": [
         {
@@ -2552,7 +2552,7 @@
         {
           "doi": "10.1038/s41467-025-64667-6",
           "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
-          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "title": "Gomis et al. (2025) - Global estimates of seagrass blue carbon stocks",
           "year": 2025,
           "tier": "T1"
         }
@@ -2614,13 +2614,13 @@
       "unverified_claims": []
     },
     "What is blue carbon?": {
-      "answer": "Blue carbon refers to the carbon captured and stored by coastal and marine ecosystems - primarily mangroves, seagrass meadows, and tidal salt marshes. These ecosystems are among the most efficient carbon sinks on Earth.\n\n**Key facts:**\n- Seagrass meadows sequester carbon approximately 35 times faster than tropical rainforests per unit area [Mazarrasa et al. 2025, DOI: 10.1038/s41467-025-64667-6]\n- Coastal ecosystems store carbon in sediments for centuries to millennia, unlike terrestrial forests where carbon cycles more rapidly\n- Despite covering <2% of the ocean floor, seagrasses account for ~10% of annual ocean carbon burial\n\n**Why blue carbon matters for investors:**\n1. **Carbon credits:** Blue carbon generates tradeable Verified Carbon Units (VCUs) at $15-50/tCO2 under voluntary market standards like Verra VM0033 [Duarte et al. 2025, DOI: 10.1038/s44183-025-00111-y]\n2. **TNFD alignment:** 733 organizations (representing $22.4T AUM) have adopted TNFD disclosure frameworks that require nature-related impact reporting, including blue carbon\n3. **Risk management:** Loss of blue carbon ecosystems releases stored carbon - the 2010/2011 Shark Bay heatwave released an estimated 2-9 Tg CO2 [Arias-Ortiz et al. 2018]\n\n**In MARIS:** Blue carbon is modeled through bridge axioms BA-013 (sequestration rate), BA-014 (credit valuation), BA-015 (reversal risk), and BA-016 (permanence guarantee). Shark Bay World Heritage Area serves as the reference site for seagrass blue carbon, just as Cabo Pulmo serves for coral reef valuation.",
+      "answer": "Blue carbon refers to the carbon captured and stored by coastal and marine ecosystems - primarily mangroves, seagrass meadows, and tidal salt marshes. These ecosystems are among the most efficient carbon sinks on Earth.\n\n**Key facts:**\n- Seagrass meadows bury approximately 20% of their net primary production in sediments, yielding 0.84 tCO2/ha/yr in long-term sequestration [Gomis et al. 2025, DOI: 10.1038/s41467-025-64667-6]\n- Coastal ecosystems store carbon in sediments for centuries to millennia, unlike terrestrial forests where carbon cycles more rapidly\n- Despite covering <2% of the ocean floor, seagrasses account for ~10% of annual ocean carbon burial\n\n**Why blue carbon matters for investors:**\n1. **Carbon credits:** Blue carbon generates tradeable Verified Carbon Units (VCUs) at $15-50/tCO2 under voluntary market standards like Verra VM0033 [Duarte et al. 2025, DOI: 10.1038/s44183-025-00111-y]\n2. **TNFD alignment:** 733 organizations (representing $22.4T AUM) have adopted TNFD disclosure frameworks that require nature-related impact reporting, including blue carbon\n3. **Risk management:** Loss of blue carbon ecosystems releases stored carbon - the 2010/2011 Shark Bay heatwave released an estimated 2-9 Tg CO2 [Arias-Ortiz et al. 2018]\n\n**In MARIS:** Blue carbon is modeled through bridge axioms BA-013 (sequestration rate), BA-014 (credit valuation), BA-015 (reversal risk), and BA-016 (permanence guarantee). Shark Bay World Heritage Area serves as the reference site for seagrass blue carbon, just as Cabo Pulmo serves for coral reef valuation.",
       "confidence": 0.4200,
       "evidence": [
         {
           "doi": "10.1038/s41467-025-64667-6",
           "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
-          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "title": "Gomis et al. (2025) - Global estimates of seagrass blue carbon stocks",
           "year": 2025,
           "tier": "T1"
         },
@@ -2688,13 +2688,13 @@
       "unverified_claims": []
     },
     "How does seagrass sequester carbon?": {
-      "answer": "Seagrass ecosystems sequester carbon through a multi-step biological and geochemical process that makes them one of the most efficient natural carbon sinks on Earth.\n\n**Sequestration mechanism:**\n1. **Photosynthesis:** Seagrass leaves absorb dissolved CO2 from seawater and convert it to organic carbon through photosynthesis, just as terrestrial plants do with atmospheric CO2\n2. **Below-ground storage:** Unlike terrestrial plants, seagrasses store 50-90% of their carbon in extensive root and rhizome networks buried in sediment\n3. **Sediment trapping:** Dense seagrass canopies slow water flow, causing suspended organic particles (from other marine organisms) to settle and accumulate in the sediment\n4. **Anoxic preservation:** Once buried below the sediment surface, organic carbon enters an oxygen-poor (anoxic) environment where decomposition is extremely slow\n5. **Millennial-scale storage:** Carbon can remain locked in seagrass sediments for hundreds to thousands of years, far longer than in most terrestrial ecosystems\n\n**Why seagrass is exceptional:**\n- Sequesters carbon ~35x faster per hectare than tropical rainforests [Mazarrasa et al. 2025]\n- Rate: 0.84 tCO2/ha/yr (global mean) [CI: 0.56-1.12]\n- Stores carbon in sediments (not biomass), making it more permanent\n- Shark Bay alone: 4,800 km2 seagrass storing ~240 Mt CO2\n\n**Reversal risk:** When seagrass is lost (as in the 2010/2011 Shark Bay heatwave), previously anoxic sediments are exposed to oxygen, triggering rapid decomposition and CO2 release. This is modeled by bridge axiom BA-015.",
+      "answer": "Seagrass ecosystems sequester carbon through a multi-step biological and geochemical process that makes them one of the most efficient natural carbon sinks on Earth.\n\n**Sequestration mechanism:**\n1. **Photosynthesis:** Seagrass leaves absorb dissolved CO2 from seawater and convert it to organic carbon through photosynthesis, just as terrestrial plants do with atmospheric CO2\n2. **Below-ground storage:** Unlike terrestrial plants, seagrasses store 50-90% of their carbon in extensive root and rhizome networks buried in sediment\n3. **Sediment trapping:** Dense seagrass canopies slow water flow, causing suspended organic particles (from other marine organisms) to settle and accumulate in the sediment\n4. **Anoxic preservation:** Once buried below the sediment surface, organic carbon enters an oxygen-poor (anoxic) environment where decomposition is extremely slow\n5. **Millennial-scale storage:** Carbon can remain locked in seagrass sediments for hundreds to thousands of years, far longer than in most terrestrial ecosystems\n\n**Why seagrass is exceptional:**\n- Buries ~20% of net primary production in sediments for long-term storage [Gomis et al. 2025]\n- Rate: 0.84 tCO2/ha/yr (global mean) [CI: 0.56-1.12]\n- Stores carbon in sediments (not biomass), making it more permanent\n- Shark Bay alone: 4,800 km2 seagrass storing ~240 Mt CO2\n\n**Reversal risk:** When seagrass is lost (as in the 2010/2011 Shark Bay heatwave), previously anoxic sediments are exposed to oxygen, triggering rapid decomposition and CO2 release. This is modeled by bridge axiom BA-015.",
       "confidence": 0.4300,
       "evidence": [
         {
           "doi": "10.1038/s41467-025-64667-6",
           "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
-          "title": "Mazarrasa et al. (2025) - Global estimates of seagrass blue carbon stocks",
+          "title": "Gomis et al. (2025) - Global estimates of seagrass blue carbon stocks",
           "year": 2025,
           "tier": "T1"
         },
@@ -2729,13 +2729,13 @@
           "from_node": "BA-013",
           "from_type": "BridgeAxiom",
           "relationship": "EVIDENCED_BY",
-          "to_node": "Mazarrasa et al. 2025",
+          "to_node": "Gomis et al. 2025",
           "to_type": "Document"
         }
       ],
       "caveats": [
         "Sequestration rates vary by seagrass species, water depth, sediment type, and nutrient availability",
-        "The 35x faster than rainforests comparison is per unit area - total area of seagrass is much smaller than terrestrial forests",
+        "The 0.84 tCO2/ha/yr rate is a global mean - site-specific rates vary by species, water depth, and sediment type",
         "Carbon storage permanence depends on continued seagrass health and sediment stability"
       ],
       "confidence_breakdown": {
