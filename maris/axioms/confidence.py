@@ -1,6 +1,30 @@
-"""Confidence interval propagation and response-level confidence scoring."""
+"""Confidence interval propagation and response-level confidence scoring.
+
+Implements a composite confidence model inspired by:
+- GRADE framework (Cochrane): 4-level evidence certainty based on study quality,
+  consistency, directness, precision, and publication bias
+- IPCC likelihood scale: calibrated probability expressions with transparent
+  decomposition of confidence factors
+- Knowledge graph confidence propagation: multiplicative path-length discounting
+  for multi-hop inference chains
+
+The composite confidence score is:
+    base_tier * path_discount * staleness_discount * sample_factor
+
+Each factor is independently auditable and displayed as a breakdown.
+"""
 
 import math
+from datetime import datetime
+
+# Base confidence by evidence tier (GRADE-inspired)
+TIER_CONFIDENCE = {"T1": 0.95, "T2": 0.80, "T3": 0.65, "T4": 0.50}
+
+# Configurable discount parameters
+PATH_DISCOUNT_PER_HOP = 0.05      # -5% per hop from source
+STALENESS_THRESHOLD_YEARS = 5     # No discount for data <= 5 years old
+STALENESS_DISCOUNT_PER_YEAR = 0.02  # -2% per year beyond threshold
+CURRENT_YEAR = datetime.now().year
 
 
 def propagate_ci(values: list[dict]) -> dict:
@@ -35,14 +59,52 @@ def propagate_ci(values: list[dict]) -> dict:
     }
 
 
-def calculate_response_confidence(graph_nodes: list[dict]) -> float:
-    """Calculate overall response confidence as the minimum across all cited nodes.
+def propagate_ci_multiplicative(values: list[dict]) -> dict:
+    """Multiplicative CI propagation for chained axiom evaluations.
 
-    Each node dict may have a 'confidence' or 'source_tier' field.
-    Tier-based confidence: T1=0.95, T2=0.80, T3=0.65, T4=0.50.
+    When axioms are applied in sequence (e.g., biomass -> tourism -> revenue),
+    confidence intervals compound multiplicatively. Each step's relative
+    uncertainty is combined: relative_ci = sqrt(sum(relative_ci_i^2)).
     """
-    tier_confidence = {"T1": 0.95, "T2": 0.80, "T3": 0.65, "T4": 0.50}
+    if not values:
+        return {"total": 0.0, "ci_low": 0.0, "ci_high": 0.0}
 
+    product = 1.0
+    sum_sq_rel_low = 0.0
+    sum_sq_rel_high = 0.0
+
+    for v in values:
+        val = float(v.get("value", 0))
+        lo = float(v.get("ci_low", val))
+        hi = float(v.get("ci_high", val))
+
+        if val == 0:
+            continue
+
+        product *= val
+        rel_low = (val - lo) / abs(val)
+        rel_high = (hi - val) / abs(val)
+        sum_sq_rel_low += rel_low ** 2
+        sum_sq_rel_high += rel_high ** 2
+
+    combined_rel_low = math.sqrt(sum_sq_rel_low)
+    combined_rel_high = math.sqrt(sum_sq_rel_high)
+
+    return {
+        "total": product,
+        "ci_low": product * (1 - combined_rel_low),
+        "ci_high": product * (1 + combined_rel_high),
+    }
+
+
+def _tier_base_confidence(graph_nodes: list[dict]) -> float:
+    """Calculate tier-based confidence using multiplicative independence model.
+
+    For independent evidence sources, multiply confidences. For corroborating
+    evidence (same claim, different studies), take the maximum.
+
+    Groups evidence by DOI - unique DOIs are treated as independent.
+    """
     if not graph_nodes:
         return 0.0
 
@@ -53,6 +115,169 @@ def calculate_response_confidence(graph_nodes: list[dict]) -> float:
             confidences.append(float(c))
         else:
             tier = node.get("source_tier") or node.get("tier", "T4")
-            confidences.append(tier_confidence.get(tier, 0.50))
+            confidences.append(TIER_CONFIDENCE.get(tier, 0.50))
 
-    return min(confidences) if confidences else 0.0
+    if not confidences:
+        return 0.0
+
+    if len(confidences) == 1:
+        return confidences[0]
+
+    # Group by DOI to detect corroborating vs independent
+    dois = [node.get("doi", "") for node in graph_nodes]
+    unique_dois = set(d for d in dois if d)
+
+    if len(unique_dois) > 1:
+        # Multiple independent sources: use product (penalizes weak links)
+        product = 1.0
+        for c in confidences:
+            product *= c
+        return product
+    else:
+        # Corroborating evidence (same or no DOIs): use max
+        return max(confidences)
+
+
+def _path_discount(n_hops: int) -> float:
+    """Apply path-length discount: -5% per hop from source data.
+
+    A direct citation (0 hops) has no discount. Each intermediate inference
+    step reduces confidence.
+    """
+    if n_hops <= 0:
+        return 1.0
+    discount = 1.0 - (PATH_DISCOUNT_PER_HOP * n_hops)
+    return max(0.1, discount)
+
+
+def _staleness_discount(
+    data_years: list[int | None],
+    current_year: int | None = None,
+) -> float:
+    """Apply data staleness discount: -2% per year beyond threshold.
+
+    Uses the oldest data point to determine discount. Data <= 5 years old
+    gets no discount.
+    """
+    ref_year = current_year or CURRENT_YEAR
+    valid_years = [y for y in data_years if y is not None and y > 0]
+
+    if not valid_years:
+        return 0.85  # No year info: assume moderate staleness
+
+    oldest = min(valid_years)
+    age = ref_year - oldest
+
+    if age <= STALENESS_THRESHOLD_YEARS:
+        return 1.0
+
+    excess_years = age - STALENESS_THRESHOLD_YEARS
+    discount = 1.0 - (STALENESS_DISCOUNT_PER_YEAR * excess_years)
+    return max(0.3, discount)
+
+
+def _sample_size_factor(n_sources: int) -> float:
+    """Confidence factor based on number of supporting sources.
+
+    Uses 1 - 1/sqrt(n) so that more sources asymptotically approach 1.0.
+    Single source: 0.0, two sources: ~0.29, three: ~0.42, ten: ~0.68.
+    """
+    if n_sources <= 0:
+        return 0.0
+    if n_sources == 1:
+        return 0.5  # Single source is not zero but not strong
+    return 1.0 - 1.0 / math.sqrt(n_sources)
+
+
+def calculate_response_confidence(
+    graph_nodes: list[dict],
+    n_hops: int = 1,
+    current_year: int | None = None,
+) -> dict:
+    """Calculate composite response confidence with full breakdown.
+
+    Returns a dict with composite score and individual factor values, following
+    the IPCC/GRADE model of transparent uncertainty decomposition.
+
+    Parameters
+    ----------
+    graph_nodes : list[dict]
+        Evidence nodes from the graph. Each should have 'confidence' or
+        'source_tier', and optionally 'year' or 'doi'.
+    n_hops : int
+        Number of inference hops from raw data to the answer.
+    current_year : int | None
+        Override for current year (for testing).
+
+    Returns
+    -------
+    dict with keys:
+        composite, tier_base, path_discount, staleness_discount,
+        sample_factor, explanation
+    """
+    if not graph_nodes:
+        return {
+            "composite": 0.0,
+            "tier_base": 0.0,
+            "path_discount": 1.0,
+            "staleness_discount": 1.0,
+            "sample_factor": 0.0,
+            "explanation": "No evidence sources available",
+        }
+
+    tier_base = _tier_base_confidence(graph_nodes)
+    path_disc = _path_discount(n_hops)
+
+    data_years = [
+        node.get("year") or node.get("measurement_year")
+        for node in graph_nodes
+    ]
+    stale_disc = _staleness_discount(data_years, current_year)
+
+    n_sources = len(set(
+        node.get("doi", f"unknown-{i}")
+        for i, node in enumerate(graph_nodes)
+        if node.get("doi")
+    )) or len(graph_nodes)
+    sample_f = _sample_size_factor(n_sources)
+
+    composite = tier_base * path_disc * stale_disc * sample_f
+    composite = max(0.0, min(1.0, composite))
+
+    # Build human-readable explanation
+    explanation_parts = []
+    if tier_base >= 0.9:
+        explanation_parts.append("High-quality peer-reviewed sources")
+    elif tier_base >= 0.7:
+        explanation_parts.append("Good quality sources with some institutional reports")
+    else:
+        explanation_parts.append("Mixed or lower-tier evidence sources")
+
+    if path_disc < 0.9:
+        explanation_parts.append(
+            f"{n_hops}-hop inference chain reduces confidence"
+        )
+
+    valid_years = [y for y in data_years if y and y > 0]
+    if valid_years:
+        oldest = min(valid_years)
+        ref = current_year or CURRENT_YEAR
+        age = ref - oldest
+        if age > STALENESS_THRESHOLD_YEARS:
+            explanation_parts.append(
+                f"oldest data is {age} years old ({oldest})"
+            )
+
+    if n_sources == 1:
+        explanation_parts.append("single supporting source")
+    elif n_sources <= 3:
+        explanation_parts.append(f"{n_sources} supporting sources")
+
+    return {
+        "composite": round(composite, 4),
+        "tier_base": round(tier_base, 4),
+        "path_discount": round(path_disc, 4),
+        "staleness_discount": round(stale_disc, 4),
+        "sample_factor": round(sample_f, 4),
+        "explanation": "; ".join(explanation_parts) if explanation_parts else "Standard confidence",
+    }

@@ -9,6 +9,32 @@ from maris.config import get_config
 logger = logging.getLogger(__name__)
 
 
+def _extract_coeff_value(coeff):
+    """Extract the numeric value from a coefficient that may be a dict with uncertainty or a scalar."""
+    if isinstance(coeff, dict) and "value" in coeff:
+        return coeff["value"]
+    if isinstance(coeff, (int, float)):
+        return coeff
+    return None
+
+
+def _extract_coeff_bounds(coeff):
+    """Extract (value, ci_low, ci_high) from a coefficient. Returns None for ci bounds if unavailable."""
+    if isinstance(coeff, dict):
+        if "value" in coeff:
+            return (
+                coeff["value"],
+                coeff.get("ci_low"),
+                coeff.get("ci_high"),
+            )
+        if "min" in coeff and "max" in coeff:
+            mid = (coeff["min"] + coeff["max"]) / 2
+            return (mid, coeff["min"], coeff["max"])
+    if isinstance(coeff, (int, float)):
+        return (coeff, None, None)
+    return (None, None, None)
+
+
 class BridgeAxiomEngine:
     """Load and evaluate bridge axiom templates."""
 
@@ -45,9 +71,8 @@ class BridgeAxiomEngine:
     def evaluate(self, axiom_id: str, inputs: dict) -> dict:
         """Apply axiom coefficients to inputs and compute a value with CI.
 
-        This is a simplified evaluator for the POC.  It looks up the axiom,
-        multiplies relevant input values by coefficients, and returns the
-        result together with any available confidence interval.
+        Handles both scalar coefficients and structured uncertainty coefficients
+        (dicts with value, ci_low, ci_high fields).
         """
         axiom = self._axioms.get(axiom_id)
         if axiom is None:
@@ -56,36 +81,48 @@ class BridgeAxiomEngine:
         coefficients = axiom.get("coefficients", {})
         caveats = axiom.get("caveats", [])
 
-        # Generic evaluation: multiply each numeric input by matching coefficient
         result_value = 0.0
         ci_low = 0.0
         ci_high = 0.0
         applied: list[str] = []
+        has_uncertainty = False
 
         for key, input_val in inputs.items():
             if not isinstance(input_val, (int, float)):
                 continue
 
-            # Look for a matching coefficient
             coeff = coefficients.get(key)
-            if isinstance(coeff, (int, float)):
-                result_value += input_val * coeff
-                applied.append(key)
-            elif isinstance(coeff, dict):
-                # Range-based coefficient: {min: x, max: y}
-                lo = coeff.get("min", 0)
-                hi = coeff.get("max", 0)
-                mid = (lo + hi) / 2
-                result_value += input_val * mid
+            if coeff is None:
+                continue
+
+            val, lo, hi = _extract_coeff_bounds(coeff)
+            if val is None:
+                continue
+
+            result_value += input_val * val
+            applied.append(key)
+
+            if lo is not None and hi is not None:
                 ci_low += input_val * lo
                 ci_high += input_val * hi
-                applied.append(key)
+                has_uncertainty = True
+            else:
+                ci_low += input_val * val
+                ci_high += input_val * val
 
-        # If confidence_interval_95 is present, use it for the primary CI
+        # If confidence_interval_95 is present and we have no other CI, use it
         ci95 = coefficients.get("confidence_interval_95")
-        if isinstance(ci95, list) and len(ci95) == 2:
-            ci_low = ci_low or ci95[0]
-            ci_high = ci_high or ci95[1]
+        if isinstance(ci95, list) and len(ci95) == 2 and not has_uncertainty:
+            ci_low = ci95[0]
+            ci_high = ci95[1]
+
+        # Collect uncertainty metadata
+        uncertainty_types = set()
+        for key in applied:
+            coeff = coefficients.get(key)
+            if isinstance(coeff, dict):
+                utype = coeff.get("uncertainty_type", "unknown")
+                uncertainty_types.add(utype)
 
         return {
             "axiom_id": axiom_id,
@@ -94,4 +131,5 @@ class BridgeAxiomEngine:
             "ci_high": ci_high,
             "coefficients_applied": applied,
             "caveats": caveats,
+            "uncertainty_types": list(uncertainty_types),
         }
