@@ -3,8 +3,9 @@
 import logging
 import time
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from maris.api.auth import rate_limit_query
 from maris.api.models import QueryRequest, QueryResponse, QueryMetadata, EvidenceItem
 from maris.config import get_config
 from maris.llm.adapter import LLMAdapter
@@ -33,7 +34,7 @@ def _init_components():
         _generator = ResponseGenerator(llm=_llm)
 
 
-@router.post("/query", response_model=QueryResponse)
+@router.post("/query", response_model=QueryResponse, dependencies=[Depends(rate_limit_query)])
 def query(request: QueryRequest):
     """Classify a natural-language question, run Cypher, and return a grounded answer."""
     _init_components()

@@ -1,10 +1,10 @@
 """Graph exploration and structured data endpoints."""
 
-import json
 import logging
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from maris.api.auth import rate_limit_default, validate_axiom_id, validate_site_name
 from maris.api.models import (
     AxiomResponse,
     CompareRequest,
@@ -18,7 +18,7 @@ from maris.axioms.engine import BridgeAxiomEngine
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api", tags=["graph"])
+router = APIRouter(prefix="/api", tags=["graph"], dependencies=[Depends(rate_limit_default)])
 
 _executor: QueryExecutor | None = None
 _axiom_engine: BridgeAxiomEngine | None = None
@@ -60,6 +60,7 @@ def traverse(request: TraverseRequest):
 @router.get("/axiom/{axiom_id}", response_model=AxiomResponse)
 def get_axiom(axiom_id: str):
     """Return bridge axiom details from the template file and graph evidence."""
+    validate_axiom_id(axiom_id)
     _init()
     assert _executor and _axiom_engine
 
@@ -98,6 +99,7 @@ def get_axiom(axiom_id: str):
 @router.get("/site/{site_name}", response_model=SiteResponse)
 def get_site(site_name: str):
     """Return full site valuation with provenance."""
+    validate_site_name(site_name)
     _init()
     assert _executor
 

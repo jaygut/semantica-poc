@@ -1,6 +1,4 @@
-"""
-MARIS v2 Configuration - Environment-based configuration for all components.
-"""
+"""MARIS v2 Configuration - Environment-based configuration for all components."""
 
 from dataclasses import dataclass, field
 from os import getenv
@@ -18,7 +16,7 @@ class MARISConfig:
     # Neo4j
     neo4j_uri: str = field(default_factory=lambda: getenv("MARIS_NEO4J_URI", "bolt://localhost:7687"))
     neo4j_user: str = field(default_factory=lambda: getenv("MARIS_NEO4J_USER", "neo4j"))
-    neo4j_password: str = field(default_factory=lambda: getenv("MARIS_NEO4J_PASSWORD", "maris-dev"))
+    neo4j_password: str = field(default_factory=lambda: getenv("MARIS_NEO4J_PASSWORD", ""))
     neo4j_database: str = field(default_factory=lambda: getenv("MARIS_NEO4J_DATABASE", "neo4j"))
 
     # LLM (model-agnostic via OpenAI-compatible API)
@@ -38,6 +36,16 @@ class MARISConfig:
     # API
     api_host: str = field(default_factory=lambda: getenv("MARIS_API_HOST", "0.0.0.0"))
     api_port: int = field(default_factory=lambda: int(getenv("MARIS_API_PORT", "8000")))
+
+    # Security
+    api_key: str = field(default_factory=lambda: getenv("MARIS_API_KEY", ""))
+    cors_origins: list[str] = field(
+        default_factory=lambda: [
+            o.strip()
+            for o in getenv("MARIS_CORS_ORIGINS", "http://localhost:8501").split(",")
+            if o.strip()
+        ]
+    )
 
     # Paths (resolved relative to project root)
     project_root: str = field(default_factory=lambda: str(Path(__file__).parent.parent))

@@ -1,6 +1,8 @@
 """Pydantic request/response models for the MARIS API."""
 
-from pydantic import BaseModel, Field
+import re
+
+from pydantic import BaseModel, Field, field_validator
 
 
 # ---------------------------------------------------------------------------
@@ -22,10 +24,17 @@ class EvidenceItem(BaseModel):
 # ---------------------------------------------------------------------------
 
 class QueryRequest(BaseModel):
-    question: str
-    site: str | None = None
+    question: str = Field(..., min_length=1, max_length=500)
+    site: str | None = Field(default=None, max_length=100)
     include_graph_path: bool = True
     max_evidence_sources: int = Field(default=5, ge=1, le=20)
+
+    @field_validator("site")
+    @classmethod
+    def validate_site(cls, v: str | None) -> str | None:
+        if v is not None and not re.match(r"^[A-Za-z0-9 \-'.]+$", v):
+            raise ValueError("Site name may only contain letters, numbers, spaces, hyphens, apostrophes, and periods.")
+        return v
 
 
 class QueryMetadata(BaseModel):
@@ -71,13 +80,28 @@ class AxiomResponse(BaseModel):
 
 
 class TraverseRequest(BaseModel):
-    start_name: str
+    start_name: str = Field(..., min_length=1, max_length=100)
     max_hops: int = Field(default=3, ge=1, le=6)
-    result_limit: int = Field(default=25, ge=1, le=100)
+    result_limit: int = Field(default=25, ge=1, le=1000)
+
+    @field_validator("start_name")
+    @classmethod
+    def validate_start_name(cls, v: str) -> str:
+        if not re.match(r"^[A-Za-z0-9 \-'.]+$", v):
+            raise ValueError("start_name may only contain letters, numbers, spaces, hyphens, apostrophes, and periods.")
+        return v
 
 
 class CompareRequest(BaseModel):
     site_names: list[str] = Field(..., min_length=2)
+
+    @field_validator("site_names")
+    @classmethod
+    def validate_site_names(cls, v: list[str]) -> list[str]:
+        for name in v:
+            if not re.match(r"^[A-Za-z0-9 \-'.]+$", name):
+                raise ValueError(f"Invalid site name: '{name}'. Only letters, numbers, spaces, hyphens, apostrophes, and periods are allowed.")
+        return v
 
 
 class CompareResponse(BaseModel):

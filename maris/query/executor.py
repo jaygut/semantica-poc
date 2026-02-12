@@ -3,7 +3,7 @@
 import logging
 
 from maris.graph.connection import run_query
-from maris.query.cypher_templates import get_template
+from maris.query.cypher_templates import get_template, _MAX_LIMIT
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,8 @@ class QueryExecutor:
     def execute(self, template_name: str, parameters: dict) -> dict:
         """Execute a named Cypher template with parameters.
 
-        Returns dict with keys: template, parameters, results, record_count.
+        Returns dict with keys: template, parameters, results, record_count,
+        and has_more (true if results were truncated by the LIMIT clause).
         """
         template = get_template(template_name)
         if template is None:
@@ -22,19 +23,35 @@ class QueryExecutor:
 
         cypher = template["cypher"]
 
+        # Inject result_limit if not already provided by caller
+        default_limit = template.get("default_limit", 100)
+        if "result_limit" not in parameters:
+            parameters["result_limit"] = default_limit
+        else:
+            parameters["result_limit"] = min(int(parameters["result_limit"]), _MAX_LIMIT)
+
+        requested_limit = parameters["result_limit"]
+
         # Neo4j does not allow parameters in variable-length path bounds,
-        # so we substitute max_hops directly (already validated by Pydantic).
+        # so we substitute max_hops directly after strict validation.
         if "MAX_HOPS_PLACEHOLDER" in cypher and "max_hops" in parameters:
-            hops = int(parameters.pop("max_hops"))
+            try:
+                hops = int(parameters.pop("max_hops"))
+            except (TypeError, ValueError):
+                return {"error": "max_hops must be an integer", "results": []}
+            if hops < 1 or hops > 6:
+                return {"error": "max_hops must be between 1 and 6", "results": []}
             cypher = cypher.replace("MAX_HOPS_PLACEHOLDER", str(hops))
 
         try:
             records = run_query(cypher, parameters)
+            has_more = len(records) >= requested_limit
             return {
                 "template": template_name,
                 "parameters": parameters,
                 "results": records,
                 "record_count": len(records),
+                "has_more": has_more,
             }
         except Exception:
             logger.exception("Cypher execution failed for template=%s", template_name)
