@@ -80,20 +80,20 @@ class TestTierBaseConfidence:
         nodes = [{"confidence": 0.72}]
         assert _tier_base_confidence(nodes) == 0.72
 
-    def test_corroborating_evidence_uses_max(self):
-        """Two nodes with same/no DOI should use max."""
+    def test_corroborating_evidence_uses_mean(self):
+        """Two nodes should use mean of tier confidences."""
         nodes = [{"source_tier": "T1"}, {"source_tier": "T4"}]
         conf = _tier_base_confidence(nodes)
-        assert conf == max(0.95, 0.50)
+        assert conf == pytest.approx((0.95 + 0.50) / 2)
 
-    def test_independent_evidence_uses_product(self):
-        """Two nodes with different DOIs should use product."""
+    def test_independent_evidence_uses_mean(self):
+        """Two nodes with different DOIs should use mean."""
         nodes = [
             {"source_tier": "T1", "doi": "10.1234/a"},
             {"source_tier": "T2", "doi": "10.1234/b"},
         ]
         conf = _tier_base_confidence(nodes)
-        assert conf == pytest.approx(0.95 * 0.80)
+        assert conf == pytest.approx((0.95 + 0.80) / 2)
 
 
 class TestPathDiscount:
@@ -131,11 +131,11 @@ class TestSampleSizeFactor:
         assert _sample_size_factor(0) == 0.0
 
     def test_one_source(self):
-        assert _sample_size_factor(1) == 0.5
+        assert _sample_size_factor(1) == 0.6
 
     def test_two_sources(self):
         f = _sample_size_factor(2)
-        assert 0.29 < f < 0.30  # 1 - 1/sqrt(2) ~ 0.2929
+        assert 0.73 < f < 0.74  # linear ramp: 0.6 + 0.4*(1/3)
 
     def test_ten_sources(self):
         f = _sample_size_factor(10)

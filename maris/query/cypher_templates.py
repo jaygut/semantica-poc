@@ -88,10 +88,12 @@ TEMPLATES: dict[str, dict] = {
             MATCH (m:MPA)
             WHERE m.name IN $site_names
             OPTIONAL MATCH (m)-[:GENERATES]->(es:EcosystemService)
+            OPTIONAL MATCH (es)<-[:TRANSLATES]-(ba:BridgeAxiom)-[:EVIDENCED_BY]->(d:Document)
             RETURN m.name AS site, m.total_esv_usd AS total_esv,
                    m.biomass_ratio AS biomass_ratio, m.neoli_score AS neoli_score,
                    m.asset_rating AS asset_rating,
-                   collect({service: es.service_name, value_usd: es.annual_value_usd}) AS services
+                   collect(DISTINCT {service: es.service_name, value_usd: es.annual_value_usd}) AS services,
+                   collect(DISTINCT {doi: d.doi, title: d.title, year: d.year, tier: d.source_tier}) AS evidence
             ORDER BY m.total_esv_usd DESC
             LIMIT $result_limit
         """,

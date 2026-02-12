@@ -98,12 +98,17 @@ def propagate_ci_multiplicative(values: list[dict]) -> dict:
 
 
 def _tier_base_confidence(graph_nodes: list[dict]) -> float:
-    """Calculate tier-based confidence using multiplicative independence model.
+    """Calculate tier-based confidence as weighted mean of source quality.
 
-    For independent evidence sources, multiply confidences. For corroborating
-    evidence (same claim, different studies), take the maximum.
+    Multiple independent sources corroborate a claim - more high-quality
+    evidence should increase confidence, not decrease it. Uses the mean
+    of individual tier confidences so that the score reflects average
+    evidence quality. The separate sample_factor handles the "more sources
+    = more confidence" dimension.
 
-    Groups evidence by DOI - unique DOIs are treated as independent.
+    Tier resolution: nodes without an explicit tier default to T2 (0.80)
+    rather than T4 because their presence in the curated graph implies
+    at least institutional-level vetting.
     """
     if not graph_nodes:
         return 0.0
@@ -114,28 +119,17 @@ def _tier_base_confidence(graph_nodes: list[dict]) -> float:
         if c is not None:
             confidences.append(float(c))
         else:
-            tier = node.get("source_tier") or node.get("tier", "T4")
-            confidences.append(TIER_CONFIDENCE.get(tier, 0.50))
+            tier = node.get("source_tier") or node.get("tier")
+            if tier is None:
+                # Document is in the curated graph but tier unknown - assume T2
+                confidences.append(TIER_CONFIDENCE["T2"])
+            else:
+                confidences.append(TIER_CONFIDENCE.get(tier, 0.50))
 
     if not confidences:
         return 0.0
 
-    if len(confidences) == 1:
-        return confidences[0]
-
-    # Group by DOI to detect corroborating vs independent
-    dois = [node.get("doi", "") for node in graph_nodes]
-    unique_dois = set(d for d in dois if d)
-
-    if len(unique_dois) > 1:
-        # Multiple independent sources: use product (penalizes weak links)
-        product = 1.0
-        for c in confidences:
-            product *= c
-        return product
-    else:
-        # Corroborating evidence (same or no DOIs): use max
-        return max(confidences)
+    return sum(confidences) / len(confidences)
 
 
 def _path_discount(n_hops: int) -> float:
@@ -156,17 +150,24 @@ def _staleness_discount(
 ) -> float:
     """Apply data staleness discount: -2% per year beyond threshold.
 
-    Uses the oldest data point to determine discount. Data <= 5 years old
-    gets no discount.
+    Uses the median data year to determine discount. This prevents a single
+    old foundational paper from tanking the score when most evidence is
+    recent. Data <= 5 years old gets no discount.
     """
     ref_year = current_year or CURRENT_YEAR
-    valid_years = [y for y in data_years if y is not None and y > 0]
+    valid_years = sorted(y for y in data_years if y is not None and y > 0)
 
     if not valid_years:
         return 0.85  # No year info: assume moderate staleness
 
-    oldest = min(valid_years)
-    age = ref_year - oldest
+    # Use median year instead of oldest - reflects typical evidence freshness
+    mid = len(valid_years) // 2
+    if len(valid_years) % 2 == 0:
+        median_year = (valid_years[mid - 1] + valid_years[mid]) // 2
+    else:
+        median_year = valid_years[mid]
+
+    age = ref_year - median_year
 
     if age <= STALENESS_THRESHOLD_YEARS:
         return 1.0
@@ -179,14 +180,17 @@ def _staleness_discount(
 def _sample_size_factor(n_sources: int) -> float:
     """Confidence factor based on number of supporting sources.
 
-    Uses 1 - 1/sqrt(n) so that more sources asymptotically approach 1.0.
-    Single source: 0.0, two sources: ~0.29, three: ~0.42, ten: ~0.68.
+    Ramps linearly from 0.6 (single source) to 1.0 (4+ sources).
+    A single peer-reviewed source still carries meaningful weight;
+    additional sources provide incremental corroboration up to a
+    saturation point at 4 independent sources.
     """
     if n_sources <= 0:
         return 0.0
-    if n_sources == 1:
-        return 0.5  # Single source is not zero but not strong
-    return 1.0 - 1.0 / math.sqrt(n_sources)
+    if n_sources >= 4:
+        return 1.0
+    # Linear ramp: 1 -> 0.6, 2 -> 0.73, 3 -> 0.87, 4 -> 1.0
+    return 0.6 + 0.4 * (n_sources - 1) / 3
 
 
 def calculate_response_confidence(
@@ -258,14 +262,15 @@ def calculate_response_confidence(
             f"{n_hops}-hop inference chain reduces confidence"
         )
 
-    valid_years = [y for y in data_years if y and y > 0]
+    valid_years = sorted(y for y in data_years if y and y > 0)
     if valid_years:
-        oldest = min(valid_years)
+        mid = len(valid_years) // 2
+        median_yr = valid_years[mid]
         ref = current_year or CURRENT_YEAR
-        age = ref - oldest
+        age = ref - median_yr
         if age > STALENESS_THRESHOLD_YEARS:
             explanation_parts.append(
-                f"oldest data is {age} years old ({oldest})"
+                f"median data year is {median_yr} ({age} years old)"
             )
 
     if n_sources == 1:
