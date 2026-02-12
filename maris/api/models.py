@@ -18,6 +18,11 @@ class EvidenceItem(BaseModel):
     page_ref: str | None = None
     quote: str = ""
 
+    @field_validator("title", "tier", "quote", mode="before")
+    @classmethod
+    def coerce_none_to_empty(cls, v):
+        return v if v is not None else ""
+
 
 # ---------------------------------------------------------------------------
 # Query
