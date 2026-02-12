@@ -121,10 +121,10 @@ This document provides a week-by-week implementation schedule for all files in t
 - [ ] Test axiom pattern matching in Semantica
 - [x] Validate Cabo Pulmo metrics (463% ±20% tolerance) ✅
 - [ ] **Test cascade reasoning (otter → kelp → carbon) via Semantica**
-- [ ] Validate all 12 bridge axioms
+- [ ] Validate all 16 bridge axioms
 
 ### Milestones:
-- All 12 bridge axioms implemented as Semantica inference rules
+- All 16 bridge axioms implemented as Semantica inference rules (12 core + 4 blue carbon)
 - Axiom pattern matching working
 - Coefficient calculations implemented
 - Cabo Pulmo validation passing (±20% tolerance)

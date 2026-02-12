@@ -69,7 +69,7 @@ This repository contains the **complete knowledge foundation** for a proof-of-co
 |----------|------|---------|
 | 1 | [`data/semantica_export/entities.jsonld`](./data/semantica_export/entities.jsonld) | 14 entities with JSON-LD context (WoRMS, FishBase, TNFD) |
 | 2 | [`data/semantica_export/relationships.json`](./data/semantica_export/relationships.json) | 15 typed relationships with provenance |
-| 3 | [`data/semantica_export/bridge_axioms.json`](./data/semantica_export/bridge_axioms.json) | 12 bridge axioms with 3+ evidence sources each |
+| 3 | [`data/semantica_export/bridge_axioms.json`](./data/semantica_export/bridge_axioms.json) | 16 bridge axioms with 3+ evidence sources each |
 | 4 | [`data/semantica_export/document_corpus.json`](./data/semantica_export/document_corpus.json) | 195-paper corpus summary |
 | 5 | [`data/sample_extractions/`](./data/sample_extractions/) | 5 critical paper extractions |
 
@@ -248,7 +248,7 @@ The MARIS pipeline generates a **Semantica-ready export bundle** designed for di
 │                                                    ↓                        │
 │   ┌──────────────────┐                  ┌──────────────────────┐           │
 │   │ Bridge Axioms    │ ──────────────→  │ Inference Engine     │           │
-│   │ (12 axioms)      │  bridge_axioms   │ (Translate + Query)  │           │
+│   │ (16 axioms)      │  bridge_axioms   │ (Translate + Query)  │           │
 │   └──────────────────┘                  └──────────────────────┘           │
 │                                                    ↓                        │
 │                                         ┌──────────────────────┐           │
@@ -267,7 +267,7 @@ Located in `data/semantica_export/`:
 |------|--------|----------|---------------|
 | `entities.jsonld` | JSON-LD | 14 entities with WoRMS/FishBase/TNFD URIs | Ontology ingestion |
 | `relationships.json` | JSON | 15 typed relationships with provenance | Graph construction |
-| `bridge_axioms.json` | JSON | 12 axioms with 3+ evidence sources each | Inference rules |
+| `bridge_axioms.json` | JSON | 16 axioms with 3+ evidence sources each | Inference rules |
 | `document_corpus.json` | JSON | 195-paper corpus summary | Retrieval index |
 
 ### Entity Types in Export
@@ -295,7 +295,7 @@ Located in `data/semantica_export/`:
 
 ### Bridge Axiom Evidence
 
-All 12 bridge axioms now have **3+ supporting sources**:
+All 16 bridge axioms now have **3+ supporting sources** (12 core + 4 blue carbon):
 
 | Axiom | Name | Sources | Key Paper |
 |-------|------|---------|-----------|
@@ -311,6 +311,10 @@ All 12 bridge axioms now have **3+ supporting sources**:
 | BA-010 | Thermal Tolerance Resilience | 3 | Lachs 2023 |
 | BA-011 | Fisheries Spillover | 3 | Aburto 2011 |
 | BA-012 | Disclosure Biodiversity Dependency | 3 | TNFD 2023 |
+| BA-013 | Seagrass Carbon Sequestration Rate | 3 | Arias-Ortiz 2018 |
+| BA-014 | Carbon Stock to Credit Value | 3 | Verra VCS VM0033 |
+| BA-015 | Habitat Loss Carbon Emission | 3 | Arias-Ortiz 2018 |
+| BA-016 | MPA Protection Carbon Permanence | 3 | IPCC 2019 |
 
 ### Ingesting Into Semantica
 
@@ -513,7 +517,7 @@ Tests are organized by module in `tests/` with shared fixtures in `conftest.py`.
 |-----------|----------|--------|---------|----------------------|
 | **Entities** | `data/semantica_export/entities.jsonld` | JSON-LD | 14 entities with WoRMS/FishBase/TNFD URIs | Ingested via Semantica API |
 | **Relationships** | `data/semantica_export/relationships.json` | JSON | 15 relationship types with provenance | Ingested via Semantica API |
-| **Bridge Axioms** | `data/semantica_export/bridge_axioms.json` | JSON | 12 axioms with 3+ evidence sources each | Registered as Semantica inference rules |
+| **Bridge Axioms** | `data/semantica_export/bridge_axioms.json` | JSON | 16 axioms with 3+ evidence sources each | Registered as Semantica inference rules |
 | **Corpus Summary** | `data/semantica_export/document_corpus.json` | JSON | 195-paper library statistics | Indexed in Semantica document index |
 | Document Library | `.claude/registry/document_index.json` | JSON | 195 indexed papers with full metadata | Indexed via Semantica API |
 | Critical Extractions | `data/sample_extractions/` | JSON | 5 papers with entities/relationships | Extracted via Semantica API |
@@ -576,7 +580,7 @@ semantica-poc/
 │   ├── semantica_export/                  # ═══ SEMANTICA-READY BUNDLE ═══
 │   │   ├── entities.jsonld                # 14 entities (JSON-LD)
 │   │   ├── relationships.json             # 15 relationships
-│   │   ├── bridge_axioms.json             # 12 axioms with evidence
+│   │   ├── bridge_axioms.json             # 16 axioms with evidence
 │   │   └── document_corpus.json           # Corpus summary
 │   └── sample_extractions/                # 5 critical paper extractions
 │
@@ -1029,7 +1033,7 @@ The system is designed to answer complex, multi-hop questions with full provenan
 - [x] Expand library to 195 papers across 10 domains
 - [x] Extract knowledge from 5 critical papers
 - [x] Generate Semantica export bundle (4 files)
-- [x] Evidence 12 bridge axioms with 3+ sources each
+- [x] Evidence 16 bridge axioms with 3+ sources each
 
 ---
 
@@ -1096,12 +1100,12 @@ The system is designed to answer complex, multi-hop questions with full provenan
 - [ ] **Test axiom pattern matching in Semantica**
 - [x] Validate Cabo Pulmo metrics (463% ±20% tolerance) ✅
 - [ ] **Test cascade reasoning (otter → kelp → carbon) via Semantica**
-- [ ] Validate all 12 bridge axioms
+- [ ] Validate all 16 bridge axioms
 
 **Phase 2 Milestones:**
 - ✅ Relationship extraction operational using Semantica
 - ✅ Trophic networks built in Semantica graph
-- ✅ All 12 bridge axioms implemented as Semantica inference rules
+- ✅ All 16 bridge axioms implemented as Semantica inference rules (12 core + 4 blue carbon)
 - ✅ Bridge axioms registered and functional in Semantica
 - ✅ Cabo Pulmo validation passing (±20% tolerance)
 - ✅ Cascade reasoning functional via Semantica
@@ -1193,7 +1197,7 @@ The system is designed to answer complex, multi-hop questions with full provenan
 | Criterion | Target |
 |-----------|--------|
 | Investor demo | Complete 10-min narrative without gaps |
-| Bridge axiom coverage | All 12 axioms functional |
+| Bridge axiom coverage | All 16 axioms functional |
 | Multi-habitat support | Coral, kelp, mangrove, seagrass |
 | Test suite | 220 tests passing |
 | API authentication | Bearer token + rate limiting |
@@ -1210,7 +1214,7 @@ The system is designed to answer complex, multi-hop questions with full provenan
 |------|---------|-----------|
 | `data/semantica_export/entities.jsonld` | JSON-LD entities for ingestion | **Day 1 - Ingest first** |
 | `data/semantica_export/relationships.json` | Typed relationships with provenance | **Day 1 - Ingest second** |
-| `data/semantica_export/bridge_axioms.json` | 12 axioms with evidence | **Day 1 - Configure inference** |
+| `data/semantica_export/bridge_axioms.json` | 16 axioms with evidence | **Day 1 - Configure inference** |
 | `data/semantica_export/document_corpus.json` | Corpus summary for indexing | **Day 1 - Build retrieval** |
 | `examples/cabo_pulmo_case_study.json` | Validation target | During testing |
 | `examples/sample_queries.md` | Query templates | During GraphRAG dev |

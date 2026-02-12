@@ -182,8 +182,8 @@ The `/validate-registry` command performs:
 Post-population graph validation (`scripts/validate_graph.py`) checks:
 
 1. **Node counts** by label match expected values
-2. **All 12 BridgeAxiom nodes** have at least one EVIDENCED_BY edge
-3. **All 3 MPA nodes** have GENERATES edges to EcosystemService nodes
+2. **All 16 BridgeAxiom nodes** have at least one EVIDENCED_BY edge
+3. **All 4 MPA nodes** have GENERATES edges to EcosystemService nodes
 4. **Relationship integrity** - no orphan edges
 
 ---

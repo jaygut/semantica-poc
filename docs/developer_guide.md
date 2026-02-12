@@ -106,7 +106,7 @@ The graph is populated from **six curated data sources**, each serving a distinc
 │                                                                              │
 │  4. Bridge Axiom Templates      schemas/bridge_axiom_templates.json         │
 │     + Evidence Mapping          data/semantica_export/bridge_axioms.json     │
-│     12 axioms with coefficients -> BridgeAxiom nodes, EVIDENCED_BY edges,    │
+│     16 axioms with coefficients -> BridgeAxiom nodes, EVIDENCED_BY edges,    │
 │     and DOI-backed evidence       APPLIES_TO edges, TRANSLATES edges         │
 │                                                                              │
 │  5. Curated Relationships       data/semantica_export/relationships.json    │
@@ -129,7 +129,7 @@ The `scripts/populate_neo4j.py` script calls `maris.graph.population.populate_gr
 | 1 | `_populate_documents()` | `document_index.json` | 195 Document nodes with DOI, tier, domain |
 | 2 | `_populate_entities()` | `entities.jsonld` | Species, MPA, Habitat, EcosystemService, etc. |
 | 3 | `_populate_cabo_pulmo()` | `cabo_pulmo_case_study.json` | Enriches MPA with NEOLI/biomass/ESV; creates services, species, trophic nodes |
-| 4 | `_populate_bridge_axioms()` | `bridge_axiom_templates.json` + `bridge_axioms.json` | 12 BridgeAxiom nodes; EVIDENCED_BY, APPLIES_TO, TRANSLATES edges |
+| 4 | `_populate_bridge_axioms()` | `bridge_axiom_templates.json` + `bridge_axioms.json` | 16 BridgeAxiom nodes (12 core + 4 blue carbon); EVIDENCED_BY, APPLIES_TO, TRANSLATES edges |
 | 5 | `_populate_comparison_sites()` | Hardcoded | Great Barrier Reef, Papahanaumokuakea MPA nodes |
 | 6 | `_populate_relationships()` | `relationships.json` | 15 cross-domain relationship edges |
 | 7 | `_populate_cross_domain_links()` | Hardcoded | Structural edges (HAS_HABITAT, PROVIDES, INHABITS, GOVERNS, etc.) |
@@ -137,7 +137,9 @@ The `scripts/populate_neo4j.py` script calls `maris.graph.population.populate_gr
 
 ### Calibration Site Model
 
-**Cabo Pulmo National Park** is the fully characterized reference site (AAA-rated) with complete financial data:
+The system has two fully characterized reference sites with contrasting ESV profiles:
+
+**Cabo Pulmo National Park** (Mexico) - coral reef-dominated, tourism-driven ESV:
 
 | Property | Value | Source |
 |----------|-------|--------|
@@ -147,9 +149,21 @@ The `scripts/populate_neo4j.py` script calls `maris.graph.population.populate_gr
 | NEOLI score | 4/5 criteria met | Edgar et al. 2014 framework |
 | Asset rating | AAA (composite 0.90) | Derived from NEOLI + ESV + CI |
 
-**Comparison sites** (Great Barrier Reef Marine Park, Papahanaumokuakea Marine National Monument) are populated with governance metadata only (area, designation year, NEOLI score, asset rating). They do not have ecosystem service valuations, species data, or bridge axiom links in the current graph. This is by design: the POC demonstrates the full provenance chain for one deeply characterized site, with comparison sites providing NEOLI benchmarking context.
+**Shark Bay World Heritage Area** (Australia) - seagrass-dominated, carbon-driven ESV:
 
-To add full coverage for another site, create a case study JSON following the structure of `examples/cabo_pulmo_case_study.json` and add a population function in `maris/graph/population.py`.
+| Property | Value | Source |
+|----------|-------|--------|
+| Total ESV | $21.5M/year (market-price) | `shark_bay_case_study.json` |
+| Carbon sequestration | $12.1M (0.84 tCO2/ha/yr, $30/tonne) | Arias-Ortiz et al. 2018 |
+| Fisheries | $5.2M (MSC-certified prawn fishery) | Market-price method |
+| Tourism | $3.4M (108K visitors/year) | Tourism WA data |
+| Coastal protection | $0.8M (40% wave reduction) | Avoided cost method |
+| Seagrass extent | 4,800 km2 (world's largest) | Direct survey |
+| NEOLI score | 4/5 criteria met | Edgar et al. 2014 framework |
+
+**Comparison sites** (Great Barrier Reef Marine Park, Papahanaumokuakea Marine National Monument) are populated with governance metadata only (area, designation year, NEOLI score, asset rating). They do not have ecosystem service valuations or bridge axiom links. The dual-site architecture demonstrates the framework's habitat-agnostic design: tourism-dominant (Cabo Pulmo) vs. carbon-dominant (Shark Bay).
+
+To add full coverage for another site, create a case study JSON following the structure of `examples/cabo_pulmo_case_study.json` or `examples/shark_bay_case_study.json` and add a population function in `maris/graph/population.py`.
 
 ### Evidence Tier System
 
@@ -217,7 +231,7 @@ This executes the 8-stage pipeline described above, loading all curated data sou
 python scripts/validate_graph.py
 ```
 
-Checks node counts by label, relationship integrity, and that all 12 bridge axioms have at least one EVIDENCED_BY edge to a Document node.
+Checks node counts by label, relationship integrity, and that all 16 bridge axioms have at least one EVIDENCED_BY edge to a Document node.
 
 ---
 
@@ -320,6 +334,8 @@ The `maris/query/validators.py` module implements a 5-step validation pipeline t
 
 **Robust JSON extraction:** LLM responses sometimes arrive malformed. The validator uses a 5-tier fallback strategy: (1) code-fence extraction, (2) direct JSON parse, (3) brace extraction, (4) truncated-JSON repair, (5) structured error response.
 
+**EvidenceItem null coercion:** The `EvidenceItem` Pydantic model (`maris/api/models.py`) includes a `field_validator` that coerces `None` values to empty strings for `title`, `tier`, and `quote` fields. This prevents validation errors when the LLM returns null for optional evidence metadata.
+
 **Empty result protection:** Before calling the LLM, `is_graph_context_empty()` checks whether the Cypher query returned meaningful data. If the graph context is empty, the system returns a structured "no data available" response without incurring an LLM call.
 
 ### Confidence Model
@@ -332,12 +348,12 @@ composite = tier_base * path_discount * staleness_discount * sample_factor
 
 | Factor | Description | Range |
 |--------|-------------|-------|
-| `tier_base` | Evidence quality: T1=0.95, T2=0.80, T3=0.65, T4=0.50. Multiple independent DOIs are combined multiplicatively; corroborating sources use max. | 0.50 - 0.95 |
+| `tier_base` | Evidence quality: T1=0.95, T2=0.80, T3=0.65, T4=0.50. Multiple sources are combined as the **mean** of their tier confidences, so more high-quality evidence increases the score. Nodes without an explicit tier default to T2 (0.80) since their presence in the curated graph implies institutional-level vetting. | 0.50 - 0.95 |
 | `path_discount` | Graph distance penalty: -5% per hop from source to claim, with a floor of 0.1. | 0.10 - 1.00 |
-| `staleness_discount` | Data age penalty: no penalty for data <=5 years old, -2% per year beyond that, floor of 0.3. If no year information is available, defaults to 0.85. | 0.30 - 1.00 |
-| `sample_factor` | Source diversity: `1 - 1/sqrt(n)` where n is the number of independent sources. A single source yields 0.5. | 0.50 - 1.00 |
+| `staleness_discount` | Data age penalty based on the **median** data year (not the oldest), so a single old foundational paper does not tank the score when most evidence is recent. No penalty for data <=5 years old, -2% per year beyond that, floor of 0.3. If no year information is available, defaults to 0.85. | 0.30 - 1.00 |
+| `sample_factor` | Source diversity: **linear ramp** from 0.6 (single source) to 1.0 (4+ sources). A single peer-reviewed source still carries meaningful weight (0.6); additional sources provide incremental corroboration up to saturation at 4 independent sources. | 0.60 - 1.00 |
 
-This replaces the earlier simple `min()` aggregation with a transparent, decomposable formula. The model is inspired by the GRADE framework (evidence certainty grading), the IPCC likelihood scale, and knowledge-graph confidence propagation techniques.
+The model is inspired by the GRADE framework (evidence certainty grading), the IPCC likelihood scale, and knowledge-graph confidence propagation techniques. It produces sensible gradients: well-characterized sites with mostly T1 evidence score 80-88%, mechanism explanations ~74%, and multi-hop risk assessments ~57%.
 
 The function returns a breakdown dict containing the composite score, each individual factor, and a human-readable explanation string suitable for display in the dashboard.
 
@@ -375,7 +391,7 @@ The output is designed to be directly interpretable by investors and underwriter
 
 ### Bridge Axiom Uncertainty Quantification
 
-Bridge axiom templates (v1.2) now include uncertainty quantification fields alongside the existing coefficient data:
+Bridge axiom templates (v1.3) now include uncertainty quantification fields alongside the existing coefficient data:
 
 | Field | Type | Description |
 |-------|------|-------------|

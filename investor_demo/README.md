@@ -65,7 +65,7 @@ Every number displayed in the dashboard traces back to curated, DOI-backed sourc
 |-------------|------|-----------------------------------|
 | **Document Registry** | `.claude/registry/document_index.json` | 195 peer-reviewed papers (DOI, title, year, evidence tier) |
 | **Cabo Pulmo Case Study** | `examples/cabo_pulmo_case_study.json` | Site metadata, NEOLI assessment, ecosystem service values ($29.27M ESV), biomass recovery (4.63x), species data, trophic network |
-| **Bridge Axiom Templates** | `schemas/bridge_axiom_templates.json` | 12 axioms with translation coefficients and DOI-backed evidence |
+| **Bridge Axiom Templates** | `schemas/bridge_axiom_templates.json` | 16 axioms with translation coefficients and DOI-backed evidence |
 | **Entity Definitions** | `data/semantica_export/entities.jsonld` | 14 JSON-LD entities (Species, Habitats, Financial Instruments, Frameworks) |
 | **Curated Relationships** | `data/semantica_export/relationships.json` | 15 cross-domain edges with quantification and mechanism |
 | **Investment-Grade Bundle** | `demos/context_graph_demo/cabo_pulmo_investment_grade_bundle.json` | Pre-computed Monte Carlo results, risk scenarios, framework alignment (used by v1 static mode) |
@@ -110,7 +110,7 @@ The v2 live mode queries these through the Neo4j graph (populated by `scripts/po
 | `components/chat_panel.py` | Ask MARIS query UI with markdown rendering, confidence badges, evidence tables |
 | `components/graph_explorer.py` | Plotly network graph with semantic layering (MPA -> Habitat -> Services -> Axioms -> Sources) |
 | `api_client.py` | HTTP client wrapping MARIS API endpoints; passes Bearer token if `MARIS_API_KEY` is configured; auto-falls back to precomputed responses via TF-IDF keyword matching |
-| `precomputed_responses.json` | Cached responses for 27 queries across all 5 categories (fallback when API is offline) |
+| `precomputed_responses.json` | Cached responses for 35 queries across all 5 categories (fallback when API is offline) |
 
 ---
 
@@ -118,7 +118,7 @@ The v2 live mode queries these through the Neo4j graph (populated by `scripts/po
 
 The v1 dashboard uses a **static JSON bundle** rather than a live database connection - this is a deliberate architectural choice. In high-stakes investor contexts, zero latency and 100% uptime are non-negotiable. The bundle itself demonstrates that MARIS outputs are portable, immutable, and auditable.
 
-The v2 dashboard extends this with **live querying** - any question the investor asks is answered in real time with full provenance traced through the Neo4j knowledge graph. If the API is unreachable, the dashboard gracefully degrades to 27 precomputed responses (covering all 5 query categories), maintaining the zero-downtime guarantee. The `StaticBundleClient` uses TF-IDF-style keyword overlap scoring (with IDF weighting, geometric mean normalization, and a 0.3 similarity threshold) to match user questions to the best precomputed response. This replaced the earlier SequenceMatcher approach for more robust matching.
+The v2 dashboard extends this with **live querying** - any question the investor asks is answered in real time with full provenance traced through the Neo4j knowledge graph. If the API is unreachable, the dashboard gracefully degrades to 35 precomputed responses (covering all 5 query categories), maintaining the zero-downtime guarantee. The `StaticBundleClient` uses TF-IDF-style keyword overlap scoring (with IDF weighting, geometric mean normalization, and a 0.3 similarity threshold) to match user questions to the best precomputed response. This replaced the earlier SequenceMatcher approach for more robust matching.
 
 ---
 

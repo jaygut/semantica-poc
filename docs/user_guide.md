@@ -31,7 +31,7 @@ The system is designed for blue bond underwriters, conservation finance analysts
    python scripts/populate_neo4j.py
    ```
 
-   This loads 195 peer-reviewed papers, 12 bridge axioms with DOI-backed evidence, ecosystem service valuations, species data, and trophic network structure from six curated JSON assets. See the [Developer Guide](developer_guide.md#knowledge-graph-data-lineage) for full data lineage.
+   This loads 195 peer-reviewed papers, 16 bridge axioms with DOI-backed evidence, ecosystem service valuations, species data, and trophic network structure from seven curated JSON assets. See the [Developer Guide](developer_guide.md#knowledge-graph-data-lineage) for full data lineage.
 
 3. **Start the API server:**
 
@@ -97,12 +97,12 @@ composite = tier_base * path_discount * staleness_discount * sample_factor
 
 | Factor | What It Measures | Values |
 |--------|-----------------|--------|
-| tier_base | Evidence quality of source documents | T1=0.95, T2=0.80, T3=0.65, T4=0.50 |
-| path_discount | Inference chain length (graph hops) | Decreases with longer provenance paths |
-| staleness_discount | Age of underlying data | Penalizes older measurements |
-| sample_factor | Number of independent sources | More sources increase confidence |
+| tier_base | Evidence quality of source documents (mean of tier confidences) | T1=0.95, T2=0.80, T3=0.65, T4=0.50 |
+| path_discount | Inference chain length (graph hops) | -5% per hop, floor 0.1 |
+| staleness_discount | Age of underlying data (based on median year) | No penalty <=5 years, -2%/year beyond, floor 0.3 |
+| sample_factor | Number of independent sources | Linear ramp: 0.6 (1 source) to 1.0 (4+ sources) |
 
-Each factor is independently auditable, so investors can see exactly why a particular answer received its confidence score.
+Typical score ranges: direct site valuations score 80-88%, mechanism explanations ~74%, and multi-hop risk assessments ~57%. Each factor is independently auditable, so investors can see exactly why a particular answer received its confidence score.
 
 ---
 
@@ -131,11 +131,11 @@ Each answer includes:
 
 ### Site Coverage
 
-**Cabo Pulmo National Park** is the fully characterized calibration site with complete ESV data, species records, trophic network, and bridge axiom links. Valuation and provenance queries for Cabo Pulmo return rich, multi-layered responses.
+**Cabo Pulmo National Park** (Mexico) and **Shark Bay World Heritage Area** (Australia) are fully characterized sites with complete ESV data, species records, and bridge axiom links. Cabo Pulmo is coral reef-dominated and tourism-driven ($29.27M ESV); Shark Bay is seagrass-dominated and carbon-driven ($21.5M ESV). Valuation and provenance queries for either site return rich, multi-layered responses.
 
 **Comparison sites** (Great Barrier Reef, Papahanaumokuakea) have governance metadata (NEOLI score, area, asset rating) but not full ecosystem service valuations. Queries about their financial value will note the absence of site-specific valuation data.
 
-When the API is unavailable, Ask MARIS falls back to 27 precomputed responses covering all 5 query categories (valuation, provenance, axiom, comparison, risk). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
+When the API is unavailable, Ask MARIS falls back to 35 precomputed responses covering all 5 query categories (valuation, provenance, axiom, comparison, risk). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
 
 ### Graph Explorer
 

@@ -96,7 +96,7 @@ The primary endpoint. Classifies a natural-language question, selects a Cypher t
 ```json
 {
   "answer": "Cabo Pulmo National Park generates an estimated $29.27M in annual ecosystem service value...",
-  "confidence": 0.85,
+  "confidence": 0.83,
   "evidence": [
     {
       "doi": "10.1038/s41598-024-83664-1",
@@ -132,7 +132,7 @@ The primary endpoint. Classifies a natural-language question, selects a Cypher t
 | Field | Description |
 |-------|-------------|
 | `answer` | LLM-synthesized narrative grounded in graph data, with DOI citations |
-| `confidence` | 0.0-1.0 score reflecting evidence strength and classification certainty |
+| `confidence` | 0.0-1.0 composite score from tier_base * path_discount * staleness_discount * sample_factor (see Developer Guide for formula details) |
 | `evidence` | Array of DOI-backed sources used in the answer (tier T1-T4) |
 | `axioms_used` | Bridge axiom IDs invoked in the provenance chain |
 | `graph_path` | Structured edges for visualization (only when `include_graph_path=true`) |
