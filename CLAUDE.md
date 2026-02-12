@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **MARIS** (Marine Asset Risk Intelligence System) is a provenance-first knowledge graph that creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. Built on the Semantica framework, it is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
 
-**Current Status:** Production-ready POC deployed on `main`. The system comprises a Neo4j knowledge graph (878 nodes, 101 edges), a FastAPI query engine with natural-language-to-Cypher classification, and an investor-facing Streamlit dashboard with interactive graph visualization. The document library contains 195 verified papers, 12 fully-evidenced bridge axioms, and a Semantica-ready export bundle. The system also runs in static mode from a pre-computed JSON bundle for zero-downtime investor demos.
+**Current Status:** Production-ready POC deployed on `main` with Tier 1/Tier 2 hardening complete. The system comprises a Neo4j knowledge graph (878 nodes, 101 edges), a FastAPI query engine with Bearer token authentication and rate limiting, natural-language-to-Cypher classification with LLM response validation, and an investor-facing Streamlit dashboard with interactive graph visualization. The document library contains 195 verified papers, 12 fully-evidenced bridge axioms (v1.2 with uncertainty quantification), and a Semantica-ready export bundle. Backed by a 220-test suite with GitHub Actions CI, multi-stage Docker builds, and a composite confidence model. The system also runs in static mode from a pre-computed JSON bundle (27 precomputed responses) for zero-downtime investor demos.
 
 ---
 
@@ -186,7 +186,7 @@ Exceeding the limit returns HTTP 429. Rate limit headers are included in respons
 
 ## Testing
 
-The project includes a comprehensive test suite with 177 tests covering all core modules.
+The project includes a comprehensive test suite with 220 tests covering all core modules.
 
 ```bash
 # Install dev dependencies
@@ -265,6 +265,7 @@ scripts/
 tests/
   conftest.py                       # Shared fixtures (graph results, LLM responses, mock config)
   test_api_endpoints.py             # API route tests with auth validation
+  test_auth.py                      # Auth enforcement, rate limiting, input validation
   test_bridge_axioms.py             # Bridge axiom computation tests
   test_cabo_pulmo_validation.py     # Cabo Pulmo reference data integrity
   test_classifier.py                # Query classification accuracy
@@ -326,6 +327,8 @@ tests/
 | `docs/developer_guide.md` | Architecture, data lineage, population pipeline, extension guide |
 | `docs/api_reference.md` | Endpoint specs, graph schema, query categories, configuration |
 | `docs/user_guide.md` | Dashboard usage, Ask MARIS examples, confidence levels, troubleshooting |
+| `docs/investment_grade_definition.md` | Investment-grade definition and criteria |
+| `docs/second_site_characterization_plan.md` | Plan for characterizing a second MPA site |
 | `investor_demo/README.md` | Dashboard architecture, data provenance, design principles |
 | `SEMANTICA_HANDOFF_README.md` | Integration guide for Semantica team |
 
@@ -538,7 +541,7 @@ These MUST be followed in all code, documentation, and generated content:
 | Live query pipeline | End-to-end NL-to-answer | Working |
 | Graph population | 878 nodes, 101 edges | Complete |
 | Dashboard (live + static) | Both modes operational | Working |
-| Test suite | 177 tests passing | Complete |
+| Test suite | 220 tests passing | Complete |
 | API authentication | Bearer token + rate limiting | Complete |
 | Docker builds | Multi-stage API + Dashboard | Complete |
 | CI pipeline | GitHub Actions (lint + test) | Complete |

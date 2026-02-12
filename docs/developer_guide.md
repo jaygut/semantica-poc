@@ -428,7 +428,7 @@ These fields feed into the Monte Carlo simulation and sensitivity analysis to pr
 
 ### Test Suite
 
-The project includes 177 tests across 13 test files in the `tests/` directory. Tests cover the full stack: query classification, Cypher template generation, LLM response validation, confidence model, sensitivity analysis, API endpoints, and graph population.
+The project includes 220 tests across 14 test files in the `tests/` directory. Tests cover the full stack: query classification, Cypher template generation, LLM response validation, confidence model, sensitivity analysis, API endpoints, and graph population.
 
 **Setup and execution:**
 
@@ -479,7 +479,7 @@ tests/
 The project uses GitHub Actions (`.github/workflows/ci.yml`) for continuous integration on every push and pull request to `main`:
 
 1. **Lint** - Runs `ruff` for code style and import order checks
-2. **Test** - Runs the full pytest suite (177 tests)
+2. **Test** - Runs the full pytest suite (220 tests)
 
 Dev dependencies are specified in `requirements-dev.txt`: pytest>=8.0, pytest-asyncio>=0.23, httpx>=0.26, ruff>=0.8, pytest-cov>=4.0.
 

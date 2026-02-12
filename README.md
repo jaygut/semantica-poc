@@ -16,7 +16,7 @@
 
 This repository contains the **complete knowledge foundation** for a proof-of-concept knowledge graph system that bridges marine ecological science with blue finance frameworks. The goal: enable investors, asset managers, and conservation organizations to make data-driven decisions about marine natural capital with full scientific provenance.
 
-**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 12 fully-evidenced bridge axioms. A **live MARIS v2 system** (Neo4j knowledge graph + FastAPI query engine + Streamlit dashboard) demonstrates the full end-to-end pipeline: natural language questions are classified, translated to Cypher, executed against the graph, and answered with full provenance and interactive graph visualization. The system also runs in static mode from a pre-computed JSON bundle for zero-downtime investor demos. The API is secured with Bearer token authentication and rate limiting, and the codebase is validated by a 177-test suite with CI via GitHub Actions.
+**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 12 fully-evidenced bridge axioms. A **live MARIS v2 system** (Neo4j knowledge graph + FastAPI query engine + Streamlit dashboard) demonstrates the full end-to-end pipeline: natural language questions are classified, translated to Cypher, executed against the graph, and answered with full provenance and interactive graph visualization. The system also runs in static mode from a pre-computed JSON bundle for zero-downtime investor demos. The API is secured with Bearer token authentication and rate limiting, and the codebase is validated by a 220-test suite with CI via GitHub Actions.
 
 **Implementation Timeline:** **8 weeks** - This POC follows a compressed 8-week implementation schedule focused on **Semantica integration** for entity extraction, relationship extraction, graph construction, and GraphRAG query execution. See [Implementation Roadmap](#implementation-roadmap) for detailed week-by-week breakdown.
 
@@ -446,7 +446,7 @@ Exceeding the limit returns HTTP 429. Rate limit headers are included in respons
 
 ### Testing
 
-The project includes 177 tests covering all core modules:
+The project includes 220 tests covering all core modules:
 
 ```bash
 # Install dev dependencies
@@ -586,9 +586,10 @@ semantica-poc/
 │   ├── validate_graph.py                  # Post-population integrity checks
 │   └── run_ingestion.py                   # PDF ingestion pipeline
 │
-├── tests/                                # ═══ TEST SUITE (177 tests) ═══
+├── tests/                                # ═══ TEST SUITE (220 tests) ═══
 │   ├── conftest.py                        # Shared fixtures
 │   ├── test_api_endpoints.py              # API route tests with auth validation
+│   ├── test_auth.py                       # Auth enforcement, rate limiting, input validation
 │   ├── test_bridge_axioms.py              # Bridge axiom computation tests
 │   ├── test_cabo_pulmo_validation.py      # Cabo Pulmo reference data integrity
 │   ├── test_classifier.py                 # Query classification accuracy
@@ -1194,7 +1195,7 @@ The system is designed to answer complex, multi-hop questions with full provenan
 | Investor demo | Complete 10-min narrative without gaps |
 | Bridge axiom coverage | All 12 axioms functional |
 | Multi-habitat support | Coral, kelp, mangrove, seagrass |
-| Test suite | 177 tests passing |
+| Test suite | 220 tests passing |
 | API authentication | Bearer token + rate limiting |
 | Docker builds | Multi-stage API + Dashboard |
 | CI pipeline | GitHub Actions (lint + test) |

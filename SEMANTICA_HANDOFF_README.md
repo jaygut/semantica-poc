@@ -68,7 +68,7 @@ semantica-poc/
 │   ├── cabo_pulmo_case_study.json       # Reference site calibration data
 │   └── sample_queries.md                # GraphRAG query examples
 │
-├── tests/                               # 177-test suite (unit + integration)
+├── tests/                               # 220-test suite (unit + integration)
 │
 ├── investor_demo/
 │   └── demo_narrative.md                # Investor pitch narrative
@@ -471,7 +471,7 @@ class MarisSemanticaPipeline:
 
 ### Test Suite
 
-- 177 tests covering unit and integration scenarios
+- 220 tests covering unit and integration scenarios
 - CI pipeline via GitHub Actions (`.github/workflows/ci.yml`)
 - Tests validate graph population, query classification, axiom computation, API endpoints, and response formatting
 
