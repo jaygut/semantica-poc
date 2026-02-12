@@ -1,9 +1,15 @@
-"""Format query responses with citations and evidence tables."""
+"""Format query responses with citations, evidence tables, and claim verification."""
+
+from maris.query.validators import validate_evidence_dois
 
 
 def format_response(raw_response: dict) -> dict:
-    """Clean up a raw response: normalise evidence items, add DOI links."""
+    """Clean up a raw response: normalise evidence items, add DOI links,
+    and pass through verified/unverified claims."""
     evidence = [_normalise_evidence_item(e) for e in raw_response.get("evidence", [])]
+
+    # Validate evidence DOIs
+    evidence, _doi_issues = validate_evidence_dois(evidence)
 
     return {
         "answer": raw_response.get("answer", ""),
@@ -12,6 +18,8 @@ def format_response(raw_response: dict) -> dict:
         "axioms_used": raw_response.get("axioms_used", []),
         "graph_path": format_graph_path(raw_response.get("graph_path", [])),
         "caveats": raw_response.get("caveats", []),
+        "verified_claims": raw_response.get("verified_claims", []),
+        "unverified_claims": raw_response.get("unverified_claims", []),
     }
 
 
