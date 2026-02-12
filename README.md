@@ -16,7 +16,7 @@
 
 This repository contains the **complete knowledge foundation** for a proof-of-concept knowledge graph system that bridges marine ecological science with blue finance frameworks. The goal: enable investors, asset managers, and conservation organizations to make data-driven decisions about marine natural capital with full scientific provenance.
 
-**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 12 fully-evidenced bridge axioms. A **live MARIS v2 system** (Neo4j knowledge graph + FastAPI query engine + Streamlit dashboard) demonstrates the full end-to-end pipeline: natural language questions are classified, translated to Cypher, executed against the graph, and answered with full provenance and interactive graph visualization. The system also runs in static mode from a pre-computed JSON bundle for zero-downtime investor demos.
+**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 12 fully-evidenced bridge axioms. A **live MARIS v2 system** (Neo4j knowledge graph + FastAPI query engine + Streamlit dashboard) demonstrates the full end-to-end pipeline: natural language questions are classified, translated to Cypher, executed against the graph, and answered with full provenance and interactive graph visualization. The system also runs in static mode from a pre-computed JSON bundle for zero-downtime investor demos. The API is secured with Bearer token authentication and rate limiting, and the codebase is validated by a 177-test suite with CI via GitHub Actions.
 
 **Implementation Timeline:** **8 weeks** - This POC follows a compressed 8-week implementation schedule focused on **Semantica integration** for entity extraction, relationship extraction, graph construction, and GraphRAG query execution. See [Implementation Roadmap](#implementation-roadmap) for detailed week-by-week breakdown.
 
@@ -344,7 +344,7 @@ User Question (NL)
         |
    [Classifier]  -- keyword-first, LLM fallback
         |
-   [Cypher Template]  -- 6 parameterized templates
+   [Cypher Template]  -- 8 parameterized templates (5 core + 3 utility)
         |
    [Neo4j Graph]  -- 878 nodes, 101 relationships
         |
@@ -364,16 +364,16 @@ User Question (NL)
 ### Environment Setup
 
 ```bash
-# 1. Copy the environment template and fill in your API key
+# 1. Copy the environment template and fill in your credentials
 cp .env.example .env
-# Edit .env: set MARIS_LLM_API_KEY to your key
+# Edit .env: set MARIS_LLM_API_KEY and MARIS_API_KEY
 
 # 2. Install dependencies
 uv venv .venv && source .venv/bin/activate
 uv pip install -r requirements-v2.txt
 ```
 
-> **Security:** The `.env` file contains your API keys and is excluded from git via `.gitignore`. Never commit `.env` - use `.env.example` as the template.
+> **Security:** The `.env` file contains your API keys and is excluded from git via `.gitignore`. Never commit `.env` - use `.env.example` as the template. Key variables: `MARIS_LLM_API_KEY` (LLM provider), `MARIS_API_KEY` (API Bearer token), `MARIS_CORS_ORIGINS` (allowed origins, default `http://localhost:8501`).
 
 ### Quick Start (Manual)
 
@@ -396,7 +396,7 @@ streamlit run streamlit_app_v2.py
 
 ```bash
 cp .env.example .env
-# Edit .env: set MARIS_LLM_API_KEY
+# Edit .env: set MARIS_LLM_API_KEY and MARIS_API_KEY
 
 docker-compose up
 # Neo4j: http://localhost:7474
@@ -406,15 +406,15 @@ docker-compose up
 
 ### API Endpoints
 
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| GET | `/api/health` | System health, Neo4j connectivity, graph stats |
-| POST | `/api/query` | Natural-language query with provenance |
-| GET | `/api/site/{name}` | Full site valuation with evidence |
-| GET | `/api/axiom/{id}` | Bridge axiom details and sources |
-| POST | `/api/compare` | Compare multiple sites |
-| POST | `/api/graph/traverse` | Multi-hop graph traversal |
-| GET | `/api/graph/node/{id}` | Single node with relationships |
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| GET | `/api/health` | No | System health, Neo4j connectivity, graph stats |
+| POST | `/api/query` | Yes | Natural-language query with provenance |
+| GET | `/api/site/{name}` | Yes | Full site valuation with evidence |
+| GET | `/api/axiom/{id}` | Yes | Bridge axiom details and sources |
+| POST | `/api/compare` | Yes | Compare multiple sites |
+| POST | `/api/graph/traverse` | Yes | Multi-hop graph traversal |
+| GET | `/api/graph/node/{id}` | Yes | Single node with relationships |
 
 ### Query Categories
 
@@ -427,6 +427,39 @@ The classifier routes questions to parameterized Cypher templates:
 | `axiom_explanation` | bridge axiom, BA-001, coefficient | "Explain BA-002" |
 | `comparison` | compare, versus, rank | "Compare to other sites" |
 | `risk_assessment` | risk, climate, threat, decline | "What if protection fails?" |
+
+### Authentication and Security
+
+All endpoints except `/api/health` require a Bearer token via the `Authorization` header:
+
+```
+Authorization: Bearer <MARIS_API_KEY>
+```
+
+Authentication is implemented in `maris/api/auth.py`. When `MARIS_DEMO_MODE=true`, authentication is bypassed for development and demos.
+
+**Rate Limiting:** In-memory sliding-window rate limiting is applied per API key:
+- `/api/query`: 30 requests per minute
+- All other endpoints: 60 requests per minute
+
+Exceeding the limit returns HTTP 429. Rate limit headers are included in responses. CORS origins are configured via `MARIS_CORS_ORIGINS`. Request tracing logs hashed IP addresses for auditability.
+
+### Testing
+
+The project includes 177 tests covering all core modules:
+
+```bash
+# Install dev dependencies
+pip install -r requirements-dev.txt
+
+# Run all tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ --cov=maris --cov-report=term-missing
+```
+
+Tests are organized by module in `tests/` with shared fixtures in `conftest.py`. CI runs automatically on push and PR to `main` via GitHub Actions (`.github/workflows/ci.yml`): linting with ruff, then pytest.
 
 ---
 
@@ -505,6 +538,7 @@ semantica-poc/
 │   ├── api/                               # FastAPI application
 │   │   ├── main.py                        # App factory, CORS, router registration
 │   │   ├── models.py                      # Pydantic request/response schemas
+│   │   ├── auth.py                        # Bearer token auth, rate limiting, request tracing
 │   │   └── routes/                        # /health, /query, /graph endpoints
 │   ├── graph/                             # Neo4j integration
 │   │   ├── connection.py                  # Driver + session pooling
@@ -513,11 +547,12 @@ semantica-poc/
 │   │   └── validation.py                  # Post-population checks
 │   ├── query/                             # NL-to-Cypher pipeline
 │   │   ├── classifier.py                  # Intent detection (keyword + LLM)
-│   │   ├── cypher_templates.py            # 6 parameterized Cypher templates
+│   │   ├── cypher_templates.py            # 8 parameterized Cypher templates
 │   │   ├── executor.py                    # Template execution + provenance edges
 │   │   ├── generator.py                   # LLM response synthesis
-│   │   └── formatter.py                   # Evidence normalization
-│   ├── axioms/                            # Bridge axiom engine
+│   │   ├── formatter.py                   # Evidence normalization
+│   │   └── validators.py                  # LLM response validation, claim verification, DOI checks
+│   ├── axioms/                            # Bridge axiom engine + sensitivity analysis
 │   ├── llm/                               # OpenAI-compatible LLM adapter
 │   ├── ingestion/                         # PDF extraction + graph merging
 │   └── config.py                          # Centralized env-based configuration
@@ -550,6 +585,22 @@ semantica-poc/
 │   ├── demo_healthcheck.py                # Pre-demo system verification
 │   ├── validate_graph.py                  # Post-population integrity checks
 │   └── run_ingestion.py                   # PDF ingestion pipeline
+│
+├── tests/                                # ═══ TEST SUITE (177 tests) ═══
+│   ├── conftest.py                        # Shared fixtures
+│   ├── test_api_endpoints.py              # API route tests with auth validation
+│   ├── test_bridge_axioms.py              # Bridge axiom computation tests
+│   ├── test_cabo_pulmo_validation.py      # Cabo Pulmo reference data integrity
+│   ├── test_classifier.py                 # Query classification accuracy
+│   ├── test_confidence.py                 # Composite confidence model tests
+│   ├── test_cypher_templates.py           # Template parameterization and LIMIT tests
+│   ├── test_entity_extraction.py          # Entity extraction pipeline tests
+│   ├── test_integration.py                # End-to-end pipeline integration tests
+│   ├── test_monte_carlo.py                # Monte Carlo simulation tests
+│   ├── test_population.py                 # Graph population pipeline tests
+│   ├── test_query_engine.py               # Query execution and response formatting
+│   ├── test_relationship_extraction.py    # Relationship extraction tests
+│   └── test_validators.py                 # LLM response validation tests
 │
 ├── demos/context_graph_demo/
 │   ├── cabo_pulmo_investment_grade.ipynb   # Investment-grade analysis notebook
@@ -1143,6 +1194,10 @@ The system is designed to answer complex, multi-hop questions with full provenan
 | Investor demo | Complete 10-min narrative without gaps |
 | Bridge axiom coverage | All 12 axioms functional |
 | Multi-habitat support | Coral, kelp, mangrove, seagrass |
+| Test suite | 177 tests passing |
+| API authentication | Bearer token + rate limiting |
+| Docker builds | Multi-stage API + Dashboard |
+| CI pipeline | GitHub Actions (lint + test) |
 
 ---
 
@@ -1188,11 +1243,18 @@ The system is designed to answer complex, multi-hop questions with full provenan
 | `requirements-v2.txt` | Python dependencies for v2 stack |
 | `maris/api/main.py` | FastAPI application factory |
 | `maris/api/models.py` | Pydantic request/response schemas |
-| `maris/query/cypher_templates.py` | 6 parameterized Cypher query templates |
+| `maris/query/cypher_templates.py` | 8 parameterized Cypher query templates |
 | `maris/graph/population.py` | Graph population from curated JSON assets |
 | `investor_demo/streamlit_app_v2.py` | v2 dashboard with live API integration |
 | `scripts/populate_neo4j.py` | Idempotent graph population script |
 | `scripts/demo_healthcheck.py` | Pre-demo system verification |
+| `Dockerfile.api` | Multi-stage API container (python:3.11-slim, non-root) |
+| `Dockerfile.dashboard` | Multi-stage dashboard container |
+| `requirements-dev.txt` | Test and lint dependencies (pytest, ruff, httpx) |
+| `.github/workflows/ci.yml` | GitHub Actions CI: lint + test pipeline |
+| `maris/api/auth.py` | Bearer token auth, rate limiting, request tracing |
+| `maris/query/validators.py` | LLM response validation, claim verification |
+| `maris/axioms/sensitivity.py` | OAT sensitivity analysis, tornado plot data |
 
 ### Utility Scripts
 
