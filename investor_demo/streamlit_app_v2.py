@@ -501,7 +501,7 @@ def fmt_service(key):
 # Plain-English bridge axiom descriptions
 AXIOM_INFO = {
     "BA-001": {
-        "meaning": "Fish biomass increases drive tourism value - divers will pay up to 84% more at sites with healthy reef biomass",
+        "meaning": "Fish biomass increases drive tourism value: divers will pay up to 84% more at sites with healthy reef biomass",
         "citation": "Marcos-Castillo et al. 2024",
     },
     "BA-002": {
@@ -626,20 +626,20 @@ st.markdown(f"""
 <div class="thesis-body">
 <strong>MARIS</strong> (Marine Asset Risk Intelligence System) is the marine-domain intelligence layer
 that converts ecological field data into investment-grade financial metrics. It contains 195 curated
-papers, <strong>{n_axioms} bridge axioms</strong> - quantitative translation rules that convert
+papers, <strong>{n_axioms} bridge axioms</strong> (quantitative translation rules that convert
 ecological measurements into financial estimates, each with documented coefficients and 95%
-confidence intervals - and 8 entity schemas covering species, habitats, MPAs, and ecosystem services.
+confidence intervals), and 8 entity schemas covering species, habitats, MPAs, and ecosystem services.
 <br><br>
 MARIS is built on <strong><a href="https://github.com/Hawksight-AI/semantica" target="_blank" style="color:#5B9BD5;text-decoration:none">Semantica</a></strong>,
 an open-source knowledge framework that validates, traces, and audits every claim back
 to its peer-reviewed source. Semantica ensures that no number exists without a DOI-backed
-provenance chain - the trust infrastructure that makes MARIS outputs auditable.
+provenance chain, the trust infrastructure that makes MARIS outputs auditable.
 <br><br>
 Together, they produce <strong>context graphs</strong>: structured knowledge representations where
 every output value traces through documented transformation steps to its original scientific source.
 Unlike traditional ESV estimates that deliver a point value without an audit trail, a context graph
 delivers the value <em>and</em> the complete reasoning chain behind it. This analysis values
-Cabo Pulmo's ecosystem services at <strong>{fmt_usd(esv_total)}</strong> annually - and every
+Cabo Pulmo's ecosystem services at <strong>{fmt_usd(esv_total)}</strong> annually, and every
 dollar can be independently verified.
 </div>
 </div>
@@ -691,7 +691,7 @@ with k4:
 # 4. Provenance Chain - THE CENTERPIECE
 # ---------------------------------------------------------------------------
 st.markdown('<div class="section-header">Provenance Chain</div>', unsafe_allow_html=True)
-st.markdown('<div class="section-desc">This graph is the core of the infrastructure. It is not a visualization of AI reasoning - it is a deterministic, auditable map where every node represents verified ecological or financial state and every edge applies a documented, peer-reviewed translation rule. An auditor can trace any financial claim back to the original field measurement.</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-desc">This graph is the core of the infrastructure. It is not a visualization of AI reasoning; it is a deterministic, auditable map where every node represents verified ecological or financial state and every edge applies a documented, peer-reviewed translation rule. An auditor can trace any financial claim back to the original field measurement.</div>', unsafe_allow_html=True)
 
 fig_prov = go.Figure()
 
@@ -1080,7 +1080,13 @@ with fw2:
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
-# 9. Ask MARIS - Chat Panel (NEW in v2)
+# 9. Scaling Intelligence (shared with v1)
+# ---------------------------------------------------------------------------
+from components.roadmap_section import render_roadmap_section
+render_roadmap_section()
+
+# ---------------------------------------------------------------------------
+# 10. Ask MARIS - Chat Panel
 # ---------------------------------------------------------------------------
 st.markdown('<div class="section-header">Ask MARIS</div>', unsafe_allow_html=True)
 st.markdown('<div class="section-desc">Query the MARIS knowledge graph in natural language. Every answer traces through bridge axioms to peer-reviewed evidence. Use the quick queries below or type your own question.</div>', unsafe_allow_html=True)
@@ -1099,7 +1105,7 @@ if st.session_state.get("maris_chat_history"):
             render_graph_explorer(graph_path)
 
 # ---------------------------------------------------------------------------
-# 10. Caveats & Footer
+# 11. Caveats & Footer
 # ---------------------------------------------------------------------------
 caveats_html = "".join(f"<li>{c}</li>" for c in data["caveats"])
 st.markdown(f"""
