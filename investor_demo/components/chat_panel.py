@@ -196,6 +196,45 @@ def _submit_query(client, question: str):
     )
 
 
+def _confidence_breakdown_html(breakdown: dict) -> str:
+    """Render confidence breakdown as an HTML mini-table."""
+    factors = [
+        ("Evidence Tier", "tier_base"),
+        ("Path Length", "path_discount"),
+        ("Data Freshness", "staleness_discount"),
+        ("Source Coverage", "sample_factor"),
+    ]
+    rows = ""
+    for label, key in factors:
+        val = breakdown.get(key, 0.0)
+        pct = int(val * 100)
+        bar_color = "#66BB6A" if val >= 0.8 else "#FFA726" if val >= 0.5 else "#EF5350"
+        rows += (
+            f"<tr>"
+            f'<td style="padding:6px 12px;color:#94A3B8;font-size:13px;border-bottom:1px solid #1E2D48">{label}</td>'
+            f'<td style="padding:6px 12px;border-bottom:1px solid #1E2D48">'
+            f'<div style="display:flex;align-items:center;gap:8px">'
+            f'<div style="flex:1;height:6px;background:#1E2D48;border-radius:3px;overflow:hidden">'
+            f'<div style="width:{pct}%;height:100%;background:{bar_color};border-radius:3px"></div></div>'
+            f'<span style="color:#CBD5E1;font-size:13px;font-weight:600;min-width:35px">{pct}%</span>'
+            f"</div></td></tr>"
+        )
+
+    explanation = breakdown.get("explanation", "")
+    composite = int(breakdown.get("composite", 0.0) * 100)
+
+    return (
+        f'<div style="margin-top:4px">'
+        f'<div style="font-size:13px;font-weight:600;color:#94A3B8;margin-bottom:8px">'
+        f"Composite: {composite}%</div>"
+        f'<table style="width:100%;border-collapse:collapse;background:rgba(15,26,46,0.6);'
+        f'border-radius:6px;overflow:hidden;border:1px solid #1E2D48">'
+        f"{rows}</table>"
+        f'<div style="margin-top:8px;font-size:12px;color:#64748B;font-style:italic">'
+        f"{explanation}</div></div>"
+    )
+
+
 def _render_response(entry: dict, idx: int):
     """Render a single question/response pair."""
     question = entry["question"]
@@ -207,6 +246,7 @@ def _render_response(entry: dict, idx: int):
     caveats = resp.get("caveats", [])
     evidence = resp.get("evidence", [])
     graph_path = resp.get("graph_path", [])
+    confidence_breakdown = resp.get("confidence_breakdown")
 
     # Outer card wrapping the entire response
     st.markdown(
@@ -267,6 +307,14 @@ def _render_response(entry: dict, idx: int):
     if evidence:
         with st.expander("Show evidence chain", expanded=False):
             st.markdown(_evidence_table(evidence), unsafe_allow_html=True)
+
+    # Confidence breakdown expander
+    if confidence_breakdown and isinstance(confidence_breakdown, dict):
+        with st.expander("Show confidence breakdown", expanded=False):
+            st.markdown(
+                _confidence_breakdown_html(confidence_breakdown),
+                unsafe_allow_html=True,
+            )
 
     # Graph path - stored for graph explorer
     if graph_path:

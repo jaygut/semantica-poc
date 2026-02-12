@@ -598,10 +598,10 @@ else:
 # ---------------------------------------------------------------------------
 ifc_badge = ""
 if data["framework_alignment"]["ifc_blue_finance"]["eligible_use_of_proceeds"]:
-    ifc_badge = '<span class="badge badge-green">IFC Blue Finance Eligible</span>'
+    ifc_badge = '<span class="badge badge-green" title="Self-assessed alignment with IFC Blue Finance Guidelines (2022) eligible use of proceeds criteria. Not independently verified.">IFC Blue Finance - Self-Assessed</span>'
 tnfd_badge = ""
 if data["framework_alignment"]["tnfd_leap"]["assess"]["opportunity"]:
-    tnfd_badge = '<span class="badge badge-blue">TNFD LEAP Aligned</span>'
+    tnfd_badge = '<span class="badge badge-blue" title="Anticipates alignment with TNFD LEAP disclosure framework. MARIS data structure follows LEAP phases but has not undergone independent TNFD review.">TNFD LEAP - Anticipates Alignment</span>'
 
 st.markdown(f"""
 <div class="masthead">
@@ -993,6 +993,80 @@ fig_mc.update_layout(
 
 st.plotly_chart(fig_mc, width="stretch")
 
+# Data age indicator
+biomass_year = data.get("ecological_recovery", {}).get("assessment_year", 2009)
+st.caption(f"*Biomass data: {biomass_year} | Tourism data: 2024 | ESV total: market-price method*")
+
+# Sensitivity tornado plot
+st.markdown('<div class="section-desc" style="margin-top:24px">**Parameter Sensitivity** - Which inputs drive ESV uncertainty most? One-at-a-time (OAT) analysis varies each service value by +/-20% while holding others constant.</div>', unsafe_allow_html=True)
+
+# Build tornado data from the ecosystem services
+_esv_services = data.get("ecosystem_services", {})
+_svc_list = []
+if isinstance(_esv_services, dict):
+    for _svc_key in ["tourism", "fisheries_spillover", "carbon_sequestration", "coastal_protection"]:
+        _svc_data = _esv_services.get(_svc_key, {})
+        if isinstance(_svc_data, dict) and _svc_data.get("annual_value_usd"):
+            _svc_list.append({
+                "name": _svc_key.replace("_", " ").title(),
+                "value": _svc_data["annual_value_usd"],
+            })
+
+if _svc_list:
+    _base_total = sum(s["value"] for s in _svc_list)
+    _tornado_data = []
+    for _s in _svc_list:
+        _low_total = _base_total - _s["value"] * 0.20
+        _high_total = _base_total + _s["value"] * 0.20
+        _tornado_data.append({
+            "name": _s["name"],
+            "low": _low_total,
+            "high": _high_total,
+            "impact": (_high_total - _low_total) / _base_total * 100,
+        })
+    _tornado_data.sort(key=lambda x: x["impact"])
+
+    fig_tornado = go.Figure()
+    for _td in _tornado_data:
+        fig_tornado.add_trace(go.Bar(
+            y=[_td["name"]],
+            x=[_td["low"] - _base_total],
+            orientation="h",
+            marker_color="#EF5350",
+            hovertemplate=f"-20%: {fmt_usd(_td['low'])}<extra></extra>",
+            showlegend=False,
+        ))
+        fig_tornado.add_trace(go.Bar(
+            y=[_td["name"]],
+            x=[_td["high"] - _base_total],
+            orientation="h",
+            marker_color="#66BB6A",
+            hovertemplate=f"+20%: {fmt_usd(_td['high'])}<extra></extra>",
+            showlegend=False,
+        ))
+
+    fig_tornado.add_vline(x=0, line_color="#94A3B8", line_width=1)
+    fig_tornado.update_layout(
+        height=200,
+        barmode="overlay",
+        margin=dict(l=0, r=0, t=10, b=30),
+        xaxis=dict(
+            title="ESV Change from Baseline (USD)",
+            tickprefix="$",
+            showgrid=True, gridcolor="#1E293B",
+            title_font=dict(size=12, color="#94A3B8"),
+            tickfont=dict(color="#94A3B8", size=11),
+        ),
+        yaxis=dict(
+            tickfont=dict(color="#CBD5E1", size=12),
+        ),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Inter", color="#CBD5E1"),
+    )
+    st.plotly_chart(fig_tornado, width="stretch")
+    st.caption(f"*Dominant parameter: {_tornado_data[-1]['name']} ({_tornado_data[-1]['impact']:.1f}% ESV swing at +/-20%)*")
+
 # Risk factor cards
 rc1, rc2 = st.columns(2)
 deg = data["risk_assessment"]["degradation_risk"]
@@ -1102,7 +1176,15 @@ if st.session_state.get("maris_chat_history"):
     graph_path = latest.get("response", {}).get("graph_path", [])
     if graph_path:
         with st.expander("Graph Explorer - Traversal Visualization", expanded=True):
-            render_graph_explorer(graph_path)
+            conf_threshold = st.slider(
+                "Confidence filter - hide edges below threshold",
+                min_value=0.0,
+                max_value=1.0,
+                value=0.0,
+                step=0.1,
+                help="Slide to hide low-confidence edges from the graph visualization",
+            )
+            render_graph_explorer(graph_path, confidence_threshold=conf_threshold)
 
 # ---------------------------------------------------------------------------
 # 11. Caveats & Footer
