@@ -52,3 +52,7 @@ data/registry_purge_report.json
 # AI IDE rules
 .windsurfrules
 .windsurf/
+
+# Test artifacts
+provenance.db
+*.db

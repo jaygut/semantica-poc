@@ -9,7 +9,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from maris.discovery.llm_detector import LLMPatternDetector, _parse_json_array
+from maris.discovery.llm_detector import (
+    LLMPatternDetector,
+    _parse_json_array,
+    _resolve_confidence,
+)
 from maris.discovery.pattern_detector import CandidatePattern, PatternDetector
 from maris.discovery.pipeline import DiscoveryPipeline
 
@@ -131,7 +135,7 @@ class TestParseJsonArray:
 
     def test_parse_invalid_json(self):
         result = _parse_json_array("not json at all")
-        assert result == []
+        assert result is None
 
     def test_parse_surrounding_text(self):
         text = 'Here are the results:\n[{"x": 42}]\nDone.'
@@ -433,3 +437,147 @@ class TestPipelineBackwardCompat:
         summary = pipeline.summary()
         assert summary["papers_loaded"] == len(sample_papers)
         assert "candidates_by_status" in summary
+
+
+# ---------------------------------------------------------------------------
+# Confidence resolution tests
+# ---------------------------------------------------------------------------
+
+class TestResolveConfidence:
+    """Tests for _resolve_confidence helper handling string and numeric values."""
+
+    def test_string_high(self):
+        assert _resolve_confidence("high") == 0.9
+
+    def test_string_medium(self):
+        assert _resolve_confidence("medium") == 0.7
+
+    def test_string_low(self):
+        assert _resolve_confidence("low") == 0.4
+
+    def test_string_unknown_defaults(self):
+        assert _resolve_confidence("unknown_label") == 0.5
+
+    def test_numeric_float(self):
+        assert _resolve_confidence(0.85) == 0.85
+
+    def test_numeric_int(self):
+        assert _resolve_confidence(1) == 1.0
+
+    def test_numeric_zero(self):
+        assert _resolve_confidence(0) == 0.0
+
+    def test_numeric_clamped_above(self):
+        assert _resolve_confidence(1.5) == 1.0
+
+    def test_numeric_clamped_below(self):
+        assert _resolve_confidence(-0.3) == 0.0
+
+    def test_case_insensitive(self):
+        assert _resolve_confidence("HIGH") == 0.9
+        assert _resolve_confidence("Medium") == 0.7
+
+
+# ---------------------------------------------------------------------------
+# Retry and robustness tests
+# ---------------------------------------------------------------------------
+
+class TestLLMRetryBehavior:
+    """Tests for retry logic when LLM returns unparseable output."""
+
+    def test_retries_on_unparseable_then_succeeds(self, sample_papers):
+        """First call returns garbage, second returns valid JSON."""
+        adapter = MagicMock()
+        adapter.complete.side_effect = [
+            "Sorry, I cannot parse that.",  # attempt 1 - unparseable
+            json.dumps([{
+                "ecological_metric": "fish biomass",
+                "financial_metric": "tourism revenue",
+                "coefficient": 84.0,
+                "unit": "%",
+                "confidence": "high",
+                "quote": "84% more revenue",
+            }]),  # attempt 2 - valid
+        ]
+        detector = LLMPatternDetector(llm_adapter=adapter, min_confidence=0.3)
+        detector.detect_patterns([sample_papers[0]])
+        # Should have called LLM twice for this paper
+        assert adapter.complete.call_count == 2
+
+    def test_no_retry_on_valid_empty_array(self, sample_papers):
+        """Empty array [] is valid - no retry needed."""
+        adapter = MagicMock()
+        adapter.complete.return_value = "[]"
+        detector = LLMPatternDetector(llm_adapter=adapter, min_confidence=0.3)
+        detector.detect_patterns([sample_papers[0]])
+        # Only one call - no retry because [] is valid
+        assert adapter.complete.call_count == 1
+
+    def test_numeric_confidence_in_llm_response(self, sample_papers):
+        """LLM returning numeric confidence (0.85) instead of string."""
+        adapter = MagicMock()
+        adapter.complete.return_value = json.dumps([{
+            "ecological_metric": "fish biomass",
+            "financial_metric": "tourism revenue",
+            "coefficient": 84.0,
+            "unit": "%",
+            "confidence": 0.85,
+            "quote": "84% more revenue",
+        }])
+        detector = LLMPatternDetector(llm_adapter=adapter, min_confidence=0.3)
+        patterns = detector.detect_patterns([sample_papers[0]])
+        llm_patterns = [p for p in patterns if p.coefficient_value == 84.0]
+        assert len(llm_patterns) > 0
+        # 0.85 + T1 boost (0.05) = 0.90
+        assert llm_patterns[0].confidence == pytest.approx(0.90)
+
+    def test_null_quote_handled(self, sample_papers):
+        """LLM returning null for quote field doesn't crash."""
+        adapter = MagicMock()
+        adapter.complete.return_value = json.dumps([{
+            "ecological_metric": "fish biomass",
+            "financial_metric": "tourism revenue",
+            "coefficient": 84.0,
+            "unit": "%",
+            "confidence": "high",
+            "quote": None,
+        }])
+        detector = LLMPatternDetector(llm_adapter=adapter, min_confidence=0.3)
+        patterns = detector.detect_patterns([sample_papers[0]])
+        llm_patterns = [p for p in patterns if p.coefficient_value == 84.0]
+        assert len(llm_patterns) > 0
+        assert llm_patterns[0].source_quote == ""
+
+
+class TestParseJsonArrayRobustness:
+    """Additional robustness tests for _parse_json_array."""
+
+    def test_filters_non_dict_items(self):
+        """Non-dict items in the array are filtered out."""
+        result = _parse_json_array('[{"a": 1}, "string_item", 42, {"b": 2}]')
+        assert len(result) == 2
+        assert result[0]["a"] == 1
+        assert result[1]["b"] == 2
+
+    def test_extra_fields_preserved(self):
+        """Extra fields from LLM output are preserved (not stripped)."""
+        text = json.dumps([{
+            "ecological_metric": "test",
+            "financial_metric": "test",
+            "coefficient": 1.0,
+            "unexpected_field": "preserved",
+        }])
+        result = _parse_json_array(text)
+        assert len(result) == 1
+        assert result[0]["unexpected_field"] == "preserved"
+
+    def test_nested_json_in_fences(self):
+        """JSON inside triple backtick fences with json label."""
+        text = 'Here is the output:\n```json\n[{"a": 1}]\n```\nDone.'
+        result = _parse_json_array(text)
+        assert len(result) == 1
+
+    def test_json_object_not_array(self):
+        """A JSON object (not array) returns None."""
+        result = _parse_json_array('{"not": "an array"}')
+        assert result is None

@@ -11,7 +11,6 @@ Run via:
 from __future__ import annotations
 
 import importlib.util
-import json
 import re
 from pathlib import Path
 
@@ -131,7 +130,7 @@ class TestT41CaboPulmoDisclosure:
         from maris.disclosure.renderers import render_markdown
         md = render_markdown(self.disclosure)
         violations = _check_terminology(md)
-        assert not violations, f"Terminology violations found:\n" + "\n".join(violations)
+        assert not violations, "Terminology violations found:\n" + "\n".join(violations)
 
 
 # ---------------------------------------------------------------------------
@@ -208,7 +207,7 @@ class TestT42SharkBayDisclosure:
         from maris.disclosure.renderers import render_markdown
         md = render_markdown(self.disclosure)
         violations = _check_terminology(md)
-        assert not violations, f"Terminology violations found:\n" + "\n".join(violations)
+        assert not violations, "Terminology violations found:\n" + "\n".join(violations)
 
 
 # ---------------------------------------------------------------------------
@@ -479,7 +478,7 @@ class TestT47AxiomDiscovery:
         )
 
         # Run the full pipeline
-        candidates = pipeline.run()
+        _candidates = pipeline.run()
 
         # Report statistics regardless of outcome
         stats = pipeline.summary()

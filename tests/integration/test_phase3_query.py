@@ -530,8 +530,6 @@ class TestT35ProvenanceEndpoint:
 
         This documents whether the Semantica bridge is wired into the API.
         """
-        import ast
-
         route_path = PROJECT_ROOT / "maris" / "api" / "routes" / "provenance.py"
         source = route_path.read_text()
 

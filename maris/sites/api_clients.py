@@ -43,11 +43,19 @@ class _BaseClient:
         for attempt in range(self.max_retries):
             try:
                 resp = httpx.get(url, params=params, timeout=self.timeout)
-                resp.raise_for_status()
                 # HTTP 204 No Content (and any response with empty body)
                 # has no JSON to parse - return empty list.
                 if resp.status_code == 204 or not resp.content:
                     return []
+                # Some APIs (e.g. Marine Regions) return 404 with a valid
+                # JSON body (empty array) to indicate "no results".  Parse
+                # the body before raising so callers get usable data.
+                if resp.status_code == 404 and resp.content:
+                    try:
+                        return resp.json()
+                    except (json.JSONDecodeError, ValueError):
+                        pass
+                resp.raise_for_status()
                 try:
                     return resp.json()
                 except (json.JSONDecodeError, ValueError):
@@ -78,6 +86,44 @@ class OBISClient(_BaseClient):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(base_url="https://api.obis.org/v3", **kwargs)
+        self._area_cache: dict[str, int | None] = {}
+
+    def search_area(self, name: str) -> int | None:
+        """Resolve an MPA name to an OBIS numeric area ID.
+
+        The OBIS ``areaid`` query parameter requires a numeric ID, not a
+        free-text name.  This method queries ``/v3/area/`` and returns the
+        first matching area ID, or ``None`` if no match is found.  Results
+        are cached for the lifetime of the client.
+        """
+        name_lower = name.lower()
+        if name_lower in self._area_cache:
+            return self._area_cache[name_lower]
+
+        try:
+            result = self._get("area/")
+            areas = result.get("results", []) if isinstance(result, dict) else result
+            for area in areas:
+                if isinstance(area, dict) and name_lower in area.get("name", "").lower():
+                    area_id = int(area["id"])
+                    self._area_cache[name_lower] = area_id
+                    return area_id
+        except (ConnectionError, ValueError, KeyError):
+            logger.warning("OBIS area lookup failed for '%s'", name)
+
+        self._area_cache[name_lower] = None
+        return None
+
+    def _resolve_area_id(self, mpa_name: str | None) -> int | None:
+        """Convert an MPA name to a numeric OBIS area ID if needed."""
+        if mpa_name is None:
+            return None
+        # Already numeric (int or string of digits)
+        if isinstance(mpa_name, int):
+            return mpa_name
+        if isinstance(mpa_name, str) and mpa_name.isdigit():
+            return int(mpa_name)
+        return self.search_area(mpa_name)
 
     def get_occurrences(
         self,
@@ -92,7 +138,7 @@ class OBISClient(_BaseClient):
         ----------
         geometry : WKT polygon string for spatial filtering.
         taxon_id : WoRMS AphiaID to filter by taxon.
-        mpa_name : Free-text MPA name search.
+        mpa_name : Free-text MPA name (resolved to OBIS area ID).
         limit : Maximum records to return.
         """
         params: dict[str, Any] = {"size": limit}
@@ -101,7 +147,11 @@ class OBISClient(_BaseClient):
         if taxon_id:
             params["taxonid"] = taxon_id
         if mpa_name:
-            params["areaid"] = mpa_name
+            area_id = self._resolve_area_id(mpa_name)
+            if area_id is not None:
+                params["areaid"] = area_id
+            else:
+                logger.warning("Could not resolve OBIS area ID for '%s'", mpa_name)
 
         result = self._get("occurrence", params=params)
         if isinstance(result, dict):
@@ -122,14 +172,18 @@ class OBISClient(_BaseClient):
         Parameters
         ----------
         geometry : WKT polygon for spatial filtering.
-        mpa_name : Free-text MPA / area name.
+        mpa_name : Free-text MPA name (resolved to OBIS area ID).
         limit : Maximum species to return (default 500).
         """
         params: dict[str, Any] = {"size": limit}
         if geometry:
             params["geometry"] = geometry
         if mpa_name:
-            params["areaid"] = mpa_name
+            area_id = self._resolve_area_id(mpa_name)
+            if area_id is not None:
+                params["areaid"] = area_id
+            else:
+                logger.warning("Could not resolve OBIS area ID for '%s'", mpa_name)
 
         result = self._get("checklist", params=params)
         if isinstance(result, dict):

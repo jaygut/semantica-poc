@@ -14,6 +14,8 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
+import httpx
+
 from maris.sites.api_clients import (
     MarineRegionsClient,
     OBISClient,
@@ -177,3 +179,14 @@ class TestMarineRegions204:
             client = MarineRegionsClient(max_retries=1)
             result = client.get_geometry(999999999)
         assert result == {}
+
+    def test_search_by_name_404_with_json_body_returns_parsed_json(self) -> None:
+        """Marine Regions returns HTTP 404 with valid JSON body for no-result queries."""
+        resp = _make_mock_response(status_code=404, content=b"[]", json_data=[])
+        resp.raise_for_status.side_effect = httpx.HTTPStatusError(
+            "404", request=MagicMock(), response=resp,
+        )
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = MarineRegionsClient(max_retries=1)
+            results = client.search_by_name("Nonexistent")
+        assert results == []

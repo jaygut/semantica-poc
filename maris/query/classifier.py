@@ -26,14 +26,14 @@ _KEYWORD_RULES: list[tuple[str, list[str]]] = [
         r"\bhow much\b.*\bworth\b",
     ]),
     ("provenance_drilldown", [
-        r"\b(?:evidence|provenance|doi|source|paper|citation|backed|supporting)\b",
+        r"\b(?:evidence|provenance|dois?|source|paper|citation|backed|support(?:s|ing|ed)?)\b",
         r"\bwhat.+(?:evidence|research|study|studies)\b",
         r"\bhow does.+(?:translat|lead to|convert|become)",
         r"\b(?:mechanism|translat)",
     ]),
     ("axiom_explanation", [
         r"\b(?:bridge.?axiom|axiom|coefficient)\b",
-        r"\b(?:BA-\d{3})\b",
+        r"\b(?:[Bb][Aa]-\d{3})\b",
         r"\b(?:seagrass|blue.?carbon).*(?:sequester|carbon|mechanism|how)\b",
         r"\bhow\b.*\b(?:seagrass|mangrove)\b.*\b(?:sequester|carbon|store)\b",
     ]),
@@ -41,9 +41,10 @@ _KEYWORD_RULES: list[tuple[str, list[str]]] = [
         r"\b(?:compar|versus|vs\.?|differ|rank|benchmark)\b",
     ]),
     ("risk_assessment", [
-        r"\b(?:risk|degrad|scenario|climate|threat|loss|lost|decline|vulnerab)\b",
+        r"\b(?:risk|degrad|scenario|climate|threat|loss|lost|declin\w*|vulnerab)\b",
         r"\bwhat\b.*\bif\b",
-        r"\bwhat\s+happens\b",
+        r"\bif\b.*\bwhat\b",
+        r"\bwhat\s+\w*\s*happen",
     ]),
 ]
 
@@ -191,6 +192,17 @@ class QueryClassifier:
 
         if scores:
             best = max(scores, key=scores.get)  # type: ignore[arg-type]
+
+            # Tie-break: prefer comparison over site_valuation when
+            # comparison-specific verbs are present
+            if (
+                best == "site_valuation"
+                and "comparison" in scores
+                and scores["comparison"] == scores["site_valuation"]
+                and re.search(r"\b(?:rank|compar|versus|vs\.?|benchmark)\b", q_lower)
+            ):
+                best = "comparison"
+
             confidence = min(0.6 + 0.15 * scores[best], 0.95)
             return {
                 "category": best,

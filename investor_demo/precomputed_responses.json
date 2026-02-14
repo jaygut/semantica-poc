@@ -2191,7 +2191,7 @@
     },
     "What is Shark Bay worth?": {
       "answer": "Shark Bay World Heritage Area generates an estimated $21.5M/year in ecosystem services [CI: $10.2M - $38.0M], derived from four service categories:\n\n- Carbon sequestration: $12.1M/year (BA-013, BA-014) - 4,800 km2 of seagrass meadows sequestering ~403,200 tCO2/yr at $15-50/tCO2 [Gomis et al. 2025, DOI: 10.1038/s41467-025-64667-6]\n- Fisheries: $5.2M/year - Sustainable fisheries supported by seagrass nursery habitat\n- Tourism: $3.4M/year - World Heritage tourism, dolphin encounters, wildlife viewing\n- Coastal protection: $800K/year - Wave attenuation by seagrass meadows\n\nShark Bay is rated AA with a composite score of 0.81, reflecting NEOLI alignment of 4/5 (meets No-take, Enforced, Old, Large; does not meet Isolated). Unlike coral reef sites where tourism dominates, Shark Bay's value is carbon-dominant (56% of total ESV), making it a candidate for blue carbon credit generation under Verra VM0033.",
-      "confidence": 0.3650,
+      "confidence": 0.365,
       "evidence": [
         {
           "doi": "10.1038/s41467-025-64667-6",
@@ -2285,7 +2285,7 @@
         "2010/2011 marine heatwave caused 36% seagrass loss, demonstrating reversal risk"
       ],
       "confidence_breakdown": {
-        "composite": 0.3650,
+        "composite": 0.365,
         "tier_base": 0.95,
         "path_discount": 0.95,
         "staleness_discount": 0.82,
@@ -2303,7 +2303,7 @@
     },
     "How much carbon does Shark Bay sequester?": {
       "answer": "Shark Bay contains one of the world's largest seagrass carbon sinks. The 4,800 km2 of seagrass meadows (480,000 hectares) sequester approximately 403,200 tCO2 per year, based on a global mean rate of 0.84 tCO2/ha/yr [Gomis et al. 2025, DOI: 10.1038/s41467-025-64667-6].\n\n**Carbon stock:** Shark Bay holds up to 1.3% of all carbon stored in the top metre of seagrass sediments worldwide - an estimated 240 million tonnes of CO2 [Arias-Ortiz et al. 2018, DOI: 10.1038/s41558-018-0096-y].\n\n**Sequestration rate breakdown:**\n- Seagrass area: 4,800 km2 (480,000 ha)\n- Rate: 0.84 tCO2/ha/yr [CI: 0.56-1.12]\n- Annual sequestration: ~403,200 tCO2/yr [CI: 268,800-537,600]\n- 12 seagrass species present, dominated by Amphibolis antarctica\n\nThe sediment burial rate of 0.84 tCO2/ha/yr reflects approximately 20% of seagrass net primary production being permanently sequestered [Gomis et al. 2025]. This makes Shark Bay one of the most significant natural carbon sinks on Earth. This rate is captured by bridge axiom BA-013 (seagrass_carbon_sequestration_rate).",
-      "confidence": 0.3900,
+      "confidence": 0.39,
       "evidence": [
         {
           "doi": "10.1038/s41467-025-64667-6",
@@ -2359,7 +2359,7 @@
         "12 seagrass species with different sequestration rates - rate aggregates across species"
       ],
       "confidence_breakdown": {
-        "composite": 0.3900,
+        "composite": 0.39,
         "tier_base": 0.95,
         "path_discount": 0.95,
         "staleness_discount": 0.86,
@@ -2376,7 +2376,7 @@
     },
     "What happens if seagrass is lost at Shark Bay?": {
       "answer": "The 2010/2011 marine heatwave at Shark Bay provides a real-world case study of seagrass carbon reversal risk. Water temperatures rose 2-4C above average for more than 2 months, causing devastating losses [Arias-Ortiz et al. 2018, DOI: 10.1038/s41558-018-0096-y].\n\n**Observed impacts:**\n- 36% of seagrass meadows damaged\n- ~1,000 km2 of habitat completely lost (22% of total meadows between 2002-2014)\n- Dominant species Amphibolis antarctica suffered widespread defoliation\n\n**Carbon consequences:**\n- An estimated 2-9 Tg CO2 (2-9 million tonnes) potentially released over the following 3 years\n- This increased Australia's land-use-change emissions by 4-21% per annum\n- The release occurs when previously anoxic seagrass sediments are exposed to oxygen after canopy loss\n\n**Financial implications (BA-015):**\n- At $15-50/tCO2, the carbon release represents $30M-$450M in lost carbon value\n- This demonstrates why permanence guarantees are essential for blue carbon credit markets\n- Bridge axiom BA-015 quantifies this reversal risk: seagrass loss releases 112-476 tCO2/ha of stored carbon\n\n**Recovery outlook:**\n- Seagrass recovery is ongoing but incomplete after >15 years\n- Recovery rates are significantly slower than degradation rates\n- MPA protection (NEOLI alignment) reduces but does not eliminate heatwave risk",
-      "confidence": 0.4100,
+      "confidence": 0.41,
       "evidence": [
         {
           "doi": "10.1038/s41558-018-0096-y",
@@ -2433,7 +2433,7 @@
         "Marine heatwave frequency is projected to increase under climate change scenarios"
       ],
       "confidence_breakdown": {
-        "composite": 0.4100,
+        "composite": 0.41,
         "tier_base": 0.95,
         "path_discount": 0.95,
         "staleness_discount": 0.86,
@@ -2450,7 +2450,7 @@
     },
     "What are the carbon credit opportunities at Shark Bay?": {
       "answer": "Shark Bay's 4,800 km2 of seagrass meadows represent one of the largest potential blue carbon credit opportunities globally. Here is the financial analysis using bridge axioms BA-013 and BA-014:\n\n**Annual credit generation potential:**\n- Sequestration rate: 0.84 tCO2/ha/yr across 480,000 ha = ~403,200 tCO2/yr\n- At $15/tCO2 (conservative): ~$6.0M/yr\n- At $30/tCO2 (mid-range): ~$12.1M/yr\n- At $50/tCO2 (premium quality): ~$20.2M/yr\n- At $90/tCO2 (high-integrity removal): ~$36.3M/yr\n\n**Applicable methodology:** Verra VCS VM0033 (Methodology for Tidal Wetland and Seagrass Restoration, v2.1) is the primary pathway for blue carbon credit generation from seagrass ecosystems.\n\n**Market context:**\n- The voluntary carbon market reached ~$1.7B in 2026, with blue carbon as an emerging high-value segment\n- Only ~10 blue carbon projects are actively issuing credits globally\n- High-quality nature-based credits trade at 300%+ premium over lower-rated credits\n- Mikoko Pamoja (Kenya) was the world's first blue carbon credit project; Shark Bay would be among the first seagrass-only projects at this scale\n\n**Key requirements:**\n- Additionality demonstration (protection prevents carbon release)\n- Permanence guarantee (25-100 years, supported by NEOLI 4/5 alignment per BA-016)\n- Monitoring, reporting, and verification (MRV) infrastructure\n- Non-permanence risk assessment per VM0033 tool",
-      "confidence": 0.3200,
+      "confidence": 0.32,
       "evidence": [
         {
           "doi": "10.1038/s44183-025-00111-y",
@@ -2516,10 +2516,10 @@
         "The $90/tCO2 scenario reflects emerging high-integrity removal credit demand from institutional buyers like Microsoft"
       ],
       "confidence_breakdown": {
-        "composite": 0.3200,
+        "composite": 0.32,
         "tier_base": 0.95,
-        "path_discount": 0.90,
-        "staleness_discount": 0.90,
+        "path_discount": 0.9,
+        "staleness_discount": 0.9,
         "sample_factor": 0.4167,
         "explanation": "Strong ecological data; market pricing inherently uncertain; credit issuance pathway not yet established for this site; 3 supporting sources"
       },
@@ -2533,7 +2533,7 @@
     },
     "Compare Cabo Pulmo and Shark Bay": {
       "answer": "Cabo Pulmo and Shark Bay represent two fundamentally different marine natural capital profiles - coral reef versus seagrass - demonstrating MARIS's ability to value diverse blue ecosystems.\n\n**Side-by-side comparison:**\n\n| Metric | Cabo Pulmo | Shark Bay |\n|--------|-----------|----------|\n| Ecosystem | Coral reef | Seagrass meadow |\n| Country | Mexico | Australia |\n| Area | 71 km2 | 23,000 km2 |\n| NEOLI Score | 4/5 | 4/5 |\n| Asset Rating | AAA (0.90) | AA (0.81) |\n| Total ESV | $29.27M/yr | $21.5M/yr |\n| Dominant Service | Tourism ($25.0M, 85%) | Carbon ($12.1M, 56%) |\n| Key Risk | Coral bleaching | Marine heatwaves |\n| Bridge Axioms | BA-001, BA-002, BA-011, BA-012 | BA-013, BA-014, BA-015, BA-016 |\n\n**Key insight:** Cabo Pulmo's value is tourism-dominant (85% of ESV), driven by the 463% biomass recovery attracting divers. Shark Bay's value is carbon-dominant (56% of ESV), driven by the world's largest seagrass carbon sink. Both score NEOLI 4/5 but through different criteria: Cabo Pulmo meets Isolated but not Large; Shark Bay meets Large but not Isolated.\n\n**For investors:** The two sites represent complementary asset classes. A portfolio containing both provides diversification across ecosystem types (reef/seagrass), revenue streams (tourism/carbon), geographies (Americas/Asia-Pacific), and risk profiles (bleaching/heatwave).",
-      "confidence": 0.3500,
+      "confidence": 0.35,
       "evidence": [
         {
           "doi": "10.1371/journal.pone.0023601",
@@ -2599,9 +2599,9 @@
         "Both sites face different climate risk profiles requiring distinct risk management approaches"
       ],
       "confidence_breakdown": {
-        "composite": 0.3500,
+        "composite": 0.35,
         "tier_base": 0.95,
-        "path_discount": 0.90,
+        "path_discount": 0.9,
         "staleness_discount": 0.82,
         "sample_factor": 0.5,
         "explanation": "Cross-site comparison relies on consistent methodology; different data vintages for each site; 3 supporting sources"
@@ -2615,7 +2615,7 @@
     },
     "What is blue carbon?": {
       "answer": "Blue carbon refers to the carbon captured and stored by coastal and marine ecosystems - primarily mangroves, seagrass meadows, and tidal salt marshes. These ecosystems are among the most efficient carbon sinks on Earth.\n\n**Key facts:**\n- Seagrass meadows bury approximately 20% of their net primary production in sediments, yielding 0.84 tCO2/ha/yr in long-term sequestration [Gomis et al. 2025, DOI: 10.1038/s41467-025-64667-6]\n- Coastal ecosystems store carbon in sediments for centuries to millennia, unlike terrestrial forests where carbon cycles more rapidly\n- Despite covering <2% of the ocean floor, seagrasses account for ~10% of annual ocean carbon burial\n\n**Why blue carbon matters for investors:**\n1. **Carbon credits:** Blue carbon generates tradeable Verified Carbon Units (VCUs) at $15-50/tCO2 under voluntary market standards like Verra VM0033 [Duarte et al. 2025, DOI: 10.1038/s44183-025-00111-y]\n2. **TNFD alignment:** 733 organizations (representing $22.4T AUM) have adopted TNFD disclosure frameworks that require nature-related impact reporting, including blue carbon\n3. **Risk management:** Loss of blue carbon ecosystems releases stored carbon - the 2010/2011 Shark Bay heatwave released an estimated 2-9 Tg CO2 [Arias-Ortiz et al. 2018]\n\n**In MARIS:** Blue carbon is modeled through bridge axioms BA-013 (sequestration rate), BA-014 (credit valuation), BA-015 (reversal risk), and BA-016 (permanence guarantee). Shark Bay World Heritage Area serves as the reference site for seagrass blue carbon, just as Cabo Pulmo serves for coral reef valuation.",
-      "confidence": 0.4200,
+      "confidence": 0.42,
       "evidence": [
         {
           "doi": "10.1038/s41467-025-64667-6",
@@ -2674,10 +2674,10 @@
         "Not all coastal ecosystems qualify for carbon credits - additionality and permanence requirements apply"
       ],
       "confidence_breakdown": {
-        "composite": 0.4200,
+        "composite": 0.42,
         "tier_base": 0.95,
         "path_discount": 0.95,
-        "staleness_discount": 0.90,
+        "staleness_discount": 0.9,
         "sample_factor": 0.5528,
         "explanation": "Well-established science from multiple peer-reviewed sources; market context from recent publications; 3 supporting sources"
       },
@@ -2689,7 +2689,7 @@
     },
     "How does seagrass sequester carbon?": {
       "answer": "Seagrass ecosystems sequester carbon through a multi-step biological and geochemical process that makes them one of the most efficient natural carbon sinks on Earth.\n\n**Sequestration mechanism:**\n1. **Photosynthesis:** Seagrass leaves absorb dissolved CO2 from seawater and convert it to organic carbon through photosynthesis, just as terrestrial plants do with atmospheric CO2\n2. **Below-ground storage:** Unlike terrestrial plants, seagrasses store 50-90% of their carbon in extensive root and rhizome networks buried in sediment\n3. **Sediment trapping:** Dense seagrass canopies slow water flow, causing suspended organic particles (from other marine organisms) to settle and accumulate in the sediment\n4. **Anoxic preservation:** Once buried below the sediment surface, organic carbon enters an oxygen-poor (anoxic) environment where decomposition is extremely slow\n5. **Millennial-scale storage:** Carbon can remain locked in seagrass sediments for hundreds to thousands of years, far longer than in most terrestrial ecosystems\n\n**Why seagrass is exceptional:**\n- Buries ~20% of net primary production in sediments for long-term storage [Gomis et al. 2025]\n- Rate: 0.84 tCO2/ha/yr (global mean) [CI: 0.56-1.12]\n- Stores carbon in sediments (not biomass), making it more permanent\n- Shark Bay alone: 4,800 km2 seagrass storing ~240 Mt CO2\n\n**Reversal risk:** When seagrass is lost (as in the 2010/2011 Shark Bay heatwave), previously anoxic sediments are exposed to oxygen, triggering rapid decomposition and CO2 release. This is modeled by bridge axiom BA-015.",
-      "confidence": 0.4300,
+      "confidence": 0.43,
       "evidence": [
         {
           "doi": "10.1038/s41467-025-64667-6",
@@ -2739,10 +2739,10 @@
         "Carbon storage permanence depends on continued seagrass health and sediment stability"
       ],
       "confidence_breakdown": {
-        "composite": 0.4300,
+        "composite": 0.43,
         "tier_base": 0.95,
         "path_discount": 0.95,
-        "staleness_discount": 0.90,
+        "staleness_discount": 0.9,
         "sample_factor": 0.5528,
         "explanation": "Well-established biological mechanisms confirmed by multiple peer-reviewed studies; 2 supporting sources"
       },
@@ -2754,7 +2754,7 @@
     },
     "What financial instruments apply to blue carbon?": {
       "answer": "Blue carbon ecosystems can be monetized through several financial instruments, each at different stages of market maturity:\n\n**1. Voluntary Carbon Credits (VCCs)**\n- Mechanism: Seagrass/mangrove conservation or restoration generates Verified Carbon Units (VCUs)\n- Standard: Verra VCS VM0033 (Tidal Wetland and Seagrass Restoration, v2.1)\n- Price range: $15-50/tCO2 in voluntary markets, with high-integrity credits trading at 300%+ premium\n- Example: Mikoko Pamoja (Gazi Bay, Kenya) - world's first blue carbon credit project, protecting 107 ha of mangrove and incorporating seagrass conservation\n- Shark Bay potential: ~403,200 VCUs/yr at $15-50/tCO2 = $6M-$20M/yr\n\n**2. Blue Bonds**\n- Mechanism: Sovereign or corporate debt instruments where proceeds fund marine conservation\n- Market: Seychelles issued the world's first sovereign blue bond ($15M, 2018); blue bond market growing\n- Application: Bond proceeds could fund seagrass protection and monitoring at Shark Bay\n- MARIS models these via FinancialInstrument nodes in the knowledge graph\n\n**3. Parametric Insurance**\n- Mechanism: Pre-defined payout triggers based on measurable events (e.g., sea surface temperature exceeding thresholds)\n- Application: Could protect against marine heatwave events like the 2010/2011 Shark Bay event\n- Market: Reef insurance pilot in Quintana Roo, Mexico (MAR Fund) demonstrates feasibility\n\n**4. Biodiversity Credits (emerging)**\n- Mechanism: Quantified units of biodiversity gain from conservation actions\n- Status: Early-stage market; frameworks being developed by Wallacea Trust, Plan Vivo\n- Application: Shark Bay's 12 seagrass species and dugong population could generate biodiversity units\n\n**TNFD context:** 733 organizations representing $22.4T in assets under management have adopted TNFD disclosure frameworks, creating institutional demand for nature-positive investments including blue carbon.",
-      "confidence": 0.3100,
+      "confidence": 0.31,
       "evidence": [
         {
           "doi": "10.1038/s44183-025-00111-y",
@@ -2805,10 +2805,10 @@
         "TNFD adoption figures (733 organizations, $22.4T AUM) are as of late 2025"
       ],
       "confidence_breakdown": {
-        "composite": 0.3100,
+        "composite": 0.31,
         "tier_base": 0.95,
         "path_discount": 0.85,
-        "staleness_discount": 0.90,
+        "staleness_discount": 0.9,
         "sample_factor": 0.4286,
         "explanation": "Market instruments are well-documented but rapidly evolving; some instruments are pre-commercial; 2 supporting sources"
       },
@@ -2819,6 +2819,1946 @@
       ],
       "unverified_claims": [
         "Blue bond applicability to Shark Bay is illustrative"
+      ]
+    },
+    "What is the carbon sequestration economics at Shark Bay?": {
+      "answer": "Shark Bay's carbon sequestration generates an estimated $12.1M/year, making it the dominant revenue stream (56% of total $21.5M ESV). The calculation follows a three-step chain through bridge axioms BA-013 and BA-014:\n\n**Step 1 - Physical sequestration (BA-013):**\n- Seagrass extent: 4,800 km2 (480,000 ha)\n- Sequestration rate: 0.84 tCO2/ha/yr (conservative, credit-eligible rate)\n- Annual sequestration: ~403,200 tCO2/yr\n\n**Step 2 - Monetization (BA-014):**\n- Carbon price: $30/tCO2 (Verra VCS benchmark)\n- Annual value: 403,200 x $30 = ~$12.1M/year\n\n**Step 3 - Stock value (asset base):**\n- Existing stock: 294 tCO2/ha in top meter of sediment\n- Total stock value: 480,000 ha x 294 tCO2/ha x $30 = ~$4.2 billion (unrealized asset)\n\nThe $12.1M figure represents annual flow value only. The underlying carbon stock of ~$4.2B represents the total asset at risk if seagrass is lost - a figure that reframes Shark Bay from a conservation site to a critical infrastructure asset.\n\nSource: Arias-Ortiz et al. 2018 (DOI: 10.1038/s41558-018-0096-y) for sequestration rates; Verra VCS VM0033 methodology for credit pricing.",
+      "confidence": 0.3249,
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s44183-025-00111-y",
+          "doi_url": "https://doi.org/10.1038/s44183-025-00111-y",
+          "title": "Duarte et al. (2025) - Marine blue carbon strategies",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Gomis et al. (2025) - Global seagrass blue carbon stocks and production",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-013",
+        "BA-014"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "HAS_HABITAT",
+          "to_node": "Seagrass Meadow",
+          "to_type": "Habitat"
+        },
+        {
+          "from_node": "Seagrass Meadow",
+          "from_type": "Habitat",
+          "relationship": "PROVIDES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "TRANSLATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-014",
+          "from_type": "BridgeAxiom",
+          "relationship": "TRANSLATES",
+          "to_node": "Carbon Credit Value",
+          "to_type": "FinancialValue"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Arias-Ortiz et al. 2018",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "0.84 tCO2/ha/yr is a conservative credit-eligible rate; natural gross sequestration can exceed 4 tCO2/ha/yr",
+        "Carbon price of $30/tCO2 is a current benchmark - prices are volatile",
+        "Stock calculation assumes uniform distribution across 4,800 km2; actual density varies"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3249,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.4226,
+        "explanation": "High-quality peer-reviewed sources; carbon rates from 2018 field data; 3 supporting sources"
+      },
+      "verified_claims": [
+        "$12.1M (Carbon sequestration)",
+        "$21.5M (total ESV)",
+        "0.84 tCO2/ha/yr",
+        "294 tCO2/ha"
+      ],
+      "unverified_claims": [
+        "$4.2 billion"
+      ]
+    },
+    "What are the risk factors for Shark Bay's seagrass?": {
+      "answer": "Shark Bay faces three primary risk categories that directly threaten its $21.5M/year ESV:\n\n**1. Marine heatwaves (severity: high, trend: increasing):**\nThe 2010/2011 marine heatwave is the defining risk event. With ocean temperatures 2-4C above normal, Shark Bay lost 36% of its seagrass meadows, releasing an estimated 2-9 Tg CO2. This single event increased Australia's land-use change emissions by 4-21% per annum over three years. Bridge axiom BA-015 quantifies the emission factor at 294 tCO2/ha released upon habitat loss.\n\nSource: Arias-Ortiz et al. 2018 (DOI: 10.1038/s41558-018-0096-y)\n\n**2. Carbon permanence risk (severity: moderate):**\nBA-016 addresses the fundamental challenge for blue carbon credits: stored carbon can be released if the seagrass is damaged. The 2011 event demonstrated this is not theoretical. Verra VCS VM0033 methodology requires buffer pool deductions to address reversal risk, reducing net credit issuance.\n\n**3. Climate trajectory (severity: high, trend: worsening):**\nShark Bay sits near the thermal tolerance limit for some seagrass species. Warming Indian Ocean temperatures increase both the frequency and intensity of marine heatwaves. Recovery from the 2011 event was partial and uneven by 2018 - a 7+ year timeline that may exceed carbon crediting assumptions.\n\n**Financial implication:** These risks justify Shark Bay's AA rating (vs. Cabo Pulmo's AAA), with a composite score of 0.81 reflecting strong fundamentals but material climate vulnerability.",
+      "confidence": 0.3412,
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-59204-4",
+          "doi_url": "https://doi.org/10.1038/s41467-025-59204-4",
+          "title": "Krause et al. (2025) - Global seagrass carbon stock variability and loss emissions",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s43247-025-02035-4",
+          "doi_url": "https://doi.org/10.1038/s43247-025-02035-4",
+          "title": "Lovelock et al. (2025) - Permanence risks in blue carbon financing",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-015",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "HAS_HABITAT",
+          "to_node": "Seagrass Meadow",
+          "to_type": "Habitat"
+        },
+        {
+          "from_node": "BA-015",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Shark Bay World Heritage Area",
+          "to_type": "MPA"
+        },
+        {
+          "from_node": "BA-016",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Shark Bay World Heritage Area",
+          "to_type": "MPA"
+        },
+        {
+          "from_node": "BA-015",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Arias-Ortiz et al. 2018",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Heatwave frequency projections depend on climate scenario (RCP/SSP pathway)",
+        "Recovery rate varies by location within the bay - some areas show good recovery, others do not",
+        "Permanence risk discount is modeled, not yet applied in a live carbon credit project at Shark Bay"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3412,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.4226,
+        "explanation": "High-quality peer-reviewed sources; 2011 heatwave is empirical evidence; 3 supporting sources"
+      },
+      "verified_claims": [
+        "$21.5M (total ESV)",
+        "36% seagrass loss",
+        "2-9 Tg CO2 released",
+        "294 tCO2/ha"
+      ],
+      "unverified_claims": []
+    },
+    "How does Shark Bay's revenue break down by service?": {
+      "answer": "Shark Bay World Heritage Area generates $21.5M/year in ecosystem services across four categories with a distinctly different profile from Cabo Pulmo:\n\n**Carbon sequestration: $12.1M/year (56.3% of total)**\n- Seagrass extent: 4,800 km2 at 0.84 tCO2/ha/yr\n- Priced at $30/tCO2 via Verra VCS VM0033\n- Bridge axiom: BA-013 (sequestration rate) -> BA-014 (credit value)\n- Source: Arias-Ortiz et al. 2018\n\n**Fisheries: $5.2M/year (24.2%)**\n- MSC-certified Shark Bay prawn fishery (WA's largest)\n- Key species: western king prawn, blue swimmer crab, scallops\n- High seagrass nursery dependency\n\n**Tourism: $3.4M/year (15.8%)**\n- 108,000 annual visitors\n- Key attraction: Monkey Mia dolphin interaction\n- World Heritage status provides brand premium\n\n**Coastal protection: $0.8M/year (3.7%)**\n- 40% wave energy reduction from seagrass meadows\n- 350 km of protected coastline\n- Valued via avoided-cost method\n\n**Portfolio insight:** Shark Bay's carbon-dominant profile (56%) contrasts sharply with Cabo Pulmo's tourism-dominant profile (85%). This difference creates distinct risk profiles - Shark Bay is more sensitive to carbon price volatility but less exposed to tourism demand shocks.",
+      "confidence": 0.3249,
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s44183-025-00111-y",
+          "doi_url": "https://doi.org/10.1038/s44183-025-00111-y",
+          "title": "Duarte et al. (2025) - Marine blue carbon strategies",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-013",
+        "BA-014"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Carbon value sensitive to $30/tCO2 price assumption",
+        "Fisheries values are approximate based on publicly available regional data",
+        "Tourism estimates are conservative based on regional visitor data"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3249,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.4226,
+        "explanation": "Peer-reviewed sources for carbon; market data for fisheries and tourism; 2 supporting sources"
+      },
+      "verified_claims": [
+        "$21.5M (total ESV)",
+        "$12.1M (Carbon)",
+        "$5.2M (Fisheries)",
+        "$3.4M (Tourism)",
+        "$0.8M (Coastal protection)"
+      ],
+      "unverified_claims": []
+    },
+    "How does UNESCO status affect Shark Bay's value?": {
+      "answer": "Shark Bay's UNESCO World Heritage listing (1991) functions as a multi-layered credit enhancement for natural capital valuation:\n\n**Governance credibility:**\n- International recognition provides a governance floor that domestic policy changes cannot easily override\n- 33 years of continuous listing demonstrates long-term institutional commitment\n- Satisfies the NEOLI 'Old' criterion (>10 years) with substantial margin\n- Joint management with Malgana Aboriginal Corporation (ILUA 2024) adds Indigenous co-management credibility\n\n**Financial implications:**\n- UNESCO status supports higher carbon credit pricing through enhanced permanence expectations\n- World Heritage premium on tourism: the listing itself is a marketing asset for the 108,000 annual visitors\n- For blue bond structuring, UNESCO designation strengthens the governance narrative required by IFC Blue Finance Guidelines\n\n**Risk mitigation:**\n- De-listing requires deliberate and sustained mismanagement - a high political bar\n- International monitoring through UNESCO's State of Conservation reporting provides early warning\n- Multi-agency governance (DBCA, Parks and Wildlife, Malgana) distributes institutional risk\n\n**Contribution to rating:**\nShark Bay's governance effectiveness score (0.90, weighted 25%) is the highest component of its AA composite rating (0.81). The UNESCO listing is the primary driver of this score.\n\nFor investors, UNESCO status is the closest thing to a sovereign guarantee for natural capital.",
+      "confidence": 0.2504,
+      "evidence": [
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. (2014) - Global conservation outcomes depend on marine protected areas with five key features",
+          "year": 2014,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "NEOLI 4/5",
+          "from_type": "GovernanceScore",
+          "relationship": "MAPS_TO",
+          "to_node": "BA-016",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-016",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Edgar et al. 2014",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "UNESCO status provides governance credibility but does not prevent climate-driven damage",
+        "Tourism premium from World Heritage listing is inferred, not directly measured",
+        "AA rating reflects material climate risk despite strong governance"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2504,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.2929,
+        "explanation": "Governance assessment well-established; UNESCO listing is factual; 1 supporting source"
+      },
+      "verified_claims": [
+        "AA (asset rating)",
+        "0.81 (composite score)",
+        "4/5 (NEOLI criteria met)"
+      ],
+      "unverified_claims": []
+    },
+    "What is the asset rating for Shark Bay?": {
+      "answer": "Shark Bay World Heritage Area holds an AA asset rating with a composite score of 0.81. This reflects strong ecological and governance fundamentals tempered by material climate risk.\n\n**Rating components:**\n\n- Ecological condition: 0.85 (weight 40%) - World's largest seagrass carbon stock, but demonstrated heatwave vulnerability from the 2011 event\n- Governance effectiveness: 0.90 (weight 25%) - UNESCO World Heritage listing, multi-agency governance, Indigenous co-management via Malgana Aboriginal Corporation\n- Financial sustainability: 0.75 (weight 20%) - Carbon-dominant revenue profile with emerging blue carbon credit potential under Verra VCS VM0033\n- Risk factors: 0.65 (weight 15%) - 36% seagrass loss in 2011 marine heatwave; permanence risk for carbon credits; warming Indian Ocean trend\n\n**Comparison to Cabo Pulmo (AAA, 0.90):**\nThe one-notch difference (AA vs AAA) is driven primarily by Shark Bay's higher risk factor score and lower ecological condition score. While Shark Bay's governance is equally strong, the demonstrated climate vulnerability and slower recovery trajectory reduce the composite.\n\n**For investors:** AA represents investment-grade quality with a clear risk narrative. The risk factors are quantified and documented, not hidden - this transparency is itself a feature of the MARIS approach.",
+      "confidence": 0.2273,
+      "evidence": [
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. (2014) - Global conservation outcomes depend on marine protected areas with five key features",
+          "year": 2014,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-011",
+        "BA-015",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "NEOLI 4/5",
+          "from_type": "GovernanceScore",
+          "relationship": "MAPS_TO",
+          "to_node": "BA-011",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "PRODUCES",
+          "to_node": "AA Rating (0.81)",
+          "to_type": "FinancialValue"
+        }
+      ],
+      "caveats": [
+        "Rating methodology is MARIS-internal, not externally certified",
+        "NEOLI alignment, not NEOLI compliance",
+        "Risk factor score (0.65) reflects demonstrated vulnerability, not speculation"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2273,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "Peer-reviewed sources for ecological and risk data; governance based on factual listing; 2 supporting sources"
+      },
+      "verified_claims": [
+        "AA (asset rating)",
+        "0.81 (composite score)",
+        "$21.5M (total ESV)",
+        "4/5 (NEOLI criteria met)"
+      ],
+      "unverified_claims": []
+    },
+    "What is the carbon permanence risk at Shark Bay?": {
+      "answer": "Carbon permanence risk is the central challenge for blue carbon credit viability at Shark Bay, and bridge axiom BA-016 explicitly addresses it.\n\n**The permanence problem:**\nCarbon credits assume that sequestered carbon stays stored for the crediting period (typically 25-100 years under VCS). But the 2011 marine heatwave proved that seagrass carbon stocks are not permanent - 36% of meadows were damaged, releasing 2-9 Tg CO2 over three years. This is not theoretical risk; it is empirical observation.\n\n**BA-016 quantification:**\n- Expected permanence: 50 years (range 25-100 years) for well-governed no-take MPAs\n- Climate risk: 36% habitat loss fraction in a single heatwave event (CI [15%, 50%])\n- Buffer pool requirement: Standard VCS methodology requires a percentage of credits be held in reserve to cover reversals\n\n**What this means for investors:**\n1. Carbon credit revenue ($12.1M/year) should be discounted by the permanence risk buffer - typically 10-20% of gross credits under VCS\n2. Net annual credit revenue after buffer: approximately $9.7M-$10.9M/year\n3. Insurance products or diversified revenue streams are needed to backstop permanence risk\n4. The 2011 event provides empirical data to price this risk, which is more than most blue carbon sites can offer\n\n**Silver lining:** Having a documented reversal event is paradoxically valuable. It allows actuarial pricing of climate risk rather than relying on modeled assumptions. The 7+ year partial recovery timeline also provides empirical data on ecosystem resilience.\n\nSource: Arias-Ortiz et al. 2018 (DOI: 10.1038/s41558-018-0096-y); Lovelock et al. 2025 (DOI: 10.1038/s43247-025-02035-4)",
+      "confidence": 0.2935,
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s43247-025-02035-4",
+          "doi_url": "https://doi.org/10.1038/s43247-025-02035-4",
+          "title": "Lovelock et al. (2025) - Permanence risks in blue carbon financing",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s44183-025-00111-y",
+          "doi_url": "https://doi.org/10.1038/s44183-025-00111-y",
+          "title": "Duarte et al. (2025) - Marine blue carbon strategies",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-015",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "HAS_HABITAT",
+          "to_node": "Seagrass Meadow",
+          "to_type": "Habitat"
+        },
+        {
+          "from_node": "BA-016",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Shark Bay World Heritage Area",
+          "to_type": "MPA"
+        },
+        {
+          "from_node": "BA-015",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Shark Bay World Heritage Area",
+          "to_type": "MPA"
+        },
+        {
+          "from_node": "BA-016",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Lovelock et al. 2025",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Buffer pool percentages are methodology-specific and may vary by VCS version",
+        "Net revenue estimate of $9.7M-$10.9M is illustrative, not from a live credit project",
+        "Permanence risk pricing is an emerging field - actuarial models for marine ecosystems are nascent"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2935,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.4226,
+        "explanation": "Empirical heatwave data provides strong evidence base; 3 supporting sources"
+      },
+      "verified_claims": [
+        "$12.1M (Carbon sequestration)",
+        "36% seagrass loss",
+        "2-9 Tg CO2 released"
+      ],
+      "unverified_claims": [
+        "$9.7M",
+        "$10.9M"
+      ]
+    },
+    "What evidence supports Shark Bay's carbon estimates?": {
+      "answer": "Shark Bay's carbon valuation is backed by a multi-source evidence chain, all T1 (peer-reviewed):\n\n**Primary source - site-specific field data:**\n- Arias-Ortiz et al. 2018, Nature Climate Change (DOI: 10.1038/s41558-018-0096-y)\n- Findings: Carbon stock of 45 Tg Corg (uncertainty +/- 23 Tg), sequestration rate 200 Gg C/yr (range 65-527), 36% seagrass loss from 2011 heatwave released 2-9 Tg CO2\n- Evidence tier: T1, direct field measurements from Shark Bay\n\n**Global synthesis sources:**\n- Gomis et al. 2025, Nature Communications (DOI: 10.1038/s41467-025-64667-6): Global seagrass NPP of 5,833 +/- 557 kg C/ha/yr with ~20% burial efficiency\n- Krause et al. 2025, Nature Communications (DOI: 10.1038/s41467-025-59204-4): Global seagrass soil Corg stock median 24.2 Mg/ha (IQR 12.4-44.9) from 2,700+ cores; 53% remineralization over 25 years\n- Strydom et al. 2023, Earth System Science Data (DOI: 10.5194/essd-15-511-2023): Global dataset from 14,271 data points across 390 publications\n\n**Methodology source:**\n- Verra VCS VM0033: Tidal Wetland and Seagrass Restoration methodology - applicable to Shark Bay carbon accounting\n\n**Key strength:** Shark Bay is one of the few blue carbon sites with both site-specific empirical data (Arias-Ortiz 2018) AND a documented reversal event. This combination enables risk pricing that most carbon credit projects cannot support.",
+      "confidence": 0.506,
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Gomis et al. (2025) - Global seagrass blue carbon stocks and production",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-59204-4",
+          "doi_url": "https://doi.org/10.1038/s41467-025-59204-4",
+          "title": "Krause et al. (2025) - Global seagrass carbon stock variability and loss emissions",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.5194/essd-15-511-2023",
+          "doi_url": "https://doi.org/10.5194/essd-15-511-2023",
+          "title": "Strydom et al. (2023) - Global seagrass meadow structure, biomass, and production dataset",
+          "year": 2023,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-013",
+        "BA-014",
+        "BA-015"
+      ],
+      "graph_path": [
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Gomis et al. 2025",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Krause et al. 2025",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-015",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Arias-Ortiz et al. 2018",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Arias-Ortiz 2018 data is site-specific but from 2011/2018 observations",
+        "Global synthesis values may not perfectly match site-specific conditions",
+        "Carbon price ($30/tCO2) is a market assumption, not an evidence-derived quantity"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.506,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.5918,
+        "explanation": "Multiple T1 sources including site-specific field data; 4 supporting sources"
+      },
+      "verified_claims": [
+        "$12.1M (Carbon sequestration)",
+        "0.84 tCO2/ha/yr",
+        "294 tCO2/ha",
+        "36% seagrass loss"
+      ],
+      "unverified_claims": []
+    },
+    "What is the habitat loss emission liability at Shark Bay?": {
+      "answer": "Bridge axiom BA-015 quantifies the carbon emission liability if Shark Bay's seagrass is lost:\n\n**Per-hectare emission factor:**\n- 294 tCO2/ha released upon habitat loss (CI [112, 476])\n- Derived from top-meter soil carbon stock (~140 Mg C/ha = 520 tCO2/ha) with ~57% remineralization\n- Source: Arias-Ortiz et al. 2018 (DOI: 10.1038/s41558-018-0096-y)\n\n**Scenario analysis - repeat of 2011 event (36% loss):**\n- Area affected: 172,800 ha (36% of 480,000 ha)\n- Emission: 172,800 x 294 = ~50.8 million tCO2\n- At $30/tCO2 social cost: ~$1.52 billion in climate damages\n- At current carbon prices: ~$1.52 billion in potential credit liability\n\n**Historical precedent:**\n- The 2011 event actually released 2-9 Tg CO2 (2-9 million tonnes)\n- This increased Australia's land-use change emissions by 4-21% per annum over three years\n\n**Global context (Krause et al. 2025):**\n- Total global seagrass carbon at risk: 1,154 Tg CO2 (range 665-1,699)\n- Social cost if lost: $213 billion (2020 USD)\n\n**Why this matters for investors:** The emission liability reframes MPA protection from a cost to an insurance premium. The cost of protection is negligible compared to the carbon liability released by habitat loss. This asymmetry is central to the blue carbon investment thesis.",
+      "confidence": 0.2935,
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-59204-4",
+          "doi_url": "https://doi.org/10.1038/s41467-025-59204-4",
+          "title": "Krause et al. (2025) - Global seagrass carbon stock variability and loss emissions",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-015"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "HAS_HABITAT",
+          "to_node": "Seagrass Meadow",
+          "to_type": "Habitat"
+        },
+        {
+          "from_node": "BA-015",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Shark Bay World Heritage Area",
+          "to_type": "MPA"
+        },
+        {
+          "from_node": "BA-015",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Arias-Ortiz et al. 2018",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Emission estimates assume uniform carbon density - actual distribution varies across the bay",
+        "Remineralization occurs over years to decades, not instantaneously",
+        "$1.52B figure uses linear scaling - actual emissions would depend on disturbance type and extent"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2935,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.2929,
+        "explanation": "Strong empirical basis from 2011 event; 2 supporting sources"
+      },
+      "verified_claims": [
+        "294 tCO2/ha",
+        "36% seagrass loss",
+        "2-9 Tg CO2 released"
+      ],
+      "unverified_claims": [
+        "$1.52 billion",
+        "50.8 million tCO2"
+      ]
+    },
+    "What does revenue concentration risk look like across sites?": {
+      "answer": "Revenue concentration risk varies dramatically between the two fully characterized sites, revealing fundamentally different risk profiles:\n\n**Cabo Pulmo - Tourism-concentrated (AAA):**\n- Tourism: $25.0M (85.4% of $29.27M total)\n- Fisheries: $3.2M (10.9%)\n- Coastal protection: $890K (3.0%)\n- Carbon: $180K (0.6%)\n- Herfindahl-Hirschman Index (HHI): ~0.75 (highly concentrated)\n\n**Shark Bay - Carbon-concentrated (AA):**\n- Carbon: $12.1M (56.3% of $21.5M total)\n- Fisheries: $5.2M (24.2%)\n- Tourism: $3.4M (15.8%)\n- Coastal protection: $0.8M (3.7%)\n- Herfindahl-Hirschman Index (HHI): ~0.41 (moderately concentrated)\n\n**Risk interpretation:**\nCabo Pulmo's 85% tourism dependence means a pandemic, travel restriction, or destination reputation shock could eliminate most of its ESV. However, tourism demand is relatively stable absent black-swan events, and biomass recovery provides a resilient physical asset.\n\nShark Bay's 56% carbon dependence exposes it to carbon price volatility and permanence risk, but its more diversified revenue base (4 meaningful streams) provides better shock absorption. A carbon price crash from $30 to $15/tCO2 would reduce total ESV by 28%, while a comparable tourism shock at Cabo Pulmo would reduce ESV by 42%.\n\n**Portfolio implication:** A portfolio holding both sites achieves natural diversification across revenue drivers (tourism vs. carbon), geographies (Americas vs. Australasia), and habitats (coral reef vs. seagrass).",
+      "confidence": 0.2504,
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41598-024-83664-1",
+          "doi_url": "https://doi.org/10.1038/s41598-024-83664-1",
+          "title": "Marcos-Castillo et al. (2024) - Tourism valuation framework for marine reserves",
+          "year": 2024,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-013",
+        "BA-014"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "HHI calculations use current ESV estimates - concentration may shift with updated data",
+        "Scenario analysis (carbon crash, tourism shock) assumes proportional scaling",
+        "Portfolio diversification benefit assumes low correlation between tourism and carbon markets"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2504,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "Comparative analysis using verified site data; scenario projections are modeled; 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (Cabo Pulmo ESV)",
+        "$21.5M (Shark Bay ESV)",
+        "$25.0M (Tourism)",
+        "$12.1M (Carbon)"
+      ],
+      "unverified_claims": [
+        "HHI ~0.75",
+        "HHI ~0.41"
+      ]
+    },
+    "Which site generates more value per square kilometer?": {
+      "answer": "Per-area efficiency reveals a striking 100x difference between the sites:\n\n**Cabo Pulmo National Park:**\n- Total ESV: $29.27M/year\n- Area: 71.11 km2\n- ESV per km2: ~$411,600/km2/year\n\n**Shark Bay World Heritage Area:**\n- Total ESV: $21.5M/year\n- Area: 23,000 km2 (total) / 4,800 km2 (seagrass extent)\n- ESV per km2 (total area): ~$935/km2/year\n- ESV per km2 (seagrass only): ~$4,479/km2/year\n\n**Why Cabo Pulmo wins on intensity:**\nCoral reef ecosystems are among the most productive per unit area on Earth. Combined with concentrated dive tourism at a small, iconic site, Cabo Pulmo delivers extraordinary ESV density. This is the power of BA-001's biomass-to-tourism elasticity at work - a 4.63x biomass increase in 71 km2 generates more tourism value than 4,800 km2 of carbon sequestration.\n\n**Why Shark Bay wins on scale:**\nShark Bay's enormous seagrass extent (4,800 km2 - the world's largest) means its total carbon stock is irreplaceable. While per-hectare value is lower, the absolute scale creates a carbon asset with no substitute.\n\n**Investment insight:** Per-area metrics favor tourism-driven sites for high-intensity, small-scale investments. Carbon-driven sites offer scale but require larger areas to generate comparable total returns. The optimal portfolio strategy depends on whether the investor prioritizes return intensity or asset scale.",
+      "confidence": 0.2154,
+      "evidence": [
+        {
+          "doi": "10.1038/s41598-024-83664-1",
+          "doi_url": "https://doi.org/10.1038/s41598-024-83664-1",
+          "title": "Marcos-Castillo et al. (2024) - Tourism valuation framework for marine reserves",
+          "year": 2024,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-013"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Per-km2 comparisons do not account for differing habitat productivity",
+        "Cabo Pulmo's area (71 km2) refers to the MPA boundary; the active reef is a subset",
+        "Shark Bay's total area (23,000 km2) includes non-seagrass habitat"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2154,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "Calculations derived from verified area and ESV data; 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (Cabo Pulmo ESV)",
+        "$21.5M (Shark Bay ESV)",
+        "71.11 km2 (Cabo Pulmo area)",
+        "23,000 km2 (Shark Bay area)"
+      ],
+      "unverified_claims": [
+        "$411,600/km2",
+        "$935/km2",
+        "$4,479/km2"
+      ]
+    },
+    "Which site is more resilient to climate change?": {
+      "answer": "Climate resilience differs qualitatively between the two sites due to their distinct habitat types and threat profiles:\n\n**Cabo Pulmo (coral reef) - Moderate resilience:**\n- BA-011 quantifies a 30% disturbance reduction and 20% faster recovery within the MPA\n- Primary threats: coral bleaching, ocean acidification, storm damage\n- Resilience factors: intact trophic structure (4.63x biomass), 29 years of no-take protection, deep-water isolation\n- Key vulnerability: coral has hard thermal thresholds - recovery from bleaching requires return to baseline temperatures\n\n**Shark Bay (seagrass) - Lower resilience, but demonstrated recovery capacity:**\n- The 2011 heatwave provides empirical resilience data: 36% loss, partial recovery by 2018 (7+ years)\n- Primary threats: marine heatwaves, dredging (mitigated by MPA), coastal development\n- Resilience factor: Posidonia australis is a 4,500-year-old polyploid clone - extraordinary genetic resilience\n- Key vulnerability: Shark Bay is at the thermal limit for some seagrass species; warming is projected to intensify\n\n**Comparative assessment:**\nCabo Pulmo's coral reef benefits from the MPA resilience premium (BA-011), but coral ecosystems globally face existential threat from warming and acidification. Shark Bay has already experienced and partially recovered from a major disturbance event, providing empirical evidence of resilience - but the 36% loss and multi-year recovery timeline is concerning for permanence-dependent carbon credits.\n\nNeither site is immune to climate change. The difference is in the nature of the risk: Cabo Pulmo faces threshold effects (bleaching), while Shark Bay faces gradual degradation with episodic shocks (heatwaves).",
+      "confidence": 0.2365,
+      "evidence": [
+        {
+          "doi": "10.1111/gcb.17477",
+          "doi_url": "https://doi.org/10.1111/gcb.17477",
+          "title": "Ortiz-Villa et al. (2024) - MPA climate resilience outcomes",
+          "year": 2024,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1111/ele.12598",
+          "doi_url": "https://doi.org/10.1111/ele.12598",
+          "title": "Mellin et al. (2016) - Coral reef community resilience from MPAs",
+          "year": 2016,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-011",
+        "BA-015",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_VIA",
+          "to_node": "BA-011",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_VIA",
+          "to_node": "BA-015",
+          "to_type": "BridgeAxiom"
+        }
+      ],
+      "caveats": [
+        "Climate projections carry high uncertainty across all scenarios",
+        "Resilience comparisons across habitat types are qualitative, not directly quantifiable",
+        "Recovery capacity does not guarantee long-term survival under sustained warming"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2365,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.4226,
+        "explanation": "Mix of empirical and modeled evidence; 3 supporting sources"
+      },
+      "verified_claims": [
+        "4.63x (biomass ratio)",
+        "36% seagrass loss"
+      ],
+      "unverified_claims": []
+    },
+    "How do the two sites complement each other in a portfolio?": {
+      "answer": "Cabo Pulmo and Shark Bay are near-optimal complements for a marine natural capital portfolio, with low correlation across every major dimension:\n\n**Geography:** Americas (Mexico) vs. Australasia (Australia) - different sovereign risk, currency exposure, and regulatory regimes\n\n**Habitat type:** Coral reef vs. seagrass meadow - different ecosystem dynamics, threats, and recovery patterns\n\n**Revenue driver:** Tourism-dominant (85% at Cabo Pulmo) vs. carbon-dominant (56% at Shark Bay) - different market exposures\n\n**Climate risk profile:** Bleaching threshold risk (coral) vs. episodic heatwave risk (seagrass) - partially correlated through global warming but expressed through different mechanisms\n\n**Scale:** Intensive small-area ($411K/km2) vs. extensive large-area ($935/km2) - different investment structures\n\n**Rating:** AAA (0.90) vs. AA (0.81) - different risk-return profiles\n\n**Combined portfolio metrics:**\n- Total ESV: $50.77M/year ($29.27M + $21.5M)\n- Revenue streams: 5 distinct categories with reduced concentration\n- Habitat coverage: coral reef + seagrass (two of four marine habitat types in MARIS)\n- Bridge axioms applied: 8 unique axioms (BA-001, BA-002, BA-004, BA-008, BA-013, BA-014, BA-015, BA-016)\n\nThis diversification demonstrates the core thesis of the Scaling Intelligence roadmap: as MARIS expands from 2 to 10 to 50+ sites, portfolio-level risk decreases while aggregate ESV grows.",
+      "confidence": 0.2154,
+      "evidence": [
+        {
+          "doi": "10.1038/s41598-024-83664-1",
+          "doi_url": "https://doi.org/10.1038/s41598-024-83664-1",
+          "title": "Marcos-Castillo et al. (2024) - Tourism valuation framework for marine reserves",
+          "year": 2024,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-013",
+        "BA-014"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Correlation between sites is assumed to be low but not empirically measured",
+        "Portfolio theory applied to natural capital is an emerging framework",
+        "Combined ESV is additive - no synergy premium is claimed"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2154,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "Comparative analysis using verified data from both sites; 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (Cabo Pulmo ESV)",
+        "$21.5M (Shark Bay ESV)",
+        "$50.77M (combined ESV)"
+      ],
+      "unverified_claims": [
+        "$411K/km2",
+        "$935/km2"
+      ]
+    },
+    "What makes one ESV model more transferable than another?": {
+      "answer": "Transferability - the ability to apply a valuation model to new sites - depends on four factors that MARIS makes explicit:\n\n**1. Coefficient universality:**\n- BA-002 (no-take biomass multiplier) is highly transferable: the meta-analysis spans 82 MPA studies globally\n- BA-001 (biomass-to-tourism) is moderately transferable: the 27,609-dive-site dataset is large but tourism infrastructure varies\n- BA-013 (seagrass carbon rate) is habitat-specific but globally calibrated from 14,271 data points\n\n**2. Site-specific calibration needs:**\n- Cabo Pulmo's tourism value ($25.0M) uses site-specific visitor counts and expenditure - these must be recalibrated per site\n- Shark Bay's carbon value ($12.1M) uses a globally applicable rate (0.84 tCO2/ha/yr) - only area and condition need updating\n- This makes carbon-driven valuations inherently more transferable than tourism-driven ones\n\n**3. Evidence tier consistency:**\n- All 16 bridge axioms use T1 (peer-reviewed) sources\n- Transfer error is flagged in axiom templates as 'research_grounded' vs. 'estimated_uncertainty'\n- 8 axioms have research-grounded CIs; 8 use estimated uncertainty with +/-20% transfer error assumption\n\n**4. Framework independence:**\n- NEOLI criteria are universally applicable to any MPA\n- The MARIS rating methodology works at any site where NEOLI can be assessed\n\n**Scaling implication:** Carbon-driven valuations (Shark Bay model) scale faster because they require fewer site-specific inputs. Tourism-driven valuations (Cabo Pulmo model) require deeper site characterization but produce higher per-area returns.",
+      "confidence": 0.2154,
+      "evidence": [
+        {
+          "doi": "10.1002/eap.3027",
+          "doi_url": "https://doi.org/10.1002/eap.3027",
+          "title": "Hopf et al. (2024) - Fisheries spillover from no-take marine reserves",
+          "year": 2024,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Gomis et al. (2025) - Global seagrass blue carbon stocks and production",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-013"
+      ],
+      "graph_path": [
+        {
+          "from_node": "BA-002",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Hopf et al. 2024",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Gomis et al. 2025",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Transfer error is inherent in benefit-transfer methodology",
+        "Scaling speed claims are based on input requirements, not empirical scaling tests",
+        "Each new site still requires validation of bridge axiom applicability"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2154,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.2929,
+        "explanation": "Meta-analysis coverage well-documented; transferability is assessed, not measured; 2 supporting sources"
+      },
+      "verified_claims": [
+        "82 MPA studies (BA-002)",
+        "27,609 dive sites (BA-001)",
+        "14,271 data points (BA-013)"
+      ],
+      "unverified_claims": []
+    },
+    "How do the NEOLI profiles differ between sites?": {
+      "answer": "Both sites achieve 4/5 NEOLI criteria, but they fail on different criteria, revealing distinct governance and ecological models:\n\n**Cabo Pulmo National Park (4/5, AAA):**\n- No-take: YES - Complete prohibition on extractive activities since 1995\n- Enforced: YES - Active ranger presence, community-based surveillance\n- Old: YES - 29 years of continuous protection (>10 year threshold)\n- Large: NO - 71 km2 falls below the 100 km2 threshold\n- Isolated: YES - Deep water boundaries provide natural isolation\n\n**Shark Bay World Heritage Area (4/5, AA):**\n- No-take: YES - Sanctuary zones with full no-take protection within the Marine Park\n- Enforced: YES - Active compliance monitoring by DBCA and Parks and Wildlife\n- Old: YES - 33 years since World Heritage listing (>10 year threshold)\n- Large: YES - 23,000 km2 (>100 km2 threshold)\n- Isolated: NO - Open coastline with limited natural barriers to adjacent waters\n\n**Why the same NEOLI score produces different ratings:**\nDespite identical 4/5 scores, the sites differ in rating (AAA vs. AA). This is because the MARIS composite rating also incorporates ecological condition, financial sustainability, and risk factors. Shark Bay's demonstrated heatwave vulnerability (36% seagrass loss) drives its risk factor score (0.65) lower than Cabo Pulmo's (0.80), creating the one-notch difference.\n\n**Investor insight:** NEOLI score alone is necessary but not sufficient for rating. The risk factor overlay - particularly empirical climate vulnerability data - differentiates sites within the same NEOLI tier.",
+      "confidence": 0.2273,
+      "evidence": [
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. (2014) - Global conservation outcomes depend on marine protected areas with five key features",
+          "year": 2014,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-011"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "ASSESSED_AS",
+          "to_node": "NEOLI 4/5",
+          "to_type": "GovernanceScore"
+        }
+      ],
+      "caveats": [
+        "NEOLI alignment, not NEOLI compliance - the system does not claim NEOLI certification",
+        "NEOLI criteria are binary - they do not capture gradient differences within each criterion",
+        "Same score does not imply same ecological or financial outcomes"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2273,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "NEOLI criteria are factual and well-documented; 1 supporting source"
+      },
+      "verified_claims": [
+        "4/5 (both sites)",
+        "AAA (Cabo Pulmo)",
+        "AA (Shark Bay)",
+        "71 km2 (Cabo Pulmo)",
+        "23,000 km2 (Shark Bay)"
+      ],
+      "unverified_claims": []
+    },
+    "What if seagrass extent declines by 20% at Shark Bay?": {
+      "answer": "A 20% seagrass loss at Shark Bay would trigger cascading impacts across all four revenue streams, quantifiable through bridge axioms BA-013, BA-014, and BA-015:\n\n**Direct carbon impact (BA-013 + BA-014):**\n- Area lost: 960 km2 (20% of 4,800 km2 = 96,000 ha)\n- Sequestration lost: 96,000 ha x 0.84 tCO2/ha/yr = 80,640 tCO2/yr\n- Revenue lost: 80,640 x $30 = ~$2.42M/year\n- Remaining carbon revenue: ~$9.68M/year (from $12.1M)\n\n**Carbon emission liability (BA-015):**\n- Emission from lost habitat: 96,000 ha x 294 tCO2/ha = ~28.2 million tCO2\n- Social cost of emissions: ~$847M at $30/tCO2\n- This liability could affect the site's carbon credit standing\n\n**Fisheries impact:**\n- Seagrass nursery habitat supports the $5.2M prawn fishery\n- With high seagrass dependency, a 20% habitat loss could reduce fisheries value by 10-15%\n- Estimated fisheries loss: $520K-$780K/year\n\n**Tourism and coastal protection:**\n- Tourism ($3.4M) and coastal protection ($0.8M) would see proportional but smaller reductions\n- Estimated combined loss: $300K-$500K/year\n\n**Total scenario impact:**\n- Total ESV reduction: ~$3.24M-$3.70M/year (15-17% of $21.5M)\n- New estimated ESV: ~$17.8M-$18.3M/year\n\nFor context, the 2011 heatwave caused 36% loss - nearly twice this scenario. A 20% decline is within the plausible range for a moderate climate event.",
+      "confidence": 0.2504,
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-59204-4",
+          "doi_url": "https://doi.org/10.1038/s41467-025-59204-4",
+          "title": "Krause et al. (2025) - Global seagrass carbon stock variability and loss emissions",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-013",
+        "BA-014",
+        "BA-015"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "HAS_HABITAT",
+          "to_node": "Seagrass Meadow",
+          "to_type": "Habitat"
+        },
+        {
+          "from_node": "BA-015",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Shark Bay World Heritage Area",
+          "to_type": "MPA"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "TRANSLATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Scenario assumes linear scaling - actual impacts may be non-linear",
+        "Fisheries loss estimate assumes proportional nursery dependency",
+        "Emission liability calculation uses average carbon density across the bay"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2504,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.2929,
+        "explanation": "Scenario analysis grounded in empirical coefficients; 2 supporting sources"
+      },
+      "verified_claims": [
+        "$21.5M (total ESV)",
+        "$12.1M (Carbon)",
+        "0.84 tCO2/ha/yr",
+        "294 tCO2/ha"
+      ],
+      "unverified_claims": [
+        "$2.42M",
+        "$847M",
+        "$17.8M",
+        "$18.3M"
+      ]
+    },
+    "What happens if coral bleaching hits Cabo Pulmo?": {
+      "answer": "Coral bleaching at Cabo Pulmo would primarily impact through BA-012 (reef degradation to fisheries loss) and cascade through tourism via BA-001:\n\n**Fisheries impact (BA-012):**\n- Reef structural degradation causes 25-50% fisheries productivity loss (central: 35%)\n- Direct fisheries loss: 35% x $3.2M = ~$1.12M/year\n- Source: Rogers et al. 2018 (DOI: 10.1111/1365-2664.13051)\n\n**Tourism cascade (BA-001):**\n- Bleached coral reduces dive appeal, lowering visitor willingness-to-pay\n- Biomass decline would erode the 4.63x recovery ratio that drives tourism demand\n- At moderate bleaching (30% coral loss): estimated tourism decline of 20-35%\n- Tourism loss: 20-35% x $25.0M = $5.0M-$8.75M/year\n\n**Resilience buffer (BA-011):**\n- The MPA provides a 30% reduction in climate disturbance impact\n- Protected reefs show 21-38% higher community stability (Mellin et al. 2016)\n- Recovery from Crown of Thorns starfish: 6 years inside MPA vs. 9 years outside\n\n**Total bleaching scenario:**\n- Moderate case: ESV drops from $29.27M to ~$19.4M-$23.2M/year\n- Severe case (P5): ~$19.6M/year (consistent with Monte Carlo downside)\n\n**Mitigating factors:**\nCabo Pulmo's intact trophic structure provides intrinsic resilience. The triggerfish-urchin control cascade prevents urchin barrens that would compound bleaching damage. An intact food web recovers faster than a depleted one. This is the insurance value of biodiversity.",
+      "confidence": 0.2935,
+      "evidence": [
+        {
+          "doi": "10.1111/1365-2664.13051",
+          "doi_url": "https://doi.org/10.1111/1365-2664.13051",
+          "title": "Rogers et al. (2018) - Impacts of reef degradation on fisheries productivity",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1111/gcb.17477",
+          "doi_url": "https://doi.org/10.1111/gcb.17477",
+          "title": "Ortiz-Villa et al. (2024) - MPA climate resilience outcomes",
+          "year": 2024,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1111/ele.12598",
+          "doi_url": "https://doi.org/10.1111/ele.12598",
+          "title": "Mellin et al. (2016) - Coral reef community resilience from MPAs",
+          "year": 2016,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-011",
+        "BA-012"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "HAS_HABITAT",
+          "to_node": "Coral Reef",
+          "to_type": "Habitat"
+        },
+        {
+          "from_node": "BA-012",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Cabo Pulmo National Park",
+          "to_type": "MPA"
+        },
+        {
+          "from_node": "BA-011",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Cabo Pulmo National Park",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "Tourism impact from bleaching is modeled, not observed at Cabo Pulmo",
+        "Bleaching severity depends on duration and intensity of thermal anomaly",
+        "Recovery timeline is highly variable - some reefs recover in 2-5 years, others do not"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2935,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.4226,
+        "explanation": "Degradation coefficients from peer-reviewed meta-analyses; 3 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (total ESV)",
+        "$25.0M (Tourism)",
+        "$3.2M (Fisheries)",
+        "4.63x (biomass ratio)"
+      ],
+      "unverified_claims": [
+        "$1.12M",
+        "$5.0M",
+        "$8.75M",
+        "$19.4M",
+        "$23.2M"
+      ]
+    },
+    "What is the cost of NOT protecting these sites?": {
+      "answer": "The counterfactual analysis - what happens without protection - reveals the asymmetric economics of marine conservation:\n\n**Cabo Pulmo counterfactual (no MPA since 1995):**\n- Without no-take protection, biomass would remain at baseline (~0.5 tonnes/ha, not 2.8 tonnes/ha)\n- Tourism value would be ~$5M/year (pre-recovery level), not $25.0M\n- Foregone tourism value alone: ~$20M/year\n- 29 years of cumulative foregone value: ~$580M\n- Fisheries spillover would not exist: $3.2M/year x 29 years = ~$92.8M additional loss\n- Total opportunity cost of non-protection: ~$670M+ over the MPA's lifetime\n\n**Shark Bay counterfactual (no UNESCO protection):**\n- Without MPA protection, direct threats (dredging, development, unregulated fishing) would compound climate risk\n- If 50% of seagrass were lost (vs. 36% from heatwave alone):\n  - Carbon emission: 240,000 ha x 294 tCO2/ha = ~70.6 million tCO2\n  - At $30/tCO2: ~$2.1 billion in emission liability\n  - Annual sequestration lost: ~$6.05M/year permanently\n  - Fisheries nursery habitat destroyed: additional $2.6M+/year lost\n\n**The asymmetry:**\nMPA management costs for a site like Cabo Pulmo are estimated at $1-3M/year. The annual ESV generated is $29.27M. This represents a benefit-cost ratio exceeding 10:1, consistent with BA-009's mangrove restoration BCR of 6.35-15.0.\n\nFor investors, the counterfactual framing transforms conservation from a cost center to an insurance premium against massive value destruction. The cost of protection is a rounding error compared to the cost of loss.",
+      "confidence": 0.2154,
+      "evidence": [
+        {
+          "doi": "10.1371/journal.pone.0023601",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
+          "title": "Aburto-Oropeza et al. (2011) - Large recovery of fish biomass in a no-take marine reserve",
+          "year": 2011,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-56587-2",
+          "doi_url": "https://doi.org/10.1038/s41467-025-56587-2",
+          "title": "Zeng et al. (2025) - Optimal mangrove restoration investment strategies",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-002",
+        "BA-009",
+        "BA-015"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "OBSERVED",
+          "to_node": "Biomass 4.63x",
+          "to_type": "EcologicalState"
+        },
+        {
+          "from_node": "BA-015",
+          "from_type": "BridgeAxiom",
+          "relationship": "APPLIES_TO",
+          "to_node": "Shark Bay World Heritage Area",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "Counterfactual scenarios are hypothetical - actual outcomes would depend on many factors",
+        "Cumulative foregone value uses simple annualization, not discounted cash flow",
+        "MPA management cost estimate ($1-3M/year) is indicative, not Cabo Pulmo-specific"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2154,
+        "tier_base": 0.95,
+        "path_discount": 0.8,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.4226,
+        "explanation": "Counterfactual analysis using verified coefficients; estimates are modeled; 3 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (Cabo Pulmo ESV)",
+        "$25.0M (Tourism)",
+        "4.63x (biomass ratio)",
+        "294 tCO2/ha"
+      ],
+      "unverified_claims": [
+        "$670M",
+        "$2.1 billion",
+        "$580M",
+        "$92.8M"
+      ]
+    },
+    "What are the insurance-relevant triggers for these sites?": {
+      "answer": "Parametric insurance for marine natural capital requires measurable triggers that correlate with economic loss. MARIS identifies site-specific triggers through bridge axiom coefficients:\n\n**Cabo Pulmo - coral reef triggers:**\n- Temperature anomaly: Degree Heating Weeks (DHW) > 4 triggers bleaching alert; DHW > 8 triggers severe bleaching\n- Biomass threshold: decline below 2.0x ratio (from current 4.63x) would trigger tourism degradation (BA-001)\n- Structural complexity: loss of reef rugosity correlates with 25-50% fisheries loss (BA-012)\n- Wave energy: coral degradation reduces wave attenuation from 97% to ~70% (BA-004)\n\n**Shark Bay - seagrass triggers:**\n- SST anomaly: +2C above seasonal baseline for >2 weeks (consistent with 2011 event parameters)\n- Seagrass extent: decline below 3,800 km2 (20% loss threshold) triggers carbon revenue loss (BA-013)\n- Carbon emission: detection of sediment disturbance and remineralization above baseline (BA-015)\n- Turbidity: sustained increase indicating seagrass die-off\n\n**Why parametric insurance fits:**\nTraditional indemnity insurance requires damage assessment after the fact. Parametric insurance pays automatically when a measurable index (SST, DHW, satellite imagery) crosses a threshold. This eliminates the assessment lag and moral hazard problems that plague traditional environmental insurance.\n\n**Bridge axiom integration:** Each trigger maps to a specific axiom coefficient, allowing the insurance payout to be calibrated to the expected economic loss. BA-012's 35% fisheries loss at structural degradation provides the loss function for reef parametric products.",
+      "confidence": 0.2154,
+      "evidence": [
+        {
+          "doi": "10.1111/1365-2664.13051",
+          "doi_url": "https://doi.org/10.1111/1365-2664.13051",
+          "title": "Rogers et al. (2018) - Impacts of reef degradation on fisheries productivity",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-018-04568-z",
+          "doi_url": "https://doi.org/10.1038/s41467-018-04568-z",
+          "title": "Beck et al. (2018) - The global flood protection savings from coral reefs",
+          "year": 2018,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-004",
+        "BA-012",
+        "BA-013",
+        "BA-015"
+      ],
+      "graph_path": [
+        {
+          "from_node": "BA-012",
+          "from_type": "BridgeAxiom",
+          "relationship": "PREDICTS",
+          "to_node": "Fisheries Productivity Loss",
+          "to_type": "RiskOutcome"
+        },
+        {
+          "from_node": "BA-004",
+          "from_type": "BridgeAxiom",
+          "relationship": "PREDICTS",
+          "to_node": "Coastal Protection Loss",
+          "to_type": "RiskOutcome"
+        },
+        {
+          "from_node": "BA-015",
+          "from_type": "BridgeAxiom",
+          "relationship": "PREDICTS",
+          "to_node": "Carbon Emission",
+          "to_type": "RiskOutcome"
+        }
+      ],
+      "caveats": [
+        "Parametric triggers are proposed, not implemented in live insurance products",
+        "Trigger thresholds would need actuarial calibration for specific products",
+        "Satellite monitoring resolution may limit real-time trigger verification"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2154,
+        "tier_base": 0.95,
+        "path_discount": 0.8,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.4226,
+        "explanation": "Trigger thresholds derived from empirical data in source studies; 3 supporting sources"
+      },
+      "verified_claims": [
+        "4.63x (biomass ratio)",
+        "97% wave energy reduction (healthy reef)",
+        "294 tCO2/ha"
+      ],
+      "unverified_claims": []
+    },
+    "What is the Monte Carlo P5 downside for each site?": {
+      "answer": "Monte Carlo simulation (10,000 runs) provides downside estimates for both fully characterized sites:\n\n**Cabo Pulmo P5 (5th percentile):**\n- P5 ESV: ~$19.6M/year\n- Loss from base case: ~$9.7M (33% decline from $29.27M)\n- Key downside drivers: Tourism demand shock, biomass decline from climate event, enforcement failure\n- Distribution: Mean ~$28.7M, Std Dev ~$4.9M\n- Full percentile range: P5 $19.6M / P25 $25.3M / P50 $28.7M / P75 $31.7M / P95 $36.1M\n\n**Shark Bay P5 (estimated from component uncertainty):**\n- Estimated P5 ESV: ~$13.5M-$15.0M/year\n- Loss from base case: ~$6.5M-$8.0M (30-37% decline from $21.5M)\n- Key downside drivers: Carbon price crash to $15/tCO2, heatwave seagrass loss, fisheries disruption\n- Carbon-specific P5: At $15/tCO2 (lower bound), carbon revenue halves to ~$6.05M\n\n**Comparative risk profile:**\n- Cabo Pulmo downside is tourism-concentrated: a single tourism shock moves the needle\n- Shark Bay downside is distributed: carbon price, seagrass extent, and fisheries each contribute\n- In percentage terms, both sites face 30-37% downside - suggesting natural capital risk is comparable across habitat types\n\n**For portfolio construction:** The P5 values provide a stress-test floor. Combined portfolio P5 would be ~$33M-$35M/year (vs. combined base of $50.77M), assuming low inter-site correlation.",
+      "confidence": 0.2504,
+      "evidence": [
+        {
+          "doi": "10.1371/journal.pone.0023601",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
+          "title": "Aburto-Oropeza et al. (2011) - Large recovery of fish biomass in a no-take marine reserve",
+          "year": 2011,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-011",
+        "BA-012",
+        "BA-013",
+        "BA-014"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "MODELED_VIA",
+          "to_node": "Monte Carlo (10,000 runs)",
+          "to_type": "Simulation"
+        },
+        {
+          "from_node": "Monte Carlo (10,000 runs)",
+          "from_type": "Simulation",
+          "relationship": "PRODUCES",
+          "to_node": "P5 $19.6M",
+          "to_type": "RiskMetric"
+        }
+      ],
+      "caveats": [
+        "Cabo Pulmo Monte Carlo is computed from the investment grade bundle; Shark Bay P5 is estimated",
+        "Correlation between sites assumed to be low but not empirically measured",
+        "Monte Carlo assumes approximately normal distributions - extreme tails may be understated"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2504,
+        "tier_base": 0.95,
+        "path_discount": 0.85,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "Cabo Pulmo Monte Carlo is pre-computed; Shark Bay estimate derived from component CIs; 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (Cabo Pulmo ESV)",
+        "$21.5M (Shark Bay ESV)",
+        "P5 ~$19.6M (Cabo Pulmo)"
+      ],
+      "unverified_claims": [
+        "$13.5M",
+        "$15.0M",
+        "$33M",
+        "$35M"
+      ]
+    },
+    "How does MARIS map to TNFD LEAP phases?": {
+      "answer": "MARIS data maps directly to all four phases of the TNFD LEAP assessment framework:\n\n**L - Locate:**\n- MARIS identifies MPA sites with coordinates, area, and habitat type\n- Cabo Pulmo: 23.42N, -109.42E, 71.11 km2, coral reef, Gulf of California\n- Shark Bay: -25.97S, 113.86E, 23,000 km2, seagrass meadow, Gascoyne, WA\n- Both sites are priority biodiversity areas with formal protection status\n\n**E - Evaluate:**\n- MARIS quantifies dependencies and impacts through bridge axioms\n- Dependencies: Tourism depends on reef health (47% of revenue from biomass via BA-001); Fisheries depend on seagrass nursery habitat (high dependency coefficient)\n- Impacts: Carbon sequestration (positive, quantified via BA-013/BA-014); Coastal protection (positive, quantified via BA-004/BA-016)\n\n**A - Assess:**\n- MARIS produces financial metrics required for materiality assessment\n- ESV quantification: $29.27M (Cabo Pulmo), $21.5M (Shark Bay)\n- Risk assessment: Monte Carlo P5, degradation scenarios, permanence risk\n- Asset ratings: AAA/AA with composite scoring methodology\n\n**P - Prepare:**\n- MARIS outputs support disclosure preparation\n- Bridge axiom provenance chains satisfy evidence requirements\n- Evidence tier system (T1-T4) maps to assurance levels\n- DOI-backed claims are independently verifiable\n\nThe system anticipates alignment with the TNFD LEAP framework. All data products are designed to support TNFD-aligned disclosure without additional transformation.",
+      "confidence": 0.2273,
+      "evidence": [
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. (2014) - Global conservation outcomes depend on marine protected areas with five key features",
+          "year": 2014,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-004",
+        "BA-013",
+        "BA-014"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "LOCATE",
+          "to_node": "Gulf of California",
+          "to_type": "Region"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVALUATE",
+          "to_node": "Tourism Dependency",
+          "to_type": "Dependency"
+        },
+        {
+          "from_node": "Monte Carlo",
+          "from_type": "Model",
+          "relationship": "ASSESS",
+          "to_node": "Risk Metrics",
+          "to_type": "FinancialOutput"
+        }
+      ],
+      "caveats": [
+        "MARIS anticipates alignment with TNFD, not compliance - TNFD adoption is voluntary",
+        "Full TNFD disclosure requires additional organizational context beyond site-level data",
+        "LEAP mapping is illustrative - formal TNFD alignment assessment would be site-specific"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2273,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.2929,
+        "explanation": "TNFD LEAP mapping is structural, not quantitative; 1 supporting source for NEOLI framework"
+      },
+      "verified_claims": [
+        "$29.27M (Cabo Pulmo ESV)",
+        "$21.5M (Shark Bay ESV)"
+      ],
+      "unverified_claims": []
+    },
+    "What TNFD disclosure metrics can MARIS produce?": {
+      "answer": "MARIS can produce or support the following TNFD-aligned disclosure metrics directly from its knowledge graph:\n\n**Core metrics (directly available):**\n- Extent of nature-dependent operations: km2 of MPA coverage (71.11 km2, 23,000 km2)\n- Nature-related dependencies: Quantified via bridge axioms (tourism on biomass, fisheries on nursery habitat, carbon on seagrass extent)\n- Ecosystem service value at risk: Monte Carlo P5 scenarios ($19.6M Cabo Pulmo, estimated $13.5M-$15.0M Shark Bay)\n- Location-specific risk assessment: NEOLI scores, asset ratings, composite risk factors\n\n**Extended metrics (derivable):**\n- Change in extent of ecosystems: Shark Bay 2011 heatwave provides baseline (36% loss, partial recovery)\n- Species composition change: Trophic level analysis for Cabo Pulmo (apex predator density 5.9x recovery)\n- Ecosystem condition assessment: Biomass ratios (4.63x), seagrass extent trends, carbon stock measurements\n\n**Evidence quality metrics (unique to MARIS):**\n- Source tier distribution: 92% T1 (peer-reviewed) across 195-paper library\n- DOI coverage: 90.3% of all claims are DOI-traceable\n- Confidence propagation: Every metric carries a confidence interval and Monte Carlo distribution\n\n**What MARIS adds beyond standard disclosure:**\nTypical nature disclosures report qualitative risk narratives. MARIS provides quantified, DOI-backed financial metrics with propagated uncertainty. This level of rigor anticipates alignment with assurance requirements that TNFD disclosures will increasingly face.",
+      "confidence": 0.2154,
+      "evidence": [
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. (2014) - Global conservation outcomes depend on marine protected areas with five key features",
+          "year": 2014,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-011",
+        "BA-013"
+      ],
+      "graph_path": [
+        {
+          "from_node": "TNFD LEAP",
+          "from_type": "Framework",
+          "relationship": "APPLICABLE_TO",
+          "to_node": "Cabo Pulmo National Park",
+          "to_type": "MPA"
+        },
+        {
+          "from_node": "TNFD LEAP",
+          "from_type": "Framework",
+          "relationship": "APPLICABLE_TO",
+          "to_node": "Shark Bay World Heritage Area",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "TNFD metrics are mapped, not formally validated against TNFD's sector guidance",
+        "Full disclosure requires organizational context beyond ecological data",
+        "MARIS anticipates alignment with TNFD, not compliance"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2154,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.2929,
+        "explanation": "Metric mapping is structural; underlying data is verified; 1 supporting source"
+      },
+      "verified_claims": [
+        "$29.27M (Cabo Pulmo ESV)",
+        "$21.5M (Shark Bay ESV)",
+        "92% T1",
+        "195 papers"
+      ],
+      "unverified_claims": []
+    },
+    "How does the evidence tier system support assurance?": {
+      "answer": "MARIS's four-tier evidence classification system is designed to map directly to assurance requirements:\n\n**T1 - Peer-reviewed journal articles (92% of library):**\n- Cite without qualification in investor materials\n- DOI-traceable to original publication\n- Subject to peer review, editorial oversight, and replication standards\n- Assurance equivalent: comparable to audited financial data sources\n\n**T2 - Institutional reports (World Bank, UNEP, TNFD):**\n- Cite with institutional context\n- Backed by organizational methodology and review processes\n- Assurance equivalent: comparable to government statistical data\n\n**T3 - Data repositories (FishBase, WoRMS, OBIS):**\n- Cite with methodology notes\n- Maintained databases with documented curation processes\n- Assurance equivalent: comparable to market data services\n\n**T4 - Preprints and grey literature:**\n- Cite with explicit caveats\n- Not yet peer-reviewed; preliminary findings\n- Assurance equivalent: management estimates requiring independent verification\n\n**How this supports audit:**\n1. Every claim in MARIS traces to a specific evidence source with a tier classification\n2. An auditor can verify each claim by following the DOI link to the original paper\n3. The confidence model penalizes claims backed by lower-tier evidence\n4. The system explicitly separates verified claims from unverified claims in every response\n\n**Current library composition:** 195 papers, 92% T1, 90.3% DOI coverage. This means an auditor could independently verify over 90% of all claims directly from the DOI links.",
+      "confidence": 0.3676,
+      "evidence": [
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. (2014) - Global conservation outcomes depend on marine protected areas with five key features",
+          "year": 2014,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1371/journal.pone.0023601",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
+          "title": "Aburto-Oropeza et al. (2011) - Large recovery of fish biomass in a no-take marine reserve",
+          "year": 2011,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Document Library",
+          "from_type": "Collection",
+          "relationship": "CONTAINS",
+          "to_node": "195 Documents",
+          "to_type": "Document"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Evidence tier classification is MARIS-internal, not an external standard",
+        "Assurance equivalencies are illustrative mappings, not formal audit opinions",
+        "90.3% DOI coverage means 9.7% of papers lack DOI links"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.3676,
+        "tier_base": 0.95,
+        "path_discount": 0.95,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.5,
+        "explanation": "Library statistics are factual; tier system is documented; 2 supporting sources"
+      },
+      "verified_claims": [
+        "195 papers",
+        "92% T1",
+        "90.3% DOI coverage"
+      ],
+      "unverified_claims": []
+    },
+    "What is the dependency versus impact framing?": {
+      "answer": "TNFD's dependency-impact framework distinguishes between how a business depends on nature (dependency) and how it affects nature (impact). MARIS quantifies both sides for each site:\n\n**Cabo Pulmo - Dependencies:**\n- Tourism ($25.0M) depends on reef health: 47% of tourism revenue traces to biomass via BA-001\n- Fisheries ($3.2M) depend on spawning biomass and larval export from the no-take zone\n- Coastal communities depend on $890K/year in flood protection from reef structures\n- Dependencies flow: Nature -> Economic Value\n\n**Cabo Pulmo - Impacts (positive):**\n- MPA protection provides 30% climate disturbance reduction (BA-011)\n- No-take status enables 4.63x biomass recovery (BA-002)\n- Carbon sequestration: $180K/year net positive impact on climate\n- Impacts flow: Economic Activity -> Nature\n\n**Shark Bay - Dependencies:**\n- Carbon credit revenue ($12.1M) depends on seagrass extent and condition\n- Fisheries ($5.2M) depend on seagrass nursery habitat (high dependency coefficient)\n- Tourism ($3.4M) depends on World Heritage status and ecological integrity\n\n**Shark Bay - Impacts (mixed):**\n- Positive: MPA protection maintains 4,800 km2 of seagrass and 294 tCO2/ha carbon stock\n- Negative risk: 2011 heatwave demonstrated that even protected sites face climate-driven damage\n- The 2-9 Tg CO2 released represents a negative impact on global climate\n\n**Key insight:** The dependency-impact framing makes the financial case for protection. When dependencies are quantified ($25.0M depends on reef health), the cost of losing that dependency becomes a material financial risk, not an externality.",
+      "confidence": 0.2273,
+      "evidence": [
+        {
+          "doi": "10.1038/s41598-024-83664-1",
+          "doi_url": "https://doi.org/10.1038/s41598-024-83664-1",
+          "title": "Marcos-Castillo et al. (2024) - Tourism valuation framework for marine reserves",
+          "year": 2024,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-011",
+        "BA-013"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Tourism",
+          "from_type": "EcosystemService",
+          "relationship": "DEPENDS_ON",
+          "to_node": "Coral Reef",
+          "to_type": "Habitat"
+        },
+        {
+          "from_node": "Carbon Sequestration",
+          "from_type": "EcosystemService",
+          "relationship": "DEPENDS_ON",
+          "to_node": "Seagrass Meadow",
+          "to_type": "Habitat"
+        }
+      ],
+      "caveats": [
+        "Dependency-impact mapping follows TNFD conceptual framework",
+        "MARIS anticipates alignment with TNFD, not compliance",
+        "Negative impacts (CO2 release from heatwave) are documented but not attributable to management failure"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2273,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "Framework mapping using verified site data; 2 supporting sources"
+      },
+      "verified_claims": [
+        "$25.0M (Tourism)",
+        "$12.1M (Carbon)",
+        "4.63x (biomass ratio)",
+        "36% seagrass loss"
+      ],
+      "unverified_claims": []
+    },
+    "Why is Shark Bay's carbon value potentially understated?": {
+      "answer": "The $12.1M/year carbon valuation for Shark Bay may significantly understate the site's true carbon value for three reasons:\n\n**1. Conservative sequestration rate:**\nBA-013 uses 0.84 tCO2/ha/yr - a conservative credit-eligible rate designed for Verra VCS verification. However, Gomis et al. 2025 report gross seagrass NPP of 5,833 +/- 557 kg C/ha/yr with ~20% burial efficiency. This implies natural gross sequestration rates substantially above 0.84 tCO2/ha/yr. The conservative rate accounts for additionality, leakage, and buffer deductions - necessary for credit issuance but not for total ecosystem service valuation.\n\n**2. Carbon price floor:**\nBA-014 uses $30/tCO2 based on the S&P Global Platts DBC-1 blue carbon benchmark. However, premium blue carbon credits have traded above $50/tCO2 due to co-benefit premiums (biodiversity, coastal protection, Indigenous co-management). At $50/tCO2, Shark Bay's carbon value would be ~$20.2M/year - nearly doubling from the base case.\n\n**3. Stock value not counted:**\nThe $12.1M represents annual flow (sequestration). The existing carbon stock of 294 tCO2/ha across 480,000 ha represents ~141 million tCO2. At $30/tCO2, this is a $4.2 billion asset base not reflected in the annual ESV. This is analogous to valuing a mine only by annual extraction, ignoring proven reserves.\n\n**Net effect:** At site-specific sequestration rates and premium carbon pricing, Shark Bay's carbon value could be $20M-$30M/year - potentially exceeding Cabo Pulmo's total ESV. The conservative methodology ensures credibility but masks the full economic significance of the world's largest seagrass carbon stock.",
+      "confidence": 0.2504,
+      "evidence": [
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Gomis et al. (2025) - Global seagrass blue carbon stocks and production",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s44183-025-00111-y",
+          "doi_url": "https://doi.org/10.1038/s44183-025-00111-y",
+          "title": "Duarte et al. (2025) - Marine blue carbon strategies",
+          "year": 2025,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. (2018) - Marine heatwave drives seagrass carbon loss",
+          "year": 2018,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-013",
+        "BA-014"
+      ],
+      "graph_path": [
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "TRANSLATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-014",
+          "from_type": "BridgeAxiom",
+          "relationship": "TRANSLATES",
+          "to_node": "Carbon Credit Value",
+          "to_type": "FinancialValue"
+        },
+        {
+          "from_node": "BA-013",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Gomis et al. 2025",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Higher valuations require moving beyond conservative credit-eligible rates",
+        "Premium carbon prices are not guaranteed and depend on market conditions",
+        "Stock valuation ($4.2B) is a theoretical maximum, not realizable as annual revenue"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2504,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.4226,
+        "explanation": "Conservative methodology is documented; upside scenarios use peer-reviewed upper bounds; 3 supporting sources"
+      },
+      "verified_claims": [
+        "$12.1M (Carbon at $30/tCO2)",
+        "0.84 tCO2/ha/yr",
+        "294 tCO2/ha",
+        "$30/tCO2"
+      ],
+      "unverified_claims": [
+        "$20.2M",
+        "$4.2 billion",
+        "$20M-$30M"
+      ]
+    },
+    "How does the trophic cascade create financial leverage?": {
+      "answer": "Cabo Pulmo's trophic cascade creates a biological amplification mechanism that multiplies base ecological productivity into outsized economic returns - a form of natural financial leverage:\n\n**The mechanism:**\nBridge axiom BA-002 documents the 4.63x biomass recovery. But this number understates the leverage effect. The recovery was not linear - it was amplified through trophic cascading:\n\n1. Apex predators (groupers, jacks) recovered first under no-take protection\n2. Predator recovery controlled mesopredator populations (triggering top-down regulation)\n3. Triggerfish controlled sea urchins, preventing urchin barrens (the coral-killing scenario)\n4. Intact coral structure supported more habitat, more recruitment, more biomass\n5. Each trophic level amplified the effect of the one above\n\n**The financial leverage:**\n- Ecological base: 0.5 tonnes/ha baseline biomass (degraded state, ~$5M ESV)\n- After cascade: 2.8 tonnes/ha (4.63x recovery, $29.27M ESV)\n- Leverage ratio: $29.27M / $5M = ~5.9x financial return on the ecological base\n- This exceeds the biological multiplier (4.63x) because BA-001's tourism elasticity provides additional amplification\n\n**Why this matters:**\nThe trophic cascade means that restoring apex predators generates disproportionate economic returns. You don't need to restore every species - restoring the top of the food web cascades through the system. This is the conservation finance equivalent of leverage: a small investment in predator protection generates outsized returns through biological amplification.\n\n**Portfolio implication:** Sites with intact trophic structures are inherently more valuable per unit of protection investment because the cascade amplifies economic returns beyond what linear models predict.",
+      "confidence": 0.2504,
+      "evidence": [
+        {
+          "doi": "10.1371/journal.pone.0023601",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
+          "title": "Aburto-Oropeza et al. (2011) - Large recovery of fish biomass in a no-take marine reserve",
+          "year": 2011,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41598-024-83664-1",
+          "doi_url": "https://doi.org/10.1038/s41598-024-83664-1",
+          "title": "Marcos-Castillo et al. (2024) - Tourism valuation framework for marine reserves",
+          "year": 2024,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "OBSERVED",
+          "to_node": "Biomass 4.63x",
+          "to_type": "EcologicalState"
+        },
+        {
+          "from_node": "groupers",
+          "from_type": "TrophicLevel",
+          "relationship": "PREYS_ON",
+          "to_node": "snappers",
+          "to_type": "TrophicLevel"
+        },
+        {
+          "from_node": "triggerfish",
+          "from_type": "TrophicLevel",
+          "relationship": "PREYS_ON",
+          "to_node": "sea_urchins",
+          "to_type": "TrophicLevel"
+        },
+        {
+          "from_node": "Biomass 4.63x",
+          "from_type": "EcologicalState",
+          "relationship": "TRANSLATES_VIA",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        }
+      ],
+      "caveats": [
+        "Financial leverage calculation uses estimated pre-protection ESV of ~$5M",
+        "Trophic cascade effects are site-specific and depend on initial community composition",
+        "The 5.9x financial leverage ratio is derived, not directly measured"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2504,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.76,
+        "sample_factor": 0.2929,
+        "explanation": "Trophic structure documented in case study; financial leverage is derived; 2 supporting sources"
+      },
+      "verified_claims": [
+        "4.63x (biomass ratio)",
+        "$29.27M (total ESV)",
+        "$25.0M (Tourism)"
+      ],
+      "unverified_claims": [
+        "$5M (pre-protection)",
+        "5.9x (financial leverage)"
+      ]
+    },
+    "How do bridge axioms create auditability that ESG ratings cannot?": {
+      "answer": "Traditional ESG ratings for marine natural capital rely on composite scores derived from opaque methodologies. Bridge axioms solve this by creating individually auditable translation steps:\n\n**The ESG problem:**\n- A typical ESG rating produces: 'Company X has a B+ nature score'\n- The methodology behind this score is proprietary and non-reproducible\n- There is no way to trace the rating back to specific ecological measurements\n- Different ESG providers produce different scores for the same entity\n\n**The bridge axiom solution:**\n- BA-001 states: 'Fish biomass increase of 463% translates to tourism value increase of ~160% via elasticity 0.346'\n- This claim can be independently verified: (1) check the biomass data in Aburto-Oropeza et al. 2011, (2) check the elasticity coefficient in Marcos-Castillo et al. 2024, (3) compute the output\n- If the coefficient is wrong, update that one axiom. The rest of the chain remains valid\n- If new research changes the estimate, the change propagates transparently\n\n**Auditability at each layer:**\n1. **Ecological data layer:** DOI links to field measurements. Auditor reads the paper.\n2. **Translation layer:** Bridge axiom coefficients with documented confidence intervals. Auditor verifies the extraction.\n3. **Financial output layer:** Computed values with Monte Carlo uncertainty. Auditor reruns the simulation.\n4. **Provenance layer:** Every edge in the knowledge graph is typed and sourced. Auditor traverses the path.\n\n**What this enables:**\n- Independent third-party verification (no proprietary models to protect)\n- Granular error identification (which axiom is wrong, not just 'the score changed')\n- Temporal tracking (axioms can be updated independently as new research publishes)\n- Regulatory defensibility (every claim is DOI-backed, not expert opinion)\n\nThis is the difference between 'trust our score' and 'verify our methodology.' Bridge axioms make the latter possible for marine natural capital for the first time.",
+      "confidence": 0.2154,
+      "evidence": [
+        {
+          "doi": "10.1038/s41598-024-83664-1",
+          "doi_url": "https://doi.org/10.1038/s41598-024-83664-1",
+          "title": "Marcos-Castillo et al. (2024) - Tourism valuation framework for marine reserves",
+          "year": 2024,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1371/journal.pone.0023601",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
+          "title": "Aburto-Oropeza et al. (2011) - Large recovery of fish biomass in a no-take marine reserve",
+          "year": 2011,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Biomass 4.63x",
+          "from_type": "EcologicalState",
+          "relationship": "TRANSLATES_VIA",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "PRODUCES",
+          "to_node": "Tourism $25.0M",
+          "to_type": "FinancialValue"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Bridge axiom auditability is a design principle, not a formal audit standard",
+        "Axiom coefficients still require expert judgment in selection and application",
+        "Not all axioms have equally strong evidence bases (research_grounded vs. estimated_uncertainty)"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2154,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "Structural comparison; bridge axiom methodology is documented; 2 supporting sources"
+      },
+      "verified_claims": [
+        "4.63x (biomass ratio)",
+        "$25.0M (Tourism)",
+        "16 bridge axioms"
+      ],
+      "unverified_claims": []
+    },
+    "What would a blue bond backed by these sites look like?": {
+      "answer": "A blue bond collateralized by Cabo Pulmo and Shark Bay ecosystem services could be structured as follows (illustrative, not investment advice):\n\n**Bond structure:**\n- Issuer: Conservation trust or sovereign development bank\n- Use of proceeds: MPA management, monitoring infrastructure, community programs\n- Collateral: $50.77M/year combined ESV ($29.27M Cabo Pulmo + $21.5M Shark Bay)\n- Indicative size: $30M-$50M (1-2x annual management cost requirement)\n- Tenor: 10-20 years (aligned with BA-016 permanence estimates of 25-100 years)\n- Coupon: 4-6% (blue bond premium over comparable sovereign)\n\n**Revenue backing:**\n- Primary: Tourism user fees and carbon credit sales\n- Secondary: Fisheries license revenues and coastal protection avoided costs\n- Service coverage ratio: $50.77M ESV / $5M annual bond service = ~10x (illustrative)\n\n**Credit enhancement features:**\n- UNESCO World Heritage status (Shark Bay) as governance backstop\n- NEOLI 4/5 alignment at both sites (demonstrated management effectiveness)\n- Dual-site diversification reduces single-site concentration risk\n- Bridge axiom transparency supports investor due diligence\n\n**Risk factors for bond covenants:**\n- NEOLI score maintenance covenant (minimum 3/5)\n- Seagrass extent monitoring (satellite-verified, minimum 80% of baseline)\n- Biomass survey requirement (minimum biennial at Cabo Pulmo)\n- Carbon permanence buffer pool maintenance\n\n**Framework alignment:**\n- IFC Blue Finance Guidelines: SDG 14 aligned, GBP/GLP consistent\n- TNFD LEAP: Full L-E-A-P data available for disclosure\n- Verra VCS VM0033: Carbon component independently verifiable\n\nThis structure leverages MARIS's provenance chain to provide the transparency that blue bond investors increasingly demand.",
+      "confidence": 0.1903,
+      "evidence": [
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. (2014) - Global conservation outcomes depend on marine protected areas with five key features",
+          "year": 2014,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s44183-025-00111-y",
+          "doi_url": "https://doi.org/10.1038/s44183-025-00111-y",
+          "title": "Duarte et al. (2025) - Marine blue carbon strategies",
+          "year": 2025,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-013",
+        "BA-014",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Blue Bond",
+          "from_type": "FinancialInstrument",
+          "relationship": "BACKED_BY",
+          "to_node": "Combined ESV $50.77M",
+          "to_type": "FinancialValue"
+        }
+      ],
+      "caveats": [
+        "This is an illustrative structure, not investment advice or a real bond offering",
+        "Bond sizing, pricing, and covenants would require underwriter analysis",
+        "ESV-based collateral is a novel concept - legal enforceability is untested",
+        "Service coverage ratio is indicative and does not account for ESV volatility"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.1903,
+        "tier_base": 0.95,
+        "path_discount": 0.8,
+        "staleness_discount": 0.86,
+        "sample_factor": 0.2929,
+        "explanation": "Illustrative financial structure using verified ESV data; bond parameters are hypothetical; 2 supporting sources"
+      },
+      "verified_claims": [
+        "$29.27M (Cabo Pulmo ESV)",
+        "$21.5M (Shark Bay ESV)",
+        "$50.77M (combined ESV)"
+      ],
+      "unverified_claims": [
+        "$30M-$50M (bond size)",
+        "4-6% (coupon)",
+        "~10x (coverage ratio)"
+      ]
+    },
+    "Why do market-price valuations differ from willingness-to-pay?": {
+      "answer": "MARIS uses market-price methodology for Cabo Pulmo's tourism valuation ($25.0M), a deliberate methodological choice with important implications:\n\n**Market-price method (used by MARIS):**\n- Measures actual observed expenditure: 45,000 visitors x $556 average spending = $25.0M\n- Based on revealed preference (what people actually paid)\n- Conservative and auditor-friendly: relies on transaction data, not surveys\n- Limitation: captures only direct spending, misses consumer surplus (value above what was paid)\n\n**Willingness-to-pay (WTP) method (not used):**\n- Measures hypothetical maximum payment through surveys\n- Based on stated preference (what people say they would pay)\n- Typically produces higher values: WTP studies for marine reserves often show 84% premiums for healthy biomass (BA-001)\n- Limitation: hypothetical bias - survey responses may overstate actual behavior\n\n**Why the difference matters:**\nIf WTP were applied to Cabo Pulmo:\n- Base tourism value: $25.0M (market-price)\n- WTP premium for high biomass: up to 84% (from Marcos-Castillo et al. 2024)\n- WTP-adjusted tourism value: up to $46.0M\n- WTP-adjusted total ESV: up to $50.27M\n\n**Why MARIS chose market-price:**\n1. Defensibility: Investment-grade analysis requires observable data, not survey estimates\n2. Conservatism: Understating value is safer than overstating it for financial applications\n3. Auditability: Transaction data can be independently verified; survey responses cannot\n4. Credibility: A conservative number that survives audit is more valuable than an optimistic number that does not\n\nThe $25.0M figure is therefore a floor, not a ceiling. This is stated explicitly in MARIS caveats.",
+      "confidence": 0.2504,
+      "evidence": [
+        {
+          "doi": "10.1038/s41598-024-83664-1",
+          "doi_url": "https://doi.org/10.1038/s41598-024-83664-1",
+          "title": "Marcos-Castillo et al. (2024) - Tourism valuation framework for marine reserves",
+          "year": 2024,
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1007/s00267-008-9198-z",
+          "doi_url": "https://doi.org/10.1007/s00267-008-9198-z",
+          "title": "Uyarra et al. (2009) - Diver selection preferences",
+          "year": 2009,
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Tourism",
+          "from_type": "EcosystemService",
+          "relationship": "VALUED_BY",
+          "to_node": "BA-001",
+          "to_type": "BridgeAxiom"
+        },
+        {
+          "from_node": "BA-001",
+          "from_type": "BridgeAxiom",
+          "relationship": "EVIDENCED_BY",
+          "to_node": "Marcos-Castillo et al. 2024",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "WTP-adjusted figures are illustrative and not used in MARIS base valuations",
+        "The 84% WTP premium is an upper bound, not a mean estimate",
+        "Market-price methodology may understate true economic value"
+      ],
+      "confidence_breakdown": {
+        "composite": 0.2504,
+        "tier_base": 0.95,
+        "path_discount": 0.9,
+        "staleness_discount": 1.0,
+        "sample_factor": 0.2929,
+        "explanation": "Methodology comparison grounded in peer-reviewed literature; 2 supporting sources"
+      },
+      "verified_claims": [
+        "$25.0M (Tourism, market-price)",
+        "84% WTP premium (upper bound)",
+        "45,000 annual visitors",
+        "$556 average spending"
+      ],
+      "unverified_claims": [
+        "$46.0M",
+        "$50.27M"
       ]
     }
   }

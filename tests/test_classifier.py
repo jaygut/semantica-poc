@@ -222,3 +222,46 @@ class TestMetricExtraction:
         result = classifier.classify("Tell me about Cabo Pulmo")
         # May or may not have metrics, but should not crash
         assert isinstance(result["metrics"], list)
+
+
+# ---- Classifier gap fixes ----
+
+class TestClassifierGapFixes:
+    """Tests for the four classifier regex gaps fixed in the hardening pass."""
+
+    def test_dois_support_ba013_routes_to_provenance(self, classifier):
+        """Gap 1: 'DOIs' (plural) + 'support' + case-insensitive BA-013."""
+        result = classifier.classify("What DOIs support BA-013?")
+        assert result["category"] == "provenance_drilldown"
+
+    def test_rank_mpas_by_esv_routes_to_comparison(self, classifier):
+        """Gap 2: 'rank' + 'ESV' tie-break should prefer comparison."""
+        result = classifier.classify("Rank the MPAs by ESV")
+        assert result["category"] == "comparison"
+
+    def test_lowercase_ba013_routes_to_axiom(self, classifier):
+        """Gap 3: Lowercase 'ba-013' should match axiom_explanation."""
+        result = classifier.classify("ba-013")
+        assert result["category"] == "axiom_explanation"
+
+    def test_declined_what_would_happen_routes_to_risk(self, classifier):
+        """Gap 4: Past tense 'declined', reverse if/what order, modal 'would happen'."""
+        result = classifier.classify(
+            "If coral declined, what would happen to fisheries revenue?"
+        )
+        assert result["category"] == "risk_assessment"
+
+    def test_declining_matches_risk(self, classifier):
+        """Verify present participle 'declining' also matches risk_assessment."""
+        result = classifier.classify("What if coral is declining?")
+        assert result["category"] == "risk_assessment"
+
+    def test_uppercase_ba_still_works(self, classifier):
+        """Ensure uppercase BA-013 still works after case-insensitive fix."""
+        result = classifier.classify("Explain BA-013")
+        assert result["category"] == "axiom_explanation"
+
+    def test_benchmark_routes_to_comparison(self, classifier):
+        """Verify 'benchmark' also triggers comparison tie-break over site_valuation."""
+        result = classifier.classify("Benchmark the MPAs by ESV")
+        assert result["category"] == "comparison"

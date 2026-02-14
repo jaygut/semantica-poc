@@ -25,9 +25,30 @@ logger = logging.getLogger(__name__)
 # Confidence string -> numeric mapping
 _CONFIDENCE_MAP = {"high": 0.9, "medium": 0.7, "low": 0.4}
 
+# Maximum LLM extraction attempts per paper before falling back to regex
+_MAX_LLM_ATTEMPTS = 2
+
+
+def _resolve_confidence(raw_value: Any) -> float:
+    """Convert a confidence value from LLM output to a float in [0, 1].
+
+    Handles both string labels ("high", "medium", "low") and numeric
+    values (0.0-1.0 floats or ints).
+    """
+    if isinstance(raw_value, (int, float)):
+        return max(0.0, min(1.0, float(raw_value)))
+    label = str(raw_value).strip().lower()
+    return _CONFIDENCE_MAP.get(label, 0.5)
+
 
 def _parse_json_array(text: str) -> list[dict[str, Any]]:
-    """Extract a JSON array from LLM output, handling markdown fences."""
+    """Extract a JSON array from LLM output, handling markdown fences.
+
+    Returns a list of dicts on success (may be empty for ``[]``).
+    Returns ``None`` when no valid JSON array can be extracted at all,
+    which callers can use to distinguish "parsed but empty" from
+    "unparseable output".
+    """
     text = text.strip()
 
     # Strip markdown code fences
@@ -38,14 +59,17 @@ def _parse_json_array(text: str) -> list[dict[str, Any]]:
     start = text.find("[")
     end = text.rfind("]")
     if start == -1 or end == -1 or end <= start:
-        return []
+        return None
 
     try:
         result = json.loads(text[start : end + 1])
-        return result if isinstance(result, list) else []
+        if not isinstance(result, list):
+            return None
+        # Filter out non-dict entries that an LLM might accidentally include
+        return [item for item in result if isinstance(item, dict)]
     except json.JSONDecodeError:
         logger.warning("Failed to parse LLM JSON response for axiom discovery")
-        return []
+        return None
 
 
 class LLMPatternDetector:
@@ -104,7 +128,11 @@ class LLMPatternDetector:
         return all_patterns
 
     def _extract_via_llm(self, paper: dict[str, Any]) -> list[CandidatePattern]:
-        """Use LLM to extract cross-domain relationships from a paper abstract."""
+        """Use LLM to extract cross-domain relationships from a paper abstract.
+
+        Retries once with explicit JSON instructions if the first attempt
+        returns unparseable output.
+        """
         abstract = paper.get("abstract", "")
         doi = paper.get("doi", "")
         paper_id = paper.get("paper_id", "")
@@ -115,16 +143,39 @@ class LLMPatternDetector:
             abstract=abstract,
         )
 
-        try:
-            raw = self._llm.complete(
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.1,
-            )
-        except Exception as e:
-            logger.warning("LLM extraction failed for %s: %s", paper_id, e)
-            return []
+        items: list[dict[str, Any]] | None = None
+        for attempt in range(1, _MAX_LLM_ATTEMPTS + 1):
+            try:
+                raw = self._llm.complete(
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.1,
+                )
+            except Exception as e:
+                logger.warning(
+                    "LLM extraction failed for %s (attempt %d): %s",
+                    paper_id, attempt, e,
+                )
+                break
 
-        items = _parse_json_array(raw)
+            items = _parse_json_array(raw)
+            if items is not None:
+                # Parsing succeeded (even if the list is empty - that's valid)
+                break
+
+            if attempt < _MAX_LLM_ATTEMPTS:
+                logger.warning(
+                    "Unparseable LLM output for %s (attempt %d), retrying",
+                    paper_id, attempt,
+                )
+                prompt = (
+                    "Your previous response was not valid JSON. "
+                    "Return ONLY a JSON array of objects. No explanation.\n\n"
+                    + prompt
+                )
+
+        if items is None:
+            items = []
+
         patterns: list[CandidatePattern] = []
 
         for item in items:
@@ -136,8 +187,7 @@ class LLMPatternDetector:
             except (ValueError, TypeError):
                 continue
 
-            confidence_str = str(item.get("confidence", "medium")).lower()
-            confidence = _CONFIDENCE_MAP.get(confidence_str, 0.5)
+            confidence = _resolve_confidence(item.get("confidence", "medium"))
 
             # Boost confidence for T1 sources
             tier_boost = {"T1": 0.05, "T2": 0.0, "T3": -0.05, "T4": -0.1}
@@ -150,7 +200,7 @@ class LLMPatternDetector:
             eco_metric = item.get("ecological_metric", "")
             fin_metric = item.get("financial_metric", "")
             unit = item.get("unit", "")
-            quote = item.get("quote", "")[:200]
+            quote = str(item.get("quote", "") or "")[:200]
 
             # Classify domains from the metric descriptions
             domain_from = _classify_domain(eco_metric) if eco_metric else "ecological"

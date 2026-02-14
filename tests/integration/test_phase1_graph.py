@@ -32,14 +32,14 @@ EVIDENCE_PATH = PROJECT_ROOT / "data" / "semantica_export" / "bridge_axioms.json
 load_dotenv(PROJECT_ROOT / ".env", override=True)
 
 # Reset the config singleton so it picks up the real env vars
-import maris.config as _cfg_mod
+import maris.config as _cfg_mod  # noqa: E402
 _cfg_mod._config = None
 
-from maris.config import get_config
-from maris.graph.connection import get_driver, run_query
+from maris.config import get_config  # noqa: E402
+from maris.graph.connection import get_driver, run_query  # noqa: E402
 
 # Reset the connection singleton too, in case it was initialized with bad creds
-import maris.graph.connection as _conn_mod
+import maris.graph.connection as _conn_mod  # noqa: E402
 _conn_mod._driver = None
 
 _HAS_SEMANTICA = importlib.util.find_spec("semantica") is not None
@@ -321,7 +321,7 @@ class TestT12ReRunPopulation:
                         ORDER BY a.axiom_id
                         """
                     )
-                    print(f"\nAll TRANSLATES edges after repopulation:")
+                    print("\nAll TRANSLATES edges after repopulation:")
                     for e in extra_edges:
                         print(f"  {e['axiom_id']} -> {e['service_id']}")
 
@@ -339,7 +339,7 @@ class TestT12ReRunPopulation:
 
         # Compare axiom evidence
         assert evidence_before == evidence_after, (
-            f"Axiom evidence changed after re-population"
+            "Axiom evidence changed after re-population"
         )
 
         # Compare MPA properties

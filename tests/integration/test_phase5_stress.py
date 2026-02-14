@@ -30,11 +30,11 @@ EVIDENCE_PATH = PROJECT_ROOT / "data" / "semantica_export" / "bridge_axioms.json
 load_dotenv(PROJECT_ROOT / ".env", override=True)
 
 # Reset the config singleton so it picks up the real env vars
-import maris.config as _cfg_mod
+import maris.config as _cfg_mod  # noqa: E402
 _cfg_mod._config = None
 
 # Reset the connection singleton too, in case it was initialized with bad creds
-import maris.graph.connection as _conn_mod
+import maris.graph.connection as _conn_mod  # noqa: E402
 _conn_mod._driver = None
 
 API_BASE = os.environ.get("MARIS_TEST_API_BASE", "http://localhost:8000")
@@ -107,10 +107,10 @@ class TestT51ProvenancePersistence:
             # Verify summary shows data
             summary1 = mgr1.summary()
             assert summary1["semantica_available"] is True
-            sem_entries_1 = summary1.get("semantica_entries", 0)
+            _sem_entries_1 = summary1.get("semantica_entries", 0)
 
             # Get Semantica-side lineage for entity
-            lineage1 = mgr1.get_semantica_lineage("test_esv_cabo_pulmo")
+            _lineage1 = mgr1.get_semantica_lineage("test_esv_cabo_pulmo")
 
             # Destroy instance
             del mgr1
@@ -557,6 +557,13 @@ class TestT56ConcurrentQueries:
         """Send 20 concurrent queries via ThreadPoolExecutor, verify all succeed."""
         import httpx
 
+        # Skip if API server is not reachable
+        try:
+            with httpx.Client(timeout=5.0) as client:
+                client.get(f"{API_BASE}/api/health")
+        except Exception:
+            pytest.skip("API server not reachable at " + API_BASE)
+
         queries = [
             "What is Cabo Pulmo worth?",
             "Compare Cabo Pulmo and Shark Bay",
@@ -621,6 +628,13 @@ class TestT56ConcurrentQueries:
     def test_concurrent_health_checks(self):
         """Health endpoint should handle concurrent requests without issues."""
         import httpx
+
+        # Skip if API server is not reachable
+        try:
+            with httpx.Client(timeout=5.0) as client:
+                client.get(f"{API_BASE}/api/health")
+        except Exception:
+            pytest.skip("API server not reachable at " + API_BASE)
 
         def check_health() -> int:
             try:
@@ -742,7 +756,7 @@ class TestT58SemanticaReasoning:
 
         # Discover actual RuleType enum values (PRD assumed DEDUCTIVE but SDK may differ)
         available_types = list(RuleType.__members__.keys())
-        assert len(available_types) > 0, f"RuleType enum has no members"
+        assert len(available_types) > 0, "RuleType enum has no members"
 
         # Use the first available rule type for the smoke test
         rule_type = list(RuleType.__members__.values())[0]

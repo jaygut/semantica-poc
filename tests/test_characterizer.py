@@ -167,25 +167,34 @@ class TestOBISChecklist:
     """OBIS get_checklist() with mpa_name parameter."""
 
     def test_get_checklist_with_mpa_name(self) -> None:
+        area_data = {
+            "total": 1,
+            "results": [{"id": "20653", "name": "Tubbataha Reefs Natural Park", "type": "mwhs"}],
+        }
         obis_data = {
             "results": [
                 {"scientificName": "Acropora palmata", "aphiaID": 206974},
                 {"scientificName": "Posidonia australis", "aphiaID": 145795},
             ]
         }
-        resp = _make_mock_response(
-            status_code=200,
-            content=b'{...}',
-            json_data=obis_data,
-        )
-        with patch("maris.sites.api_clients.httpx.get", return_value=resp) as mock_get:
+        area_resp = _make_mock_response(status_code=200, content=b'{...}', json_data=area_data)
+        checklist_resp = _make_mock_response(status_code=200, content=b'{...}', json_data=obis_data)
+
+        def _route_get(url: str, **kwargs):
+            if "area" in url:
+                return area_resp
+            return checklist_resp
+
+        with patch("maris.sites.api_clients.httpx.get", side_effect=_route_get) as mock_get:
             client = OBISClient(max_retries=1)
             results = client.get_checklist(mpa_name="Tubbataha Reefs Natural Park")
         assert len(results) == 2
         assert results[0]["scientificName"] == "Acropora palmata"
-        # Verify areaid param was sent
-        call_kwargs = mock_get.call_args
-        assert "areaid" in call_kwargs.kwargs.get("params", call_kwargs[1].get("params", {}))
+        # Verify areaid param was sent as a numeric ID (not raw string)
+        checklist_call = [c for c in mock_get.call_args_list if "checklist" in str(c)]
+        assert len(checklist_call) == 1
+        params = checklist_call[0].kwargs.get("params", checklist_call[0][1].get("params", {}))
+        assert params.get("areaid") == 20653
 
     def test_get_checklist_with_geometry(self) -> None:
         obis_data = {"results": [{"scientificName": "Foo bar", "aphiaID": 1}]}
@@ -203,11 +212,69 @@ class TestOBISChecklist:
         assert "geometry" in params
 
     def test_get_checklist_204_returns_empty(self) -> None:
-        resp = _make_mock_response(status_code=204, content=b"")
-        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+        area_resp = _make_mock_response(status_code=200, content=b'{...}', json_data={"total": 0, "results": []})
+        checklist_resp = _make_mock_response(status_code=204, content=b"")
+
+        def _route_get(url: str, **kwargs):
+            if "area" in url:
+                return area_resp
+            return checklist_resp
+
+        with patch("maris.sites.api_clients.httpx.get", side_effect=_route_get):
             client = OBISClient(max_retries=1)
             results = client.get_checklist(mpa_name="Nonexistent")
         assert results == []
+
+
+# ---------------------------------------------------------------------------
+# 3b. OBIS area resolution
+# ---------------------------------------------------------------------------
+
+class TestOBISAreaResolution:
+    """OBIS search_area() resolves MPA names to numeric area IDs."""
+
+    def test_search_area_finds_known_mpa(self) -> None:
+        area_data = {
+            "total": 2,
+            "results": [
+                {"id": "20653", "name": "Tubbataha Reefs Natural Park", "type": "mwhs"},
+                {"id": "20578", "name": "Shark Bay, Western Australia", "type": "mwhs"},
+            ],
+        }
+        resp = _make_mock_response(status_code=200, content=b'{...}', json_data=area_data)
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            area_id = client.search_area("Tubbataha Reefs Natural Park")
+        assert area_id == 20653
+
+    def test_search_area_returns_none_for_unknown(self) -> None:
+        area_data = {"total": 0, "results": []}
+        resp = _make_mock_response(status_code=200, content=b'{...}', json_data=area_data)
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            area_id = client.search_area("Nonexistent MPA")
+        assert area_id is None
+
+    def test_search_area_caches_results(self) -> None:
+        area_data = {
+            "total": 1,
+            "results": [{"id": "20653", "name": "Tubbataha Reefs Natural Park", "type": "mwhs"}],
+        }
+        resp = _make_mock_response(status_code=200, content=b'{...}', json_data=area_data)
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp) as mock_get:
+            client = OBISClient(max_retries=1)
+            client.search_area("Tubbataha Reefs Natural Park")
+            client.search_area("Tubbataha Reefs Natural Park")
+        # Only one HTTP call - second call uses cache
+        assert mock_get.call_count == 1
+
+    def test_resolve_area_id_with_numeric_string(self) -> None:
+        client = OBISClient(max_retries=1)
+        assert client._resolve_area_id("12345") == 12345
+
+    def test_resolve_area_id_with_none(self) -> None:
+        client = OBISClient(max_retries=1)
+        assert client._resolve_area_id(None) is None
 
 
 # ---------------------------------------------------------------------------
