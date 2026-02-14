@@ -403,12 +403,16 @@ class TestSiteCharacterizer:
 
         mock_mr = MagicMock()
         mock_mr.search_by_name.return_value = marine_regions_fixture
+        mock_mr.get_geometry.return_value = {}
 
         mock_obis = MagicMock()
+        mock_obis.get_checklist.return_value = []
         mock_obis.get_occurrences.return_value = obis_fixture["results"]
 
         mock_worms = MagicMock()
         mock_worms.get_record.return_value = worms_fixture
+        mock_worms.get_classification.return_value = {}
+        mock_worms.get_attributes.return_value = []
 
         characterizer = SiteCharacterizer(
             marine_regions_client=mock_mr,
@@ -436,8 +440,14 @@ class TestSiteCharacterizer:
         mock_prov.provenance.record_activity.return_value = None
 
         characterizer = SiteCharacterizer(
-            marine_regions_client=MagicMock(search_by_name=MagicMock(return_value=marine_regions_fixture)),
-            obis_client=MagicMock(get_occurrences=MagicMock(return_value=[])),
+            marine_regions_client=MagicMock(
+                search_by_name=MagicMock(return_value=marine_regions_fixture),
+                get_geometry=MagicMock(return_value={}),
+            ),
+            obis_client=MagicMock(
+                get_checklist=MagicMock(return_value=[]),
+                get_occurrences=MagicMock(return_value=[]),
+            ),
             worms_client=MagicMock(),
             provenance_manager=mock_prov,
         )
@@ -474,10 +484,14 @@ class TestSiteCharacterizer:
         from maris.sites.characterizer import SiteCharacterizer
 
         mock_obis = MagicMock()
+        mock_obis.get_checklist.side_effect = ConnectionError("timeout")
         mock_obis.get_occurrences.side_effect = ConnectionError("timeout")
 
         characterizer = SiteCharacterizer(
-            marine_regions_client=MagicMock(search_by_name=MagicMock(return_value=marine_regions_fixture)),
+            marine_regions_client=MagicMock(
+                search_by_name=MagicMock(return_value=marine_regions_fixture),
+                get_geometry=MagicMock(return_value={}),
+            ),
             obis_client=mock_obis,
             worms_client=MagicMock(),
         )
@@ -494,10 +508,18 @@ class TestSiteCharacterizer:
 
         mock_worms = MagicMock()
         mock_worms.get_record.side_effect = ConnectionError("timeout")
+        mock_worms.get_classification.side_effect = ConnectionError("timeout")
+        mock_worms.get_attributes.side_effect = ConnectionError("timeout")
 
         characterizer = SiteCharacterizer(
-            marine_regions_client=MagicMock(search_by_name=MagicMock(return_value=marine_regions_fixture)),
-            obis_client=MagicMock(get_occurrences=MagicMock(return_value=obis_fixture["results"])),
+            marine_regions_client=MagicMock(
+                search_by_name=MagicMock(return_value=marine_regions_fixture),
+                get_geometry=MagicMock(return_value={}),
+            ),
+            obis_client=MagicMock(
+                get_checklist=MagicMock(return_value=[]),
+                get_occurrences=MagicMock(return_value=obis_fixture["results"]),
+            ),
             worms_client=mock_worms,
         )
         site = characterizer.characterize(
@@ -513,8 +535,14 @@ class TestSiteCharacterizer:
         from maris.sites.characterizer import SiteCharacterizer
 
         characterizer = SiteCharacterizer(
-            marine_regions_client=MagicMock(search_by_name=MagicMock(return_value=marine_regions_fixture)),
-            obis_client=MagicMock(get_occurrences=MagicMock(return_value=[])),
+            marine_regions_client=MagicMock(
+                search_by_name=MagicMock(return_value=marine_regions_fixture),
+                get_geometry=MagicMock(return_value={}),
+            ),
+            obis_client=MagicMock(
+                get_checklist=MagicMock(return_value=[]),
+                get_occurrences=MagicMock(return_value=[]),
+            ),
             worms_client=MagicMock(),
         )
         site = characterizer.characterize(
@@ -540,9 +568,19 @@ class TestSiteCharacterizer:
         ]
 
         characterizer = SiteCharacterizer(
-            marine_regions_client=MagicMock(search_by_name=MagicMock(return_value=marine_regions_fixture)),
-            obis_client=MagicMock(get_occurrences=MagicMock(return_value=coral_occurrences)),
-            worms_client=MagicMock(get_record=MagicMock(return_value={})),
+            marine_regions_client=MagicMock(
+                search_by_name=MagicMock(return_value=marine_regions_fixture),
+                get_geometry=MagicMock(return_value={}),
+            ),
+            obis_client=MagicMock(
+                get_checklist=MagicMock(return_value=[]),
+                get_occurrences=MagicMock(return_value=coral_occurrences),
+            ),
+            worms_client=MagicMock(
+                get_record=MagicMock(return_value={}),
+                get_classification=MagicMock(return_value={}),
+                get_attributes=MagicMock(return_value=[]),
+            ),
         )
         site = characterizer.characterize(
             name="Coral Site",
@@ -562,9 +600,19 @@ class TestSiteCharacterizer:
         ]
 
         characterizer = SiteCharacterizer(
-            marine_regions_client=MagicMock(search_by_name=MagicMock(return_value=marine_regions_fixture)),
-            obis_client=MagicMock(get_occurrences=MagicMock(return_value=seagrass_occurrences)),
-            worms_client=MagicMock(get_record=MagicMock(return_value={})),
+            marine_regions_client=MagicMock(
+                search_by_name=MagicMock(return_value=marine_regions_fixture),
+                get_geometry=MagicMock(return_value={}),
+            ),
+            obis_client=MagicMock(
+                get_checklist=MagicMock(return_value=[]),
+                get_occurrences=MagicMock(return_value=seagrass_occurrences),
+            ),
+            worms_client=MagicMock(
+                get_record=MagicMock(return_value={}),
+                get_classification=MagicMock(return_value={}),
+                get_attributes=MagicMock(return_value=[]),
+            ),
         )
         site = characterizer.characterize(
             name="Seagrass Site",
@@ -881,9 +929,19 @@ class TestIntegration:
 
         # Step 1: Characterize
         characterizer = SiteCharacterizer(
-            marine_regions_client=MagicMock(search_by_name=MagicMock(return_value=marine_regions_fixture)),
-            obis_client=MagicMock(get_occurrences=MagicMock(return_value=obis_fixture["results"])),
-            worms_client=MagicMock(get_record=MagicMock(return_value=worms_fixture)),
+            marine_regions_client=MagicMock(
+                search_by_name=MagicMock(return_value=marine_regions_fixture),
+                get_geometry=MagicMock(return_value={}),
+            ),
+            obis_client=MagicMock(
+                get_checklist=MagicMock(return_value=[]),
+                get_occurrences=MagicMock(return_value=obis_fixture["results"]),
+            ),
+            worms_client=MagicMock(
+                get_record=MagicMock(return_value=worms_fixture),
+                get_classification=MagicMock(return_value={}),
+                get_attributes=MagicMock(return_value=[]),
+            ),
         )
         site = characterizer.characterize(
             name="Tubbataha Reefs Natural Park",

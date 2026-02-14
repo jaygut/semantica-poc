@@ -74,16 +74,11 @@ class InferenceEngine:
 
         Returns the rule_id.
         """
-        rule_id = f"rule:{axiom.axiom_id}"
-        self._rules[rule_id] = InferenceRule(
-            rule_id=rule_id,
-            axiom=axiom,
-            input_domain=axiom.input_domain,
-            output_domain=axiom.output_domain,
-            condition=axiom.rule,
-            applicable_habitats=axiom.applicable_habitats,
-        )
-        return rule_id
+        from maris.reasoning.rule_compiler import compile_axiom
+
+        rule = compile_axiom(axiom)
+        self._rules[rule.rule_id] = rule
+        return rule.rule_id
 
     def register_axioms(self, axioms: list[BridgeAxiom]) -> int:
         """Register multiple axioms. Returns count registered."""

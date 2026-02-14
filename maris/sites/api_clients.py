@@ -6,6 +6,7 @@ and rate limiting. No real HTTP calls are made in tests.
 
 from __future__ import annotations
 
+import json
 import logging
 import time
 from typing import Any
@@ -43,7 +44,18 @@ class _BaseClient:
             try:
                 resp = httpx.get(url, params=params, timeout=self.timeout)
                 resp.raise_for_status()
-                return resp.json()
+                # HTTP 204 No Content (and any response with empty body)
+                # has no JSON to parse - return empty list.
+                if resp.status_code == 204 or not resp.content:
+                    return []
+                try:
+                    return resp.json()
+                except (json.JSONDecodeError, ValueError):
+                    logger.warning(
+                        "Non-JSON response from %s (status %d)",
+                        url, resp.status_code,
+                    )
+                    return []
             except (httpx.HTTPStatusError, httpx.RequestError) as exc:
                 last_exc = exc
                 logger.warning(
@@ -99,12 +111,25 @@ class OBISClient(_BaseClient):
     def get_checklist(
         self,
         geometry: str | None = None,
-        limit: int = 100,
+        mpa_name: str | None = None,
+        limit: int = 500,
     ) -> list[dict[str, Any]]:
-        """Get species checklist for a geographic area."""
+        """Get unique species checklist for a geographic area.
+
+        More efficient than raw occurrences because OBIS deduplicates
+        server-side, returning one record per species.
+
+        Parameters
+        ----------
+        geometry : WKT polygon for spatial filtering.
+        mpa_name : Free-text MPA / area name.
+        limit : Maximum species to return (default 500).
+        """
         params: dict[str, Any] = {"size": limit}
         if geometry:
             params["geometry"] = geometry
+        if mpa_name:
+            params["areaid"] = mpa_name
 
         result = self._get("checklist", params=params)
         if isinstance(result, dict):
@@ -132,9 +157,44 @@ class WoRMSClient(_BaseClient):
         return result if isinstance(result, list) else [result] if result else []
 
     def get_classification(self, aphia_id: int) -> dict[str, Any]:
-        """Get the full taxonomic classification for an AphiaID."""
+        """Get the full taxonomic classification for an AphiaID.
+
+        Returns a nested dict with keys like ``scientificname``, ``rank``,
+        and ``child`` (recursive).  Flattened ranks (kingdom, phylum, class,
+        order, family, genus) are extracted by :func:`flatten_classification`.
+        """
         result = self._get(f"AphiaClassificationByAphiaID/{aphia_id}")
         return result if isinstance(result, dict) else {}
+
+    def get_attributes(self, aphia_id: int) -> list[dict[str, Any]]:
+        """Get biological attributes for an AphiaID.
+
+        The WoRMS ``/AphiaAttributesByAphiaID/{id}`` endpoint returns a
+        list of attribute dicts, each with ``measurementType`` and
+        ``measurementValue`` fields (e.g. functional group, body size).
+        """
+        result = self._get(f"AphiaAttributesByAphiaID/{aphia_id}")
+        return result if isinstance(result, list) else []
+
+
+def flatten_classification(node: dict[str, Any]) -> dict[str, str]:
+    """Walk a nested WoRMS classification response and return a flat dict.
+
+    The WoRMS ``/AphiaClassificationByAphiaID`` endpoint returns a tree
+    like ``{"rank": "Kingdom", "scientificname": "Animalia", "child": {...}}``.
+    This helper walks the tree and returns::
+
+        {"Kingdom": "Animalia", "Phylum": "Cnidaria", ...}
+    """
+    flat: dict[str, str] = {}
+    current: dict[str, Any] | None = node
+    while current:
+        rank = current.get("rank", "")
+        name = current.get("scientificname", "")
+        if rank and name:
+            flat[rank] = name
+        current = current.get("child")
+    return flat
 
 
 class MarineRegionsClient(_BaseClient):

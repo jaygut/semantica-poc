@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **MARIS** (Marine Asset Risk Intelligence System) is a provenance-first knowledge graph that creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. Built on the Semantica framework, it is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
 
-**Current Status:** Production-ready POC deployed on `main` with Blue Carbon Extension complete. The system comprises a Neo4j knowledge graph (893 nodes, 132 edges) spanning two fully characterized MPA sites (Cabo Pulmo and Shark Bay), a FastAPI query engine with Bearer token authentication and rate limiting, natural-language-to-Cypher classification with LLM response validation, and an investor-facing Streamlit dashboard with interactive graph visualization. The document library contains 195 verified papers, 16 fully-evidenced bridge axioms (v1.3 with blue carbon axioms BA-013 through BA-016 and uncertainty quantification), and a Semantica-ready export bundle. Backed by a 220-test suite with GitHub Actions CI, multi-stage Docker builds, and a composite confidence model. The system also runs in static mode from a pre-computed JSON bundle (35 precomputed responses) for zero-downtime investor demos.
+**Current Status:** Production-ready POC deployed on `main` with Blue Carbon Extension complete. Semantica SDK integration (P0-P4) is ~93% complete on `feature/semantica-integration` branch. The system comprises a Neo4j knowledge graph (893 nodes, 132 edges) spanning two fully characterized MPA sites (Cabo Pulmo and Shark Bay), a FastAPI query engine with 9 endpoints (7 core + provenance + disclosure), Bearer token authentication and rate limiting, natural-language-to-Cypher classification with LLM response validation, and an investor-facing Streamlit dashboard with interactive graph visualization. The document library contains 195 verified papers, 16 fully-evidenced bridge axioms (v1.3 with blue carbon axioms BA-013 through BA-016 and uncertainty quantification), and a Semantica-ready export bundle. The Semantica integration adds W3C PROV-O provenance tracking, multi-site scaling pipeline, cross-domain reasoning engine, TNFD LEAP disclosure automation, dynamic axiom discovery, and a 6-file SDK bridge layer. Backed by a **770-test suite** (573 unit + 197 integration) with GitHub Actions CI, multi-stage Docker builds, and a composite confidence model. The system also runs in static mode from a pre-computed JSON bundle (35 precomputed responses) for zero-downtime investor demos.
 
 ---
 
@@ -177,6 +177,10 @@ The graph is populated from **seven curated data sources** through an idempotent
 | POST | `/api/compare` | Yes | Side-by-side MPA comparison |
 | POST | `/api/graph/traverse` | Yes | Graph traversal from a starting node (1-6 hops) |
 | GET | `/api/graph/node/{element_id}` | Yes | Node properties and relationships by Neo4j element ID |
+| GET | `/api/provenance/{entity_id}` | Yes | Provenance lineage and certificate for a tracked entity |
+| GET | `/api/provenance/{entity_id}/markdown` | Yes | Markdown-formatted provenance certificate |
+| GET | `/api/provenance` | Yes | Provenance store summary |
+| POST | `/api/disclosure/tnfd-leap` | Yes | Generate TNFD LEAP disclosure for a site |
 
 ---
 
@@ -200,7 +204,7 @@ Exceeding the limit returns HTTP 429. Rate limit headers are included in respons
 
 ## Testing
 
-The project includes a comprehensive test suite with 220 tests covering all core modules.
+The project includes a comprehensive test suite with 770 tests covering all core modules.
 
 ```bash
 # Install dev dependencies
@@ -229,6 +233,8 @@ maris/
       health.py                 # GET /api/health
       query.py                  # POST /api/query - full NL-to-answer pipeline
       graph.py                  # Graph traversal and node detail endpoints
+      provenance.py             # GET /api/provenance/{entity_id} - lineage and certificates
+      disclosure.py             # POST /api/disclosure/tnfd-leap - TNFD LEAP generation
   graph/                        # Neo4j integration layer
     connection.py               # Bolt driver singleton, run_query() helper
     schema.py                   # Uniqueness constraints and indexes
@@ -254,6 +260,41 @@ maris/
     llm_extractor.py            # LLM-based entity/relationship extraction
     embedding_generator.py      # Vector embeddings for semantic search
     graph_merger.py             # Merge extracted triples into Neo4j
+  provenance/                   # P0: W3C PROV-O provenance tracking
+    manager.py                  # MARISProvenanceManager
+    bridge_axiom_registry.py    # 16 axioms as typed BridgeAxiom objects
+    certificate.py              # Provenance certificate generation
+    core.py                     # PROV-O dataclasses
+    integrity.py                # SHA-256 checksum verification
+    storage.py                  # InMemoryStorage + SQLiteStorage
+  sites/                        # P1: Multi-site scaling pipeline
+    api_clients.py              # OBIS, WoRMS, Marine Regions clients
+    characterizer.py            # 5-step auto-characterization (Bronze/Silver/Gold)
+    esv_estimator.py            # Bridge axiom-based ESV estimation
+    models.py                   # Pydantic site models
+    registry.py                 # JSON-backed site registry
+  reasoning/                    # P2: Cross-domain reasoning engine
+    context_builder.py          # Graph -> Semantica ContextGraph
+    hybrid_retriever.py         # Graph + keyword + RRF retrieval
+    inference_engine.py         # Forward/backward chaining
+    explanation.py              # Investor-friendly explanations
+  disclosure/                   # P3: TNFD LEAP disclosure automation
+    leap_generator.py           # 4-phase TNFD LEAP generation
+    renderers.py                # Markdown, JSON, summary output
+    alignment_scorer.py         # 14-disclosure gap analysis
+    models.py                   # TNFD Pydantic models
+  discovery/                    # P4: Dynamic axiom discovery
+    pattern_detector.py         # Cross-paper pattern detection
+    aggregator.py               # Multi-study aggregation + conflict detection
+    candidate_axiom.py          # Candidate axiom formation
+    reviewer.py                 # Human-in-the-loop validation
+    pipeline.py                 # Discovery orchestration
+  semantica_bridge/             # Semantica SDK adapter layer
+    storage_adapter.py          # SemanticaStorage wrapping SDK
+    axiom_adapter.py            # MARIS <-> Semantica axiom conversion
+    provenance_adapter.py       # Dual-write provenance manager
+    integrity_adapter.py        # SDK-backed integrity verification
+    manager.py                  # SemanticaBackedManager (drop-in replacement)
   config.py                     # Centralized config from .env (MARIS_ prefix)
 
 investor_demo/
@@ -293,6 +334,19 @@ tests/
   test_query_engine.py              # Query execution and response formatting
   test_relationship_extraction.py   # Relationship extraction tests
   test_validators.py                # LLM response validation tests
+  test_provenance.py                # P0: Provenance engine tests
+  test_site_scaling.py              # P1: Site scaling tests
+  test_reasoning.py                 # P2: Reasoning engine tests
+  test_disclosure.py                # P3: TNFD disclosure tests
+  test_axiom_discovery.py           # P4: Axiom discovery tests
+  test_semantica_bridge.py          # Semantica SDK bridge tests (51 tests)
+  integration/                      # Integration test suite (197 tests)
+    test_phase0_bridge.py           # SDK availability, SQLite persistence, dual-write
+    test_phase1_graph.py            # Graph integrity, idempotent re-population
+    test_phase2_apis.py             # External API validation (OBIS, WoRMS, Marine Regions)
+    test_phase3_query.py            # Query pipeline regression
+    test_phase4_disclosure.py       # TNFD disclosure, axiom discovery
+    test_phase5_stress.py           # Stress tests, concurrent queries
 ```
 
 ---
@@ -565,7 +619,10 @@ These MUST be followed in all code, documentation, and generated content:
 | Live query pipeline | End-to-end NL-to-answer | Working |
 | Graph population | 893 nodes, 132 edges | Complete |
 | Dashboard (live + static) | Both modes operational | Working |
-| Test suite | 220 tests passing | Complete |
+| Test suite | 770 tests passing (573 unit + 197 integration) | Complete |
+| Semantica SDK integration | P0-P4 ~93% complete (25 modules) | In Progress |
+| Provenance tracking | W3C PROV-O with SQLite persistence | Complete |
+| TNFD disclosure | LEAP automation with alignment scoring | Complete |
 | API authentication | Bearer token + rate limiting | Complete |
 | Docker builds | Multi-stage API + Dashboard | Complete |
 | CI pipeline | GitHub Actions (lint + test) | Complete |

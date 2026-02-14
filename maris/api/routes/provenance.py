@@ -1,6 +1,7 @@
 """Provenance endpoint - entity lineage and certificates."""
 
 import logging
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -11,29 +12,49 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["provenance"], dependencies=[Depends(rate_limit_default)])
 
 # Lazy singleton
-_manager = None
+_manager: Any = None
 
 
-def _get_manager():
-    """Get or create the MARISProvenanceManager singleton."""
+def _get_manager() -> Any:
+    """Get or create the provenance manager singleton.
+
+    Prefers SemanticaBackedManager (SQLite persistence) when the Semantica SDK
+    bridge is available.  Falls back to MARISProvenanceManager (in-memory) if
+    the import fails.
+    """
     global _manager
     if _manager is None:
         from maris.config import get_config
-        from maris.provenance.manager import MARISProvenanceManager
 
         cfg = get_config()
         templates_path = cfg.schemas_dir / "bridge_axiom_templates.json"
         evidence_path = cfg.export_dir / "bridge_axioms.json"
 
-        _manager = MARISProvenanceManager(
-            templates_path=templates_path,
-            evidence_path=evidence_path,
-        )
+        try:
+            from maris.semantica_bridge.manager import SemanticaBackedManager
+
+            _manager = SemanticaBackedManager(
+                templates_path=templates_path,
+                evidence_path=evidence_path,
+                db_path=cfg.provenance_db,
+            )
+            logger.info(
+                "Provenance endpoint using SemanticaBackedManager (db=%s)",
+                cfg.provenance_db,
+            )
+        except ImportError:
+            from maris.provenance.manager import MARISProvenanceManager
+
+            _manager = MARISProvenanceManager(
+                templates_path=templates_path,
+                evidence_path=evidence_path,
+            )
+            logger.info("Provenance endpoint using MARISProvenanceManager (in-memory)")
     return _manager
 
 
 @router.get("/provenance/{entity_id}")
-def get_provenance(entity_id: str):
+def get_provenance(entity_id: str) -> dict[str, Any]:
     """Return provenance lineage and certificate for an entity.
 
     The entity_id can be any tracked entity (e.g., a document DOI,
@@ -60,7 +81,7 @@ def get_provenance(entity_id: str):
 
 
 @router.get("/provenance/{entity_id}/markdown")
-def get_provenance_markdown(entity_id: str):
+def get_provenance_markdown(entity_id: str) -> dict[str, str]:
     """Return a Markdown-formatted provenance certificate."""
     manager = _get_manager()
 
@@ -81,7 +102,7 @@ def get_provenance_markdown(entity_id: str):
 
 
 @router.get("/provenance")
-def provenance_summary():
+def provenance_summary() -> dict[str, Any]:
     """Return a summary of the provenance store."""
     manager = _get_manager()
     return manager.summary()

@@ -39,6 +39,7 @@ class HabitatInfo(BaseModel):
     habitat_id: str
     name: str = ""
     extent_km2: float | None = None
+    confidence: float = 0.0
 
 
 class EcosystemServiceEstimate(BaseModel):

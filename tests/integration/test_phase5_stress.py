@@ -154,16 +154,18 @@ class TestT51ProvenancePersistence:
         source_file = Path(api_main.__file__)
         source_text = source_file.read_text()
 
-        uses_semantica = "SemanticaBackedManager" in source_text
+        semantica_sources: list[str] = []
+        if "SemanticaBackedManager" in source_text:
+            semantica_sources.append(source_text)
         # Also check routes that might create provenance managers
         routes_dir = source_file.parent / "routes"
         if routes_dir.exists():
             for route_file in routes_dir.glob("*.py"):
-                if "SemanticaBackedManager" in route_file.read_text():
-                    uses_semantica = True
-                    break
+                rt = route_file.read_text()
+                if "SemanticaBackedManager" in rt:
+                    semantica_sources.append(rt)
 
-        if not uses_semantica:
+        if not semantica_sources:
             pytest.skip(
                 "INTEGRATION GAP: API server does not use SemanticaBackedManager. "
                 "The bridge works in isolation (proven by test_sqlite_persistence_round_trip) "
@@ -171,7 +173,8 @@ class TestT51ProvenancePersistence:
             )
         else:
             # If it does use it, verify it passes a db_path for persistence
-            assert "db_path" in source_text, (
+            combined = "\n".join(semantica_sources)
+            assert "db_path" in combined, (
                 "API server uses SemanticaBackedManager but may not provide db_path "
                 "for SQLite persistence"
             )

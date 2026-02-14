@@ -9,6 +9,7 @@ from maris.reasoning.context_builder import ContextNode, ContextEdge, ContextGra
 from maris.reasoning.hybrid_retriever import HybridRetriever, RetrievalResult
 from maris.reasoning.inference_engine import InferenceEngine, InferenceStep
 from maris.reasoning.explanation import ExplanationGenerator
+from maris.reasoning.rule_compiler import compile_axiom, compile_all, compile_from_templates
 
 __all__ = [
     "ContextNode",
@@ -19,4 +20,7 @@ __all__ = [
     "InferenceEngine",
     "InferenceStep",
     "ExplanationGenerator",
+    "compile_axiom",
+    "compile_all",
+    "compile_from_templates",
 ]

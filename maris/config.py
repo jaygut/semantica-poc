@@ -83,6 +83,9 @@ class MARISConfig:
     def registry_path(self) -> Path:
         return Path(self.project_root) / ".claude" / "registry" / "document_index.json"
 
+    # Provenance
+    provenance_db: str = field(default_factory=lambda: getenv("MARIS_PROVENANCE_DB", "provenance.db"))
+
     # Feature flags
     enable_live_graph: bool = field(default_factory=lambda: getenv("MARIS_ENABLE_LIVE_GRAPH", "true").lower() == "true")
     enable_chat: bool = field(default_factory=lambda: getenv("MARIS_ENABLE_CHAT", "true").lower() == "true")

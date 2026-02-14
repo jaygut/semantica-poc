@@ -37,9 +37,17 @@ class DiscoveryPipeline:
         min_sources: int = 3,
         min_confidence: float = 0.3,
         registry_path: Path | str | None = None,
+        llm_adapter: Any | None = None,
     ) -> None:
         self._min_sources = min_sources
-        self._detector = PatternDetector(min_confidence=min_confidence)
+        if llm_adapter is not None:
+            from maris.discovery.llm_detector import LLMPatternDetector
+            self._detector = LLMPatternDetector(
+                llm_adapter=llm_adapter,
+                min_confidence=min_confidence,
+            )
+        else:
+            self._detector = PatternDetector(min_confidence=min_confidence)
         self._aggregator = PatternAggregator()
         self._reviewer = AxiomReviewer()
         self._registry_path = Path(registry_path) if registry_path else None

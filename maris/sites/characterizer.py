@@ -2,8 +2,8 @@
 
 Implements a 5-step pipeline:
   1. LOCATE - Fetch MPA metadata from Marine Regions
-  2. POPULATE SPECIES - Query OBIS for occurrences, cross-ref WoRMS
-  3. CHARACTERIZE HABITAT - Infer habitat types from species + metadata
+  2. POPULATE SPECIES - Query OBIS checklist, cross-ref WoRMS for taxonomy and attributes
+  3. CHARACTERIZE HABITAT - Score habitat types from taxonomic hierarchy and functional groups
   4. ESTIMATE SERVICES - Apply relevant bridge axioms based on habitat
   5. SCORE & RATE - Calculate NEOLI score, assign provisional rating
 
@@ -15,7 +15,12 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from maris.sites.api_clients import MarineRegionsClient, OBISClient, WoRMSClient
+from maris.sites.api_clients import (
+    MarineRegionsClient,
+    OBISClient,
+    WoRMSClient,
+    flatten_classification,
+)
 from maris.sites.esv_estimator import estimate_esv
 from maris.sites.models import (
     CharacterizationTier,
@@ -28,12 +33,50 @@ from maris.sites.models import (
 
 logger = logging.getLogger(__name__)
 
-# Habitat inference rules based on dominant species families / keywords
-_HABITAT_INFERENCE: dict[str, list[str]] = {
-    "coral_reef": ["Acropora", "Porites", "Pocillopora", "Scleractinia", "coral"],
-    "seagrass_meadow": ["Posidonia", "Zostera", "Halophila", "Thalassia", "seagrass"],
-    "mangrove_forest": ["Rhizophora", "Avicennia", "Sonneratia", "mangrove"],
-    "kelp_forest": ["Macrocystis", "Ecklonia", "Laminaria", "Nereocystis", "kelp"],
+# ---------------------------------------------------------------------------
+# Habitat inference configuration
+# ---------------------------------------------------------------------------
+
+# Keyword matches on species scientific names (genus, order, common name)
+_HABITAT_KEYWORDS: dict[str, list[str]] = {
+    "coral_reef": ["Acropora", "Porites", "Pocillopora", "Scleractinia", "coral",
+                    "Montipora", "Stylophora", "Fungia", "Millepora"],
+    "seagrass_meadow": ["Posidonia", "Zostera", "Halophila", "Thalassia", "seagrass",
+                         "Cymodocea", "Halodule", "Syringodium", "Enhalus"],
+    "mangrove_forest": ["Rhizophora", "Avicennia", "Sonneratia", "mangrove",
+                         "Bruguiera", "Ceriops", "Laguncularia"],
+    "kelp_forest": ["Macrocystis", "Ecklonia", "Laminaria", "Nereocystis", "kelp",
+                     "Saccharina", "Undaria", "Lessonia"],
+}
+
+# Taxonomic indicators: order/family names that strongly indicate habitat
+_TAXONOMIC_INDICATORS: dict[str, dict[str, list[str]]] = {
+    "coral_reef": {
+        "Order": ["Scleractinia", "Alcyonacea"],
+        "Family": ["Acroporidae", "Poritidae", "Pocilloporidae", "Faviidae",
+                    "Fungiidae", "Merulinidae", "Milleporidae"],
+    },
+    "seagrass_meadow": {
+        "Order": ["Alismatales"],
+        "Family": ["Posidoniaceae", "Zosteraceae", "Hydrocharitaceae",
+                    "Cymodoceaceae"],
+    },
+    "mangrove_forest": {
+        "Order": ["Malpighiales", "Lamiales"],
+        "Family": ["Rhizophoraceae", "Acanthaceae", "Combretaceae"],
+    },
+    "kelp_forest": {
+        "Order": ["Laminariales"],
+        "Family": ["Laminariaceae", "Lessoniaceae", "Alariaceae"],
+    },
+}
+
+# WoRMS functional group keywords that map to habitats
+_FUNCTIONAL_GROUP_HABITAT: dict[str, list[str]] = {
+    "coral_reef": ["reef-associated", "coral", "coral reef"],
+    "seagrass_meadow": ["seagrass", "seagrass-associated"],
+    "mangrove_forest": ["mangrove", "mangrove-associated"],
+    "kelp_forest": ["kelp", "macroalgae"],
 }
 
 
@@ -129,6 +172,7 @@ class SiteCharacterizer:
     ) -> SiteCharacterization:
         """Step 1: Resolve MPA metadata from Marine Regions or supplied data."""
         mrgid: int | None = None
+        boundary_wkt: str | None = None
 
         if not country or not coordinates:
             try:
@@ -147,7 +191,15 @@ class SiteCharacterizer:
             except ConnectionError:
                 logger.warning("Marine Regions lookup failed for %s", name)
 
-        return SiteCharacterization(
+        # Fetch boundary geometry for spatial queries if MRGID available
+        if mrgid:
+            try:
+                geom = self._mr.get_geometry(mrgid)
+                boundary_wkt = geom.get("the_geom") or geom.get("geometry")
+            except ConnectionError:
+                logger.warning("Marine Regions geometry lookup failed for MRGID %d", mrgid)
+
+        site = SiteCharacterization(
             canonical_name=name,
             country=country,
             coordinates=coordinates,
@@ -155,23 +207,50 @@ class SiteCharacterizer:
             designation_year=designation_year,
             mrgid=mrgid,
         )
+        # Store boundary WKT for use in OBIS spatial queries (not persisted in model)
+        site._boundary_wkt = boundary_wkt  # type: ignore[attr-defined]
+        return site
 
     def _step_populate_species(
         self, site: SiteCharacterization
     ) -> list[SpeciesRecord]:
-        """Step 2: Query OBIS for species, cross-reference WoRMS."""
+        """Step 2: Query OBIS for species, cross-reference WoRMS.
+
+        Uses the OBIS checklist endpoint first (more efficient - deduplicated
+        server-side). Falls back to raw occurrences if checklist fails.
+        Enriches each species with WoRMS record, taxonomic classification,
+        and biological attributes (functional group, trophic level).
+        """
         species: list[SpeciesRecord] = []
 
+        # Try checklist endpoint first (more efficient, deduplicated).
+        # If boundary WKT is available from Marine Regions, use spatial query.
+        # Fall back to name-based occurrence query as last resort.
+        boundary_wkt: str | None = getattr(site, "_boundary_wkt", None)
+        obis_records: list[dict[str, Any]] = []
+
         try:
-            occurrences = self._obis.get_occurrences(
-                mpa_name=site.canonical_name, limit=50,
+            obis_records = self._obis.get_checklist(
+                geometry=boundary_wkt,
+                mpa_name=site.canonical_name if not boundary_wkt else None,
+                limit=100,
             )
         except ConnectionError:
-            logger.warning("OBIS lookup failed for %s", site.canonical_name)
-            return species
+            logger.warning("OBIS checklist failed for %s", site.canonical_name)
+
+        if not obis_records:
+            try:
+                obis_records = self._obis.get_occurrences(
+                    geometry=boundary_wkt,
+                    mpa_name=site.canonical_name if not boundary_wkt else None,
+                    limit=100,
+                )
+            except ConnectionError:
+                logger.warning("OBIS occurrence fallback failed for %s", site.canonical_name)
+                return species
 
         seen_ids: set[int] = set()
-        for occ in occurrences:
+        for occ in obis_records:
             aphia_id = occ.get("aphiaID") or occ.get("taxonID")
             if not aphia_id or aphia_id in seen_ids:
                 continue
@@ -183,7 +262,7 @@ class SiteCharacterizer:
                 worms_aphia_id=aphia_id,
             )
 
-            # Enrich from WoRMS
+            # Enrich from WoRMS record (basic info + IUCN status)
             try:
                 worms_rec = self._worms.get_record(aphia_id)
                 if worms_rec:
@@ -192,7 +271,32 @@ class SiteCharacterizer:
                     )
                     record.conservation_status = worms_rec.get("iucn_status", "")
             except ConnectionError:
-                logger.warning("WoRMS lookup failed for AphiaID %d", aphia_id)
+                logger.warning("WoRMS record lookup failed for AphiaID %d", aphia_id)
+
+            # Enrich with taxonomic classification
+            try:
+                classification = self._worms.get_classification(aphia_id)
+                if classification:
+                    flat = flatten_classification(classification)
+                    record._classification = flat  # type: ignore[attr-defined]
+            except ConnectionError:
+                logger.warning("WoRMS classification failed for AphiaID %d", aphia_id)
+
+            # Enrich with biological attributes (functional group, trophic level)
+            try:
+                attrs = self._worms.get_attributes(aphia_id)
+                for attr in attrs:
+                    mtype = (attr.get("measurementType") or "").lower()
+                    mvalue = attr.get("measurementValue", "")
+                    if "functional group" in mtype or "functional_group" in mtype:
+                        record.functional_group = str(mvalue)
+                    elif "trophic" in mtype and mvalue:
+                        try:
+                            record.trophic_level = float(mvalue)
+                        except (ValueError, TypeError):
+                            pass
+            except ConnectionError:
+                logger.warning("WoRMS attributes failed for AphiaID %d", aphia_id)
 
             species.append(record)
 
@@ -203,21 +307,67 @@ class SiteCharacterizer:
         site: SiteCharacterization,
         species: list[SpeciesRecord],
     ) -> list[HabitatInfo]:
-        """Step 3: Infer habitat types from species composition."""
-        habitat_scores: dict[str, int] = {}
-        all_names = " ".join(s.scientific_name for s in species).lower()
+        """Step 3: Infer habitat types from species composition.
 
-        for habitat_id, keywords in _HABITAT_INFERENCE.items():
-            score = sum(1 for kw in keywords if kw.lower() in all_names)
-            if score > 0:
-                habitat_scores[habitat_id] = score
+        Uses a multi-signal scoring system:
+          1. Keyword matches on scientific names (1 pt each)
+          2. Taxonomic hierarchy indicators at order/family level (3 pts each)
+          3. WoRMS functional group keywords (2 pts each)
+
+        Only habitats with score >= 1 are included. Confidence is derived
+        from the proportion of indicator species found.
+        """
+        habitat_scores: dict[str, float] = {}
+        habitat_indicator_count: dict[str, int] = {}
+
+        for hab_id in _HABITAT_KEYWORDS:
+            habitat_scores[hab_id] = 0.0
+            habitat_indicator_count[hab_id] = 0
+
+        for sp in species:
+            name_lower = sp.scientific_name.lower()
+            classification: dict[str, str] = getattr(sp, "_classification", {})
+            func_group_lower = sp.functional_group.lower()
+
+            for hab_id, keywords in _HABITAT_KEYWORDS.items():
+                # Signal 1: keyword match on scientific name
+                for kw in keywords:
+                    if kw.lower() in name_lower:
+                        habitat_scores[hab_id] += 1.0
+                        habitat_indicator_count[hab_id] += 1
+                        break
+
+                # Signal 2: taxonomic hierarchy (order / family level)
+                if classification:
+                    tax_indicators = _TAXONOMIC_INDICATORS.get(hab_id, {})
+                    for rank, indicator_names in tax_indicators.items():
+                        sp_rank_value = classification.get(rank, "")
+                        if sp_rank_value in indicator_names:
+                            habitat_scores[hab_id] += 3.0
+                            habitat_indicator_count[hab_id] += 1
+                            break
+
+                # Signal 3: WoRMS functional group
+                if func_group_lower:
+                    fg_keywords = _FUNCTIONAL_GROUP_HABITAT.get(hab_id, [])
+                    for fg_kw in fg_keywords:
+                        if fg_kw in func_group_lower:
+                            habitat_scores[hab_id] += 2.0
+                            habitat_indicator_count[hab_id] += 1
+                            break
 
         habitats: list[HabitatInfo] = []
+        total_species = max(len(species), 1)
         for hab_id in sorted(habitat_scores, key=habitat_scores.get, reverse=True):  # type: ignore[arg-type]
+            score = habitat_scores[hab_id]
+            if score < 1.0:
+                continue
+            indicator_frac = habitat_indicator_count[hab_id] / total_species
             habitats.append(HabitatInfo(
                 habitat_id=hab_id,
                 name=hab_id.replace("_", " ").title(),
                 extent_km2=site.area_km2,
+                confidence=min(indicator_frac, 1.0),
             ))
 
         return habitats

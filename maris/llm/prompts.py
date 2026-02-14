@@ -124,3 +124,43 @@ Text:
 
 Respond with JSON array of relationships.
 """
+
+# ---------------------------------------------------------------------------
+# Axiom discovery - cross-domain coefficient extraction
+# ---------------------------------------------------------------------------
+
+AXIOM_DISCOVERY_PROMPT = """\
+You are a scientific data extraction system for marine natural capital research.
+Extract all quantitative ecological-to-financial or ecological-to-service
+relationships from the abstract below.
+
+ABSTRACT (DOI: {doi}):
+---
+{abstract}
+---
+
+For each cross-domain quantitative relationship found, provide:
+1. ecological_metric: The ecological input (e.g. "fish biomass", "seagrass area", "coral cover")
+2. financial_metric: The financial or service output (e.g. "tourism revenue", "carbon credit value", "fisheries yield")
+3. coefficient: The numeric coefficient, multiplier, rate, or percentage (as a float)
+4. unit: The unit of the coefficient (e.g. "%", "x", "tCO2/ha/yr", "USD/ha", "million")
+5. confidence: Your confidence in this extraction (high, medium, or low)
+6. quote: The exact sentence or phrase from the abstract supporting this relationship (max 200 chars)
+
+Rules:
+- Only extract relationships that cross domains (ecological -> financial/service)
+- The coefficient must be explicitly stated in the text, not inferred
+- If no cross-domain quantitative relationships are found, return []
+
+Return ONLY a JSON array. Example:
+[
+  {{
+    "ecological_metric": "fish biomass recovery",
+    "financial_metric": "dive tourism revenue",
+    "coefficient": 84.0,
+    "unit": "%",
+    "confidence": "high",
+    "quote": "divers willing to pay up to 84% more for higher biomass sites"
+  }}
+]
+"""

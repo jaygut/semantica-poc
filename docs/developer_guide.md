@@ -42,6 +42,8 @@ maris/
       health.py               # GET /api/health - Neo4j + LLM status + graph stats
       query.py                # POST /api/query - full NL-to-answer pipeline
       graph.py                # Graph traversal and node detail endpoints
+      provenance.py           # GET /api/provenance/{entity_id} - lineage and certificates
+      disclosure.py           # POST /api/disclosure/tnfd-leap - TNFD LEAP generation
   graph/                      # Neo4j integration layer
     connection.py             # Bolt driver singleton, run_query() helper
     schema.py                 # Uniqueness constraints and indexes
@@ -67,6 +69,42 @@ maris/
     llm_extractor.py          # LLM-based entity/relationship extraction
     embedding_generator.py    # Vector embeddings for semantic search
     graph_merger.py           # Merge extracted triples into Neo4j
+  provenance/                 # P0: W3C PROV-O provenance tracking
+    manager.py                # MARISProvenanceManager (entity/activity/agent tracking)
+    bridge_axiom_registry.py  # 16 axioms as typed BridgeAxiom objects with TranslationChain
+    bridge_axiom.py           # BridgeAxiom dataclass
+    certificate.py            # Provenance certificate generation (JSON/Markdown)
+    core.py                   # PROV-O core dataclasses (ProvenanceEntity, ProvenanceActivity, ProvenanceAgent)
+    integrity.py              # SHA-256 checksum verification
+    storage.py                # InMemoryStorage and SQLiteStorage backends
+  sites/                      # P1: Multi-site scaling pipeline
+    api_clients.py            # Thin wrappers for OBIS, WoRMS, Marine Regions APIs
+    characterizer.py          # 5-step auto-characterization pipeline (Bronze/Silver/Gold)
+    esv_estimator.py          # Bridge axiom-based ESV estimation with CI propagation
+    models.py                 # Pydantic v2 models (SiteCharacterization, SpeciesRecord, etc.)
+    registry.py               # JSON-backed site registry with CRUD operations
+  reasoning/                  # P2: Cross-domain reasoning engine
+    context_builder.py        # Convert Neo4j results to Semantica ContextGraph
+    hybrid_retriever.py       # Graph + keyword + Reciprocal Rank Fusion retrieval
+    inference_engine.py       # Forward/backward chaining with bridge axiom rules
+    explanation.py            # Investor-friendly explanation generation
+  disclosure/                 # P3: TNFD LEAP disclosure automation
+    models.py                 # Pydantic models for TNFD LEAP 4-phase sections
+    leap_generator.py         # TNFD LEAP document generation from graph data
+    renderers.py              # Markdown, JSON, and executive summary output
+    alignment_scorer.py       # 14-disclosure gap analysis and scoring
+  discovery/                  # P4: Dynamic axiom discovery pipeline
+    pattern_detector.py       # Cross-paper quantitative pattern detection
+    aggregator.py             # Multi-study aggregation with conflict detection
+    candidate_axiom.py        # Candidate axiom formation (compatible with bridge_axiom_templates.json)
+    reviewer.py               # Human-in-the-loop accept/reject workflow
+    pipeline.py               # End-to-end discovery pipeline orchestration
+  semantica_bridge/           # Semantica SDK adapter layer
+    storage_adapter.py        # SemanticaStorage wrapping semantica.provenance.storage
+    axiom_adapter.py          # MARIS <-> Semantica BridgeAxiom conversion + chaining
+    provenance_adapter.py     # Dual-write ProvenanceManager (MARIS + Semantica)
+    integrity_adapter.py      # Integrity verification backed by Semantica checksums
+    manager.py                # SemanticaBackedManager - drop-in replacement with SQLite persistence
   config.py                   # Centralized configuration from .env
 ```
 
@@ -449,7 +487,7 @@ These fields feed into the Monte Carlo simulation and sensitivity analysis to pr
 
 ### Test Suite
 
-The project includes 220 tests across 14 test files in the `tests/` directory. Tests cover the full stack: query classification, Cypher template generation, LLM response validation, confidence model, sensitivity analysis, API endpoints, and graph population.
+The project includes **770 tests** across 22 test files. Tests cover the full stack: query classification, Cypher template generation, LLM response validation, confidence model, sensitivity analysis, API endpoints, graph population, W3C PROV-O provenance, multi-site scaling, cross-domain reasoning, TNFD disclosure, axiom discovery, and Semantica SDK bridge adapters.
 
 **Setup and execution:**
 
@@ -484,6 +522,19 @@ tests/
   test_query_engine.py              # Query execution and response formatting
   test_relationship_extraction.py   # Relationship extraction tests
   test_validators.py                # LLM response validation tests
+  test_provenance.py                # P0: Provenance engine tests (40 tests)
+  test_site_scaling.py              # P1: Multi-site scaling pipeline tests (45 tests)
+  test_reasoning.py                 # P2: Cross-domain reasoning engine tests (35 tests)
+  test_disclosure.py                # P3: TNFD LEAP disclosure tests (30 tests)
+  test_axiom_discovery.py           # P4: Axiom discovery pipeline tests (70+ tests)
+  test_semantica_bridge.py          # Semantica SDK bridge adapter tests (51 tests)
+  integration/                      # Integration test suite (197 tests)
+    test_phase0_bridge.py           # SDK availability, SQLite persistence, dual-write
+    test_phase1_graph.py            # Graph integrity, idempotent re-population
+    test_phase2_apis.py             # OBIS, WoRMS, Marine Regions real API calls
+    test_phase3_query.py            # 5-category regression, classifier accuracy
+    test_phase4_disclosure.py       # TNFD disclosure, axiom discovery
+    test_phase5_stress.py           # SQLite persistence, concurrent queries
 ```
 
 **Key fixtures** (defined in `conftest.py`):
@@ -501,7 +552,7 @@ tests/
 The project uses GitHub Actions (`.github/workflows/ci.yml`) for continuous integration on every push and pull request to `main`:
 
 1. **Lint** - Runs `ruff` for code style and import order checks
-2. **Test** - Runs the full pytest suite (220 tests)
+2. **Test** - Runs the full pytest suite (770 tests: 573 unit + 197 integration)
 
 Dev dependencies are specified in `requirements-dev.txt`: pytest>=8.0, pytest-asyncio>=0.23, httpx>=0.26, ruff>=0.8, pytest-cov>=4.0.
 
