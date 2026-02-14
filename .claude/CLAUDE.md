@@ -98,6 +98,7 @@ bridge_axiom_templates.json (16 axioms) ─────────────�
 tests/                               # Test suite (220 tests)
   conftest.py                        # Shared fixtures
   test_api_endpoints.py              # API route tests with auth validation
+  test_auth.py                       # Auth enforcement, rate limiting, input validation
   test_bridge_axioms.py              # Bridge axiom computation tests
   test_cabo_pulmo_validation.py      # Cabo Pulmo reference data integrity
   test_classifier.py                 # Query classification accuracy

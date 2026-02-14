@@ -44,19 +44,19 @@ Returns system status including Neo4j connectivity, LLM availability, and graph 
   "neo4j_connected": true,
   "llm_available": true,
   "graph_stats": {
-    "total_nodes": 878,
-    "total_edges": 101,
+    "total_nodes": 893,
+    "total_edges": 132,
     "node_breakdown": {
-      "Document": 828,
-      "BridgeAxiom": 12,
+      "Document": 829,
+      "BridgeAxiom": 16,
+      "EcosystemService": 11,
       "TrophicLevel": 10,
-      "Concept": 8,
-      "EcosystemService": 6,
+      "Concept": 10,
       "Habitat": 4,
-      "MPA": 3,
+      "MPA": 4,
       "Species": 3,
-      "FinancialInstrument": 2,
-      "Framework": 2
+      "FinancialInstrument": 3,
+      "Framework": 3
     }
   }
 }
@@ -145,7 +145,7 @@ The primary endpoint. Classifies a natural-language question, selects a Cypher t
 
 #### `GET /api/site/{site_name}`
 
-Retrieve structured data for a specific MPA. Returns full metadata for the calibration site (Cabo Pulmo); returns governance metadata only for comparison sites. Requires authentication (returns 401/429 on failure).
+Retrieve structured data for a specific MPA. Returns full metadata for fully characterized sites (Cabo Pulmo and Shark Bay); returns governance metadata only for comparison sites. Requires authentication (returns 401/429 on failure).
 
 **Response (`SiteResponse`):**
 
@@ -160,7 +160,7 @@ Retrieve structured data for a specific MPA. Returns full metadata for the calib
 | `asset_rating` | string | Investment-grade rating (e.g. "AAA", "AA") |
 | `services` | list | Ecosystem service breakdown with per-service values |
 
-> **Data coverage note:** Only the calibration site (Cabo Pulmo National Park) returns full ESV, biomass, and service breakdowns. Comparison sites (Great Barrier Reef Marine Park, Papahanaumokuakea Marine National Monument) return governance metadata but null for financial fields. See the [Developer Guide](developer_guide.md#calibration-site-model) for details.
+> **Data coverage note:** Fully characterized sites (Cabo Pulmo National Park and Shark Bay World Heritage Area) return full ESV, biomass, and service breakdowns. Comparison sites (Great Barrier Reef Marine Park, Papahanaumokuakea Marine National Monument) return governance metadata but null for financial fields. See the [Developer Guide](developer_guide.md#calibration-site-model) for details.
 
 ---
 

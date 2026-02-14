@@ -72,7 +72,7 @@ Every number displayed in the dashboard traces back to curated, DOI-backed sourc
 
 The v2 live mode queries these through the Neo4j graph (populated by `scripts/populate_neo4j.py`). The v1 static mode reads directly from the investment-grade bundle JSON.
 
-**Calibration site model:** Cabo Pulmo National Park is the fully characterized reference site with complete ecosystem service valuations. Comparison sites (Great Barrier Reef, Papahanaumokuakea) have governance metadata only (NEOLI score, area, asset rating) and do not have financial data in the current graph. See the [Developer Guide](../docs/developer_guide.md#calibration-site-model) for details on adding new sites.
+**Calibration site model:** Cabo Pulmo National Park ($29.27M ESV, tourism-dominant) and Shark Bay World Heritage Area ($21.5M ESV, carbon-dominant) are fully characterized reference sites with complete ecosystem service valuations. Comparison sites (Great Barrier Reef, Papahanaumokuakea) have governance metadata only (NEOLI score, area, asset rating) and do not have financial data in the current graph. See the [Developer Guide](../docs/developer_guide.md#calibration-site-model) for details on adding new sites.
 
 ---
 
@@ -86,18 +86,19 @@ The v2 live mode queries these through the Neo4j graph (populated by `scripts/po
 | **Investment Thesis** | Three-paragraph block: MARIS definition, Semantica provenance framework, context graphs concept |
 | **Key Metrics** | 4 KPI cards: Annual ESV, Biomass Recovery, NEOLI Score, Climate Buffer |
 | **Provenance Chain** | Fixed-position causal graph with 5 layers: Site, Ecological State, Ecosystem Services, Financial Value, Risk |
-| **Bridge Axiom Evidence** | Table mapping 4 axioms (BA-001, BA-002, BA-011, BA-012) to plain-English meanings and DOI citations |
+| **Bridge Axiom Evidence** | Table mapping key axioms (BA-001, BA-002, BA-011 through BA-016) to plain-English meanings and DOI citations |
 | **Valuation Composition** | Horizontal bar chart of service breakdown + CI context |
 | **Risk Profile** | Monte Carlo distribution (10,000 simulations) + resilience/degradation risk cards |
+| **Comparison Sites** | 2x2 grid: Papahanaumokuakea (5/5), Cabo Pulmo (4/5), Shark Bay (4/5), Mesoamerican Reef (1-2/5) |
+| **Framework Alignment** | IFC Blue Finance eligible uses + TNFD LEAP four-phase summary |
+| **Scaling Intelligence** | Intelligence stack (public data, ecological, financial layers), 4-phase execution roadmap |
 | **Ask MARIS** | Natural-language query chat with confidence badges, axiom tags, and evidence tables (v2 only) |
 | **Graph Explorer** | Interactive Plotly visualization of the provenance chain from Neo4j (v2 only) |
-| **Comparison Sites** | Papahanaumokuakea (5/5), Cabo Pulmo (4/5), Mesoamerican Reef (1-2/5) |
-| **Framework Alignment** | IFC Blue Finance eligible uses + TNFD LEAP four-phase summary |
 | **Caveats** | All 7 caveats from the data bundle |
 
 ### Sidebar
 
-- Asset information (site name, area, designation year)
+- Characterized sites: Cabo Pulmo ($29.27M ESV) and Shark Bay ($21.5M ESV) with dual-site architecture summary
 - NEOLI alignment breakdown with visual indicators
 - Confidence level slider: Conservative (P5) / Base Case (Median) / Optimistic (P95)
 - Methodology note and metadata
@@ -109,6 +110,7 @@ The v2 live mode queries these through the Neo4j graph (populated by `scripts/po
 | `streamlit_app_v2.py` | Main dashboard - CSS, layout, data sections |
 | `components/chat_panel.py` | Ask MARIS query UI with markdown rendering, confidence badges, evidence tables |
 | `components/graph_explorer.py` | Plotly network graph with semantic layering (MPA -> Habitat -> Services -> Axioms -> Sources) |
+| `components/roadmap_section.py` | Scaling Intelligence section (intelligence stack + execution roadmap), shared between v1 and v2 |
 | `api_client.py` | HTTP client wrapping MARIS API endpoints; passes Bearer token if `MARIS_API_KEY` is configured; auto-falls back to precomputed responses via TF-IDF keyword matching |
 | `precomputed_responses.json` | Cached responses for 35 queries across all 5 categories (fallback when API is offline) |
 

@@ -61,18 +61,19 @@ The dashboard is a single-scroll, dark-mode page designed for investor-facing pr
 | **Investment Thesis** | Three-paragraph overview: what MARIS is, how Semantica provides provenance, and what context graphs mean for blue finance |
 | **Key Metrics** | 4 KPI cards: Annual ESV ($29.27M), Biomass Recovery (4.63x), NEOLI Score (4/5), Climate Buffer |
 | **Provenance Chain** | Fixed causal graph tracing ecological data through bridge axioms to financial value - the core "trust bridge" |
-| **Bridge Axiom Evidence** | Table mapping 4 key axioms (BA-001, BA-002, BA-011, BA-012) to plain-English explanations and DOI citations |
+| **Bridge Axiom Evidence** | Table mapping key axioms (BA-001, BA-002, BA-011 through BA-016) to plain-English explanations and DOI citations |
 | **Valuation Composition** | Horizontal bar chart showing ecosystem service breakdown (tourism, fisheries, carbon, coastal protection) with confidence intervals |
 | **Risk Profile** | Monte Carlo distribution (10,000 simulations) with P5/P50/P95 percentiles, plus resilience and degradation risk scenario cards |
-| **Ask MARIS** | Natural-language query chat with live provenance-backed answers |
-| **Graph Explorer** | Interactive Plotly network visualization of the knowledge graph from Neo4j |
-| **Comparison Sites** | Side-by-side NEOLI ratings: Papahanaumokuakea (5/5), Cabo Pulmo (4/5), Mesoamerican Reef (1-2/5) |
+| **Comparison Sites** | 2x2 grid: Papahanaumokuakea (5/5), Cabo Pulmo (4/5), Shark Bay (4/5), Mesoamerican Reef (1-2/5) |
 | **Framework Alignment** | IFC Blue Finance eligible uses and TNFD LEAP four-phase summary |
+| **Scaling Intelligence** | Intelligence stack (public data, ecological, financial layers), 4-phase execution roadmap from 1 to 100+ MPAs |
+| **Ask MARIS** | Natural-language query chat with live provenance-backed answers (v2 only) |
+| **Graph Explorer** | Interactive Plotly network visualization of the knowledge graph from Neo4j (v2 only) |
 | **Caveats** | All 7 methodology caveats, displayed for transparency |
 
 ### Sidebar Controls
 
-- **Asset information** - Site name, area (71 km2), designation year (1995)
+- **Characterized sites** - Cabo Pulmo ($29.27M ESV, tourism-dominant) and Shark Bay ($21.5M ESV, carbon-dominant) with dual-site architecture summary
 - **NEOLI alignment** - Visual breakdown of each NEOLI criterion (No-take, Enforced, Old, Large, Isolated) with green/amber indicators
 - **Confidence slider** - Switch between Conservative (P5), Base Case (Median), and Optimistic (P95) Monte Carlo scenarios
 - **Methodology note** - Valuation methodology and data vintage
@@ -199,6 +200,6 @@ This uses a pre-computed JSON bundle (`demos/context_graph_demo/cabo_pulmo_inves
 | LLM errors in Ask MARIS | Verify `MARIS_LLM_API_KEY` in `.env` is valid for your chosen provider |
 | Empty graph explorer | Run `python scripts/populate_neo4j.py` to load data into Neo4j |
 | Import errors on dashboard start | Ensure you are running from inside the `investor_demo/` directory |
-| Queries return empty for non-Cabo Pulmo sites | Expected behavior - only the calibration site has full ESV data (see Site Coverage above) |
+| Queries return empty for comparison sites | Expected behavior - only Cabo Pulmo and Shark Bay have full ESV data (see Site Coverage above) |
 | **401 Unauthorized** from API | API key is missing or invalid. Set `MARIS_API_KEY` in `.env` and include `Authorization: Bearer <key>` header in requests |
 | **429 Rate Limited** | Too many requests. The API allows 30 queries/minute and 60 other requests/minute per API key. Wait and retry |

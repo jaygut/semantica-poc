@@ -263,6 +263,7 @@ investor_demo/
   components/
     chat_panel.py               # Ask MARIS query UI with markdown, confidence badges, evidence
     graph_explorer.py           # Plotly network graph with semantic layering
+    roadmap_section.py          # Scaling Intelligence section (shared between v1 and v2)
   precomputed_responses.json    # Cached responses for 35 common queries (API fallback)
   demo_narrative.md             # 10-minute pitch script (v1)
   demo_narrative_v2.md          # Updated pitch script (v2)

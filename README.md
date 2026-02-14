@@ -8,7 +8,7 @@
 [![Papers](https://img.shields.io/badge/Literature-195%20Papers-green)]()
 [![Evidence](https://img.shields.io/badge/T1%20Sources-92%25-brightgreen)]()
 [![Abstracts](https://img.shields.io/badge/Abstracts-67%25-yellow)]()
-[![Axioms](https://img.shields.io/badge/Bridge%20Axioms-12%2F12-brightgreen)]()
+[![Axioms](https://img.shields.io/badge/Bridge%20Axioms-16%2F16-brightgreen)]()
 
 ---
 
@@ -350,7 +350,7 @@ User Question (NL)
         |
    [Cypher Template]  -- 8 parameterized templates (5 core + 3 utility)
         |
-   [Neo4j Graph]  -- 878 nodes, 101 relationships
+   [Neo4j Graph]  -- 893 nodes, 132 relationships
         |
    [LLM Synthesis]  -- DeepSeek/Claude/GPT-4 (configurable)
         |
@@ -566,7 +566,8 @@ semantica-poc/
 │   ├── streamlit_app.py                   # v1 dashboard (static bundle only)
 │   ├── components/
 │   │   ├── chat_panel.py                  # Ask MARIS query interface
-│   │   └── graph_explorer.py              # Interactive provenance visualization
+│   │   ├── graph_explorer.py              # Interactive provenance visualization
+│   │   └── roadmap_section.py             # Scaling Intelligence section (shared v1/v2)
 │   ├── api_client.py                      # HTTP client for MARIS API
 │   ├── precomputed_responses.json         # Fallback responses for demo mode
 │   └── README.md                          # Dashboard architecture and usage
@@ -574,7 +575,7 @@ semantica-poc/
 ├── schemas/                               # ═══ INGEST THESE FIRST ═══
 │   ├── entity_schema.json                 # 8 entity types (JSON-LD)
 │   ├── relationship_schema.json           # 14 relationship types
-│   └── bridge_axiom_templates.json        # 12 translation rules
+│   └── bridge_axiom_templates.json        # 16 translation rules
 │
 ├── data/
 │   ├── semantica_export/                  # ═══ SEMANTICA-READY BUNDLE ═══
@@ -617,7 +618,8 @@ semantica-poc/
 │   └── user_guide.md                      # End-user query guide
 │
 └── examples/
-    ├── cabo_pulmo_case_study.json         # AAA reference (validation target)
+    ├── cabo_pulmo_case_study.json         # AAA reference site (coral reef, tourism-dominant)
+    ├── shark_bay_case_study.json          # Second reference site (seagrass, carbon-dominant)
     └── sample_queries.md                  # 11 GraphRAG query templates
 ```
 
@@ -674,7 +676,7 @@ Bridge axioms are the **core innovation** — explicit, quantified rules that tr
 - **Confidence**: Evidence strength (HIGH/MEDIUM/LOW)
 - **Provenance**: Source papers with DOI + page references
 
-### The 12 Core Axioms
+### The 16 Bridge Axioms
 
 | ID | Name | Translation | Confidence |
 |----|------|-------------|------------|
@@ -690,6 +692,10 @@ Bridge axioms are the **core innovation** — explicit, quantified rules that tr
 | **BA-010** | Kelp-Services | Kelp forest → $500B/yr global services | MEDIUM |
 | **BA-011** | MPA-Resilience | MPA network → Climate resilience buffer | MEDIUM |
 | **BA-012** | Structure-Fisheries | Reef structural complexity → +35% fisheries productivity | HIGH |
+| **BA-013** | Seagrass-Carbon-Rate | Seagrass area → Carbon sequestration (0.84 tCO2/ha/yr) | HIGH |
+| **BA-014** | Carbon-Credit-Value | Carbon stock → Credit value ($30/tonne, Verra VCS) | HIGH |
+| **BA-015** | Habitat-Loss-Emission | Habitat loss → Carbon emission (294 tCO2/ha released) | HIGH |
+| **BA-016** | MPA-Carbon-Permanence | MPA protection → Carbon permanence guarantee | MEDIUM |
 
 ### Example: BA-001 in Action
 
@@ -938,8 +944,9 @@ The dashboard is powered by a **static JSON bundle** (`cabo_pulmo_investment_gra
 | **Bridge Axiom Evidence** | 4 axioms with plain-English meanings and DOI links |
 | **Valuation Composition** | Horizontal bar chart with CI context |
 | **Risk Profile** | Monte Carlo distribution + climate/degradation risk cards |
-| **Comparison Sites** | Papahanaumokuakea, Cabo Pulmo, Mesoamerican Reef |
+| **Comparison Sites** | Papahanaumokuakea, Cabo Pulmo, Shark Bay, Mesoamerican Reef (2x2 grid) |
 | **Framework Alignment** | IFC Blue Finance + TNFD LEAP details |
+| **Scaling Intelligence** | Intelligence stack layers, 4-phase execution roadmap (1 to 100+ MPAs) |
 
 ### Running the Dashboard
 

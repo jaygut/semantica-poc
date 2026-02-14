@@ -83,7 +83,7 @@ maris/
 
 ## Knowledge Graph Data Lineage
 
-The graph is populated from **six curated data sources**, each serving a distinct role in the provenance chain. All population operations use `MERGE` (idempotent) so the pipeline is safe to re-run.
+The graph is populated from **seven curated data sources**, each serving a distinct role in the provenance chain. All population operations use `MERGE` (idempotent) so the pipeline is safe to re-run.
 
 ### Source Datasets
 
@@ -101,8 +101,12 @@ The graph is populated from **six curated data sources**, each serving a distinc
 │                                                                              │
 │  3. Cabo Pulmo Case Study       examples/cabo_pulmo_case_study.json         │
 │     Reference calibration site  -> MPA enrichment (NEOLI, biomass, ESV),     │
-│                                    EcosystemService values, Species nodes,   │
+│     (coral reef, tourism)         EcosystemService values, Species nodes,   │
 │                                    TrophicLevel food web, GENERATES edges    │
+│                                                                              │
+│  3b. Shark Bay Case Study       examples/shark_bay_case_study.json          │
+│      Second calibration site    -> MPA enrichment (NEOLI, seagrass, ESV),    │
+│      (seagrass, carbon)           EcosystemService values, GENERATES edges  │
 │                                                                              │
 │  4. Bridge Axiom Templates      schemas/bridge_axiom_templates.json         │
 │     + Evidence Mapping          data/semantica_export/bridge_axioms.json     │
@@ -129,6 +133,7 @@ The `scripts/populate_neo4j.py` script calls `maris.graph.population.populate_gr
 | 1 | `_populate_documents()` | `document_index.json` | 195 Document nodes with DOI, tier, domain |
 | 2 | `_populate_entities()` | `entities.jsonld` | Species, MPA, Habitat, EcosystemService, etc. |
 | 3 | `_populate_cabo_pulmo()` | `cabo_pulmo_case_study.json` | Enriches MPA with NEOLI/biomass/ESV; creates services, species, trophic nodes |
+| 3b | `_populate_shark_bay()` | `shark_bay_case_study.json` | Enriches MPA with NEOLI/seagrass/ESV; creates carbon, fisheries, tourism, coastal services |
 | 4 | `_populate_bridge_axioms()` | `bridge_axiom_templates.json` + `bridge_axioms.json` | 16 BridgeAxiom nodes (12 core + 4 blue carbon); EVIDENCED_BY, APPLIES_TO, TRANSLATES edges |
 | 5 | `_populate_comparison_sites()` | Hardcoded | Great Barrier Reef, Papahanaumokuakea MPA nodes |
 | 6 | `_populate_relationships()` | `relationships.json` | 15 cross-domain relationship edges |
@@ -409,8 +414,8 @@ These fields feed into the Monte Carlo simulation and sensitivity analysis to pr
 
 ### Adding a New Site
 
-1. Create a case study JSON following the structure of `examples/cabo_pulmo_case_study.json` with site metadata, NEOLI assessment, ecological recovery metrics, ecosystem service valuations (with DOI sources and valuation methods), and key species
-2. Add a population function in `maris/graph/population.py` (pattern: `_populate_cabo_pulmo()`)
+1. Create a case study JSON following the structure of `examples/cabo_pulmo_case_study.json` or `examples/shark_bay_case_study.json` with site metadata, NEOLI assessment, ecological recovery metrics, ecosystem service valuations (with DOI sources and valuation methods), and key species
+2. Add a population function in `maris/graph/population.py` (pattern: `_populate_cabo_pulmo()` or `_populate_shark_bay()`)
 3. Add the site's canonical name to the classifier's `_SITE_PATTERNS` in `maris/query/classifier.py`
 4. Run `python scripts/populate_neo4j.py` to load the new site
 
@@ -463,21 +468,22 @@ pytest tests/ -v --cov=maris
 
 ```
 tests/
-  conftest.py           # Shared fixtures: sample_graph_result, sample_llm_response,
-                        #   sample_services, mock_neo4j, mock_config
-  test_classifier.py    # Query classification (keyword + LLM fallback)
-  test_cypher.py        # Cypher template generation and parameterization
-  test_executor.py      # Query execution against mock Neo4j
-  test_generator.py     # LLM response synthesis
-  test_formatter.py     # Response formatting and structure
-  test_validators.py    # LLM response validation pipeline
-  test_confidence.py    # Composite confidence model
-  test_sensitivity.py   # OAT sensitivity analysis
-  test_monte_carlo.py   # Monte Carlo ESV simulation
-  test_auth.py          # Authentication, rate limiting, input validation
-  test_api.py           # FastAPI endpoint integration tests
-  test_population.py    # Graph population pipeline
-  test_config.py        # Configuration loading
+  conftest.py                       # Shared fixtures: sample_graph_result, sample_llm_response,
+                                    #   sample_services, mock_neo4j, mock_config
+  test_api_endpoints.py             # API route tests with auth validation
+  test_auth.py                      # Auth enforcement, rate limiting, input validation
+  test_bridge_axioms.py             # Bridge axiom computation tests
+  test_cabo_pulmo_validation.py     # Cabo Pulmo reference data integrity
+  test_classifier.py                # Query classification accuracy
+  test_confidence.py                # Composite confidence model tests
+  test_cypher_templates.py          # Template parameterization and LIMIT tests
+  test_entity_extraction.py         # Entity extraction pipeline tests
+  test_integration.py               # End-to-end pipeline integration tests
+  test_monte_carlo.py               # Monte Carlo simulation tests
+  test_population.py                # Graph population pipeline tests
+  test_query_engine.py              # Query execution and response formatting
+  test_relationship_extraction.py   # Relationship extraction tests
+  test_validators.py                # LLM response validation tests
 ```
 
 **Key fixtures** (defined in `conftest.py`):
@@ -512,10 +518,11 @@ curl http://localhost:8000/api/health
 ```bash
 curl -X POST http://localhost:8000/api/query \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $MARIS_API_KEY" \
   -d '{"question": "What is Cabo Pulmo worth?", "include_graph_path": true}'
 ```
 
-Expected: JSON response with `answer`, `confidence` >= 0.5, `evidence` array with DOIs, `axioms_used`, and `graph_path` edges.
+Expected: JSON response with `answer`, `confidence` >= 0.5, `evidence` array with DOIs, `axioms_used`, and `graph_path` edges. Requires a valid Bearer token (or `MARIS_DEMO_MODE=true`).
 
 **Graph validation:**
 
