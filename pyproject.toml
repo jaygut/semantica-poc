@@ -36,6 +36,9 @@ include-package-data = false
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+markers = [
+    "integration: Integration tests requiring real Semantica SDK and/or external services",
+]
 
 [tool.ruff]
 target-version = "py311"
