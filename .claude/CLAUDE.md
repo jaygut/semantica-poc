@@ -14,8 +14,8 @@ This directory contains the agentic workflow system, document registry, and skil
 | Document Library | Complete | 195 papers, 92% T1, 16 bridge axioms |
 | Semantica Export | Complete | 14 entities, 15 relationships, 16 axioms |
 | Characterized Sites | 2 | Cabo Pulmo ($29.27M ESV) + Shark Bay ($21.5M ESV) |
-| Semantica Integration | ~93% | P0-P4 on feature/semantica-integration branch (25 modules, 6-file bridge) |
-| Test Suite | 770 | 573 unit + 197 integration tests |
+| Semantica Integration | Complete | P0-P4 on feature/semantica-integration branch (27 modules, 6-file bridge) |
+| Test Suite | 910 | 706 unit + 204 integration tests |
 
 ### Document Library Metrics
 
@@ -97,7 +97,7 @@ bridge_axiom_templates.json (16 axioms) ─────────────�
     kg_ready/                      # Extracted knowledge for graph population
     reports/                       # Pipeline execution reports
 
-tests/                               # Test suite (770 tests)
+tests/                               # Test suite (910 tests: 706 unit + 204 integration)
   conftest.py                        # Shared fixtures
   test_api_endpoints.py              # API route tests with auth validation
   test_auth.py                       # Auth enforcement, rate limiting, input validation
@@ -230,7 +230,7 @@ The curated data is exported in four files for Semantica ingestion and also cons
 
 ## Testing and CI
 
-The project includes 770 tests in `tests/` covering query classification, Cypher templates, graph population, bridge axioms, Monte Carlo simulation, confidence modeling, LLM response validation, and API endpoints. Shared fixtures are in `tests/conftest.py`.
+The project includes 910 tests (706 unit + 204 integration) in `tests/` covering query classification (with hardened regex patterns), Cypher templates, graph population, bridge axioms, Monte Carlo simulation, confidence modeling, LLM response validation, API endpoints, W3C PROV-O provenance, multi-site scaling, cross-domain reasoning, TNFD disclosure, axiom discovery (with LLM-enhanced detection), Semantica SDK bridge adapters, and LLM discovery integration. Shared fixtures are in `tests/conftest.py`.
 
 CI runs on push/PR to `main` via GitHub Actions (`.github/workflows/ci.yml`):
 1. **Lint**: `ruff check maris/ tests/`

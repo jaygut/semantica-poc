@@ -50,7 +50,7 @@ maris/
     population.py             # 8-stage population pipeline from curated JSON assets
     validation.py             # Post-population integrity checks
   query/                      # NL-to-Cypher pipeline
-    classifier.py             # Two-tier classification: keyword regex + LLM fallback
+    classifier.py             # Two-tier classification: keyword regex (case-insensitive BA, DOI, risk patterns, comparison tie-break) + LLM fallback
     cypher_templates.py       # 8 Cypher templates (5 core + 3 utility) by category
     validators.py             # LLM response validation: schema checks, confidence bounds, DOI format, numerical claim verification, robust JSON extraction
     executor.py               # Template execution + provenance edge extraction
@@ -78,8 +78,8 @@ maris/
     integrity.py              # SHA-256 checksum verification
     storage.py                # InMemoryStorage and SQLiteStorage backends
   sites/                      # P1: Multi-site scaling pipeline
-    api_clients.py            # Thin wrappers for OBIS, WoRMS, Marine Regions APIs
-    characterizer.py          # 5-step auto-characterization pipeline (Bronze/Silver/Gold)
+    api_clients.py            # OBIS (numeric area resolution), WoRMS (204 fix), Marine Regions (404+JSON handling) API clients
+    characterizer.py          # 5-step auto-characterization pipeline (Bronze/Silver/Gold) with multi-signal habitat scoring (keywords, taxonomy, functional groups)
     esv_estimator.py          # Bridge axiom-based ESV estimation with CI propagation
     models.py                 # Pydantic v2 models (SiteCharacterization, SpeciesRecord, etc.)
     registry.py               # JSON-backed site registry with CRUD operations
@@ -87,6 +87,7 @@ maris/
     context_builder.py        # Convert Neo4j results to Semantica ContextGraph
     hybrid_retriever.py       # Graph + keyword + Reciprocal Rank Fusion retrieval
     inference_engine.py       # Forward/backward chaining with bridge axiom rules
+    rule_compiler.py          # Rule compilation extracted from InferenceEngine
     explanation.py            # Investor-friendly explanation generation
   disclosure/                 # P3: TNFD LEAP disclosure automation
     models.py                 # Pydantic models for TNFD LEAP 4-phase sections
@@ -94,7 +95,8 @@ maris/
     renderers.py              # Markdown, JSON, and executive summary output
     alignment_scorer.py       # 14-disclosure gap analysis and scoring
   discovery/                  # P4: Dynamic axiom discovery pipeline
-    pattern_detector.py       # Cross-paper quantitative pattern detection
+    pattern_detector.py       # Cross-paper quantitative pattern detection (regex)
+    llm_detector.py           # LLM-enhanced pattern detection with regex fallback, retry logic, numeric confidence, robust JSON parsing
     aggregator.py             # Multi-study aggregation with conflict detection
     candidate_axiom.py        # Candidate axiom formation (compatible with bridge_axiom_templates.json)
     reviewer.py               # Human-in-the-loop accept/reject workflow
@@ -487,7 +489,7 @@ These fields feed into the Monte Carlo simulation and sensitivity analysis to pr
 
 ### Test Suite
 
-The project includes **770 tests** across 22 test files. Tests cover the full stack: query classification, Cypher template generation, LLM response validation, confidence model, sensitivity analysis, API endpoints, graph population, W3C PROV-O provenance, multi-site scaling, cross-domain reasoning, TNFD disclosure, axiom discovery, and Semantica SDK bridge adapters.
+The project includes **910 tests** (706 unit + 204 integration) across 23 test files. Tests cover the full stack: query classification (with hardened regex patterns), Cypher template generation, LLM response validation, confidence model, sensitivity analysis, API endpoints, graph population, W3C PROV-O provenance, multi-site scaling (with OBIS area resolution and WoRMS 204 handling), cross-domain reasoning (with rule compilation), TNFD disclosure, axiom discovery (with LLM-enhanced pattern detection), Semantica SDK bridge adapters, and LLM discovery integration against live DeepSeek.
 
 **Setup and execution:**
 
@@ -528,13 +530,14 @@ tests/
   test_disclosure.py                # P3: TNFD LEAP disclosure tests (30 tests)
   test_axiom_discovery.py           # P4: Axiom discovery pipeline tests (70+ tests)
   test_semantica_bridge.py          # Semantica SDK bridge adapter tests (51 tests)
-  integration/                      # Integration test suite (197 tests)
+  integration/                      # Integration test suite (204 tests)
     test_phase0_bridge.py           # SDK availability, SQLite persistence, dual-write
     test_phase1_graph.py            # Graph integrity, idempotent re-population
     test_phase2_apis.py             # OBIS, WoRMS, Marine Regions real API calls
     test_phase3_query.py            # 5-category regression, classifier accuracy
     test_phase4_disclosure.py       # TNFD disclosure, axiom discovery
     test_phase5_stress.py           # SQLite persistence, concurrent queries
+    test_phase6_llm_discovery.py    # LLM-enhanced discovery integration (7 tests against live DeepSeek)
 ```
 
 **Key fixtures** (defined in `conftest.py`):
@@ -552,7 +555,7 @@ tests/
 The project uses GitHub Actions (`.github/workflows/ci.yml`) for continuous integration on every push and pull request to `main`:
 
 1. **Lint** - Runs `ruff` for code style and import order checks
-2. **Test** - Runs the full pytest suite (770 tests: 573 unit + 197 integration)
+2. **Test** - Runs the full pytest suite (910 tests: 706 unit + 204 integration)
 
 Dev dependencies are specified in `requirements-dev.txt`: pytest>=8.0, pytest-asyncio>=0.23, httpx>=0.26, ruff>=0.8, pytest-cov>=4.0.
 

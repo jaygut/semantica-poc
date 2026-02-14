@@ -68,7 +68,7 @@ semantica-poc/
 │   ├── cabo_pulmo_case_study.json       # Reference site calibration data
 │   └── sample_queries.md                # GraphRAG query examples
 │
-├── tests/                               # 770-test suite (573 unit + 197 integration)
+├── tests/                               # 910-test suite (706 unit + 204 integration)
 │
 ├── investor_demo/
 │   └── demo_narrative.md                # Investor pitch narrative
@@ -405,7 +405,7 @@ Authentication is skipped when `MARIS_DEMO_MODE=true`. Rate limits apply: 30 que
 
 ### Semantica SDK Integration (Implemented)
 
-The Semantica framework (v0.2.7+) is integrated through a 6-file bridge layer in `maris/semantica_bridge/` that wraps the real Semantica SDK behind MARIS's existing API surface. When Semantica is installed, all operations use the SDK; when absent, MARIS gracefully degrades to its native implementations.
+The Semantica framework (v0.2.7+) is integrated through a 6-file bridge layer in `maris/semantica_bridge/` that wraps the real Semantica SDK behind MARIS's existing API surface. When Semantica is installed, all operations use the SDK; when absent, MARIS gracefully degrades to its native implementations. All P0-P4 integration gaps have been closed on the `feature/semantica-integration` branch, including LLM-enhanced axiom discovery, rule compilation, hardened API clients (WoRMS 204 fix, OBIS area resolution, Marine Regions 404 handling), enhanced multi-signal habitat characterization, and classifier regex gap fixes.
 
 **Bridge Architecture:**
 
@@ -435,12 +435,12 @@ cert = manager.get_certificate("cabo_pulmo_esv")
 
 | Module | Package | Key Classes | Status |
 |--------|---------|-------------|--------|
-| P0: Provenance | `maris/provenance/` (7 files) | `MARISProvenanceManager`, `BridgeAxiomRegistry`, `ProvenanceCertificate` | 95% |
-| P1: Site Scaling | `maris/sites/` (5 files) | `SiteCharacterizer`, `OBISClient`, `WoRMSClient`, `SiteRegistry` | 90% |
-| P2: Reasoning | `maris/reasoning/` (4 files) | `InferenceEngine`, `HybridRetriever`, `ExplanationGenerator` | 85% |
-| P3: Disclosure | `maris/disclosure/` (4 files) | `LEAPGenerator`, `AlignmentScorer`, `TNFDLocate/Evaluate/Assess/Prepare` | 100% |
-| P4: Discovery | `maris/discovery/` (5 files) | `PatternDetector`, `PatternAggregator`, `AxiomReviewer`, `DiscoveryPipeline` | 95% |
-| Bridge | `maris/semantica_bridge/` (6 files) | `SemanticaBackedManager`, `SemanticaStorage`, `SemanticaProvenanceAdapter` | 100% |
+| P0: Provenance | `maris/provenance/` (7 files) | `MARISProvenanceManager`, `BridgeAxiomRegistry`, `ProvenanceCertificate` | Complete |
+| P1: Site Scaling | `maris/sites/` (5 files) | `SiteCharacterizer`, `OBISClient` (area resolution), `WoRMSClient` (204 fix), `SiteRegistry` | Complete |
+| P2: Reasoning | `maris/reasoning/` (5 files) | `InferenceEngine`, `RuleCompiler`, `HybridRetriever`, `ExplanationGenerator` | Complete |
+| P3: Disclosure | `maris/disclosure/` (4 files) | `LEAPGenerator`, `AlignmentScorer`, `TNFDLocate/Evaluate/Assess/Prepare` | Complete |
+| P4: Discovery | `maris/discovery/` (6 files) | `PatternDetector`, `LLMPatternDetector`, `PatternAggregator`, `AxiomReviewer`, `DiscoveryPipeline` | Complete |
+| Bridge | `maris/semantica_bridge/` (6 files) | `SemanticaBackedManager`, `SemanticaStorage`, `SemanticaProvenanceAdapter` | Complete |
 
 ---
 
@@ -454,10 +454,12 @@ cert = manager.get_certificate("cabo_pulmo_esv")
 
 ### Test Suite
 
-- **770 tests** covering unit and integration scenarios (573 unit + 197 integration)
+- **910 tests** covering unit and integration scenarios (706 unit + 204 integration)
+- 0 ruff lint errors
 - CI pipeline via GitHub Actions (`.github/workflows/ci.yml`)
-- Unit tests validate graph population, query classification, axiom computation, API endpoints, response formatting, provenance tracking, site scaling, reasoning, disclosure, axiom discovery, and Semantica SDK bridge adapters
-- Integration tests (6 phases) validate SDK availability, graph integrity, external APIs, query pipeline, disclosure generation, and stress scenarios
+- Unit tests validate graph population, query classification (hardened regex patterns), axiom computation, API endpoints, response formatting, provenance tracking, site scaling (OBIS area resolution, WoRMS 204), reasoning (rule compilation), disclosure, axiom discovery (LLM-enhanced detection), and Semantica SDK bridge adapters
+- Integration tests (7 phases) validate SDK availability, graph integrity, external APIs, query pipeline, disclosure generation, stress scenarios, and LLM-enhanced discovery (phase 6 - 7 tests against live DeepSeek)
+- 63 precomputed investor demo responses (expanded from 35)
 
 ### Production Deployment
 
@@ -477,13 +479,14 @@ cert = manager.get_certificate("cabo_pulmo_esv")
 | Phase 0 | Document Library | 195 papers, 92% T1, 16 axioms evidenced | Complete |
 | Phase 1-4 | Core System | Neo4j + FastAPI + Streamlit + 220 tests | Complete |
 | Blue Carbon | Dual-Site Architecture | Shark Bay ($21.5M ESV) + BA-013 through BA-016 | Complete |
-| P0 | Provenance Engine | W3C PROV-O tracking, SQLite persistence | 95% |
-| P1 | Site Scaling | Bronze/Silver/Gold characterization, 3 API clients | 90% |
-| P2 | Reasoning Engine | Forward/backward chaining, hybrid retrieval | 85% |
-| P3 | TNFD Disclosure | LEAP automation, alignment scoring | 100% |
-| P4 | Axiom Discovery | Pattern detection, aggregation, review pipeline | 95% |
-| Bridge | Semantica SDK | 6-file adapter layer, dual-write provenance | 100% |
-| Testing | Integration Suite | 197 integration tests across 6 phases | Complete |
+| P0 | Provenance Engine | W3C PROV-O tracking, SQLite persistence, SemanticaBackedManager wired | Complete |
+| P1 | Site Scaling | Bronze/Silver/Gold characterization, 3 hardened API clients, multi-signal habitat scoring | Complete |
+| P2 | Reasoning Engine | Forward/backward chaining, hybrid retrieval, rule compiler | Complete |
+| P3 | TNFD Disclosure | LEAP automation, alignment scoring | Complete |
+| P4 | Axiom Discovery | Pattern detection, LLM-enhanced detection, aggregation, review pipeline | Complete |
+| Bridge | Semantica SDK | 6-file adapter layer, dual-write provenance | Complete |
+| Gap Closure | Final Polish | Classifier regex fixes, hardened LLM detector, 2 API bug fixes, 20 ruff fixes | Complete |
+| Testing | Integration Suite | 204 integration tests across 7 phases (incl. LLM discovery) | Complete |
 
 ---
 
@@ -494,14 +497,18 @@ cert = manager.get_certificate("cabo_pulmo_esv")
 - [x] All claims traceable to T1/T2 sources
 - [x] Multi-hop queries return in <5 seconds
 - [x] Cabo Pulmo correctly rated as "AAA"
-- [x] 770 tests passing (573 unit + 197 integration)
+- [x] 910 tests passing (706 unit + 204 integration)
+- [x] 0 ruff lint errors
 - [x] Semantica SDK integration with graceful degradation
+- [x] LLM-enhanced axiom discovery with regex fallback
+- [x] All P0-P4 integration gaps closed
+- [x] 63 precomputed investor demo responses
 
 ### Business
 - [x] Demo compelling to partners - dual-site investor dashboard operational
 - [x] Clear value proposition for blue bond structuring - full ESV provenance chain
 - [x] Differentiation from greenwashing claims demonstrable - DOI-backed audit trails
-- [ ] Foundation for Series A discussion - remaining P0-P4 gaps to close
+- [x] Foundation for Series A discussion - all P0-P4 gaps closed, production-ready on feature/semantica-integration
 
 ---
 

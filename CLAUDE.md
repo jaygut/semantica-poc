@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **MARIS** (Marine Asset Risk Intelligence System) is a provenance-first knowledge graph that creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. Built on the Semantica framework, it is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
 
-**Current Status:** Production-ready POC deployed on `main` with Blue Carbon Extension complete. Semantica SDK integration (P0-P4) is ~93% complete on `feature/semantica-integration` branch. The system comprises a Neo4j knowledge graph (893 nodes, 132 edges) spanning two fully characterized MPA sites (Cabo Pulmo and Shark Bay), a FastAPI query engine with 9 endpoints (7 core + provenance + disclosure), Bearer token authentication and rate limiting, natural-language-to-Cypher classification with LLM response validation, and an investor-facing Streamlit dashboard with interactive graph visualization. The document library contains 195 verified papers, 16 fully-evidenced bridge axioms (v1.3 with blue carbon axioms BA-013 through BA-016 and uncertainty quantification), and a Semantica-ready export bundle. The Semantica integration adds W3C PROV-O provenance tracking, multi-site scaling pipeline, cross-domain reasoning engine, TNFD LEAP disclosure automation, dynamic axiom discovery, and a 6-file SDK bridge layer. Backed by a **770-test suite** (573 unit + 197 integration) with GitHub Actions CI, multi-stage Docker builds, and a composite confidence model. The system also runs in static mode from a pre-computed JSON bundle (35 precomputed responses) for zero-downtime investor demos.
+**Current Status:** Production-ready POC deployed on `main` with Blue Carbon Extension complete. Semantica SDK integration (P0-P4) is complete on `feature/semantica-integration` branch with all gaps closed - including LLM-enhanced axiom discovery, rule compilation, enhanced multi-signal habitat characterization, and hardened API clients. The system comprises a Neo4j knowledge graph (893 nodes, 132 edges) spanning two fully characterized MPA sites (Cabo Pulmo and Shark Bay), a FastAPI query engine with 9 endpoints (7 core + provenance + disclosure), Bearer token authentication and rate limiting, natural-language-to-Cypher classification with LLM response validation, and an investor-facing Streamlit dashboard with interactive graph visualization. The document library contains 195 verified papers, 16 fully-evidenced bridge axioms (v1.3 with blue carbon axioms BA-013 through BA-016 and uncertainty quantification), and a Semantica-ready export bundle. The Semantica integration adds W3C PROV-O provenance tracking, multi-site scaling pipeline, cross-domain reasoning engine, TNFD LEAP disclosure automation, LLM-enhanced dynamic axiom discovery with regex fallback, rule compilation extracted from InferenceEngine, and a 6-file SDK bridge layer. Backed by a **910-test suite** (706 unit + 204 integration) with GitHub Actions CI, multi-stage Docker builds, and a composite confidence model. The system also runs in static mode from a pre-computed JSON bundle (63 precomputed responses) for zero-downtime investor demos.
 
 ---
 
@@ -204,7 +204,7 @@ Exceeding the limit returns HTTP 429. Rate limit headers are included in respons
 
 ## Testing
 
-The project includes a comprehensive test suite with 770 tests covering all core modules.
+The project includes a comprehensive test suite with 910 tests (706 unit + 204 integration) covering all core modules.
 
 ```bash
 # Install dev dependencies
@@ -241,7 +241,7 @@ maris/
     population.py               # 8-stage population pipeline from curated JSON
     validation.py               # Post-population integrity checks
   query/                        # NL-to-Cypher pipeline
-    classifier.py               # Two-tier: keyword regex + LLM fallback
+    classifier.py               # Two-tier: keyword regex (case-insensitive BA, DOI, risk patterns, comparison tie-break) + LLM fallback
     cypher_templates.py         # 8 parameterized Cypher templates by category
     executor.py                 # Template execution + provenance edge extraction
     generator.py                # LLM response synthesis from graph context
@@ -268,8 +268,8 @@ maris/
     integrity.py                # SHA-256 checksum verification
     storage.py                  # InMemoryStorage + SQLiteStorage
   sites/                        # P1: Multi-site scaling pipeline
-    api_clients.py              # OBIS, WoRMS, Marine Regions clients
-    characterizer.py            # 5-step auto-characterization (Bronze/Silver/Gold)
+    api_clients.py              # OBIS (area resolution), WoRMS (204 fix), Marine Regions (404 handling) clients
+    characterizer.py            # 5-step auto-characterization (Bronze/Silver/Gold) with multi-signal habitat scoring (keywords, taxonomy, functional groups)
     esv_estimator.py            # Bridge axiom-based ESV estimation
     models.py                   # Pydantic site models
     registry.py                 # JSON-backed site registry
@@ -277,6 +277,7 @@ maris/
     context_builder.py          # Graph -> Semantica ContextGraph
     hybrid_retriever.py         # Graph + keyword + RRF retrieval
     inference_engine.py         # Forward/backward chaining
+    rule_compiler.py            # Rule compilation extracted from InferenceEngine
     explanation.py              # Investor-friendly explanations
   disclosure/                   # P3: TNFD LEAP disclosure automation
     leap_generator.py           # 4-phase TNFD LEAP generation
@@ -284,7 +285,8 @@ maris/
     alignment_scorer.py         # 14-disclosure gap analysis
     models.py                   # TNFD Pydantic models
   discovery/                    # P4: Dynamic axiom discovery
-    pattern_detector.py         # Cross-paper pattern detection
+    pattern_detector.py         # Cross-paper pattern detection (regex)
+    llm_detector.py             # LLM-enhanced pattern detection with regex fallback, retry logic, numeric confidence, robust JSON parsing
     aggregator.py               # Multi-study aggregation + conflict detection
     candidate_axiom.py          # Candidate axiom formation
     reviewer.py                 # Human-in-the-loop validation
@@ -305,7 +307,7 @@ investor_demo/
     chat_panel.py               # Ask MARIS query UI with markdown, confidence badges, evidence
     graph_explorer.py           # Plotly network graph with semantic layering
     roadmap_section.py          # Scaling Intelligence section (shared between v1 and v2)
-  precomputed_responses.json    # Cached responses for 35 common queries (API fallback)
+  precomputed_responses.json    # Cached responses for 63 common queries (API fallback)
   demo_narrative.md             # 10-minute pitch script (v1)
   demo_narrative_v2.md          # Updated pitch script (v2)
 
@@ -340,13 +342,14 @@ tests/
   test_disclosure.py                # P3: TNFD disclosure tests
   test_axiom_discovery.py           # P4: Axiom discovery tests
   test_semantica_bridge.py          # Semantica SDK bridge tests (51 tests)
-  integration/                      # Integration test suite (197 tests)
+  integration/                      # Integration test suite (204 tests)
     test_phase0_bridge.py           # SDK availability, SQLite persistence, dual-write
     test_phase1_graph.py            # Graph integrity, idempotent re-population
     test_phase2_apis.py             # External API validation (OBIS, WoRMS, Marine Regions)
     test_phase3_query.py            # Query pipeline regression
     test_phase4_disclosure.py       # TNFD disclosure, axiom discovery
     test_phase5_stress.py           # Stress tests, concurrent queries
+    test_phase6_llm_discovery.py    # LLM-enhanced discovery integration tests (7 tests against live DeepSeek)
 ```
 
 ---
@@ -421,6 +424,7 @@ All settings use `MARIS_` prefix. Copy `.env.example` to `.env` and configure:
 | `MARIS_ENABLE_CHAT` | true | Enable Ask MARIS chat panel |
 | `MARIS_API_KEY` | - | Bearer token for API authentication (required unless MARIS_DEMO_MODE=true) |
 | `MARIS_CORS_ORIGINS` | http://localhost:8501 | Comma-separated list of allowed CORS origins |
+| `MARIS_PROVENANCE_DB` | provenance.db | SQLite database path for W3C PROV-O provenance persistence |
 
 **Security:** `.env` contains secrets and is excluded from git via `.gitignore`. Never commit it.
 
@@ -428,7 +432,7 @@ All settings use `MARIS_` prefix. Copy `.env.example` to `.env` and configure:
 
 ## Query Classification System
 
-The `QueryClassifier` (`maris/query/classifier.py`) maps natural-language questions into five categories. Each category is backed by a parameterized Cypher template. There are 8 templates total (5 core + 3 utility).
+The `QueryClassifier` (`maris/query/classifier.py`) maps natural-language questions into five categories. Each category is backed by a parameterized Cypher template. There are 8 templates total (5 core + 3 utility). The classifier has been hardened with four regex gap fixes: case-insensitive bridge axiom ID matching (e.g., "ba-001"), DOI keyword routing to provenance, expanded risk patterns (including "lost"), and comparison tie-break logic.
 
 | Category | Keyword Triggers | What the Template Returns |
 |----------|-----------------|--------------------------|
@@ -619,8 +623,8 @@ These MUST be followed in all code, documentation, and generated content:
 | Live query pipeline | End-to-end NL-to-answer | Working |
 | Graph population | 893 nodes, 132 edges | Complete |
 | Dashboard (live + static) | Both modes operational | Working |
-| Test suite | 770 tests passing (573 unit + 197 integration) | Complete |
-| Semantica SDK integration | P0-P4 ~93% complete (25 modules) | In Progress |
+| Test suite | 910 tests passing (706 unit + 204 integration) | Complete |
+| Semantica SDK integration | P0-P4 complete (27 modules) on feature/semantica-integration | Complete |
 | Provenance tracking | W3C PROV-O with SQLite persistence | Complete |
 | TNFD disclosure | LEAP automation with alignment scoring | Complete |
 | API authentication | Bearer token + rate limiting | Complete |

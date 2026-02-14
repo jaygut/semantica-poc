@@ -16,7 +16,7 @@
 
 This repository contains the **complete knowledge foundation** for a proof-of-concept knowledge graph system that bridges marine ecological science with blue finance frameworks. The goal: enable investors, asset managers, and conservation organizations to make data-driven decisions about marine natural capital with full scientific provenance.
 
-**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 16 fully-evidenced bridge axioms. A **live MARIS v2 system** (Neo4j knowledge graph + FastAPI query engine + Streamlit dashboard) demonstrates the full end-to-end pipeline: natural language questions are classified, translated to Cypher, executed against the graph, and answered with full provenance and interactive graph visualization. The system also runs in static mode from a pre-computed JSON bundle for zero-downtime investor demos. The API is secured with Bearer token authentication and rate limiting. **Semantica SDK integration (P0-P4) is ~93% complete**: W3C PROV-O provenance tracking, multi-site scaling pipeline, cross-domain reasoning engine, TNFD LEAP disclosure automation, and dynamic axiom discovery are all implemented across 25 new modules with a Semantica bridge layer for SDK interop. The codebase is validated by a **770-test suite** (573 unit + 197 integration) with CI via GitHub Actions.
+**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 16 fully-evidenced bridge axioms. A **live MARIS v2 system** (Neo4j knowledge graph + FastAPI query engine + Streamlit dashboard) demonstrates the full end-to-end pipeline: natural language questions are classified, translated to Cypher, executed against the graph, and answered with full provenance and interactive graph visualization. The system also runs in static mode from a pre-computed JSON bundle (63 precomputed responses) for zero-downtime investor demos. The API is secured with Bearer token authentication and rate limiting. **Semantica SDK integration (P0-P4) is complete** on `feature/semantica-integration`: W3C PROV-O provenance tracking, multi-site scaling pipeline (with hardened OBIS area resolution, WoRMS 204 fix, and Marine Regions 404 handling), cross-domain reasoning engine with rule compilation, TNFD LEAP disclosure automation, and LLM-enhanced dynamic axiom discovery with regex fallback are all implemented across 27 modules with a Semantica bridge layer for SDK interop. The classifier has been hardened with four regex gap fixes (case-insensitive BA IDs, DOI keywords, risk patterns, comparison tie-break). The codebase is validated by a **910-test suite** (706 unit + 204 integration) with CI via GitHub Actions and 0 ruff lint errors.
 
 **Implementation Timeline:** **8 weeks** - This POC follows a compressed 8-week implementation schedule focused on **Semantica integration** for entity extraction, relationship extraction, graph construction, and GraphRAG query execution. See [Implementation Roadmap](#implementation-roadmap) for detailed week-by-week breakdown.
 
@@ -450,7 +450,7 @@ Exceeding the limit returns HTTP 429. Rate limit headers are included in respons
 
 ### Testing
 
-The project includes **770 tests** (573 unit + 197 integration) covering all core modules and the Semantica integration:
+The project includes **910 tests** (706 unit + 204 integration) covering all core modules and the Semantica integration:
 
 ```bash
 # Install dev dependencies
@@ -466,7 +466,7 @@ pytest tests/integration/ -v
 pytest tests/ --cov=maris --cov-report=term-missing
 ```
 
-Tests are organized by module in `tests/` with shared fixtures in `conftest.py`. Integration tests live in `tests/integration/` with 6 phase files covering bridge validation, graph integrity, external APIs, query pipeline, disclosure/discovery, and stress tests. CI runs automatically on push and PR to `main` via GitHub Actions (`.github/workflows/ci.yml`): linting with ruff, then pytest.
+Tests are organized by module in `tests/` with shared fixtures in `conftest.py`. Integration tests live in `tests/integration/` with 7 phase files covering bridge validation, graph integrity, external APIs, query pipeline, disclosure/discovery, stress tests, and LLM-enhanced discovery (phase 6 tests against live DeepSeek). CI runs automatically on push and PR to `main` via GitHub Actions (`.github/workflows/ci.yml`): linting with ruff, then pytest.
 
 ---
 
@@ -570,8 +570,8 @@ semantica-poc/
 │   │   ├── integrity.py                   # SHA-256 checksum verification
 │   │   └── storage.py                     # In-memory + SQLite storage backends
 │   ├── sites/                             # P1: Multi-site scaling pipeline
-│   │   ├── api_clients.py                 # OBIS, WoRMS, Marine Regions API clients
-│   │   ├── characterizer.py              # 5-step auto-characterization (Bronze/Silver/Gold)
+│   │   ├── api_clients.py                 # OBIS (area resolution), WoRMS (204 fix), Marine Regions (404+JSON handling) API clients
+│   │   ├── characterizer.py              # 5-step auto-characterization (Bronze/Silver/Gold) with multi-signal habitat scoring (keywords, taxonomy, functional groups)
 │   │   ├── esv_estimator.py              # Bridge axiom-based ESV estimation
 │   │   ├── models.py                      # Pydantic site models
 │   │   └── registry.py                    # JSON-backed site registry
@@ -579,6 +579,7 @@ semantica-poc/
 │   │   ├── context_builder.py            # Graph -> Semantica ContextGraph conversion
 │   │   ├── hybrid_retriever.py           # Graph + keyword + RRF hybrid retrieval
 │   │   ├── inference_engine.py           # Forward/backward chaining with axiom rules
+│   │   ├── rule_compiler.py             # Rule compilation extracted from InferenceEngine
 │   │   └── explanation.py                # Investor-friendly explanation generation
 │   ├── disclosure/                        # P3: TNFD LEAP disclosure automation
 │   │   ├── leap_generator.py             # 4-phase TNFD LEAP document generation
@@ -586,7 +587,8 @@ semantica-poc/
 │   │   ├── alignment_scorer.py           # 14-disclosure gap analysis
 │   │   └── models.py                     # TNFD Pydantic models
 │   ├── discovery/                         # P4: Dynamic axiom discovery
-│   │   ├── pattern_detector.py           # Cross-paper quantitative pattern detection
+│   │   ├── pattern_detector.py           # Cross-paper quantitative pattern detection (regex)
+│   │   ├── llm_detector.py              # LLM-enhanced pattern detection with regex fallback, retry logic, numeric confidence, robust JSON parsing
 │   │   ├── aggregator.py                 # Multi-study aggregation + conflict detection
 │   │   ├── candidate_axiom.py            # Candidate axiom formation
 │   │   ├── reviewer.py                   # Human-in-the-loop validation workflow
@@ -607,7 +609,7 @@ semantica-poc/
 │   │   ├── graph_explorer.py              # Interactive provenance visualization
 │   │   └── roadmap_section.py             # Scaling Intelligence section (shared v1/v2)
 │   ├── api_client.py                      # HTTP client for MARIS API
-│   ├── precomputed_responses.json         # Fallback responses for demo mode
+│   ├── precomputed_responses.json         # Fallback responses for demo mode (63 queries)
 │   └── README.md                          # Dashboard architecture and usage
 │
 ├── schemas/                               # ═══ INGEST THESE FIRST ═══
@@ -629,7 +631,7 @@ semantica-poc/
 │   ├── validate_graph.py                  # Post-population integrity checks
 │   └── run_ingestion.py                   # PDF ingestion pipeline
 │
-├── tests/                                # ═══ TEST SUITE (770 tests) ═══
+├── tests/                                # ═══ TEST SUITE (910 tests) ═══
 │   ├── conftest.py                        # Shared fixtures
 │   ├── test_api_endpoints.py              # API route tests with auth validation
 │   ├── test_auth.py                       # Auth enforcement, rate limiting, input validation
@@ -651,13 +653,14 @@ semantica-poc/
 │   ├── test_disclosure.py                 # P3: TNFD disclosure tests (30 tests)
 │   ├── test_axiom_discovery.py            # P4: Axiom discovery pipeline tests (70+ tests)
 │   ├── test_semantica_bridge.py           # Semantica SDK bridge adapter tests (51 tests)
-│   └── integration/                       # ═══ INTEGRATION TESTS (197 tests) ═══
+│   └── integration/                       # ═══ INTEGRATION TESTS (204 tests) ═══
 │       ├── test_phase0_bridge.py          # SDK availability, SQLite persistence, dual-write
 │       ├── test_phase1_graph.py           # Graph integrity, idempotent re-population
 │       ├── test_phase2_apis.py            # OBIS, WoRMS, Marine Regions real API calls
 │       ├── test_phase3_query.py           # 5-category regression, classifier accuracy
 │       ├── test_phase4_disclosure.py      # TNFD disclosure, axiom discovery
-│       └── test_phase5_stress.py          # SQLite persistence, concurrent queries
+│       ├── test_phase5_stress.py          # SQLite persistence, concurrent queries
+│       └── test_phase6_llm_discovery.py   # LLM-enhanced discovery integration (7 tests against live DeepSeek)
 │
 ├── demos/context_graph_demo/
 │   ├── cabo_pulmo_investment_grade.ipynb   # Investment-grade analysis notebook
@@ -1095,11 +1098,11 @@ The system is designed to answer complex, multi-hop questions with full provenan
 
 ---
 
-## Semantica SDK Integration (P0-P4) - ~93% Complete
+## Semantica SDK Integration (P0-P4) - Complete
 
-The Semantica framework (v0.2.7+) has been integrated across five priority tiers, adding 25 new modules and 550+ new tests. Implementation lives on the `feature/semantica-integration` branch with 9 commits.
+The Semantica framework (v0.2.7+) has been integrated across five priority tiers, adding 27 modules and 690+ new tests. Implementation lives on the `feature/semantica-integration` branch with 11 commits. All P0-P4 gaps have been closed in the final polish phase.
 
-### P0: Automated Provenance Chains - 95% Complete
+### P0: Automated Provenance Chains - Complete
 
 - [x] `maris/provenance/` module (7 files) - W3C PROV-O entity/activity/agent tracking
 - [x] `BridgeAxiomRegistry` - all 16 axioms as typed BridgeAxiom objects
@@ -1107,44 +1110,47 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 - [x] `MARISProvenanceManager` - track_extraction, track_axiom_application, get_lineage
 - [x] SHA-256 integrity verification with InMemoryStorage and SQLiteStorage
 - [x] `GET /api/provenance/{entity_id}` endpoint registered and functional
-- [ ] **GAP: Wire SemanticaBackedManager into API routes** (currently uses MARISProvenanceManager)
+- [x] SemanticaBackedManager wired into provenance route with ImportError fallback
+- [x] `MARIS_PROVENANCE_DB` config option for SQLite persistence path
 
-### P1: Multi-Site Scaling Pipeline - 90% Complete
+### P1: Multi-Site Scaling Pipeline - Complete
 
 - [x] `maris/sites/` module (5 files) - OBIS, WoRMS, Marine Regions API clients
-- [x] `SiteCharacterizer` - 5-step pipeline (Locate, Species, Habitat, ESV, Score)
+- [x] `SiteCharacterizer` - 5-step pipeline (Locate, Species, Habitat, ESV, Score) with multi-signal habitat scoring (keywords, taxonomy, functional groups)
 - [x] Bronze/Silver/Gold tier model with Pydantic v2 models
 - [x] ESV estimator with bridge axiom selection by habitat type
 - [x] JSON-backed site registry with CRUD operations
-- [ ] **GAP: WoRMS 204 bug** - `api_clients.py:46` crashes on HTTP 204 No Content
-- [ ] **GAP: Silver/Gold _enrich_from_apis() returns minimal data**
+- [x] WoRMS 204 No Content fix in `api_clients.py`
+- [x] OBIS numeric area ID resolution for geometry lookups
+- [x] Marine Regions 404 and JSON error handling
 
-### P2: Cross-Domain Reasoning Engine - 85% Complete
+### P2: Cross-Domain Reasoning Engine - Complete
 
-- [x] `maris/reasoning/` module (4 files) - context builder, hybrid retriever, inference engine
+- [x] `maris/reasoning/` module (5 files) - context builder, hybrid retriever, inference engine, rule compiler
 - [x] Forward chaining: ecological facts -> financial conclusions
 - [x] Backward chaining: financial query -> needed ecological evidence
 - [x] Investor-friendly explanation generation with DOI citations
 - [x] `open_domain` 6th query category in classifier
-- [ ] **GAP: rule_compiler.py exists inline, not as separate module** (cosmetic)
+- [x] `rule_compiler.py` extracted as separate module from InferenceEngine
 
-### P3: TNFD Disclosure Automation - 100% Complete
+### P3: TNFD Disclosure Automation - Complete
 
 - [x] `maris/disclosure/` module (4 files) - full TNFD LEAP generation
 - [x] 4-phase LEAP: Locate, Evaluate, Assess, Prepare
 - [x] Markdown, JSON, and summary renderers
 - [x] 14-disclosure alignment scorer with gap analysis
 - [x] `POST /api/disclosure/tnfd-leap` endpoint
-- [x] All 35 integration tests passing
+- [x] All integration tests passing
 
-### P4: Dynamic Axiom Discovery - 95% Complete
+### P4: Dynamic Axiom Discovery - Complete
 
-- [x] `maris/discovery/` module (5 files) - pattern detection, aggregation, review
+- [x] `maris/discovery/` module (6 files) - pattern detection, LLM-enhanced detection, aggregation, review
 - [x] Cross-paper quantitative pattern detector (regex + domain classification)
+- [x] `llm_detector.py` - LLM-enhanced pattern detection with regex fallback, retry logic, numeric confidence, robust JSON parsing
 - [x] Multi-study aggregation with conflict detection (3+ sources required)
 - [x] Candidate axiom formation compatible with bridge_axiom_templates.json
 - [x] Human-in-the-loop reviewer with accept/reject workflow
-- [ ] **GAP: Literature scanner uses mock extraction; real LLM pipeline not wired**
+- [x] Phase 6 integration tests (7 tests against live DeepSeek)
 
 ### Semantica SDK Bridge Layer
 
@@ -1152,7 +1158,7 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 - [x] `SemanticaBackedManager` - drop-in replacement for MARISProvenanceManager with SQLite persistence
 - [x] Dual-write provenance: writes to both MARIS and Semantica backends simultaneously
 - [x] Graceful degradation when `semantica` package is not installed
-- [x] 51 unit tests + 197 integration tests validating all bridge adapters
+- [x] 51 unit tests + 204 integration tests validating all bridge adapters
 
 ---
 
@@ -1200,11 +1206,11 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 | Investor demo | Complete 10-min narrative without gaps |
 | Bridge axiom coverage | All 16 axioms functional |
 | Multi-habitat support | Coral, kelp, mangrove, seagrass |
-| Test suite | 770 tests passing (573 unit + 197 integration) |
+| Test suite | 910 tests passing (706 unit + 204 integration) |
 | API authentication | Bearer token + rate limiting |
 | Docker builds | Multi-stage API + Dashboard |
 | CI pipeline | GitHub Actions (lint + test) |
-| Semantica SDK integration | P0-P4 ~93% complete (25 modules, 6-file bridge layer) |
+| Semantica SDK integration | P0-P4 complete (27 modules, 6-file bridge layer) on feature/semantica-integration |
 | Provenance tracking | W3C PROV-O with SQLite persistence |
 | TNFD disclosure | LEAP automation with 14-disclosure alignment scoring |
 | Multi-site scaling | Bronze/Silver/Gold characterization pipeline |
