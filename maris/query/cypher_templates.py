@@ -185,6 +185,46 @@ TEMPLATES: dict[str, dict] = {
         """,
         "parameters": [],
     },
+
+    # ------------------------------------------------------------------
+    # Open-domain retrieval templates (P2)
+    # ------------------------------------------------------------------
+    "graph_neighborhood": {
+        "name": "graph_neighborhood",
+        "category": "open_domain",
+        "default_limit": _TRAVERSAL_LIMIT,
+        "cypher": """
+            MATCH (start)
+            WHERE start.name = $start_name
+            MATCH path = (start)-[*1..MAX_HOPS_PLACEHOLDER]-(neighbor)
+            WITH start, neighbor, path,
+                 [n IN nodes(path) | {labels: labels(n), name: n.name, props: properties(n)}] AS node_list,
+                 [r IN relationships(path) | {type: type(r), start: startNode(r).name, end: endNode(r).name}] AS rel_list
+            RETURN start.name AS start_node,
+                   neighbor.name AS neighbor_name,
+                   labels(neighbor)[0] AS neighbor_label,
+                   properties(neighbor) AS neighbor_props,
+                   node_list, rel_list
+            LIMIT $result_limit
+        """,
+        "parameters": ["start_name", "max_hops", "result_limit"],
+    },
+    "semantic_search": {
+        "name": "semantic_search",
+        "category": "open_domain",
+        "default_limit": _DETAIL_LIMIT,
+        "cypher": """
+            MATCH (n)
+            WHERE n.name CONTAINS $search_term
+               OR n.description CONTAINS $search_term
+               OR n.service_name CONTAINS $search_term
+               OR n.axiom_id CONTAINS $search_term
+            RETURN labels(n)[0] AS label, n.name AS name,
+                   properties(n) AS props
+            LIMIT $result_limit
+        """,
+        "parameters": ["search_term"],
+    },
 }
 
 

@@ -205,14 +205,22 @@ class QueryClassifier:
             result = self._classify_with_llm(question, site, metrics)
             if caveats:
                 result["caveats"] = result.get("caveats", []) + caveats
+            # Route to open_domain when LLM succeeded but with low confidence.
+            # LLM failure fallback is marked with _llm_failed=True and keeps
+            # its default category.
+            if (
+                not result.pop("_llm_failed", False)
+                and result.get("confidence", 0) < 0.4
+            ):
+                result["category"] = "open_domain"
             return result
 
-        # Default fallback
+        # No keyword match and no LLM -> open_domain
         return {
-            "category": "site_valuation",
+            "category": "open_domain",
             "site": site,
             "metrics": metrics,
-            "confidence": 0.3,
+            "confidence": 0.2,
             "caveats": caveats or [],
         }
 
@@ -299,4 +307,5 @@ class QueryClassifier:
                 "metrics": metrics,
                 "confidence": 0.3,
                 "caveats": [],
+                "_llm_failed": True,
             }

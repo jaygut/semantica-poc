@@ -11,6 +11,34 @@ logger = logging.getLogger(__name__)
 class QueryExecutor:
     """Run parameterized Cypher templates or raw queries against Neo4j."""
 
+    def execute_open_domain(self, question: str, site_name: str | None = None) -> dict:
+        """Execute an open-domain query using hybrid retrieval.
+
+        Falls back to graph_neighborhood + semantic_search when the question
+        does not match any of the 5 core query categories.
+        """
+        from maris.query.classifier import _KEYWORD_RULES
+        from maris.reasoning.hybrid_retriever import HybridRetriever
+
+        retriever = HybridRetriever(
+            executor=self,
+            keyword_rules=_KEYWORD_RULES,
+        )
+        result = retriever.retrieve(
+            question=question,
+            site_name=site_name,
+            max_hops=3,
+            top_k=20,
+        )
+        return {
+            "template": "open_domain",
+            "parameters": {"question": question, "site_name": site_name},
+            "results": result.ranked_nodes,
+            "record_count": len(result.ranked_nodes),
+            "has_more": result.total_candidates > 20,
+            "retrieval_modes": result.retrieval_modes,
+        }
+
     def execute(self, template_name: str, parameters: dict) -> dict:
         """Execute a named Cypher template with parameters.
 

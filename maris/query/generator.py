@@ -21,6 +21,7 @@ _CATEGORY_HOPS = {
     "axiom_explanation": 2,
     "comparison": 1,
     "risk_assessment": 3,
+    "open_domain": 3,
 }
 
 
@@ -30,11 +31,20 @@ class ResponseGenerator:
     def __init__(self, llm: LLMAdapter):
         self._llm = llm
 
-    def generate(self, question: str, graph_context: dict, category: str) -> dict:
+    def generate(
+        self,
+        question: str,
+        graph_context: dict,
+        category: str,
+        explanation_chain: str | None = None,
+    ) -> dict:
         """Synthesize a response from graph results.
 
         Returns dict with keys: answer, confidence, evidence, axioms_used,
         graph_path, caveats, verified_claims, unverified_claims.
+
+        If explanation_chain is provided (from inference engine), it is
+        appended to the LLM prompt to ground the response in the reasoning.
         """
         # Empty result protection: do not call LLM if graph has no data
         if is_graph_context_empty(graph_context):
@@ -48,6 +58,13 @@ class ResponseGenerator:
             category=category,
             graph_context=context_str,
         )
+
+        # Append inference explanation if available
+        if explanation_chain:
+            prompt += (
+                "\n\nInference chain (use this to structure your answer):\n"
+                + explanation_chain
+            )
 
         try:
             result = self._llm.complete_json([{"role": "user", "content": prompt}])
