@@ -1,0 +1,41 @@
+{
+  "total": 3,
+  "results": [
+    {
+      "occurrenceID": "urn:lsid:obis:occurrence:001",
+      "scientificName": "Acropora palmata",
+      "vernacularName": "Elkhorn coral",
+      "aphiaID": 206974,
+      "taxonID": 206974,
+      "decimalLatitude": 23.42,
+      "decimalLongitude": -109.42,
+      "eventDate": "2023-06-15",
+      "basisOfRecord": "HumanObservation",
+      "dataset_id": "mpa_survey_001"
+    },
+    {
+      "occurrenceID": "urn:lsid:obis:occurrence:002",
+      "scientificName": "Lutjanus argentiventris",
+      "vernacularName": "Yellow snapper",
+      "aphiaID": 281326,
+      "taxonID": 281326,
+      "decimalLatitude": 23.43,
+      "decimalLongitude": -109.41,
+      "eventDate": "2023-06-15",
+      "basisOfRecord": "HumanObservation",
+      "dataset_id": "mpa_survey_001"
+    },
+    {
+      "occurrenceID": "urn:lsid:obis:occurrence:003",
+      "scientificName": "Posidonia australis",
+      "vernacularName": "Australian seagrass",
+      "aphiaID": 145795,
+      "taxonID": 145795,
+      "decimalLatitude": -25.97,
+      "decimalLongitude": 113.86,
+      "eventDate": "2023-08-20",
+      "basisOfRecord": "HumanObservation",
+      "dataset_id": "mpa_survey_002"
+    }
+  ]
+}

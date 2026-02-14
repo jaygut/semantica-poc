@@ -72,6 +72,43 @@ _SITE_PATTERNS: list[tuple[str, str]] = [
 # Canonical names list for fuzzy matching fallback
 _CANONICAL_SITES = [s[1] for s in _SITE_PATTERNS]
 
+# Dynamic site patterns loaded from the site registry (populated at runtime)
+_DYNAMIC_SITE_PATTERNS: list[tuple[str, str]] = []
+
+
+def register_dynamic_sites(site_names: list[str]) -> int:
+    """Register additional site names for query classification.
+
+    Called by the site registry when new sites are added. Each name gets
+    a word-boundary regex pattern generated automatically.
+
+    Returns the number of patterns registered.
+    """
+    global _DYNAMIC_SITE_PATTERNS  # noqa: PLW0603
+    _DYNAMIC_SITE_PATTERNS = []
+    for name in site_names:
+        # Build a regex from the canonical name (case-insensitive word match)
+        escaped = re.escape(name)
+        # Also create a short form from the first two words
+        parts = name.split()
+        patterns = [rf"\b{escaped}\b"]
+        if len(parts) >= 2:
+            short = re.escape(" ".join(parts[:2]))
+            patterns.append(rf"\b{short}\b")
+        combined = "|".join(patterns)
+        _DYNAMIC_SITE_PATTERNS.append((f"(?:{combined})", name))
+    return len(_DYNAMIC_SITE_PATTERNS)
+
+
+def get_all_canonical_sites() -> list[str]:
+    """Return all canonical site names (static + dynamic)."""
+    names = list(_CANONICAL_SITES)
+    for _, canonical in _DYNAMIC_SITE_PATTERNS:
+        if canonical not in names:
+            names.append(canonical)
+    return names
+
+
 # Negation markers
 _NEGATION_PATTERN = re.compile(
     r"\b(?:not|without|no\s+|never|exclude|excluding|lacks?|missing)\b",
@@ -186,16 +223,21 @@ class QueryClassifier:
         ]
 
     def _extract_sites(self, text: str) -> list[str]:
-        """Extract all mentioned sites, with fuzzy fallback."""
+        """Extract all mentioned sites, with dynamic registry and fuzzy fallback."""
         found: list[str] = []
         for pat, canonical in _SITE_PATTERNS:
             if re.search(pat, text, re.IGNORECASE):
                 if canonical not in found:
                     found.append(canonical)
 
+        # Check dynamic patterns from site registry
+        for pat, canonical in _DYNAMIC_SITE_PATTERNS:
+            if canonical not in found and re.search(pat, text, re.IGNORECASE):
+                found.append(canonical)
+
         if not found:
             # Fuzzy matching fallback: extract multi-word tokens and try
-            # matching against canonical site names
+            # matching against canonical site names (static + dynamic)
             fuzzy_match = self._fuzzy_site_match(text)
             if fuzzy_match:
                 found.append(fuzzy_match)
@@ -208,7 +250,8 @@ class QueryClassifier:
         return sites[0] if sites else None
 
     def _fuzzy_site_match(self, text: str, cutoff: float = 0.6) -> str | None:
-        """Try fuzzy matching against canonical site names."""
+        """Try fuzzy matching against canonical site names (static + dynamic)."""
+        all_sites = get_all_canonical_sites()
         # Build candidate words from the text (2-5 word windows)
         words = text.split()
         candidates: list[str] = []
@@ -218,19 +261,18 @@ class QueryClassifier:
         candidates.extend(words)
 
         # Try each candidate against canonical names
+        lower_sites = [name.lower() for name in all_sites]
         for candidate in candidates:
             matches = difflib.get_close_matches(
                 candidate,
-                [name.lower() for name in _CANONICAL_SITES],
+                lower_sites,
                 n=1,
                 cutoff=cutoff,
             )
             if matches:
                 # Map back to properly cased canonical name
-                idx = [name.lower() for name in _CANONICAL_SITES].index(
-                    matches[0]
-                )
-                return _CANONICAL_SITES[idx]
+                idx = lower_sites.index(matches[0])
+                return all_sites[idx]
 
         return None
 

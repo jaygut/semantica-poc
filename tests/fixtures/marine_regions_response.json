@@ -1,0 +1,21 @@
+[
+  {
+    "MRGID": 8364,
+    "gazetteerSource": "Marine Regions",
+    "placeType": "Marine Protected Area",
+    "latitude": 9.47,
+    "longitude": 119.87,
+    "minLatitude": 8.62,
+    "minLongitude": 119.77,
+    "maxLatitude": 9.96,
+    "maxLongitude": 120.07,
+    "precision": 0.01,
+    "preferredGazetteerName": "Tubbataha Reefs Natural Park",
+    "preferredGazetteerNameLang": "English",
+    "status": "standard",
+    "accepted": 8364,
+    "country": "Philippines",
+    "area_km2": 970.0,
+    "year": 1988
+  }
+]

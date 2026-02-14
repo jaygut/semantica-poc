@@ -1063,9 +1063,149 @@ def _populate_provenance(session, cfg):
 
 
 # ---------------------------------------------------------------------------
+# 9. Registered sites from site registry (Bronze/Silver/Gold tiers)
+# ---------------------------------------------------------------------------
+def _populate_registered_sites(session, registry_path=None):
+    """Populate graph with sites from the site scaling registry.
+
+    Tier behavior:
+      Bronze: MPA node with governance metadata only.
+      Silver: MPA + Species + Habitat + EcosystemService + GENERATES edges.
+      Gold: Delegates to full case study population (not handled here).
+    """
+    if registry_path is None:
+        return 0
+
+    try:
+        from maris.sites.registry import SiteRegistry
+        from maris.sites.models import CharacterizationTier
+    except ImportError:
+        print("  WARNING: maris.sites module not available, skipping registered sites.")
+        return 0
+
+    registry = SiteRegistry(registry_path)
+    if registry.count() == 0:
+        return 0
+
+    count = 0
+    for site in registry.list_sites():
+        if site.tier == CharacterizationTier.gold and site.case_study_path:
+            # Gold tier sites should use full case study population
+            continue
+
+        # Bronze + Silver: create MPA node
+        pop_dict = site.to_population_dict()
+        session.run(
+            """
+            MERGE (m:MPA {name: $name})
+            SET m.country          = $country,
+                m.area_km2         = $area_km2,
+                m.designation_year = $designation_year,
+                m.neoli_score      = $neoli_score,
+                m.asset_rating     = $asset_rating,
+                m.characterization_tier = $tier
+            """,
+            {
+                "name": pop_dict.get("name", ""),
+                "country": pop_dict.get("country", ""),
+                "area_km2": pop_dict.get("area_km2"),
+                "designation_year": pop_dict.get("designation_year"),
+                "neoli_score": pop_dict.get("neoli_score"),
+                "asset_rating": pop_dict.get("asset_rating", ""),
+                "tier": site.tier.value,
+            },
+        )
+        count += 1
+
+        if site.tier == CharacterizationTier.bronze:
+            continue
+
+        # Silver: add species, habitats, services
+        for sp in site.species:
+            if sp.worms_aphia_id:
+                session.run(
+                    """
+                    MERGE (s:Species {worms_id: $worms_id})
+                    SET s.scientific_name = $scientific_name,
+                        s.common_name    = $common_name
+                    """,
+                    {
+                        "worms_id": sp.worms_aphia_id,
+                        "scientific_name": sp.scientific_name,
+                        "common_name": sp.common_name,
+                    },
+                )
+                session.run(
+                    """
+                    MATCH (s:Species {worms_id: $worms_id})
+                    MATCH (m:MPA {name: $mpa_name})
+                    MERGE (s)-[:LOCATED_IN]->(m)
+                    """,
+                    {"worms_id": sp.worms_aphia_id, "mpa_name": site.canonical_name},
+                )
+                count += 1
+
+        for hab in site.habitats:
+            session.run(
+                """
+                MERGE (h:Habitat {habitat_id: $habitat_id})
+                ON CREATE SET h.name = $name
+                """,
+                {"habitat_id": hab.habitat_id, "name": hab.name},
+            )
+            session.run(
+                """
+                MATCH (m:MPA {name: $mpa_name})
+                MATCH (h:Habitat {habitat_id: $habitat_id})
+                MERGE (m)-[:HAS_HABITAT]->(h)
+                """,
+                {"mpa_name": site.canonical_name, "habitat_id": hab.habitat_id},
+            )
+            count += 1
+
+        for svc in site.ecosystem_services:
+            service_id = f"{site.canonical_name.lower().replace(' ', '_')}_{svc.service_type}"
+            session.run(
+                """
+                MERGE (es:EcosystemService {service_id: $service_id})
+                SET es.service_name     = $name,
+                    es.service_type     = $svc_type,
+                    es.annual_value_usd = $value,
+                    es.valuation_method = $method
+                """,
+                {
+                    "service_id": service_id,
+                    "name": svc.service_name or svc.service_type.replace("_", " ").title(),
+                    "svc_type": svc.service_type,
+                    "value": svc.annual_value_usd,
+                    "method": svc.valuation_method,
+                },
+            )
+            session.run(
+                """
+                MATCH (m:MPA {name: $mpa_name})
+                MATCH (es:EcosystemService {service_id: $service_id})
+                MERGE (m)-[g:GENERATES]->(es)
+                SET g.total_usd_yr = $value,
+                    g.method       = $method
+                """,
+                {
+                    "mpa_name": site.canonical_name,
+                    "service_id": service_id,
+                    "value": svc.annual_value_usd,
+                    "method": svc.valuation_method,
+                },
+            )
+            count += 1
+
+    print(f"  Registered sites: {count} nodes/edges merged.")
+    return count
+
+
+# ---------------------------------------------------------------------------
 # Main entry point
 # ---------------------------------------------------------------------------
-def populate_graph():
+def populate_graph(site_registry_path=None):
     """Run the full population pipeline. Idempotent via MERGE."""
     cfg = get_config()
     driver = get_driver()
@@ -1084,6 +1224,7 @@ def populate_graph():
         total += _populate_relationships(session, cfg)
         total += _populate_cross_domain_links(session)
         total += _populate_provenance(session, cfg)
+        total += _populate_registered_sites(session, site_registry_path)
 
     print("=" * 60)
     print(f"Population complete. ~{total} operations executed.")
