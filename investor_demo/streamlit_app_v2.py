@@ -1206,6 +1206,69 @@ with fw2:
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
+# 8b. TNFD Disclosure (auto-generated)
+# ---------------------------------------------------------------------------
+st.markdown('<div class="section-header">TNFD Disclosure</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-desc">Auto-generated TNFD LEAP disclosure from MARIS knowledge graph. All claims traced to DOI-backed evidence through bridge axioms.</div>', unsafe_allow_html=True)
+
+try:
+    import sys as _sys
+    _sys.path.insert(0, str(Path(__file__).resolve().parent.parent)) if str(Path(__file__).resolve().parent.parent) not in _sys.path else None
+    from maris.disclosure.leap_generator import LEAPGenerator
+    from maris.disclosure.alignment_scorer import AlignmentScorer
+    from maris.disclosure.renderers import render_markdown as _render_md, render_summary as _render_summary
+
+    _leap_gen = LEAPGenerator(project_root=Path(__file__).resolve().parent.parent)
+    _leap_scorer = AlignmentScorer()
+
+    _site_for_disclosure = data.get("site", {}).get("name", "Cabo Pulmo National Park")
+    _tnfd_disclosure = _leap_gen.generate(_site_for_disclosure)
+    _tnfd_alignment = _leap_scorer.score(_tnfd_disclosure)
+
+    # Alignment score badge
+    _score_color = "#22C55E" if _tnfd_alignment.score_pct >= 80 else "#F59E0B" if _tnfd_alignment.score_pct >= 50 else "#EF4444"
+    st.markdown(f"""
+<div class="kpi-card" style="text-align:center;margin-bottom:16px">
+<span style="font-size:40px;font-weight:700;color:{_score_color}">{_tnfd_alignment.populated_count}/{_tnfd_alignment.total_disclosures}</span>
+<br><span style="color:#94A3B8;font-size:16px">TNFD Recommended Disclosures Populated ({_tnfd_alignment.score_pct:.0f}%)</span>
+</div>
+""", unsafe_allow_html=True)
+
+    with st.expander("View Full TNFD LEAP Disclosure", expanded=False):
+        _disclosure_tab, _summary_tab = st.tabs(["Full Disclosure", "Executive Summary"])
+        with _disclosure_tab:
+            st.markdown(_render_md(_tnfd_disclosure))
+        with _summary_tab:
+            st.markdown(_render_summary(_tnfd_disclosure))
+
+        # Download buttons
+        _dl_col1, _dl_col2 = st.columns(2)
+        with _dl_col1:
+            st.download_button(
+                label="Download Markdown",
+                data=_render_md(_tnfd_disclosure),
+                file_name=f"tnfd_leap_{_site_for_disclosure.lower().replace(' ', '_')}.md",
+                mime="text/markdown",
+            )
+        with _dl_col2:
+            from maris.disclosure.renderers import render_json as _render_json_disc
+            st.download_button(
+                label="Download JSON",
+                data=_render_json_disc(_tnfd_disclosure),
+                file_name=f"tnfd_leap_{_site_for_disclosure.lower().replace(' ', '_')}.json",
+                mime="application/json",
+            )
+
+    if _tnfd_alignment.gap_ids:
+        with st.expander(f"Gap Analysis ({_tnfd_alignment.gap_count} gaps)", expanded=False):
+            for _gap_id in _tnfd_alignment.gap_ids:
+                _reason = _tnfd_alignment.gap_details.get(_gap_id, "")
+                st.markdown(f"- **{_gap_id}**: {_reason}")
+
+except Exception as _tnfd_err:
+    st.caption(f"TNFD disclosure unavailable: {_tnfd_err}")
+
+# ---------------------------------------------------------------------------
 # 9. Scaling Intelligence (shared with v1)
 # ---------------------------------------------------------------------------
 from components.roadmap_section import render_roadmap_section
