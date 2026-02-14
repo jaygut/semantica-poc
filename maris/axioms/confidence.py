@@ -197,6 +197,7 @@ def calculate_response_confidence(
     graph_nodes: list[dict],
     n_hops: int = 1,
     current_year: int | None = None,
+    provenance_certificate: dict | None = None,
 ) -> dict:
     """Calculate composite response confidence with full breakdown.
 
@@ -278,7 +279,7 @@ def calculate_response_confidence(
     elif n_sources <= 3:
         explanation_parts.append(f"{n_sources} supporting sources")
 
-    return {
+    result = {
         "composite": round(composite, 4),
         "tier_base": round(tier_base, 4),
         "path_discount": round(path_disc, 4),
@@ -286,3 +287,11 @@ def calculate_response_confidence(
         "sample_factor": round(sample_f, 4),
         "explanation": "; ".join(explanation_parts) if explanation_parts else "Standard confidence",
     }
+
+    # Attach provenance metadata if certificate provided
+    if provenance_certificate is not None:
+        result["provenance_depth"] = provenance_certificate.get("lineage_depth", 0)
+        result["provenance_checksum"] = provenance_certificate.get("checksum", "")
+        result["provenance_dois"] = provenance_certificate.get("source_dois", [])
+
+    return result

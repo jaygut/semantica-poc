@@ -87,7 +87,7 @@ def _parse_json_from_response(text: str) -> list[dict]:
 class LLMExtractor:
     """Extract entities and relationships from text chunks using an LLM."""
 
-    def __init__(self, config: MARISConfig):
+    def __init__(self, config: MARISConfig, provenance_manager=None):
         self.config = config
         self.client = OpenAI(
             api_key=config.llm_api_key,
@@ -95,6 +95,7 @@ class LLMExtractor:
         )
         self.model = config.llm_model
         self.threshold = config.extraction_confidence_threshold
+        self._provenance = provenance_manager
 
     def extract_entities(self, chunk: dict, paper_meta: dict) -> list[dict]:
         """Extract entities from a single chunk.
@@ -140,6 +141,23 @@ class LLMExtractor:
             ent["_page_start"] = chunk["page_start"]
             ent["_page_end"] = chunk["page_end"]
             results.append(ent)
+
+            # Track in provenance system if available
+            if self._provenance is not None:
+                ent_name = ent.get("scientific_name") or ent.get("name") or ent.get("metric_name") or "unknown"
+                ent_type = ent.get("type", "Entity")
+                entity_id = f"extracted:{ent_type}:{ent_name}:{chunk.get('chunk_id', '')}"
+                self._provenance.track_extraction(
+                    entity_id=entity_id,
+                    entity_type=ent_type,
+                    source_doi=paper_meta.get("doi", ""),
+                    attributes={
+                        "name": ent_name,
+                        "confidence": confidence,
+                        "page_start": chunk["page_start"],
+                        "page_end": chunk["page_end"],
+                    },
+                )
 
         return results
 

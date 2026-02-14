@@ -61,10 +61,12 @@ def create_app() -> FastAPI:
     from maris.api.routes.query import router as query_router
     from maris.api.routes.graph import router as graph_router
     from maris.api.routes.health import router as health_router
+    from maris.api.routes.provenance import router as provenance_router
 
     app.include_router(query_router)
     app.include_router(graph_router)
     app.include_router(health_router)
+    app.include_router(provenance_router)
 
     return app
 
