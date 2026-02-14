@@ -3,7 +3,7 @@
 import logging
 
 from maris.config import MARISConfig
-from maris.graph.connection import get_driver, run_write
+from maris.graph.connection import run_write
 
 logger = logging.getLogger(__name__)
 
@@ -174,7 +174,6 @@ class GraphMerger:
             if not source or not target:
                 continue
 
-            properties = rel.get("properties", {})
             confidence = float(rel.get("confidence", 0))
             quote = rel.get("supporting_quote", "")[:200]
             source_doi = rel.get("_source_doi", "")

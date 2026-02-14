@@ -1,7 +1,5 @@
 """Tests for Monte Carlo ESV simulation."""
 
-import numpy as np
-import pytest
 
 from maris.axioms.monte_carlo import run_monte_carlo
 

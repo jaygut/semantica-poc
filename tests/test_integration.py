@@ -1,7 +1,5 @@
 """Integration tests for the query pipeline (no Neo4j/LLM required)."""
 
-import pytest
-from unittest.mock import MagicMock, patch
 
 from maris.query.classifier import QueryClassifier
 from maris.query.formatter import format_response

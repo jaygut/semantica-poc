@@ -1,6 +1,5 @@
 """Tests for LLM response validation logic in maris.query.validators."""
 
-import pytest
 
 from maris.query.validators import (
     validate_response_schema,

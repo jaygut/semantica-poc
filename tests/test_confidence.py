@@ -9,7 +9,6 @@ from maris.axioms.confidence import (
     _path_discount,
     _staleness_discount,
     _sample_size_factor,
-    TIER_CONFIDENCE,
 )
 
 

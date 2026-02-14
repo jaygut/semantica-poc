@@ -1,7 +1,7 @@
 """Tests for query classifier - keyword matching, site extraction, and LLM fallback."""
 
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from maris.query.classifier import QueryClassifier
 

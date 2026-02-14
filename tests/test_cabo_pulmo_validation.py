@@ -1,7 +1,6 @@
 """Validation tests for Cabo Pulmo case study reference data."""
 
 import json
-import math
 import re
 from pathlib import Path
 
