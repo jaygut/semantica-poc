@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **MARIS** (Marine Asset Risk Intelligence System) is a provenance-first knowledge graph that creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. Built on the Semantica framework, it is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
 
-**Current Status:** Production-ready POC deployed on `main` with Blue Carbon Extension complete. Semantica SDK integration (P0-P4) is complete on `feature/semantica-integration` branch with all gaps closed - including LLM-enhanced axiom discovery, rule compilation, enhanced multi-signal habitat characterization, and hardened API clients. The system comprises a Neo4j knowledge graph (893 nodes, 132 edges) spanning two fully characterized MPA sites (Cabo Pulmo and Shark Bay), a FastAPI query engine with 9 endpoints (7 core + provenance + disclosure), Bearer token authentication and rate limiting, natural-language-to-Cypher classification with LLM response validation, and an investor-facing Streamlit dashboard with interactive graph visualization. The document library contains 195 verified papers, 16 fully-evidenced bridge axioms (v1.3 with blue carbon axioms BA-013 through BA-016 and uncertainty quantification), and a Semantica-ready export bundle. The Semantica integration adds W3C PROV-O provenance tracking, multi-site scaling pipeline, cross-domain reasoning engine, TNFD LEAP disclosure automation, LLM-enhanced dynamic axiom discovery with regex fallback, rule compilation extracted from InferenceEngine, and a 6-file SDK bridge layer. Backed by a **910-test suite** (706 unit + 204 integration) with GitHub Actions CI, multi-stage Docker builds, and a composite confidence model. The system also runs in static mode from a pre-computed JSON bundle (63 precomputed responses) for zero-downtime investor demos.
+**Current Status:** Production-ready POC deployed on `main` with Blue Carbon Extension complete. Semantica SDK integration (P0-P4) is complete on `feature/semantica-integration` branch with all gaps closed - including LLM-enhanced axiom discovery, rule compilation, enhanced multi-signal habitat characterization, and hardened API clients. The v3 Intelligence Platform dashboard (multi-tab architecture) is also complete on `feature/semantica-integration`, making the P0-P4 infrastructure visible and interactive. The system comprises a Neo4j knowledge graph (893 nodes, 132 edges) spanning two fully characterized MPA sites (Cabo Pulmo and Shark Bay), a FastAPI query engine with 9 endpoints (7 core + provenance + disclosure), Bearer token authentication and rate limiting, natural-language-to-Cypher classification with LLM response validation, and three investor-facing Streamlit dashboards (v1 static, v2 live, v3 intelligence platform). The document library contains 195 verified papers, 16 fully-evidenced bridge axioms (v1.3 with blue carbon axioms BA-013 through BA-016 and uncertainty quantification), and a Semantica-ready export bundle. The Semantica integration adds W3C PROV-O provenance tracking, multi-site scaling pipeline, cross-domain reasoning engine, TNFD LEAP disclosure automation, LLM-enhanced dynamic axiom discovery with regex fallback, rule compilation extracted from InferenceEngine, and a 6-file SDK bridge layer. Backed by a **910-test suite** (706 unit + 204 integration) with GitHub Actions CI, multi-stage Docker builds, and a composite confidence model. The system also runs in static mode from a pre-computed JSON bundle (63 precomputed responses) for zero-downtime investor demos.
 
 ---
 
@@ -57,7 +57,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |-------|-----------|---------|
 | Knowledge Graph | Neo4j Community 5.x | 893 nodes, 132 edges; bolt://localhost:7687 |
 | API Server | FastAPI + Uvicorn | 7 REST endpoints; http://localhost:8000 |
-| Dashboard | Streamlit 1.54 | Dark-mode investor UI; http://localhost:8501 |
+| Dashboard | Streamlit 1.54 | Dark-mode investor UI; v2 http://localhost:8501, v3 http://localhost:8503 |
 | LLM | DeepSeek V3 (default) | Query classification and response synthesis |
 | Computation | NumPy, NetworkX | Monte Carlo simulation (10,000 runs), graph analysis |
 
@@ -65,7 +65,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Quick Start
 
-### v2 - Live System (Recommended)
+### v3 - Intelligence Platform (Latest)
 
 ```bash
 # 1. Configure environment (copy template, add your credentials)
@@ -81,7 +81,17 @@ python scripts/populate_neo4j.py
 # 4. Start the API server (terminal 1)
 uvicorn maris.api.main:app --host 0.0.0.0 --port 8000
 
-# 5. Start the dashboard (terminal 2)
+# 5. Start the v3 dashboard (terminal 2)
+cd investor_demo
+streamlit run streamlit_app_v3.py --server.port 8503
+```
+
+The v3 Intelligence Platform opens at `http://localhost:8503` with 5 tabs: Intelligence Brief, Ask MARIS (GraphRAG), Scenario Lab, Site Scout (deferred), and TNFD Compliance. Every feature has dual-mode operation: LIVE (Neo4j + LLM) and DEMO (precomputed + static bundle).
+
+### v2 - Live System
+
+```bash
+# Same setup as v3, then:
 cd investor_demo
 streamlit run streamlit_app_v2.py
 ```
@@ -300,13 +310,21 @@ maris/
   config.py                     # Centralized config from .env (MARIS_ prefix)
 
 investor_demo/
-  streamlit_app_v2.py           # Live dashboard - CSS, layout, data, Ask MARIS, Graph Explorer
-  streamlit_app.py              # Static dashboard - bundle-only, zero dependencies
+  streamlit_app_v3.py           # v3 Intelligence Platform - multi-tab, dual-mode (live/demo)
+  streamlit_app_v2.py           # v2 Live dashboard - CSS, layout, data, Ask MARIS, Graph Explorer
+  streamlit_app.py              # v1 Static dashboard - bundle-only, zero dependencies
   api_client.py                 # HTTP client wrapping MARIS API; auto-fallback to precomputed
   components/
-    chat_panel.py               # Ask MARIS query UI with markdown, confidence badges, evidence
-    graph_explorer.py           # Plotly network graph with semantic layering
+    chat_panel.py               # v2 Ask MARIS query UI with markdown, confidence badges, evidence
+    graph_explorer.py           # v2 Plotly network graph with semantic layering
     roadmap_section.py          # Scaling Intelligence section (shared between v1 and v2)
+    v3/                         # v3 Intelligence Platform component package
+      __init__.py               # Public API exports from shared.py
+      shared.py                 # Colors, CSS, formatters, health checks, data loading
+      intelligence_brief.py     # Tab 1: KPIs, provenance graph, axiom evidence, risk profile
+      graphrag_chat.py          # Tab 2: Split-panel GraphRAG chat with pipeline transparency
+      scenario_engine.py        # Tab 3: Interactive Monte Carlo with parameter sliders, tornado chart
+      tnfd_compliance.py        # Tab 5: TNFD LEAP disclosure with alignment scoring
   precomputed_responses.json    # Cached responses for 63 common queries (API fallback)
   demo_narrative.md             # 10-minute pitch script (v1)
   demo_narrative_v2.md          # Updated pitch script (v2)
