@@ -293,7 +293,7 @@ V3_CSS = """
 
     /* ---- Connection status ---- */
     .conn-status {
-        display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
+        display: inline-flex; align-items: center; gap: 6px; font-size: 14px;
         padding: 4px 12px; border-radius: 4px; font-weight: 500;
     }
     .conn-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
@@ -313,7 +313,7 @@ V3_CSS = """
         background: rgba(91, 155, 213, 0.1) !important;
         border: 1px solid rgba(91, 155, 213, 0.3) !important;
         color: #5B9BD5 !important;
-        border-radius: 20px !important; font-size: 13px !important;
+        border-radius: 20px !important; font-size: 14px !important;
         font-weight: 500 !important; padding: 6px 16px !important;
         white-space: nowrap !important; transition: all 0.2s ease !important;
     }
@@ -339,21 +339,21 @@ V3_CSS = """
         background: linear-gradient(145deg, #0F1A2E 0%, #162039 100%);
         border: 1px solid #1E293B;
         border-radius: 8px;
-        padding: 14px 18px;
+        padding: 16px 20px;
         margin-bottom: 10px;
-        font-size: 14px;
+        font-size: 15px;
         color: #94A3B8;
         transition: border-color 0.3s ease;
     }
     .pipeline-step .step-header {
         display: flex; align-items: center; gap: 10px;
-        font-weight: 600; color: #CBD5E1; font-size: 14px;
+        font-weight: 600; color: #CBD5E1; font-size: 15px;
         text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
     }
     .pipeline-step .step-num {
         width: 24px; height: 24px; border-radius: 50%;
         display: inline-flex; align-items: center; justify-content: center;
-        font-size: 12px; font-weight: 700;
+        font-size: 13px; font-weight: 700;
     }
     .pipeline-step.complete { border-color: #22C55E; }
     .pipeline-step.complete .step-num { background: rgba(34, 197, 94, 0.2); color: #22C55E; }
@@ -362,12 +362,12 @@ V3_CSS = """
     .pipeline-step.pending { border-color: #1E293B; }
     .pipeline-step.pending .step-num { background: rgba(100, 116, 139, 0.2); color: #64748B; }
     .pipeline-step .step-detail {
-        font-size: 13px; color: #94A3B8; line-height: 1.6;
+        font-size: 14px; color: #94A3B8; line-height: 1.6;
         padding-left: 34px;
     }
     .pipeline-step .step-detail code {
         background: rgba(91, 155, 213, 0.1); color: #5B9BD5;
-        padding: 2px 6px; border-radius: 3px; font-size: 12px;
+        padding: 2px 6px; border-radius: 3px; font-size: 13px;
     }
 
     /* ---- v3 NEW: Split panel ---- */
@@ -377,7 +377,7 @@ V3_CSS = """
     .cypher-block {
         background: #0A0F1C; border: 1px solid #1E293B; border-radius: 6px;
         padding: 12px 16px; font-family: 'Fira Code', 'Courier New', monospace;
-        font-size: 12px; color: #5B9BD5; overflow-x: auto;
+        font-size: 13px; color: #5B9BD5; overflow-x: auto;
         line-height: 1.5; white-space: pre-wrap; word-break: break-word;
     }
 
@@ -425,7 +425,7 @@ V3_CSS = """
         text-align: center;
     }
     .pillar-bar .pillar-name {
-        font-size: 13px; font-weight: 600; text-transform: uppercase;
+        font-size: 14px; font-weight: 600; text-transform: uppercase;
         letter-spacing: 1px; color: #94A3B8; margin-bottom: 8px;
     }
     .pillar-bar .pillar-score {
@@ -459,8 +459,19 @@ def fmt_pct(val: float) -> str:
     return f"{val * 100:.1f}%"
 
 
-def confidence_badge(score: float) -> str:
-    """Return HTML for a color-coded confidence badge."""
+def confidence_badge(score: float | None) -> str:
+    """Return HTML for a color-coded confidence badge.
+
+    When *score* is ``None`` or ``0.0`` (typically a demo/fallback response),
+    a muted "DEMO MODE" badge is shown instead of an alarming red "0%".
+    """
+    if score is None or score == 0.0:
+        return (
+            '<span style="display:inline-block;padding:4px 14px;border-radius:4px;'
+            'font-size:14px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;'
+            'background:rgba(100,116,139,0.2);color:#94A3B8;border:1px solid rgba(100,116,139,0.3)">'
+            "DEMO MODE</span>"
+        )
     if score >= 0.8:
         color, bg, border = "#66BB6A", "rgba(46,125,50,0.2)", "rgba(46,125,50,0.35)"
     elif score >= 0.6:
@@ -488,7 +499,7 @@ def tier_badge(tier: str) -> str:
     color, bg = tier_colors.get(tier, ("#94A3B8", "rgba(148,163,184,0.15)"))
     return (
         f'<span style="display:inline-block;padding:3px 10px;border-radius:4px;'
-        f"font-size:12px;font-weight:600;color:{color};background:{bg};"
+        f"font-size:13px;font-weight:600;color:{color};background:{bg};"
         f'border:1px solid {color}40">{tier}</span>'
     )
 
@@ -497,7 +508,7 @@ def axiom_tag(axiom_id: str) -> str:
     """Return HTML for an axiom pill tag."""
     return (
         f'<span style="display:inline-block;padding:4px 12px;border-radius:12px;'
-        f"font-size:13px;font-weight:600;margin-right:6px;margin-bottom:4px;"
+        f"font-size:14px;font-weight:600;margin-right:6px;margin-bottom:4px;"
         f"color:#5B9BD5;background:rgba(91,155,213,0.15);"
         f'border:1px solid rgba(91,155,213,0.3)">{axiom_id}</span>'
     )
@@ -506,16 +517,24 @@ def axiom_tag(axiom_id: str) -> str:
 def render_service_health(status: dict[str, bool]) -> str:
     """Return sidebar health indicator HTML."""
     items = ""
+    api_up = status.get("api", False)
     labels = {"neo4j": "Neo4j", "llm": "LLM API", "api": "MARIS API"}
     for key, label in labels.items():
         ok = status.get(key, False)
-        dot_color = "#66BB6A" if ok else "#EF5350"
-        text = "Connected" if ok else "Unavailable"
+        if ok and api_up:
+            dot_color, text = "#66BB6A", "Connected"
+        elif ok and not api_up:
+            # Service is reachable directly but API isn't proxying it
+            dot_color, text = "#66BB6A", "Ready"
+        elif key == "api":
+            dot_color, text = "#EF5350", "Not running"
+        else:
+            dot_color, text = "#EF5350", "Unavailable"
         items += (
             f'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
             f'<span style="width:8px;height:8px;border-radius:50%;background:{dot_color};'
             f'display:inline-block"></span>'
-            f'<span style="font-size:13px;color:#94A3B8">{label}: {text}</span></div>'
+            f'<span style="font-size:14px;color:#94A3B8">{label}: {text}</span></div>'
         )
     return f'<div style="margin:8px 0">{items}</div>'
 
@@ -525,9 +544,41 @@ def render_service_health(status: dict[str, bool]) -> str:
 # ---------------------------------------------------------------------------
 
 
+def _check_neo4j_direct() -> bool:
+    """Check Neo4j connectivity directly via bolt driver."""
+    try:
+        import os
+
+        from neo4j import GraphDatabase
+
+        uri = os.environ.get("MARIS_NEO4J_URI", "bolt://localhost:7687")
+        user = os.environ.get("MARIS_NEO4J_USER", "neo4j")
+        password = os.environ.get("MARIS_NEO4J_PASSWORD", "")
+        if not password:
+            return False
+        driver = GraphDatabase.driver(uri, auth=(user, password))
+        driver.verify_connectivity()
+        driver.close()
+        return True
+    except Exception:
+        return False
+
+
+def _check_llm_direct() -> bool:
+    """Check if an LLM API key is configured."""
+    import os
+
+    key = os.environ.get("MARIS_LLM_API_KEY", "")
+    return bool(key and len(key) > 8)
+
+
 def check_services(api_base: str = "http://localhost:8000") -> dict[str, bool]:
-    """Check Neo4j, LLM, and API connectivity. Returns status dict."""
-    result = {"neo4j": False, "llm": False, "api": False}
+    """Check Neo4j, LLM, and API connectivity independently.
+
+    First tries the MARIS API health endpoint. If the API is down, checks
+    Neo4j and LLM directly so the sidebar shows accurate per-service status.
+    """
+    result: dict[str, bool] = {"neo4j": False, "llm": False, "api": False}
     try:
         import requests
 
@@ -537,8 +588,13 @@ def check_services(api_base: str = "http://localhost:8000") -> dict[str, bool]:
             data = resp.json()
             result["neo4j"] = data.get("neo4j_connected", False)
             result["llm"] = data.get("llm_available", False)
+            return result
     except Exception:
         pass
+
+    # API is down - check services directly
+    result["neo4j"] = _check_neo4j_direct()
+    result["llm"] = _check_llm_direct()
     return result
 
 

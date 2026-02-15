@@ -16,7 +16,7 @@
 
 This repository contains the **complete knowledge foundation** for a proof-of-concept knowledge graph system that bridges marine ecological science with blue finance frameworks. The goal: enable investors, asset managers, and conservation organizations to make data-driven decisions about marine natural capital with full scientific provenance.
 
-**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 16 fully-evidenced bridge axioms. A **live MARIS v2 system** (Neo4j knowledge graph + FastAPI query engine + Streamlit dashboard) demonstrates the full end-to-end pipeline: natural language questions are classified, translated to Cypher, executed against the graph, and answered with full provenance and interactive graph visualization. The system also runs in static mode from a pre-computed JSON bundle (63 precomputed responses) for zero-downtime investor demos. The API is secured with Bearer token authentication and rate limiting. **Semantica SDK integration (P0-P4) is complete** on `feature/semantica-integration`: W3C PROV-O provenance tracking, multi-site scaling pipeline (with hardened OBIS area resolution, WoRMS 204 fix, and Marine Regions 404 handling), cross-domain reasoning engine with rule compilation, TNFD LEAP disclosure automation, and LLM-enhanced dynamic axiom discovery with regex fallback are all implemented across 27 modules with a Semantica bridge layer for SDK interop. The classifier has been hardened with four regex gap fixes (case-insensitive BA IDs, DOI keywords, risk patterns, comparison tie-break). The codebase is validated by a **910-test suite** (706 unit + 204 integration) with CI via GitHub Actions and 0 ruff lint errors.
+**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 16 fully-evidenced bridge axioms. A **live MARIS v2 system** (Neo4j knowledge graph + FastAPI query engine + Streamlit dashboard) demonstrates the full end-to-end pipeline: natural language questions are classified, translated to Cypher, executed against the graph, and answered with full provenance and interactive graph visualization. The **MARIS v3 Intelligence Platform** is a multi-tab dashboard that makes the P0-P4 backend infrastructure visible and interactive: Intelligence Brief, GraphRAG Chat with pipeline transparency, interactive Scenario Lab (Monte Carlo with parameter sliders), and TNFD Compliance with LEAP generation and alignment scoring. The system also runs in static mode from a pre-computed JSON bundle (63 precomputed responses) for zero-downtime investor demos. The API is secured with Bearer token authentication and rate limiting. **Semantica SDK integration (P0-P4) is complete**: W3C PROV-O provenance tracking, multi-site scaling pipeline (with hardened OBIS area resolution, WoRMS 204 fix, and Marine Regions 404 handling), cross-domain reasoning engine with rule compilation, TNFD LEAP disclosure automation, and LLM-enhanced dynamic axiom discovery with regex fallback are all implemented across 27 modules with a Semantica bridge layer for SDK interop. The classifier has been hardened with four regex gap fixes (case-insensitive BA IDs, DOI keywords, risk patterns, comparison tie-break). The codebase is validated by a **910-test suite** (706 unit + 204 integration) with CI via GitHub Actions and 0 ruff lint errors.
 
 **Implementation Timeline:** **8 weeks** - This POC follows a compressed 8-week implementation schedule focused on **Semantica integration** for entity extraction, relationship extraction, graph construction, and GraphRAG query execution. See [Implementation Roadmap](#implementation-roadmap) for detailed week-by-week breakdown.
 
@@ -602,11 +602,19 @@ semantica-poc/
 │   └── config.py                          # Centralized env-based configuration
 │
 ├── investor_demo/                         # ═══ STREAMLIT DASHBOARD ═══
+│   ├── streamlit_app_v3.py                # v3 Intelligence Platform (multi-tab, recommended)
 │   ├── streamlit_app_v2.py                # v2 dashboard (live API + static bundle)
 │   ├── streamlit_app.py                   # v1 dashboard (static bundle only)
 │   ├── components/
-│   │   ├── chat_panel.py                  # Ask MARIS query interface
-│   │   ├── graph_explorer.py              # Interactive provenance visualization
+│   │   ├── v3/                            # v3 Intelligence Platform components
+│   │   │   ├── __init__.py                # Package init with shared exports
+│   │   │   ├── shared.py                  # Colors, CSS, formatters, service health
+│   │   │   ├── intelligence_brief.py      # Tab 1: KPIs, provenance graph, axiom evidence
+│   │   │   ├── graphrag_chat.py           # Tab 2: Split-panel GraphRAG with pipeline transparency
+│   │   │   ├── scenario_engine.py         # Tab 3: Interactive Monte Carlo with parameter sliders
+│   │   │   └── tnfd_compliance.py         # Tab 5: TNFD LEAP generation + alignment scoring
+│   │   ├── chat_panel.py                  # Ask MARIS query interface (v2)
+│   │   ├── graph_explorer.py              # Interactive provenance visualization (v2)
 │   │   └── roadmap_section.py             # Scaling Intelligence section (shared v1/v2)
 │   ├── api_client.py                      # HTTP client for MARIS API
 │   ├── precomputed_responses.json         # Fallback responses for demo mode (63 queries)
@@ -981,39 +989,43 @@ A correctly functioning MARIS system should:
 
 ## Investor Demo Dashboard
 
-The repository includes an **interactive Streamlit dashboard** designed for investor-facing demonstrations of the Cabo Pulmo investment case. This is the presentation layer for the MARIS/Semantica system.
+The repository includes three dashboard versions, each building on the previous:
 
-### Architecture: "The Artifact is the Asset"
+### v3 Intelligence Platform (Recommended)
 
-The dashboard is powered by a **static JSON bundle** (`cabo_pulmo_investment_grade_bundle.json`) generated by the investment-grade Jupyter notebook. This is a deliberate architectural choice - in investor pitch contexts, zero latency and 100% uptime are non-negotiable. The bundle itself demonstrates that MARIS outputs are portable, immutable, and auditable.
+The v3 dashboard is a **multi-tab intelligence platform** that makes the P0-P4 backend infrastructure visible and interactive. Every feature has dual-mode operation: LIVE (Neo4j + LLM) and DEMO (precomputed + static bundle).
 
-### Dashboard Sections (single-scroll, dark-mode)
+```bash
+cd investor_demo
+streamlit run streamlit_app_v3.py --server.port 8503
+```
 
-| Section | Purpose |
-|---------|---------|
-| **Masthead** | Site branding, IFC/TNFD alignment badges |
-| **Investment Thesis** | MARIS + Semantica + context graphs explanation |
-| **KPI Strip** | ESV, biomass recovery, NEOLI score, climate buffer |
-| **Provenance Chain** | Fixed-position graph: Site -> Ecology -> Services -> Finance |
-| **Bridge Axiom Evidence** | 4 axioms with plain-English meanings and DOI links |
-| **Valuation Composition** | Horizontal bar chart with CI context |
-| **Risk Profile** | Monte Carlo distribution + climate/degradation risk cards |
-| **Comparison Sites** | Papahanaumokuakea, Cabo Pulmo, Shark Bay, Mesoamerican Reef (2x2 grid) |
-| **Framework Alignment** | IFC Blue Finance + TNFD LEAP details |
-| **Scaling Intelligence** | Intelligence stack layers, 4-phase execution roadmap (1 to 100+ MPAs) |
+Opens at `http://localhost:8503` with 5 tabs:
 
-### Running the Dashboard
+| Tab | Content |
+|-----|---------|
+| **Intelligence Brief** | KPI strip (ESV, NEOLI, asset rating, CI), provenance chain graph, axiom evidence table, valuation composition bar chart, Monte Carlo risk profile |
+| **Ask MARIS (GraphRAG)** | Split-panel: chat on left (60%), reasoning pipeline on right (40%) showing CLASSIFY -> QUERY -> SYNTHESIZE -> VALIDATE steps with Cypher display and confidence breakdown |
+| **Scenario Lab** | 4 parameter sliders (carbon price, habitat loss, tourism growth, fisheries change), real-time Monte Carlo recalculation (10k simulations), overlay histogram, tornado sensitivity chart, bridge axiom chain impact |
+| **Site Scout** | Deferred (placeholder with pipeline-ready description) |
+| **TNFD Compliance** | TNFD LEAP disclosure generation with X/14 alignment scoring, per-pillar breakdown (Governance, Strategy, Risk/Impact, Metrics/Targets), gap analysis, download buttons |
 
-**v2 (Live mode - recommended):** Requires Neo4j + API server running (see [MARIS v2 - Live Query System](#maris-v2---live-query-system)):
+**Sidebar:** Mode toggle (Live/Demo), service health panel, site selector (Cabo Pulmo / Shark Bay), scenario slider, system metadata.
+
+### v2 Dashboard (Single-Scroll)
+
+The v2 dashboard is the original single-scroll investor UI with Ask MARIS chat and interactive graph explorer. Requires Neo4j + API server running (see [MARIS v2 - Live Query System](#maris-v2---live-query-system)):
 
 ```bash
 cd investor_demo
 streamlit run streamlit_app_v2.py
 ```
 
-This adds **Ask MARIS** (natural-language query chat) and an **interactive Graph Explorer** showing provenance chains pulled live from Neo4j.
+Opens at `http://localhost:8501`. Sections include: Masthead, Investment Thesis, KPI Strip, Provenance Chain, Bridge Axiom Evidence, Valuation Composition, Risk Profile, Comparison Sites, Framework Alignment, Scaling Intelligence, Ask MARIS chat, and Graph Explorer.
 
-**v1 (Static mode - fallback):** No external services needed:
+### v1 Dashboard (Static Fallback)
+
+No external services needed:
 
 ```bash
 cd investor_demo
@@ -1021,7 +1033,7 @@ pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-Both versions include a **confidence slider** (Conservative P5 / Base Case Median / Optimistic P95) that updates KPI values and highlights the Monte Carlo distribution.
+All versions include a **confidence slider** (Conservative P5 / Base Case Median / Optimistic P95) that updates KPI values and highlights the Monte Carlo distribution.
 
 ### Investment-Grade Notebook
 
@@ -1261,7 +1273,9 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 | `maris/api/models.py` | Pydantic request/response schemas |
 | `maris/query/cypher_templates.py` | 8 parameterized Cypher query templates |
 | `maris/graph/population.py` | Graph population from curated JSON assets |
+| `investor_demo/streamlit_app_v3.py` | v3 Intelligence Platform (multi-tab, recommended) |
 | `investor_demo/streamlit_app_v2.py` | v2 dashboard with live API integration |
+| `investor_demo/components/v3/` | v3 tab components (intelligence brief, GraphRAG, scenario, TNFD) |
 | `scripts/populate_neo4j.py` | Idempotent graph population script |
 | `scripts/demo_healthcheck.py` | Pre-demo system verification |
 | `Dockerfile.api` | Multi-stage API container (python:3.11-slim, non-root) |

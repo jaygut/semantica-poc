@@ -71,6 +71,9 @@ semantica-poc/
 ├── tests/                               # 910-test suite (706 unit + 204 integration)
 │
 ├── investor_demo/
+│   ├── streamlit_app_v3.py              # v3 Intelligence Platform (multi-tab, recommended)
+│   ├── streamlit_app_v2.py              # v2 dashboard (single-scroll)
+│   ├── components/v3/                   # v3 tab components (5 files)
 │   └── demo_narrative.md                # Investor pitch narrative
 │
 ├── Dockerfile.api                       # Multi-stage API build (non-root)
@@ -461,6 +464,19 @@ cert = manager.get_certificate("cabo_pulmo_esv")
 - Integration tests (7 phases) validate SDK availability, graph integrity, external APIs, query pipeline, disclosure generation, stress scenarios, and LLM-enhanced discovery (phase 6 - 7 tests against live DeepSeek)
 - 63 precomputed investor demo responses (expanded from 35)
 
+### v3 Intelligence Platform
+
+The **MARIS v3 Intelligence Platform** (`investor_demo/streamlit_app_v3.py`) is a multi-tab dashboard that makes the P0-P4 backend infrastructure visible and interactive for investors. It runs at `http://localhost:8503` with dual-mode operation (Live/Demo):
+
+| Tab | P0-P4 Infrastructure Surfaced |
+|-----|-------------------------------|
+| **Intelligence Brief** | Provenance chain graph, axiom evidence table, Monte Carlo risk profile |
+| **Ask MARIS (GraphRAG)** | Split-panel with pipeline transparency: CLASSIFY -> QUERY -> SYNTHESIZE -> VALIDATE |
+| **Scenario Lab** | Interactive Monte Carlo using `maris.axioms.monte_carlo` and `maris.axioms.sensitivity` |
+| **TNFD Compliance** | Uses `maris.disclosure.leap_generator` and `maris.disclosure.alignment_scorer` for live LEAP generation |
+
+This is the recommended demo surface. Run with: `cd investor_demo && streamlit run streamlit_app_v3.py --server.port 8503`
+
 ### Production Deployment
 
 - Multi-stage Docker builds (`Dockerfile.api`, `Dockerfile.dashboard`) with non-root runtime users
@@ -487,6 +503,7 @@ cert = manager.get_certificate("cabo_pulmo_esv")
 | Bridge | Semantica SDK | 6-file adapter layer, dual-write provenance | Complete |
 | Gap Closure | Final Polish | Classifier regex fixes, hardened LLM detector, 2 API bug fixes, 20 ruff fixes | Complete |
 | Testing | Integration Suite | 204 integration tests across 7 phases (incl. LLM discovery) | Complete |
+| v3 Dashboard | Intelligence Platform | Multi-tab dashboard (5 tabs) surfacing P0-P4 infrastructure interactively | Complete |
 
 ---
 
@@ -508,7 +525,8 @@ cert = manager.get_certificate("cabo_pulmo_esv")
 - [x] Demo compelling to partners - dual-site investor dashboard operational
 - [x] Clear value proposition for blue bond structuring - full ESV provenance chain
 - [x] Differentiation from greenwashing claims demonstrable - DOI-backed audit trails
-- [x] Foundation for Series A discussion - all P0-P4 gaps closed, production-ready on feature/semantica-integration
+- [x] Foundation for Series A discussion - all P0-P4 gaps closed, production-ready
+- [x] v3 Intelligence Platform - multi-tab dashboard making P0-P4 infrastructure visible and interactive
 
 ---
 

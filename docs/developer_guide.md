@@ -108,6 +108,24 @@ maris/
     integrity_adapter.py      # Integrity verification backed by Semantica checksums
     manager.py                # SemanticaBackedManager - drop-in replacement with SQLite persistence
   config.py                   # Centralized configuration from .env
+
+investor_demo/
+  streamlit_app_v3.py          # v3 Intelligence Platform (multi-tab, recommended)
+  streamlit_app_v2.py          # v2 dashboard (live API + static bundle)
+  streamlit_app.py             # v1 dashboard (static bundle only)
+  api_client.py                # HTTP client for MARIS API with auto-fallback
+  precomputed_responses.json   # Cached responses for 63 common queries
+  components/
+    v3/                        # v3 Intelligence Platform components
+      __init__.py              # Package init with shared exports
+      shared.py                # COLORS dict, V3_CSS, formatters, service health checks
+      intelligence_brief.py    # Tab 1: KPIs, provenance graph, axiom evidence, risk profile
+      graphrag_chat.py         # Tab 2: Split-panel GraphRAG with pipeline transparency
+      scenario_engine.py       # Tab 3: Interactive Monte Carlo with 4 parameter sliders
+      tnfd_compliance.py       # Tab 5: TNFD LEAP generation + alignment scoring
+    chat_panel.py              # v2 Ask MARIS query interface
+    graph_explorer.py          # v2 interactive Plotly provenance visualization
+    roadmap_section.py         # Scaling Intelligence section (shared v1/v2)
 ```
 
 ### Key Scripts
@@ -294,8 +312,15 @@ uvicorn maris.api.main:app --host 0.0.0.0 --port 8000
 
 # Terminal 3: Start the investor dashboard
 cd investor_demo
+
+# v3 Intelligence Platform (recommended) - multi-tab with pipeline transparency
+streamlit run streamlit_app_v3.py --server.port 8503
+
+# v2 dashboard (alternative) - single-scroll with Ask MARIS chat
 streamlit run streamlit_app_v2.py
 ```
+
+The v3 dashboard opens at `http://localhost:8503` with 5 tabs: Intelligence Brief, Ask MARIS (GraphRAG), Scenario Lab, Site Scout, and TNFD Compliance. Each tab has dual-mode operation (Live/Demo) toggled from the sidebar. The v2 dashboard opens at `http://localhost:8501`.
 
 ### Docker Compose
 

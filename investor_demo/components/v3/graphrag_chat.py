@@ -140,7 +140,7 @@ def render_graphrag_chat(
     # Quick query buttons
     quick_queries = _build_quick_queries(site_short)
     st.markdown(
-        '<div style="font-size:14px;font-weight:600;color:#94A3B8;'
+        '<div style="font-size:15px;font-weight:600;color:#94A3B8;'
         'margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">'
         "Quick queries</div>",
         unsafe_allow_html=True,
@@ -148,12 +148,12 @@ def render_graphrag_chat(
     row1 = st.columns(3)
     for i, q in enumerate(quick_queries[:3]):
         with row1[i]:
-            if st.button(q, key=f"v3_quick_{i}", use_container_width=True):
+            if st.button(q, key=f"v3_quick_{i}", width="stretch"):
                 _submit_query(client, q, mode)
     row2 = st.columns(3)
     for i, q in enumerate(quick_queries[3:]):
         with row2[i]:
-            if st.button(q, key=f"v3_quick_{i + 3}", use_container_width=True):
+            if st.button(q, key=f"v3_quick_{i + 3}", width="stretch"):
                 _submit_query(client, q, mode)
 
     # Custom text input
@@ -163,7 +163,7 @@ def render_graphrag_chat(
             placeholder="e.g., What is the tourism elasticity coefficient?",
             label_visibility="collapsed",
         )
-        submitted = st.form_submit_button("Ask MARIS", use_container_width=True)
+        submitted = st.form_submit_button("Ask MARIS", width="stretch")
         if submitted and user_input:
             _submit_query(client, user_input, mode)
 
@@ -265,18 +265,50 @@ def _submit_query(client: Any, question: str, mode: str) -> None:
         response["_query_ms"] = round(elapsed_ms, 1)
     except Exception:
         logger.exception("API query failed for: %s", question)
-        response = {
-            "answer": (
-                "The query service is temporarily unavailable. "
-                "Please try again or use a different query."
-            ),
-            "confidence": 0.0,
-            "evidence": [],
-            "axioms_used": [],
-            "caveats": ["API error - response generated from fallback"],
-            "graph_path": [],
-            "_query_ms": 0.0,
-        }
+        # Fall back to precomputed responses instead of showing 0% confidence
+        try:
+            from investor_demo.api_client import StaticBundleClient
+
+            fallback_client = StaticBundleClient()
+            response = fallback_client.query(question, site=site)
+            if (
+                response.get("confidence", 0) == 0.0
+                and response.get("answer", "").startswith("I don't have")
+            ):
+                # Even precomputed didn't match - show a nicer message
+                response = {
+                    "answer": (
+                        "This query could not be answered in demo mode. "
+                        "Start the MARIS API for live responses, or try one "
+                        "of the quick queries above."
+                    ),
+                    "confidence": 0.0,
+                    "evidence": [],
+                    "axioms_used": [],
+                    "caveats": ["Demo mode - live API not available"],
+                    "graph_path": [],
+                    "_query_ms": 0.0,
+                }
+            else:
+                response["_query_ms"] = 0.0
+                if "caveats" not in response:
+                    response["caveats"] = []
+                response["caveats"].append(
+                    "Response from precomputed cache (API unavailable)"
+                )
+        except Exception:
+            response = {
+                "answer": (
+                    "The query service is temporarily unavailable. "
+                    "Please try again or use a different query."
+                ),
+                "confidence": 0.0,
+                "evidence": [],
+                "axioms_used": [],
+                "caveats": ["API error - response generated from fallback"],
+                "graph_path": [],
+                "_query_ms": 0.0,
+            }
 
     st.session_state.v3_chat_history.append({
         "question": question,
@@ -358,7 +390,7 @@ def _render_chat_panel(resp: dict, idx: int) -> None:
         st.markdown(
             f'<div style="background:#0D1526;border:1px solid #1E293B;'
             f'border-radius:8px;padding:12px 16px;margin-bottom:12px">'
-            f'<div style="font-size:12px;font-weight:600;text-transform:uppercase;'
+            f'<div style="font-size:13px;font-weight:600;text-transform:uppercase;'
             f'letter-spacing:1.5px;color:#64748B;margin-bottom:6px">Caveats</div>'
             f"<ul style='margin:0;padding-left:20px'>{caveat_items}</ul></div>",
             unsafe_allow_html=True,
@@ -383,7 +415,7 @@ def _render_pipeline_panel(
 ) -> None:
     """Render the right-side reasoning pipeline transparency panel."""
     st.markdown(
-        '<div style="font-size:13px;font-weight:600;text-transform:uppercase;'
+        '<div style="font-size:14px;font-weight:600;text-transform:uppercase;'
         'letter-spacing:1.5px;color:#5B9BD5;margin-bottom:12px">'
         "Reasoning Pipeline</div>",
         unsafe_allow_html=True,
@@ -502,42 +534,161 @@ def _render_pipeline_panel(
 
 
 def _render_demo_pipeline(resp: dict) -> None:
-    """Render a simplified pipeline panel for demo mode."""
-    st.markdown(
-        '<div style="font-size:13px;color:#64748B;font-style:italic;'
-        'margin-bottom:12px">'
-        "Demo mode - pipeline classification runs in live mode only"
-        "</div>",
-        unsafe_allow_html=True,
-    )
+    """Render a meaningful pipeline panel for demo mode.
 
+    Shows all four pipeline stages with the data available from the
+    precomputed response, plus a note explaining what each step does
+    in live mode.
+    """
     confidence = resp.get("confidence", 0.0)
     evidence = resp.get("evidence", [])
     axioms = resp.get("axioms_used", [])
     caveats = resp.get("caveats", [])
+    graph_path = resp.get("graph_path", [])
 
-    conf_color = "#66BB6A" if confidence >= 0.8 else "#FFA726" if confidence >= 0.6 else "#EF5350"
-    conf_pct = int(confidence * 100)
+    has_real_data = confidence > 0.0 or evidence or axioms
 
+    # Determine step style based on whether we have real precomputed data
+    step_class = "complete" if has_real_data else "pending"
+
+    # Step 1: CLASSIFY
+    # Infer category from response content if available
+    answer_lower = resp.get("answer", "").lower()
+    inferred_category = "unknown"
+    if any(kw in answer_lower for kw in ("worth", "valuation", "esv", "$")):
+        inferred_category = "site_valuation"
+    elif any(kw in answer_lower for kw in ("evidence", "doi", "source", "provenance")):
+        inferred_category = "provenance_drilldown"
+    elif any(kw in answer_lower for kw in ("axiom", "coefficient", "ba-")):
+        inferred_category = "axiom_explanation"
+    elif any(kw in answer_lower for kw in ("compare", "versus", "both sites")):
+        inferred_category = "comparison"
+    elif any(kw in answer_lower for kw in ("risk", "threat", "degradation")):
+        inferred_category = "risk_assessment"
+
+    st.markdown(
+        f'<div class="pipeline-step {step_class}">'
+        '<div class="step-header">'
+        '<span class="step-num">1</span> CLASSIFY'
+        "</div>"
+        '<div class="step-detail">'
+        f"Category: <code>{_escape(inferred_category)}</code><br>"
+        "Method: precomputed (keyword classifier in live mode)<br>"
+        '<span style="color:#64748B;font-style:italic">'
+        "Live mode runs the QueryClassifier with regex + LLM fallback"
+        "</span>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
+
+    # Step 2: QUERY GRAPH
+    result_count = len(graph_path)
+    provenance_edges = sum(
+        1 for edge in graph_path if edge.get("relationship") == "EVIDENCED_BY"
+    )
+    template_map: dict[str, str] = {
+        "site_valuation": "SITE_VALUATION_QUERY",
+        "provenance_drilldown": "PROVENANCE_DRILLDOWN_QUERY",
+        "axiom_explanation": "AXIOM_EXPLANATION_QUERY",
+        "comparison": "COMPARISON_QUERY",
+        "risk_assessment": "RISK_ASSESSMENT_QUERY",
+    }
+    template_name = template_map.get(inferred_category, "DEFAULT_QUERY")
+
+    graph_detail = (
+        f"Template: <code>{_escape(template_name)}</code><br>"
+        f"Result edges: {result_count}<br>"
+        f"Provenance edges: {provenance_edges}<br>"
+    )
+    if not graph_path:
+        graph_detail += (
+            '<span style="color:#64748B;font-style:italic">'
+            "Graph traversal runs against Neo4j (893 nodes) in live mode"
+            "</span>"
+        )
+
+    st.markdown(
+        f'<div class="pipeline-step {step_class}">'
+        '<div class="step-header">'
+        '<span class="step-num">2</span> QUERY GRAPH'
+        "</div>"
+        f'<div class="step-detail">{graph_detail}</div></div>',
+        unsafe_allow_html=True,
+    )
+
+    # Step 3: SYNTHESIZE
+    doi_count = sum(1 for e in evidence if e.get("doi"))
+    answer_len = len(resp.get("answer", ""))
+
+    synth_detail = (
+        f"DOI citations: {doi_count}<br>"
+        f"Evidence items: {len(evidence)}<br>"
+        f"Response length: {answer_len} chars<br>"
+    )
+    if not evidence:
+        synth_detail += (
+            '<span style="color:#64748B;font-style:italic">'
+            "LLM grounds graph results into narrative with DOI citations in live mode"
+            "</span>"
+        )
+
+    st.markdown(
+        f'<div class="pipeline-step {step_class}">'
+        '<div class="step-header">'
+        '<span class="step-num">3</span> SYNTHESIZE'
+        "</div>"
+        f'<div class="step-detail">{synth_detail}</div></div>',
+        unsafe_allow_html=True,
+    )
+
+    # Step 4: VALIDATE
     tier_dist = _compute_tier_distribution(evidence)
     tier_display = ", ".join(
         f"{tier}: {count}" for tier, count in sorted(tier_dist.items())
     ) if tier_dist else "N/A"
 
-    # Show a summary step instead
-    st.markdown(
-        '<div class="pipeline-step complete">'
-        '<div class="step-header">'
-        '<span class="step-num">-</span> RESPONSE METADATA'
-        "</div>"
-        '<div class="step-detail">'
-        f'Confidence: <span style="color:{conf_color};font-weight:600">'
-        f"{conf_pct}%</span><br>"
-        f"Evidence items: {len(evidence)}<br>"
+    if confidence > 0.0:
+        conf_color = (
+            "#66BB6A" if confidence >= 0.8
+            else "#FFA726" if confidence >= 0.6
+            else "#EF5350"
+        )
+        conf_pct = int(confidence * 100)
+        conf_html = (
+            f'Composite confidence: <span style="color:{conf_color};font-weight:600">'
+            f"{conf_pct}%</span><br>"
+        )
+    else:
+        conf_html = (
+            'Composite confidence: <span style="color:#94A3B8;font-weight:600">'
+            "N/A</span> (demo mode)<br>"
+        )
+
+    validate_detail = (
+        f"{conf_html}"
         f"Tier distribution: {_escape(tier_display)}<br>"
-        f"Axioms: {len(axioms)}<br>"
+        f"Axioms used: {len(axioms)}<br>"
         f"Caveats: {len(caveats)}"
-        "</div></div>",
+    )
+
+    st.markdown(
+        f'<div class="pipeline-step {step_class}">'
+        '<div class="step-header">'
+        '<span class="step-num">4</span> VALIDATE'
+        "</div>"
+        f'<div class="step-detail">{validate_detail}</div></div>',
+        unsafe_allow_html=True,
+    )
+
+    # Demo mode note
+    st.markdown(
+        '<div style="font-size:13px;color:#475569;font-style:italic;'
+        'margin-top:8px;padding:8px 12px;background:rgba(15,26,46,0.4);'
+        'border-radius:6px;border:1px solid #1E293B">'
+        "Showing precomputed response. Start the MARIS API for full "
+        "pipeline transparency with real-time classification, graph "
+        "traversal, and LLM synthesis."
+        "</div>",
         unsafe_allow_html=True,
     )
 
@@ -694,7 +845,7 @@ def _confidence_breakdown_html(breakdown: dict) -> str:
         f'<table style="width:100%;border-collapse:collapse;'
         f"background:rgba(15,26,46,0.6);border-radius:6px;overflow:hidden;"
         f'border:1px solid #1E2D48">{rows}</table>'
-        f'<div style="margin-top:8px;font-size:12px;color:#64748B;font-style:italic">'
+        f'<div style="margin-top:8px;font-size:13px;color:#64748B;font-style:italic">'
         f"{explanation}</div></div>"
     )
 
@@ -871,7 +1022,7 @@ def _render_graph_explorer(graph_path: list[dict]) -> None:
         fig.add_annotation(
             x=x_min + 0.15, y=y + band_h - 0.12,
             text=label.upper(), showarrow=False,
-            font={"size": 12, "color": header_color, "family": "Inter"},
+            font={"size": 13, "color": header_color, "family": "Inter"},
             xanchor="left", opacity=0.7,
         )
 
@@ -942,7 +1093,7 @@ def _render_graph_explorer(graph_path: list[dict]) -> None:
             fig.add_annotation(
                 x=info["x"], y=info["y"] - 0.35,
                 text=_truncate(name, 45), showarrow=False,
-                font={"size": 11, "color": "#94A3B8", "family": "Inter"},
+                font={"size": 12, "color": "#94A3B8", "family": "Inter"},
                 textangle=90, xanchor="center", yanchor="top",
             )
         else:
@@ -973,7 +1124,7 @@ def _render_graph_explorer(graph_path: list[dict]) -> None:
         font={"family": "Inter", "color": "#CBD5E1"},
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     # Legend
     _render_graph_legend(graph_path)
@@ -1024,14 +1175,14 @@ def _render_graph_legend(graph_path: list[dict]) -> None:
     if node_legend:
         parts.append(
             f'<div style="margin-bottom:6px">'
-            f'<span style="font-size:12px;font-weight:600;color:#64748B;'
+            f'<span style="font-size:13px;font-weight:600;color:#64748B;'
             f'text-transform:uppercase;letter-spacing:1px;margin-right:10px">'
             f"Nodes</span>{node_legend}</div>"
         )
     if tier_legend:
         parts.append(
             f'<div style="margin-bottom:6px">'
-            f'<span style="font-size:12px;font-weight:600;color:#64748B;'
+            f'<span style="font-size:13px;font-weight:600;color:#64748B;'
             f'text-transform:uppercase;letter-spacing:1px;margin-right:10px">'
             f"Evidence Tier</span>{tier_legend}</div>"
         )

@@ -2,18 +2,19 @@
 
 ## Overview
 
-Interactive Streamlit dashboard for the **Cabo Pulmo Investment Case**, designed for investor-facing demonstrations of the MARIS/Semantica provenance-first blue finance infrastructure. Dark-mode, single-scroll layout with professional financial styling.
+Interactive Streamlit dashboards for the **MARIS/Semantica provenance-first blue finance infrastructure**, designed for investor-facing demonstrations. Dark-mode layout with professional financial styling.
 
-**Two operating modes:**
+**Three operating modes:**
 
-- **v2 (Live)** - Full stack with Neo4j knowledge graph, FastAPI query engine, and interactive graph explorer. Users can ask natural-language questions and see provenance chains rendered in real time.
+- **v3 (Intelligence Platform - Recommended)** - Multi-tab dashboard that makes the P0-P4 backend infrastructure visible and interactive. 5 tabs: Intelligence Brief, GraphRAG Chat, Scenario Lab, Site Scout, TNFD Compliance. Dual-mode operation (Live/Demo) on every tab.
+- **v2 (Live)** - Single-scroll dashboard with Neo4j knowledge graph, FastAPI query engine, and interactive graph explorer. Users can ask natural-language questions and see provenance chains rendered in real time.
 - **v1 (Static)** - Standalone mode powered by a pre-computed JSON bundle. No external services required - ideal for offline demos or when zero-downtime is critical.
 
 ## Quick Start
 
-### v2 - Live Mode (Recommended)
+### v3 - Intelligence Platform (Recommended)
 
-Requires Neo4j and the MARIS API server. See the [root README](../README.md#maris-v2---live-query-system) for full setup.
+Requires Neo4j and the MARIS API server for Live mode, or runs standalone in Demo mode. See the [root README](../README.md#maris-v2---live-query-system) for full backend setup.
 
 ```bash
 # 1. Ensure Neo4j is running and the graph is populated
@@ -22,7 +23,16 @@ python scripts/populate_neo4j.py
 # 2. Start the API server (in one terminal)
 uvicorn maris.api.main:app --host 0.0.0.0 --port 8000
 
-# 3. Start the dashboard (in another terminal)
+# 3. Start the v3 dashboard (in another terminal)
+cd investor_demo
+streamlit run streamlit_app_v3.py --server.port 8503
+```
+
+The dashboard opens at `http://localhost:8503`. Toggle between Live and Demo modes in the sidebar. In Demo mode, no external services are required.
+
+### v2 - Single-Scroll Dashboard
+
+```bash
 cd investor_demo
 streamlit run streamlit_app_v2.py
 ```
@@ -78,7 +88,19 @@ The v2 live mode queries these through the Neo4j graph (populated by `scripts/po
 
 ## Dashboard Architecture
 
-### Page Structure (v2, single-scroll, dark-mode)
+### v3 Tab Structure (multi-tab, dark-mode)
+
+| Tab | Content |
+|-----|---------|
+| **Intelligence Brief** | KPI strip (4 expandable cards), investment thesis, provenance chain graph, axiom evidence table, valuation composition, Monte Carlo risk profile |
+| **Ask MARIS (GraphRAG)** | Split-panel: chat (60%) + reasoning pipeline (40%) showing CLASSIFY -> QUERY -> SYNTHESIZE -> VALIDATE steps with Cypher display, confidence breakdown, and integrated graph explorer |
+| **Scenario Lab** | 4 parameter sliders (carbon price, habitat loss, tourism growth, fisheries change), real-time Monte Carlo recalculation (10k simulations), overlay histogram, tornado sensitivity chart, bridge axiom chain impact |
+| **Site Scout** | Deferred placeholder (pipeline ready, dashboard pending) |
+| **TNFD Compliance** | LEAP disclosure generation, X/14 alignment gauge, per-pillar progress bars, gap analysis, download buttons (Markdown, JSON, Executive Summary) |
+
+**v3 Sidebar:** Mode toggle (Live/Demo), service health panel, site selector, scenario slider, system metadata.
+
+### v2 Page Structure (single-scroll, dark-mode)
 
 | Section | Content |
 |---------|---------|
@@ -92,27 +114,41 @@ The v2 live mode queries these through the Neo4j graph (populated by `scripts/po
 | **Comparison Sites** | 2x2 grid: Papahanaumokuakea (5/5), Cabo Pulmo (4/5), Shark Bay (4/5), Mesoamerican Reef (1-2/5) |
 | **Framework Alignment** | IFC Blue Finance eligible uses + TNFD LEAP four-phase summary |
 | **Scaling Intelligence** | Intelligence stack (public data, ecological, financial layers), 4-phase execution roadmap |
-| **Ask MARIS** | Natural-language query chat with confidence badges, axiom tags, and evidence tables (v2 only) |
-| **Graph Explorer** | Interactive Plotly visualization of the provenance chain from Neo4j (v2 only) |
+| **Ask MARIS** | Natural-language query chat with confidence badges, axiom tags, and evidence tables |
+| **Graph Explorer** | Interactive Plotly visualization of the provenance chain from Neo4j |
 | **Caveats** | All 7 caveats from the data bundle |
 
-### Sidebar
+**v2 Sidebar:** Characterized sites, NEOLI alignment breakdown, confidence level slider (P5/Median/P95), methodology note.
 
-- Characterized sites: Cabo Pulmo ($29.27M ESV) and Shark Bay ($21.5M ESV) with dual-site architecture summary
-- NEOLI alignment breakdown with visual indicators
-- Confidence level slider: Conservative (P5) / Base Case (Median) / Optimistic (P95)
-- Methodology note and metadata
+### Component Files
 
-### Component Files (v2)
+**v3 Intelligence Platform:**
 
 | File | Purpose |
 |------|---------|
-| `streamlit_app_v2.py` | Main dashboard - CSS, layout, data sections |
+| `streamlit_app_v3.py` | Main v3 app - page config, CSS, sidebar, 5-tab structure |
+| `components/v3/__init__.py` | Package init with shared exports (COLORS, formatters, health checks) |
+| `components/v3/shared.py` | 26-color palette, V3_CSS (14k chars), formatters (fmt_usd, fmt_pct, confidence_badge, tier_badge), service health, site data loading |
+| `components/v3/intelligence_brief.py` | Tab 1: KPIs, provenance graph, axiom evidence, valuation, risk profile |
+| `components/v3/graphrag_chat.py` | Tab 2: Split-panel GraphRAG with pipeline transparency and graph explorer |
+| `components/v3/scenario_engine.py` | Tab 3: Interactive Monte Carlo with 4 sliders, tornado chart, axiom impact |
+| `components/v3/tnfd_compliance.py` | Tab 5: TNFD LEAP generation, alignment scoring, gap analysis, downloads |
+
+**v2 Dashboard:**
+
+| File | Purpose |
+|------|---------|
+| `streamlit_app_v2.py` | Main v2 dashboard - CSS, layout, data sections |
 | `components/chat_panel.py` | Ask MARIS query UI with markdown rendering, confidence badges, evidence tables |
 | `components/graph_explorer.py` | Plotly network graph with semantic layering (MPA -> Habitat -> Services -> Axioms -> Sources) |
 | `components/roadmap_section.py` | Scaling Intelligence section (intelligence stack + execution roadmap), shared between v1 and v2 |
+
+**Shared:**
+
+| File | Purpose |
+|------|---------|
 | `api_client.py` | HTTP client wrapping MARIS API endpoints; passes Bearer token if `MARIS_API_KEY` is configured; auto-falls back to precomputed responses via TF-IDF keyword matching |
-| `precomputed_responses.json` | Cached responses for 35 queries across all 5 categories (fallback when API is offline) |
+| `precomputed_responses.json` | Cached responses for 63 queries across all 5 categories (fallback when API is offline) |
 
 ---
 
@@ -144,10 +180,12 @@ Freshness is derived from the `measurement_year` property on MPA nodes and feeds
 
 ## Design Principles
 
-- **Dark mode**: Navy/slate palette (`#0B1120` background, `#162039` card gradient)
-- **No tabs**: Single-scroll page keeps the narrative flowing from ecology to finance
+- **Dark mode**: Navy/slate palette (`#0B1120` background, `#162039` card gradient) - shared across v2 and v3
+- **v3 multi-tab**: Organized into 5 focused tabs for deeper exploration of each domain
+- **v2 single-scroll**: Narrative flows from ecology to finance in one continuous page
 - **No emojis**: Professional, sober financial tone appropriate for institutional audiences
 - **Provenance-first**: Every number traces to a DOI-backed source through explicit bridge axioms
+- **Dual-mode operation**: Every v3 tab works in Live (Neo4j + LLM) and Demo (precomputed) modes
 - **Market-price methodology**: Actual expenditure data (not contingent valuation or willingness-to-pay)
 - **Custom HTML/CSS**: All cards, KPIs, and tables use injected HTML for precise visual control
 

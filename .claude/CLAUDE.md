@@ -10,7 +10,8 @@ This directory contains the agentic workflow system, document registry, and skil
 |-----------|--------|---------|
 | Neo4j Knowledge Graph | Running | 893 nodes, 132 edges, bolt://localhost:7687 |
 | FastAPI Query Engine | Running | 9 endpoints (7 core + provenance + disclosure), http://localhost:8000 |
-| Streamlit Dashboard | Running | Dark-mode dual-site investor UI, http://localhost:8501 |
+| v3 Intelligence Platform | Running | Multi-tab dashboard (5 tabs), http://localhost:8503 |
+| v2 Streamlit Dashboard | Running | Dark-mode dual-site investor UI, http://localhost:8501 |
 | Document Library | Complete | 195 papers, 92% T1, 16 bridge axioms |
 | Semantica Export | Complete | 14 entities, 15 relationships, 16 axioms |
 | Characterized Sites | 2 | Cabo Pulmo ($29.27M ESV) + Shark Bay ($21.5M ESV) |
@@ -59,7 +60,8 @@ bridge_axiom_templates.json (16 axioms) ─────────────�
                                           Neo4j (893 nodes, 132 edges)
                                                       │
                                                       v
-                                          FastAPI ──> Streamlit Dashboard
+                                          FastAPI ──> v3 Intelligence Platform (8503)
+                                                  ──> v2 Streamlit Dashboard (8501)
 ```
 
 ---

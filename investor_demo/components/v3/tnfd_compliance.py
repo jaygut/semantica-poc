@@ -389,7 +389,7 @@ def _render_download_buttons(
             data=md_content,
             file_name=f"tnfd_leap_{site_slug}.md",
             mime="text/markdown",
-            use_container_width=True,
+            width="stretch",
         )
     with dl2:
         st.download_button(
@@ -397,7 +397,7 @@ def _render_download_buttons(
             data=json_content,
             file_name=f"tnfd_leap_{site_slug}.json",
             mime="application/json",
-            use_container_width=True,
+            width="stretch",
         )
     with dl3:
         st.download_button(
@@ -405,7 +405,7 @@ def _render_download_buttons(
             data=summary_content,
             file_name=f"tnfd_executive_summary_{site_slug}.md",
             mime="text/markdown",
-            use_container_width=True,
+            width="stretch",
         )
 
 

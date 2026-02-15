@@ -619,7 +619,7 @@ def _render_mc_mini(mc: dict[str, Any]) -> None:
             line_color=clr,
             line_width=1,
             annotation_text=f"{lbl}: {fmt_usd(val)}",
-            annotation_font=dict(size=10, color=clr),
+            annotation_font=dict(size=11, color=clr),
             annotation_position="top",
         )
 
@@ -630,14 +630,14 @@ def _render_mc_mini(mc: dict[str, Any]) -> None:
             tickprefix="$",
             showgrid=True,
             gridcolor="#1E293B",
-            tickfont=dict(color="#94A3B8", size=10),
+            tickfont=dict(color="#94A3B8", size=11),
         ),
         yaxis=dict(visible=False),
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
         showlegend=False,
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
     n = mc.get("n_simulations", 10_000)
     st.caption(f"*{n:,} Monte Carlo simulations, triangular distribution*")
 
@@ -900,7 +900,7 @@ def _render_provenance_graph(nd: dict[str, Any]) -> None:
         )
         if label:
             lbl_color = "#E2E8F0" if is_axiom else "#94A3B8"
-            lbl_size = 13 if is_axiom else 12
+            lbl_size = 13
             fig.add_annotation(
                 x=(x0 + x1) / 2, y=(y0 + y1) / 2,
                 text=label,
@@ -971,7 +971,7 @@ def _render_provenance_graph(nd: dict[str, Any]) -> None:
         font=dict(family="Inter", color="#CBD5E1"),
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 
 def _render_axiom_evidence_table(nd: dict[str, Any]) -> None:
@@ -1069,7 +1069,7 @@ def _render_valuation_composition(nd: dict[str, Any]) -> None:
             paper_bgcolor="rgba(0,0,0,0)",
             font=dict(family="Inter", color="#CBD5E1"),
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     with col_ci:
         mc = nd.get("monte_carlo", {})
@@ -1160,7 +1160,7 @@ def _render_risk_profile(nd: dict[str, Any]) -> None:
             showlegend=False,
             font=dict(family="Inter", color="#CBD5E1"),
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     # Risk factor cards
     site = nd["site_name"]

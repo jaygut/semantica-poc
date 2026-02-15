@@ -277,14 +277,14 @@ def _build_histogram(
         line_color=COLORS["danger"],
         annotation_text=f"P5 {fmt_usd(scenario_mc['p5'])}",
         annotation_font_color=COLORS["danger"],
-        annotation_font_size=11,
+        annotation_font_size=12,
     )
     fig.add_vline(
         x=scenario_mc["median"],
         line_color="#FFFFFF",
         annotation_text=f"Median {fmt_usd(scenario_mc['median'])}",
         annotation_font_color="#FFFFFF",
-        annotation_font_size=11,
+        annotation_font_size=12,
     )
     fig.add_vline(
         x=scenario_mc["p95"],
@@ -292,7 +292,7 @@ def _build_histogram(
         line_color=COLORS["success"],
         annotation_text=f"P95 {fmt_usd(scenario_mc['p95'])}",
         annotation_font_color=COLORS["success"],
-        annotation_font_size=11,
+        annotation_font_size=12,
     )
 
     fig.update_layout(
@@ -317,7 +317,7 @@ def _build_histogram(
             y=1.02,
             xanchor="center",
             x=0.5,
-            font=dict(size=12),
+            font=dict(size=13),
         ),
         margin=dict(l=60, r=20, t=60, b=50),
         height=380,
@@ -404,7 +404,7 @@ def _build_tornado(sensitivity: dict[str, Any]) -> go.Figure:
             y=1.02,
             xanchor="center",
             x=0.5,
-            font=dict(size=12),
+            font=dict(size=13),
         ),
         margin=dict(l=150, r=20, t=60, b=50),
         height=max(280, 80 * len(names)),
@@ -671,7 +671,7 @@ def render_scenario_engine(
                 f'{scen_svc["service_name"]}</span>'
                 f'<span style="color:{color};font-size:15px;font-weight:600">'
                 f"{fmt_usd(scen_svc['value'])}"
-                f'<span style="font-size:12px;margin-left:6px">'
+                f'<span style="font-size:13px;margin-left:6px">'
                 f"({sign_str}{fmt_usd(delta)})</span>"
                 f"</span></div>",
                 unsafe_allow_html=True,
@@ -680,7 +680,7 @@ def render_scenario_engine(
 
     with right_col:
         histogram_fig = _build_histogram(base_mc, scenario_mc)
-        st.plotly_chart(histogram_fig, use_container_width=True)
+        st.plotly_chart(histogram_fig, width="stretch")
 
     # --- Sensitivity Tornado Chart ---
     st.markdown(
@@ -688,7 +688,7 @@ def render_scenario_engine(
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<div style="font-size:14px;color:#94A3B8;margin-bottom:12px">'
+        '<div style="font-size:15px;color:#94A3B8;margin-bottom:12px">'
         "One-at-a-time (OAT) perturbation at +/-20%. "
         "Bars show ESV change when each service varies individually - "
         "longest bar is the dominant risk driver."
@@ -697,7 +697,7 @@ def render_scenario_engine(
     )
     sensitivity = run_sensitivity_analysis(base_services, n_simulations=10_000)
     tornado_fig = _build_tornado(sensitivity)
-    st.plotly_chart(tornado_fig, use_container_width=True)
+    st.plotly_chart(tornado_fig, width="stretch")
 
     # --- Axiom Chain Impact ---
     st.markdown(
@@ -705,7 +705,7 @@ def render_scenario_engine(
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<div style="font-size:14px;color:#94A3B8;margin-bottom:12px">'
+        '<div style="font-size:15px;color:#94A3B8;margin-bottom:12px">'
         "Bridge axioms affected by the current scenario parameters. "
         "Each axiom translates an ecological measurement into a financial "
         "metric through peer-reviewed coefficients."

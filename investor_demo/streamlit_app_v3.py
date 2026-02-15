@@ -6,10 +6,15 @@ and DEMO (precomputed + static bundle).
 """
 
 import json
+import os
 import sys
 from pathlib import Path
 
 import streamlit as st
+from dotenv import load_dotenv
+
+# Load .env from project root so MARIS_* vars are available
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 # Ensure project root is importable
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -119,7 +124,6 @@ with st.sidebar:
         # Re-initialize client on mode change
         if new_mode == "live":
             from api_client import LiveAPIClient
-            import os
             st.session_state.v3_client = LiveAPIClient(
                 api_key=os.environ.get("MARIS_API_KEY", "")
             )
@@ -135,7 +139,23 @@ with st.sidebar:
         st.session_state.v3_llm_ok = status["llm"]
         st.markdown(render_service_health(status), unsafe_allow_html=True)
         if not status["api"]:
-            st.warning("MARIS API not reachable. Queries will use precomputed fallback.")
+            # API not running - show actionable guidance
+            if status["neo4j"] and status["llm"]:
+                st.info(
+                    "Neo4j and LLM are ready. Start the API server to unlock live queries:\n\n"
+                    "```\nMARIS_DEMO_MODE=true uvicorn maris.api.main:app --port 8000\n```"
+                )
+            elif status["neo4j"]:
+                st.info(
+                    "Neo4j is running. Start the API server:\n\n"
+                    "```\nMARIS_DEMO_MODE=true uvicorn maris.api.main:app --port 8000\n```"
+                )
+            else:
+                st.warning(
+                    "MARIS API not running. Start it with:\n\n"
+                    "```\nMARIS_DEMO_MODE=true uvicorn maris.api.main:app --port 8000\n```"
+                )
+            st.caption("Queries will use precomputed fallback until the API is started.")
     else:
         st.markdown(
             '<div class="conn-status conn-static">'

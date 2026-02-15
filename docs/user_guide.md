@@ -43,18 +43,82 @@ The system is designed for blue bond underwriters, conservation finance analysts
 
    ```bash
    cd investor_demo
+
+   # v3 Intelligence Platform (recommended)
+   streamlit run streamlit_app_v3.py --server.port 8503
+
+   # v2 single-scroll dashboard (alternative)
    streamlit run streamlit_app_v2.py
    ```
 
-   The dashboard opens at `http://localhost:8501`.
+   The v3 dashboard opens at `http://localhost:8503`. The v2 dashboard opens at `http://localhost:8501`.
 
 ---
 
 ## Using the Dashboard
 
-### Layout
+MARIS provides two dashboard versions: the **v3 Intelligence Platform** (recommended) and the **v2 single-scroll dashboard**.
 
-The dashboard is a single-scroll, dark-mode page designed for investor-facing presentations. No tabs - the narrative flows from ecological evidence through bridge axioms to financial output.
+### v3 Intelligence Platform (Recommended)
+
+The v3 dashboard is a multi-tab intelligence platform at `http://localhost:8503` that makes the MARIS backend infrastructure visible and interactive. Every tab has dual-mode operation: **Live** (Neo4j + LLM) and **Demo** (precomputed + static bundle), toggled from the sidebar.
+
+#### Tab 1: Intelligence Brief
+
+The default landing tab presents a comprehensive site overview:
+
+| Section | What You See |
+|---------|-------------|
+| **KPI Strip** | 4 expandable cards: Annual ESV, NEOLI Score, Asset Rating, Confidence Interval (with detailed breakdowns on expand) |
+| **Investment Thesis** | Site-specific narrative with market context |
+| **Provenance Chain** | Interactive Plotly network graph with semantic layers (MPA, Services, Axioms, Documents) |
+| **Axiom Evidence Table** | Bridge axioms mapped to plain-English explanations, coefficients, and DOI citations |
+| **Valuation Composition** | Bar chart showing ecosystem service breakdown with confidence intervals |
+| **Risk Profile** | Monte Carlo distribution (10,000 simulations) with P5/P50/P95 percentiles |
+
+#### Tab 2: Ask MARIS (GraphRAG)
+
+A split-panel interface showing both the chat and the reasoning pipeline:
+
+- **Left panel (60%)** - Natural-language chat with confidence badges, axiom tags, and evidence tables
+- **Right panel (40%)** - Pipeline transparency showing 4 steps: CLASSIFY (query category detection), QUERY GRAPH (Cypher generation and execution), SYNTHESIZE (LLM grounding with graph context), VALIDATE (confidence scoring and DOI verification)
+- Includes an integrated graph explorer with semantic layering
+
+#### Tab 3: Scenario Lab
+
+Interactive Monte Carlo simulation with real-time parameter adjustment:
+
+- **4 parameter sliders**: Carbon price ($10-100/tonne), Habitat loss (0-50%), Tourism growth (-20% to +30%), Fisheries change (-30% to +20%)
+- **Overlay histogram**: Shows how parameter changes shift the ESV distribution relative to the baseline
+- **Tornado sensitivity chart**: Ranks parameters by their impact on total ESV
+- **Bridge axiom chain impact**: Shows how parameter changes flow through BA-013, BA-014, BA-015 to affect the bottom line
+- Uses `maris.axioms.monte_carlo` and `maris.axioms.sensitivity` engines for real computation
+
+#### Tab 4: Site Scout
+
+Placeholder for live MPA characterization. The auto-characterization pipeline (OBIS/WoRMS/Marine Regions) is built and tested (28 unit tests) but dashboard integration is deferred to reduce demo risk from flaky external APIs.
+
+#### Tab 5: TNFD Compliance
+
+TNFD LEAP disclosure generation and compliance scoring:
+
+- **Alignment gauge**: X/14 disclosure alignment score
+- **Per-pillar progress bars**: Governance (X/3), Strategy (X/4), Risk & Impact (X/4), Metrics & Targets (X/3)
+- **LEAP phase expanders**: Locate, Evaluate, Assess, Prepare - each with generated content
+- **Gap analysis**: Identifies missing or partial disclosures
+- **Download buttons**: Export as Markdown, JSON, or Executive Summary
+
+#### v3 Sidebar Controls
+
+- **Mode toggle** - Switch between Live Intelligence Mode (Neo4j + LLM) and Demo Mode (precomputed)
+- **Service health panel** - Shows API, Neo4j, and LLM connectivity status (Live mode only)
+- **Site selector** - Cabo Pulmo National Park or Shark Bay World Heritage Area
+- **Scenario slider** - Conservative (P5) / Base Case (Median) / Optimistic (P95)
+- **System metadata** - Schema version, site count, bridge axiom count
+
+### v2 Single-Scroll Dashboard
+
+The v2 dashboard at `http://localhost:8501` is a single-scroll, dark-mode page designed for investor-facing presentations. The narrative flows from ecological evidence through bridge axioms to financial output.
 
 | Section | What You See |
 |---------|-------------|
@@ -67,11 +131,11 @@ The dashboard is a single-scroll, dark-mode page designed for investor-facing pr
 | **Comparison Sites** | 2x2 grid: Papahanaumokuakea (5/5), Cabo Pulmo (4/5), Shark Bay (4/5), Mesoamerican Reef (1-2/5) |
 | **Framework Alignment** | IFC Blue Finance eligible uses and TNFD LEAP four-phase summary |
 | **Scaling Intelligence** | Intelligence stack (public data, ecological, financial layers), 4-phase execution roadmap from 1 to 100+ MPAs |
-| **Ask MARIS** | Natural-language query chat with live provenance-backed answers (v2 only) |
-| **Graph Explorer** | Interactive Plotly network visualization of the knowledge graph from Neo4j (v2 only) |
+| **Ask MARIS** | Natural-language query chat with live provenance-backed answers |
+| **Graph Explorer** | Interactive Plotly network visualization of the knowledge graph from Neo4j |
 | **Caveats** | All 7 methodology caveats, displayed for transparency |
 
-### Sidebar Controls
+#### v2 Sidebar Controls
 
 - **Characterized sites** - Cabo Pulmo ($29.27M ESV, tourism-dominant) and Shark Bay ($21.5M ESV, carbon-dominant) with dual-site architecture summary
 - **NEOLI alignment** - Visual breakdown of each NEOLI criterion (No-take, Enforced, Old, Large, Isolated) with green/amber indicators
@@ -111,6 +175,8 @@ Typical score ranges: direct site valuations score 80-88%, mechanism explanation
 
 The Ask MARIS panel accepts natural-language questions about any site in the knowledge graph. Behind the scenes, questions are classified into categories, mapped to Cypher templates, executed against Neo4j, and synthesized into grounded answers with full provenance.
 
+In the **v3 Intelligence Platform** (Tab 2), the GraphRAG interface uses a split-panel layout: chat on the left with a reasoning pipeline panel on the right that shows each step of the query pipeline (CLASSIFY, QUERY GRAPH, SYNTHESIZE, VALIDATE) in real time with Cypher display and confidence breakdown. In the **v2 dashboard**, Ask MARIS appears as a chat panel near the bottom of the page.
+
 ### Example Questions
 
 | Question | What You Get |
@@ -136,7 +202,7 @@ Each answer includes:
 
 **Comparison sites** (Great Barrier Reef, Papahanaumokuakea) have governance metadata (NEOLI score, area, asset rating) but not full ecosystem service valuations. Queries about their financial value will note the absence of site-specific valuation data.
 
-When the API is unavailable, Ask MARIS falls back to 35 precomputed responses covering all 5 query categories (valuation, provenance, axiom, comparison, risk). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
+When the API is unavailable, Ask MARIS falls back to 63 precomputed responses covering all 5 query categories (valuation, provenance, axiom, comparison, risk). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
 
 ### Graph Explorer
 
@@ -178,16 +244,18 @@ The dominant parameter is typically Tourism ($25.0M), which accounts for the lar
 
 ---
 
-## Offline / Static Mode
+## Offline / Demo Mode
 
-If Neo4j or the API is unavailable, run the static v1 dashboard:
+Both the v3 and v2 dashboards support **Demo Mode** (toggle in sidebar) which uses precomputed responses and static data bundles - no Neo4j or LLM required.
+
+For a fully standalone experience with no external services, run the static v1 dashboard:
 
 ```bash
 cd investor_demo
 streamlit run streamlit_app.py
 ```
 
-This uses a pre-computed JSON bundle (`demos/context_graph_demo/cabo_pulmo_investment_grade_bundle.json`) and requires no external services. The Ask MARIS and Graph Explorer features are not available in static mode, but all pre-computed sections (KPIs, provenance chain, risk profile, framework alignment) render fully.
+This uses a pre-computed JSON bundle (`demos/context_graph_demo/cabo_pulmo_investment_grade_bundle.json`). The Ask MARIS and Graph Explorer features are not available in v1 static mode, but all pre-computed sections (KPIs, provenance chain, risk profile, framework alignment) render fully.
 
 ---
 
