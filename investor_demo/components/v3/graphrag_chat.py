@@ -350,7 +350,7 @@ def _render_split_response(entry: dict, idx: int, mode: str) -> None:
     graph_path = resp.get("graph_path", [])
     if graph_path:
         with st.expander("Show knowledge graph subgraph", expanded=False):
-            _render_graph_explorer(graph_path)
+            _render_graph_explorer(graph_path, idx)
 
 
 def _render_chat_panel(resp: dict, idx: int) -> None:
@@ -976,7 +976,7 @@ def _build_hover(name: str, node_type: str, node_metadata: dict) -> str:
     return "<br>".join(parts)
 
 
-def _render_graph_explorer(graph_path: list[dict]) -> None:
+def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
     """Render the Plotly network graph for a query's subgraph."""
     if not graph_path:
         st.info("No graph path available for this response.")
@@ -1124,7 +1124,7 @@ def _render_graph_explorer(graph_path: list[dict]) -> None:
         font={"family": "Inter", "color": "#CBD5E1"},
     )
 
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig, width="stretch", key=f"v3_graph_explorer_{idx}")
 
     # Legend
     _render_graph_legend(graph_path)

@@ -637,7 +637,7 @@ def _render_mc_mini(mc: dict[str, Any]) -> None:
         paper_bgcolor="rgba(0,0,0,0)",
         showlegend=False,
     )
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig, width="stretch", key="v3_brief_monte_carlo")
     n = mc.get("n_simulations", 10_000)
     st.caption(f"*{n:,} Monte Carlo simulations, triangular distribution*")
 
@@ -971,7 +971,7 @@ def _render_provenance_graph(nd: dict[str, Any]) -> None:
         font=dict(family="Inter", color="#CBD5E1"),
     )
 
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig, width="stretch", key="v3_brief_provenance_chain")
 
 
 def _render_axiom_evidence_table(nd: dict[str, Any]) -> None:
@@ -1069,7 +1069,7 @@ def _render_valuation_composition(nd: dict[str, Any]) -> None:
             paper_bgcolor="rgba(0,0,0,0)",
             font=dict(family="Inter", color="#CBD5E1"),
         )
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(fig, width="stretch", key="v3_brief_valuation_bar")
 
     with col_ci:
         mc = nd.get("monte_carlo", {})
@@ -1160,7 +1160,7 @@ def _render_risk_profile(nd: dict[str, Any]) -> None:
             showlegend=False,
             font=dict(family="Inter", color="#CBD5E1"),
         )
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(fig, width="stretch", key="v3_brief_risk_dist")
 
     # Risk factor cards
     site = nd["site_name"]

@@ -680,7 +680,7 @@ def render_scenario_engine(
 
     with right_col:
         histogram_fig = _build_histogram(base_mc, scenario_mc)
-        st.plotly_chart(histogram_fig, width="stretch")
+        st.plotly_chart(histogram_fig, width="stretch", key="v3_scenario_histogram")
 
     # --- Sensitivity Tornado Chart ---
     st.markdown(
@@ -697,7 +697,7 @@ def render_scenario_engine(
     )
     sensitivity = run_sensitivity_analysis(base_services, n_simulations=10_000)
     tornado_fig = _build_tornado(sensitivity)
-    st.plotly_chart(tornado_fig, width="stretch")
+    st.plotly_chart(tornado_fig, width="stretch", key="v3_scenario_tornado")
 
     # --- Axiom Chain Impact ---
     st.markdown(
