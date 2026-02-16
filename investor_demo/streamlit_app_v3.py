@@ -231,6 +231,10 @@ site = st.session_state.v3_site
 mode = st.session_state.v3_mode
 data = get_site_data(site, bundle_data)
 
+if data is None:
+    st.error(f"Failed to load data for {site}.")
+    st.stop()
+
 # ---------------------------------------------------------------------------
 # Tab Structure
 # ---------------------------------------------------------------------------
@@ -244,7 +248,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 
 with tab1:
     from investor_demo.components.v3.intelligence_brief import render_intelligence_brief
-    render_intelligence_brief(data, site, mode)
+    render_intelligence_brief(data, site, mode, scenario=st.session_state.v3_scenario)
 
 with tab2:
     from investor_demo.components.v3.graphrag_chat import render_graphrag_chat

@@ -59,8 +59,8 @@ _DEFAULT_CI: dict[str, dict[str, tuple[float, float]]] = {
     },
 }
 
-# Axiom metadata for the impact panel
-_AXIOM_CHAIN: list[dict[str, Any]] = [
+# Axiom metadata for the impact panel (site-specific chains)
+_SHARK_BAY_AXIOM_CHAIN: list[dict[str, Any]] = [
     {
         "id": "BA-013",
         "name": "Seagrass carbon sequestration rate",
@@ -79,6 +79,27 @@ _AXIOM_CHAIN: list[dict[str, Any]] = [
         "name": "Habitat loss carbon emission",
         "coefficient": "294 tCO2/ha released",
         "affected_by": ["habitat_loss"],
+    },
+]
+
+_CABO_PULMO_AXIOM_CHAIN: list[dict[str, Any]] = [
+    {
+        "id": "BA-001",
+        "name": "MPA biomass to dive tourism value",
+        "coefficient": "Up to 84% higher WTP",
+        "affected_by": ["tourism_growth"],
+    },
+    {
+        "id": "BA-002",
+        "name": "No-take MPA biomass multiplier",
+        "coefficient": "4.63x over 10yr",
+        "affected_by": ["habitat_loss"],
+    },
+    {
+        "id": "BA-012",
+        "name": "Reef degradation fisheries loss",
+        "coefficient": "Revenue decline per degradation unit",
+        "affected_by": ["habitat_loss", "fisheries_change"],
     },
 ]
 
@@ -469,13 +490,20 @@ def _esv_impact_card(
     """
 
 
-def _axiom_chain_html(adjustments: dict[str, float]) -> str:
+def _axiom_chain_html(adjustments: dict[str, float], site: str = "") -> str:
     """Render axiom chain impact panel showing affected bridge axioms."""
     carbon_price = adjustments.get("carbon_price", _BASE_CARBON_PRICE)
     habitat_loss_pct = adjustments.get("habitat_loss_pct", 0)
+    tourism_growth_pct = adjustments.get("tourism_growth_pct", 0)
+    fisheries_change_pct = adjustments.get("fisheries_change_pct", 0)
+
+    if "Shark Bay" in site:
+        axiom_chain = _SHARK_BAY_AXIOM_CHAIN
+    else:
+        axiom_chain = _CABO_PULMO_AXIOM_CHAIN
 
     rows = ""
-    for ax in _AXIOM_CHAIN:
+    for ax in axiom_chain:
         # Determine if this axiom is affected by the current scenario
         affected = False
         impact_parts: list[str] = []
@@ -494,6 +522,24 @@ def _axiom_chain_html(adjustments: dict[str, float]) -> str:
             impact_parts.append(
                 f'<span class="parameter-impact negative">'
                 f"-{habitat_loss_pct}% habitat loss applied</span>"
+            )
+
+        if "tourism_growth" in ax["affected_by"] and tourism_growth_pct != 0:
+            affected = True
+            css = "positive" if tourism_growth_pct > 0 else "negative"
+            sign = "+" if tourism_growth_pct > 0 else ""
+            impact_parts.append(
+                f'<span class="parameter-impact {css}">'
+                f"{sign}{tourism_growth_pct}% tourism growth</span>"
+            )
+
+        if "fisheries_change" in ax["affected_by"] and fisheries_change_pct != 0:
+            affected = True
+            css = "positive" if fisheries_change_pct > 0 else "negative"
+            sign = "+" if fisheries_change_pct > 0 else ""
+            impact_parts.append(
+                f'<span class="parameter-impact {css}">'
+                f"{sign}{fisheries_change_pct}% fisheries change</span>"
             )
 
         if not affected:
@@ -712,7 +758,7 @@ def render_scenario_engine(
         "</div>",
         unsafe_allow_html=True,
     )
-    st.markdown(_axiom_chain_html(adjustments), unsafe_allow_html=True)
+    st.markdown(_axiom_chain_html(adjustments, site), unsafe_allow_html=True)
 
     # --- Demo mode note ---
     if mode == "demo":

@@ -59,6 +59,14 @@ AXIOM_INFO: dict[str, dict[str, str]] = {
         "citation": "Ortiz-Villa et al. 2024",
         "doi": "10.1111/gcb.17477",
     },
+    "BA-004": {
+        "meaning": (
+            "Coral reef structural complexity reduces wave energy, "
+            "providing coastal flood protection"
+        ),
+        "source": "Ferrario et al. 2014",
+        "doi": "10.1038/ncomms4794",
+    },
     "BA-012": {
         "meaning": (
             "Reef degradation causes 35% loss in fisheries productivity "
@@ -103,7 +111,7 @@ AXIOM_INFO: dict[str, dict[str, str]] = {
 
 # Which axioms to display per site
 _SITE_AXIOMS: dict[str, list[str]] = {
-    "Cabo Pulmo National Park": ["BA-001", "BA-002", "BA-011", "BA-012"],
+    "Cabo Pulmo National Park": ["BA-001", "BA-002", "BA-004", "BA-011", "BA-012"],
     "Shark Bay World Heritage Area": ["BA-013", "BA-014", "BA-015", "BA-016"],
 }
 
@@ -272,6 +280,14 @@ def _normalize_site_data(data: dict[str, Any], site: str) -> dict[str, Any]:
     out["asset_rating"] = rating.get("rating", "")
     out["composite_score"] = rating.get("composite_score", 0.0)
 
+    # --- Staleness and validation ---
+    out["staleness_flag"] = (
+        data.get("ecological_status", {})
+        .get("biomass_ratio", {})
+        .get("staleness_flag", "")
+    )
+    out["validation_checklist"] = data.get("validation_checklist", {})
+
     # --- Bridge axioms applied ---
     out["bridge_axioms_applied"] = data.get(
         "bridge_axioms_applied",
@@ -336,7 +352,7 @@ def _render_masthead(nd: dict[str, Any], mode: str) -> None:
     )
 
 
-def _render_kpi_strip(nd: dict[str, Any]) -> None:
+def _render_kpi_strip(nd: dict[str, Any], *, scenario: str = "p50") -> None:
     """Render the 4-card KPI strip with expandable drill-downs."""
     st.markdown(
         '<div class="section-header">Key Metrics</div>',
@@ -344,7 +360,16 @@ def _render_kpi_strip(nd: dict[str, Any]) -> None:
     )
 
     mc = nd.get("monte_carlo", {})
-    median = mc.get("median", nd["esv_total"])
+    percentiles = {"P5": mc.get("p5", 0), "P95": mc.get("p95", 0)}
+    if scenario == "p5":
+        headline_esv = percentiles.get("P5") or nd["esv_total"]
+        scenario_label = "Conservative (P5)"
+    elif scenario == "p95":
+        headline_esv = percentiles.get("P95") or nd["esv_total"]
+        scenario_label = "Optimistic (P95)"
+    else:
+        headline_esv = mc.get("median", nd["esv_total"])
+        scenario_label = "Median - Base Case"
 
     k1, k2, k3, k4 = st.columns(4)
 
@@ -354,8 +379,8 @@ def _render_kpi_strip(nd: dict[str, Any]) -> None:
             f"""
 <div class="kpi-card">
 <div class="kpi-label">Annual Ecosystem Service Value</div>
-<div class="kpi-value">{fmt_usd(median)}</div>
-<div class="kpi-context">Median - Base Case</div>
+<div class="kpi-value">{fmt_usd(headline_esv)}</div>
+<div class="kpi-context">{scenario_label}</div>
 </div>
 """,
             unsafe_allow_html=True,
@@ -582,6 +607,14 @@ def _render_kpi_strip(nd: dict[str, Any]) -> None:
 """,
                 unsafe_allow_html=True,
             )
+
+    # --- Optional: Asset Rating ---
+    if nd.get("asset_rating"):
+        st.markdown(
+            f'<div class="kpi-card"><span class="kpi-value">{nd["asset_rating"]}</span>'
+            f'<span class="kpi-label">Asset Rating (composite: {nd.get("composite_score", 0):.2f})</span></div>',
+            unsafe_allow_html=True,
+        )
 
 
 def _render_mc_mini(mc: dict[str, Any]) -> None:
@@ -1000,7 +1033,7 @@ def _render_axiom_evidence_table(nd: dict[str, Any]) -> None:
     for aid in axiom_ids:
         info = AXIOM_INFO.get(aid, {})
         meaning = info.get("meaning", "")
-        citation = info.get("citation", "")
+        citation = info.get("citation", "") or info.get("source", "")
         doi = info.get("doi", "")
         doi_link = f"https://doi.org/{doi}" if doi else "#"
         rows += (
@@ -1235,6 +1268,38 @@ Source: <a href="https://doi.org/10.1038/s41558-024-02206-5" target="_blank">Lov
             )
 
 
+def _render_data_quality(nd: dict[str, Any]) -> None:
+    """Render data quality indicators, staleness warnings, and caveats."""
+    st.markdown(
+        '<div class="section-header">Data Quality & Caveats</div>',
+        unsafe_allow_html=True,
+    )
+
+    staleness = nd.get("staleness_flag", "")
+    if staleness:
+        st.markdown(
+            f'<div style="background:#78350F;border:1px solid #D97706;'
+            f'border-radius:8px;padding:10px 16px;margin-bottom:12px;'
+            f'color:#FDE68A;font-size:14px">'
+            f"Staleness warning: {staleness}</div>",
+            unsafe_allow_html=True,
+        )
+
+    caveats = nd.get("caveats", [])
+    if caveats:
+        with st.expander("View all caveats"):
+            for caveat in caveats:
+                st.markdown(f"- {caveat}")
+
+    validation = nd.get("validation_checklist", {})
+    if validation:
+        with st.expander("Validation checklist"):
+            for check_name, passed in validation.items():
+                icon = "pass" if passed else "FAIL"
+                label = check_name.replace("_", " ").title()
+                st.markdown(f"- **{icon}** - {label}")
+
+
 # ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
@@ -1244,6 +1309,8 @@ def render_intelligence_brief(
     data: dict[str, Any],
     site: str,
     mode: str,
+    *,
+    scenario: str = "p50",
     **kwargs: Any,
 ) -> None:
     """Render the Intelligence Brief tab.
@@ -1256,10 +1323,16 @@ def render_intelligence_brief(
         Canonical site name (e.g. "Cabo Pulmo National Park").
     mode:
         "live" or "demo".
+    scenario:
+        Monte Carlo percentile for headline ESV: "p5", "p50", or "p95".
     """
     nd = _normalize_site_data(data, site)
 
     _render_masthead(nd, mode)
+
+    # Data source label
+    source = "Investment-grade bundle" if "financial_output" in data else "Case study JSON"
+    st.caption(f"Data source: {source}")
 
     # Disclaimer
     meta = nd.get("metadata", {})
@@ -1268,8 +1341,9 @@ def render_intelligence_brief(
         st.caption(f"*{disclaimer}*")
 
     _render_investment_thesis(nd)
-    _render_kpi_strip(nd)
+    _render_kpi_strip(nd, scenario=scenario)
     _render_provenance_graph(nd)
     _render_axiom_evidence_table(nd)
     _render_valuation_composition(nd)
     _render_risk_profile(nd)
+    _render_data_quality(nd)

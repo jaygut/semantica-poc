@@ -626,7 +626,7 @@ def get_case_study_path(site_name: str) -> Path | None:
     return _PROJECT_ROOT / rel
 
 
-def get_site_data(site_name: str, bundle_data: dict[str, Any]) -> dict[str, Any]:
+def get_site_data(site_name: str, bundle_data: dict[str, Any]) -> dict[str, Any] | None:
     """Extract site-specific data from bundle or case study JSON.
 
     For Cabo Pulmo, the static bundle is preferred (richer structure).
@@ -643,4 +643,4 @@ def get_site_data(site_name: str, bundle_data: dict[str, Any]) -> dict[str, Any]
         except Exception:
             logger.warning("Failed to load case study for %s", site_name)
 
-    return bundle_data
+    return None
