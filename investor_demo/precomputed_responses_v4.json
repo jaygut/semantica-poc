@@ -1,0 +1,1010 @@
+{
+  "responses": {
+    "What is Belize Barrier Reef Reserve System worth?": {
+      "answer": "Belize Barrier Reef Reserve System generates an estimated $292.5M/year in ecosystem services, derived from 4 service categories:\n\n- Tourism: $150.0M/year (market_price)\n- Coastal Protection: $120.0M/year (avoided_cost)\n- Fisheries: $14.0M/year (market_price)\n- Carbon Sequestration: $8.5M/year (regional_analogue_estimate)\n\nAsset rating: AA (composite score 0.82). All values use market-price methodology where available, with avoided-cost methods for protection services.",
+      "confidence": 0.49199999999999994,
+      "evidence": [
+        {
+          "doi": "10.1371/journal.pone.0249155",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0249155",
+          "title": "Twenty years of benthic community monitoring data",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-011",
+        "BA-012"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Belize Barrier Reef Reserve System",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Belize Barrier Reef Reserve System",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Belize Barrier Reef Reserve System",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Belize Barrier Reef Reserve System",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Valuation uses 4 service categories with market-price methodology where available",
+        "Regional analogue estimates may differ from site-specific field studies"
+      ],
+      "verified_claims": [
+        "$292.5M (total ESV)",
+        "$150.0M (Tourism)",
+        "$120.0M (Coastal Protection)",
+        "$14.0M (Fisheries)",
+        "$8.5M (Carbon Sequestration)"
+      ],
+      "unverified_claims": []
+    },
+    "What is Cabo Pulmo National Park worth?": {
+      "answer": "Cabo Pulmo National Park generates an estimated $29.3M/year in ecosystem services, derived from 4 service categories:\n\n- Tourism: $25.0M/year (market_price)\n- Fisheries Spillover: $3.2M/year (market_price)\n- Carbon Sequestration: $180K/year (avoided_cost)\n- Coastal Protection: $890K/year (avoided_cost)\n\nAsset rating: AAA (composite score 0.90). All values use market-price methodology where available, with avoided-cost methods for protection services.",
+      "confidence": 0.54,
+      "evidence": [
+        {
+          "doi": "10.1371/journal.pone.0023601",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
+          "title": "Primary field data",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-011",
+        "BA-012"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries Spillover",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Valuation uses 4 service categories with market-price methodology where available",
+        "Regional analogue estimates may differ from site-specific field studies"
+      ],
+      "verified_claims": [
+        "$29.3M (total ESV)",
+        "$25.0M (Tourism)",
+        "$3.2M (Fisheries Spillover)",
+        "$180K (Carbon Sequestration)",
+        "$890K (Coastal Protection)"
+      ],
+      "unverified_claims": []
+    },
+    "What is Galapagos Marine Reserve worth?": {
+      "answer": "Galapagos Marine Reserve generates an estimated $341.0M/year in ecosystem services, derived from 4 service categories:\n\n- Tourism: $275.0M/year (market_price)\n- Carbon Sequestration: $36.5M/year (market_price)\n- Fisheries: $22.0M/year (market_price)\n- Coastal Protection: $7.5M/year (avoided_cost)\n\nAsset rating: AA (composite score 0.84). NEOLI alignment: 5/5 criteria met. All values use market-price methodology where available.",
+      "confidence": 0.504,
+      "evidence": [
+        {
+          "doi": "10.1016/j.ecolecon.2018.05.011",
+          "doi_url": "https://doi.org/10.1016/j.ecolecon.2018.05.011",
+          "title": "Galapagos mangrove carbon valuation study",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-003",
+        "BA-004",
+        "BA-005",
+        "BA-006"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Galapagos Marine Reserve",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Galapagos Marine Reserve",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Galapagos Marine Reserve",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Galapagos Marine Reserve",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Valuation uses 4 service categories",
+        "Values derived from published ESV studies and regional analogues"
+      ],
+      "verified_claims": [
+        "$341.0M (total ESV)",
+        "$275.0M (Tourism)",
+        "$36.5M (Carbon Sequestration)",
+        "$22.0M (Fisheries)",
+        "$7.5M (Coastal Protection)"
+      ],
+      "unverified_claims": []
+    },
+    "What is Raja Ampat Marine Park worth?": {
+      "answer": "Raja Ampat Marine Park generates an estimated $78.0M/year in ecosystem services, derived from 4 service categories:\n\n- Tourism: $52.5M/year (market_price)\n- Fisheries: $15.0M/year (regional_analogue_estimate)\n- Coastal Protection: $8.0M/year (regional_analogue_estimate)\n- Carbon Sequestration: $2.5M/year (regional_analogue_estimate)\n\nAsset rating: AA (composite score 0.86). All values use market-price methodology where available, with avoided-cost methods for protection services.",
+      "confidence": 0.516,
+      "evidence": [
+        {
+          "doi": "10.1016/j.marpol.2017.09.030",
+          "doi_url": "https://doi.org/10.1016/j.marpol.2017.09.030",
+          "title": "Global coral reef tourism and fisheries economic valuation",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-011",
+        "BA-012"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Raja Ampat Marine Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Raja Ampat Marine Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Raja Ampat Marine Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Raja Ampat Marine Park",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Valuation uses 4 service categories with market-price methodology where available",
+        "Regional analogue estimates may differ from site-specific field studies"
+      ],
+      "verified_claims": [
+        "$78.0M (total ESV)",
+        "$52.5M (Tourism)",
+        "$15.0M (Fisheries)",
+        "$8.0M (Coastal Protection)",
+        "$2.5M (Carbon Sequestration)"
+      ],
+      "unverified_claims": []
+    },
+    "What is Shark Bay World Heritage Area worth?": {
+      "answer": "Shark Bay World Heritage Area generates an estimated $21.5M/year in ecosystem services, derived from 4 service categories:\n\n- Carbon Sequestration: $12.1M/year (market_price)\n- Fisheries: $5.2M/year (market_price)\n- Tourism: $3.4M/year (market_price)\n- Coastal Protection: $800K/year (avoided_cost)\n\nAsset rating: AA (composite score 0.81). All values use market-price methodology where available, with avoided-cost methods for protection services.",
+      "confidence": 0.486,
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Primary field data - carbon stocks and heatwave impacts",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Global seagrass blue carbon stocks and production estimates",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-59204-4",
+          "doi_url": "https://doi.org/10.1038/s41467-025-59204-4",
+          "title": "Global seagrass carbon stock variability and loss emissions",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.5194/essd-15-511-2023",
+          "doi_url": "https://doi.org/10.5194/essd-15-511-2023",
+          "title": "Global seagrass meadow structure, biomass and production dataset",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-008",
+        "BA-013",
+        "BA-014",
+        "BA-015",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Valuation uses 4 service categories with market-price methodology where available",
+        "Regional analogue estimates may differ from site-specific field studies"
+      ],
+      "verified_claims": [
+        "$21.5M (total ESV)",
+        "$12.1M (Carbon Sequestration)",
+        "$5.2M (Fisheries)",
+        "$3.4M (Tourism)",
+        "$800K (Coastal Protection)"
+      ],
+      "unverified_claims": []
+    },
+    "What is Sundarbans Reserve Forest worth?": {
+      "answer": "Sundarbans Reserve Forest generates an estimated $778.9M/year in ecosystem services, derived from 4 service categories:\n\n- Carbon Sequestration: $59.2M/year (market_price)\n- Fisheries: $216.7M/year (market_price)\n- Coastal Protection: $450.0M/year (avoided_cost)\n- Tourism: $53.0M/year (market_price)\n\nAsset rating: A (composite score 0.69). All values use market-price methodology where available, with avoided-cost methods for protection services.",
+      "confidence": 0.414,
+      "evidence": [
+        {
+          "doi": "10.1038/s41598-022-11716-5",
+          "doi_url": "https://doi.org/10.1038/s41598-022-11716-5",
+          "title": "Carbon stock reduction and ecosystem service valuation of Indian Sundarban",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1016/j.biombioe.2021.106272",
+          "doi_url": "https://doi.org/10.1016/j.biombioe.2021.106272",
+          "title": "Species-specific biomass and carbon flux",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1007/s13157-016-0819-7",
+          "doi_url": "https://doi.org/10.1007/s13157-016-0819-7",
+          "title": "Blue carbon stock projections",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-005",
+        "BA-006",
+        "BA-007",
+        "BA-014",
+        "BA-015",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Sundarbans Reserve Forest",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Sundarbans Reserve Forest",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Sundarbans Reserve Forest",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Sundarbans Reserve Forest",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Valuation uses 4 service categories with market-price methodology where available",
+        "Regional analogue estimates may differ from site-specific field studies"
+      ],
+      "verified_claims": [
+        "$778.9M (total ESV)",
+        "$59.2M (Carbon Sequestration)",
+        "$216.7M (Fisheries)",
+        "$450.0M (Coastal Protection)",
+        "$53.0M (Tourism)"
+      ],
+      "unverified_claims": []
+    },
+    "What is Aldabra Atoll worth?": {
+      "answer": "Aldabra Atoll generates an estimated $8.2M/year in ecosystem services, derived from 4 service categories:\n\n- Coastal Protection: $3.5M/year (avoided_cost)\n- Tourism: $2.8M/year (market_price)\n- Carbon Sequestration: $1.2M/year (market_price)\n- Fisheries: $700K/year (market_price)\n\nAsset rating: AA (composite score 0.80). NEOLI alignment: 4/5 criteria met. All values use market-price methodology where available.",
+      "confidence": 0.48,
+      "evidence": [
+        {
+          "doi": "10.1016/j.marpol.2025.106549",
+          "doi_url": "https://doi.org/10.1016/j.marpol.2025.106549",
+          "title": "Seychelles blue bond financial structure and outcomes",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-005",
+        "BA-006",
+        "BA-007"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Aldabra Atoll",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Aldabra Atoll",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Aldabra Atoll",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Aldabra Atoll",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Valuation uses 4 service categories",
+        "Values derived from published ESV studies and regional analogues"
+      ],
+      "verified_claims": [
+        "$8.2M (total ESV)",
+        "$3.5M (Coastal Protection)",
+        "$2.8M (Tourism)",
+        "$1.2M (Carbon Sequestration)",
+        "$700K (Fisheries)"
+      ],
+      "unverified_claims": []
+    },
+    "What is Cispatá Bay Mangrove Conservation Area worth?": {
+      "answer": "Cispatá Bay Mangrove Conservation Area generates an estimated $45.6M/year in ecosystem services, derived from 4 service categories:\n\n- Carbon Sequestration: $31.0M/year (market_price)\n- Fisheries: $8.2M/year (market_price)\n- Coastal Protection: $4.5M/year (avoided_cost)\n- Tourism: $1.9M/year (market_price)\n\nAsset rating: A (composite score 0.76). NEOLI alignment: 3/5 criteria met. All values use market-price methodology where available.",
+      "confidence": 0.45599999999999996,
+      "evidence": [
+        {
+          "doi": "10.1016/j.foreco.2018.02.037",
+          "doi_url": "https://doi.org/10.1016/j.foreco.2018.02.037",
+          "title": "Cispatá Bay complete mangrove carbon accounting",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-005",
+        "BA-006",
+        "BA-007",
+        "BA-014",
+        "BA-015",
+        "BA-016"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Cispatá Bay Mangrove Conservation Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cispatá Bay Mangrove Conservation Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cispatá Bay Mangrove Conservation Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Cispatá Bay Mangrove Conservation Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Valuation uses 4 service categories",
+        "Values derived from published ESV studies and regional analogues"
+      ],
+      "verified_claims": [
+        "$45.6M (total ESV)",
+        "$31.0M (Carbon Sequestration)",
+        "$8.2M (Fisheries)",
+        "$4.5M (Coastal Protection)",
+        "$1.9M (Tourism)"
+      ],
+      "unverified_claims": []
+    },
+    "What is Ningaloo Coast World Heritage Area worth?": {
+      "answer": "Ningaloo Coast World Heritage Area generates an estimated $87.0M/year in ecosystem services, derived from 4 service categories:\n\n- Tourism: $72.0M/year (market_price)\n- Fisheries: $8.5M/year (market_price)\n- Coastal Protection: $5.0M/year (avoided_cost)\n- Carbon Sequestration: $1.5M/year (market_price)\n\nAsset rating: AA (composite score 0.83). NEOLI alignment: 4/5 criteria met. All values use market-price methodology where available.",
+      "confidence": 0.49799999999999994,
+      "evidence": [
+        {
+          "doi": "10.1016/j.ocecoaman.2020.105344",
+          "doi_url": "https://doi.org/10.1016/j.ocecoaman.2020.105344",
+          "title": "Ningaloo Reef economic contribution assessment",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-004",
+        "BA-011",
+        "BA-012"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Ningaloo Coast World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Tourism",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Ningaloo Coast World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Fisheries",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Ningaloo Coast World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Coastal Protection",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "Ningaloo Coast World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Carbon Sequestration",
+          "to_type": "EcosystemService"
+        }
+      ],
+      "caveats": [
+        "Valuation uses 4 service categories",
+        "Values derived from published ESV studies and regional analogues"
+      ],
+      "verified_claims": [
+        "$87.0M (total ESV)",
+        "$72.0M (Tourism)",
+        "$8.5M (Fisheries)",
+        "$5.0M (Coastal Protection)",
+        "$1.5M (Carbon Sequestration)"
+      ],
+      "unverified_claims": []
+    },
+    "What evidence supports the Belize Barrier Reef Reserve System valuation?": {
+      "answer": "The $292.5M/year valuation of Belize Barrier Reef Reserve System is supported by 2 peer-reviewed sources:\n\n- Twenty years of benthic community monitoring data: DOI 10.1371/journal.pone.0249155\n- NEOLI assessment framework: DOI 10.1038/nature13022\n\nAll sources are T1 (peer-reviewed journal articles) and provide DOI-backed provenance chains. Each ecosystem service value traces through bridge axioms to specific publication findings.",
+      "confidence": 0.85,
+      "evidence": [
+        {
+          "doi": "10.1371/journal.pone.0249155",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0249155",
+          "title": "Twenty years of benthic community monitoring data",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. 2014 - NEOLI framework",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Belize Barrier Reef Reserve System",
+          "from_type": "MPA",
+          "relationship": "DERIVED_FROM",
+          "to_node": "Peer-reviewed literature",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [],
+      "verified_claims": [
+        "2 peer-reviewed sources identified"
+      ],
+      "unverified_claims": []
+    },
+    "What evidence supports the Cabo Pulmo National Park valuation?": {
+      "answer": "The $29.3M/year valuation of Cabo Pulmo National Park is supported by 2 peer-reviewed sources:\n\n- Primary field data: DOI 10.1371/journal.pone.0023601\n- NEOLI assessment framework: DOI 10.1038/nature13022\n\nAll sources are T1 (peer-reviewed journal articles) and provide DOI-backed provenance chains. Each ecosystem service value traces through bridge axioms to specific publication findings.",
+      "confidence": 0.85,
+      "evidence": [
+        {
+          "doi": "10.1371/journal.pone.0023601",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
+          "title": "Primary field data",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. 2014 - NEOLI framework",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Cabo Pulmo National Park",
+          "from_type": "MPA",
+          "relationship": "DERIVED_FROM",
+          "to_node": "Peer-reviewed literature",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [],
+      "verified_claims": [
+        "2 peer-reviewed sources identified"
+      ],
+      "unverified_claims": []
+    },
+    "What evidence supports the Galapagos Marine Reserve valuation?": {
+      "answer": "The $341.0M/year valuation of Galapagos Marine Reserve is supported by published ESV studies:\n\n- Primary source: Galapagos mangrove carbon valuation study (DOI: 10.1016/j.ecolecon.2018.05.011)\n- NEOLI alignment: 10.1038/nature13022 (Edgar et al. 2014)\n\nAll sources are T1 (peer-reviewed) or T2 (institutional reports). Full provenance chain available through the Nereus knowledge graph.",
+      "confidence": 0.75,
+      "evidence": [
+        {
+          "doi": "10.1016/j.ecolecon.2018.05.011",
+          "doi_url": "https://doi.org/10.1016/j.ecolecon.2018.05.011",
+          "title": "Galapagos mangrove carbon valuation study",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Galapagos Marine Reserve",
+          "from_type": "MPA",
+          "relationship": "DERIVED_FROM",
+          "to_node": "Peer-reviewed literature",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Case study data may be supplemented as additional sources are integrated"
+      ],
+      "verified_claims": [],
+      "unverified_claims": []
+    },
+    "What evidence supports the Raja Ampat Marine Park valuation?": {
+      "answer": "The $78.0M/year valuation of Raja Ampat Marine Park is supported by 2 peer-reviewed sources:\n\n- Global coral reef tourism and fisheries economic valuation: DOI 10.1016/j.marpol.2017.09.030\n- NEOLI assessment framework: DOI 10.1038/nature13022\n\nAll sources are T1 (peer-reviewed journal articles) and provide DOI-backed provenance chains. Each ecosystem service value traces through bridge axioms to specific publication findings.",
+      "confidence": 0.85,
+      "evidence": [
+        {
+          "doi": "10.1016/j.marpol.2017.09.030",
+          "doi_url": "https://doi.org/10.1016/j.marpol.2017.09.030",
+          "title": "Global coral reef tourism and fisheries economic valuation",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. 2014 - NEOLI framework",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Raja Ampat Marine Park",
+          "from_type": "MPA",
+          "relationship": "DERIVED_FROM",
+          "to_node": "Peer-reviewed literature",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [],
+      "verified_claims": [
+        "2 peer-reviewed sources identified"
+      ],
+      "unverified_claims": []
+    },
+    "What evidence supports the Shark Bay World Heritage Area valuation?": {
+      "answer": "The $21.5M/year valuation of Shark Bay World Heritage Area is supported by 5 peer-reviewed sources:\n\n- Primary field data - carbon stocks and heatwave impacts: DOI 10.1038/s41558-018-0096-y\n- Global seagrass blue carbon stocks and production estimates: DOI 10.1038/s41467-025-64667-6\n- Global seagrass carbon stock variability and loss emissions: DOI 10.1038/s41467-025-59204-4\n- Global seagrass meadow structure, biomass and production dataset: DOI 10.5194/essd-15-511-2023\n- NEOLI assessment framework: DOI 10.1038/nature13022\n\nAll sources are T1 (peer-reviewed journal articles) and provide DOI-backed provenance chains. Each ecosystem service value traces through bridge axioms to specific publication findings.",
+      "confidence": 0.85,
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Primary field data - carbon stocks and heatwave impacts",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-64667-6",
+          "doi_url": "https://doi.org/10.1038/s41467-025-64667-6",
+          "title": "Global seagrass blue carbon stocks and production estimates",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41467-025-59204-4",
+          "doi_url": "https://doi.org/10.1038/s41467-025-59204-4",
+          "title": "Global seagrass carbon stock variability and loss emissions",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.5194/essd-15-511-2023",
+          "doi_url": "https://doi.org/10.5194/essd-15-511-2023",
+          "title": "Global seagrass meadow structure, biomass and production dataset",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. 2014 - NEOLI framework",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "DERIVED_FROM",
+          "to_node": "Peer-reviewed literature",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [],
+      "verified_claims": [
+        "5 peer-reviewed sources identified"
+      ],
+      "unverified_claims": []
+    },
+    "What evidence supports the Sundarbans Reserve Forest valuation?": {
+      "answer": "The $778.9M/year valuation of Sundarbans Reserve Forest is supported by 4 peer-reviewed sources:\n\n- Carbon stock reduction and ecosystem service valuation of Indian Sundarban: DOI 10.1038/s41598-022-11716-5\n- Species-specific biomass and carbon flux: DOI 10.1016/j.biombioe.2021.106272\n- Blue carbon stock projections: DOI 10.1007/s13157-016-0819-7\n- NEOLI assessment framework: DOI 10.1038/nature13022\n\nAll sources are T1 (peer-reviewed journal articles) and provide DOI-backed provenance chains. Each ecosystem service value traces through bridge axioms to specific publication findings.",
+      "confidence": 0.85,
+      "evidence": [
+        {
+          "doi": "10.1038/s41598-022-11716-5",
+          "doi_url": "https://doi.org/10.1038/s41598-022-11716-5",
+          "title": "Carbon stock reduction and ecosystem service valuation of Indian Sundarban",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1016/j.biombioe.2021.106272",
+          "doi_url": "https://doi.org/10.1016/j.biombioe.2021.106272",
+          "title": "Species-specific biomass and carbon flux",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1007/s13157-016-0819-7",
+          "doi_url": "https://doi.org/10.1007/s13157-016-0819-7",
+          "title": "Blue carbon stock projections",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/nature13022",
+          "doi_url": "https://doi.org/10.1038/nature13022",
+          "title": "Edgar et al. 2014 - NEOLI framework",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Sundarbans Reserve Forest",
+          "from_type": "MPA",
+          "relationship": "DERIVED_FROM",
+          "to_node": "Peer-reviewed literature",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [],
+      "verified_claims": [
+        "4 peer-reviewed sources identified"
+      ],
+      "unverified_claims": []
+    },
+    "What evidence supports the Aldabra Atoll valuation?": {
+      "answer": "The $8.2M/year valuation of Aldabra Atoll is supported by published ESV studies:\n\n- Primary source: Seychelles blue bond financial structure and outcomes (DOI: 10.1016/j.marpol.2025.106549)\n- NEOLI alignment: 10.1038/nature13022 (Edgar et al. 2014)\n\nAll sources are T1 (peer-reviewed) or T2 (institutional reports). Full provenance chain available through the Nereus knowledge graph.",
+      "confidence": 0.75,
+      "evidence": [
+        {
+          "doi": "10.1016/j.marpol.2025.106549",
+          "doi_url": "https://doi.org/10.1016/j.marpol.2025.106549",
+          "title": "Seychelles blue bond financial structure and outcomes",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Aldabra Atoll",
+          "from_type": "MPA",
+          "relationship": "DERIVED_FROM",
+          "to_node": "Peer-reviewed literature",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Case study data may be supplemented as additional sources are integrated"
+      ],
+      "verified_claims": [],
+      "unverified_claims": []
+    },
+    "What evidence supports the Cispatá Bay Mangrove Conservation Area valuation?": {
+      "answer": "The $45.6M/year valuation of Cispatá Bay Mangrove Conservation Area is supported by published ESV studies:\n\n- Primary source: Cispatá Bay complete mangrove carbon accounting (DOI: 10.1016/j.foreco.2018.02.037)\n- NEOLI alignment: 10.1038/nature13022 (Edgar et al. 2014)\n\nAll sources are T1 (peer-reviewed) or T2 (institutional reports). Full provenance chain available through the Nereus knowledge graph.",
+      "confidence": 0.75,
+      "evidence": [
+        {
+          "doi": "10.1016/j.foreco.2018.02.037",
+          "doi_url": "https://doi.org/10.1016/j.foreco.2018.02.037",
+          "title": "Cispatá Bay complete mangrove carbon accounting",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Cispatá Bay Mangrove Conservation Area",
+          "from_type": "MPA",
+          "relationship": "DERIVED_FROM",
+          "to_node": "Peer-reviewed literature",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Case study data may be supplemented as additional sources are integrated"
+      ],
+      "verified_claims": [],
+      "unverified_claims": []
+    },
+    "What evidence supports the Ningaloo Coast World Heritage Area valuation?": {
+      "answer": "The $87.0M/year valuation of Ningaloo Coast World Heritage Area is supported by published ESV studies:\n\n- Primary source: Ningaloo Reef economic contribution assessment (DOI: 10.1016/j.ocecoaman.2020.105344)\n- NEOLI alignment: 10.1038/nature13022 (Edgar et al. 2014)\n\nAll sources are T1 (peer-reviewed) or T2 (institutional reports). Full provenance chain available through the Nereus knowledge graph.",
+      "confidence": 0.75,
+      "evidence": [
+        {
+          "doi": "10.1016/j.ocecoaman.2020.105344",
+          "doi_url": "https://doi.org/10.1016/j.ocecoaman.2020.105344",
+          "title": "Ningaloo Reef economic contribution assessment",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Ningaloo Coast World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "DERIVED_FROM",
+          "to_node": "Peer-reviewed literature",
+          "to_type": "Document"
+        }
+      ],
+      "caveats": [
+        "Case study data may be supplemented as additional sources are integrated"
+      ],
+      "verified_claims": [],
+      "unverified_claims": []
+    },
+    "Compare Belize Barrier Reef Reserve System and Cabo Pulmo National Park": {
+      "answer": "Caribbean Vs Pacific Coral Reef comparison:\n\n**Belize Barrier Reef Reserve System** (coral reef, mangrove, seagrass)\n- Total ESV: $292.5M/year\n- Area: 960 km2\n- Asset rating: AA\n\n**Cabo Pulmo National Park** (coral reef)\n- Total ESV: $29.3M/year\n- Area: 71 km2\n- Asset rating: AAA\n\nBelize BBRRS delivers 10x the ESV due to its larger area and triple-habitat system (coral, mangrove, seagrass), plus an active $364M TNC Blue Bond. Cabo Pulmo earns a higher AAA rating due to its exceptional biomass recovery (4.63x) and stronger NEOLI criteria. Both are coral reef-dominated but demonstrate that ESV magnitude and asset quality are distinct metrics.",
+      "confidence": 0.75,
+      "evidence": [],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Belize Barrier Reef Reserve System",
+          "from_type": "MPA",
+          "relationship": "COMPARED_WITH",
+          "to_node": "Cabo Pulmo National Park",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "ESV comparisons should account for differences in area, habitat type, and valuation methodology",
+        "Asset ratings reflect composite scoring across multiple dimensions, not just ESV magnitude"
+      ],
+      "verified_claims": [
+        "Belize Barrier Reef Reserve System ESV: $292.5M",
+        "Cabo Pulmo National Park ESV: $29.3M"
+      ],
+      "unverified_claims": []
+    },
+    "Compare Sundarbans Reserve Forest and Cispatá Bay Mangrove Conservation Area": {
+      "answer": "Asian Vs Caribbean Mangrove comparison:\n\n**Sundarbans Reserve Forest** (mangrove forest)\n- Total ESV: $778.9M/year\n- Area: 9,630 km2\n- Asset rating: A\n\n**Cispatá Bay Mangrove Conservation Area** (mangrove forest)\n- Total ESV: $45.6M/year\n- Area: 110 km2\n- Asset rating: A\n\nThe Sundarbans is 88x larger and delivers 17x the ESV, driven by massive coastal protection ($450M/yr) and fisheries ($217M/yr) values. Cispata Bay is smaller but has the first complete mangrove carbon accounting (above + below ground + sediment) and active Verra VCS credit issuance. Both demonstrate BA-005 through BA-007 (mangrove axioms) at different scales.",
+      "confidence": 0.75,
+      "evidence": [],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Sundarbans Reserve Forest",
+          "from_type": "MPA",
+          "relationship": "COMPARED_WITH",
+          "to_node": "Cispatá Bay Mangrove Conservation Area",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "ESV comparisons should account for differences in area, habitat type, and valuation methodology",
+        "Asset ratings reflect composite scoring across multiple dimensions, not just ESV magnitude"
+      ],
+      "verified_claims": [
+        "Sundarbans Reserve Forest ESV: $778.9M",
+        "Cispatá Bay Mangrove Conservation Area ESV: $45.6M"
+      ],
+      "unverified_claims": []
+    },
+    "Compare Galapagos Marine Reserve and Raja Ampat Marine Park": {
+      "answer": "Multi-Habitat Comparison comparison:\n\n**Galapagos Marine Reserve** (coral reef, kelp forest, mangrove)\n- Total ESV: $341.0M/year\n- Area: 138,000 km2\n- Asset rating: AA\n\n**Raja Ampat Marine Park** (coral reef, mangrove)\n- Total ESV: $78.0M/year\n- Area: 20,001 km2\n- Asset rating: AA\n\nBoth are iconic biodiversity hotspots. Galapagos uniquely combines three habitat types (coral, kelp, mangrove) in one reserve with massive tourism revenue ($275M/yr). Raja Ampat is the epicenter of the Coral Triangle with 1,600+ fish species and benefits from Indonesia's sovereign blue bond jurisdiction. Both are AA-rated but Galapagos generates 4.4x the ESV primarily through tourism.",
+      "confidence": 0.75,
+      "evidence": [],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Galapagos Marine Reserve",
+          "from_type": "MPA",
+          "relationship": "COMPARED_WITH",
+          "to_node": "Raja Ampat Marine Park",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "ESV comparisons should account for differences in area, habitat type, and valuation methodology",
+        "Asset ratings reflect composite scoring across multiple dimensions, not just ESV magnitude"
+      ],
+      "verified_claims": [
+        "Galapagos Marine Reserve ESV: $341.0M",
+        "Raja Ampat Marine Park ESV: $78.0M"
+      ],
+      "unverified_claims": []
+    },
+    "Compare Shark Bay World Heritage Area and Sundarbans Reserve Forest": {
+      "answer": "Seagrass Vs Mangrove Carbon comparison:\n\n**Shark Bay World Heritage Area** (seagrass meadow)\n- Total ESV: $21.5M/year\n- Area: 23,000 km2\n- Asset rating: AA\n\n**Sundarbans Reserve Forest** (mangrove forest)\n- Total ESV: $778.9M/year\n- Area: 9,630 km2\n- Asset rating: A\n\nBoth are carbon-rich sites but with contrasting profiles. Shark Bay's carbon value ($12.1M) comes from seagrass sequestration at 0.84 tCO2/ha/yr (BA-013), while the Sundarbans' comes from mangrove stocks at 1,023 Mg C/ha (BA-007). Shark Bay earns a higher AA rating despite lower ESV due to better governance scores. The Sundarbans' coastal protection alone ($450M) exceeds Shark Bay's total ESV by 21x.",
+      "confidence": 0.75,
+      "evidence": [],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Shark Bay World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "COMPARED_WITH",
+          "to_node": "Sundarbans Reserve Forest",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "ESV comparisons should account for differences in area, habitat type, and valuation methodology",
+        "Asset ratings reflect composite scoring across multiple dimensions, not just ESV magnitude"
+      ],
+      "verified_claims": [
+        "Shark Bay World Heritage Area ESV: $21.5M",
+        "Sundarbans Reserve Forest ESV: $778.9M"
+      ],
+      "unverified_claims": []
+    },
+    "Compare Ningaloo Coast World Heritage Area and Aldabra Atoll": {
+      "answer": "Indo-Pacific Vs Indian Ocean Coral comparison:\n\n**Ningaloo Coast World Heritage Area** (coral reef)\n- Total ESV: $87.0M/year\n- Area: 2,435 km2\n- Asset rating: AA\n\n**Aldabra Atoll** (coral reef, mangrove)\n- Total ESV: $8.2M/year\n- Area: 350 km2\n- Asset rating: AA\n\nBoth are World Heritage coral reef sites in the Indian Ocean basin. Ningaloo delivers 10.6x the ESV due to its larger area and significant tourism ($72M/yr from whale shark tourism). Aldabra is the pioneer of blue finance innovation - home to the world's first sovereign blue bond ($15M, Seychelles 2018) and a debt-for-nature swap. Both are AA-rated, demonstrating consistent quality across different ESV magnitudes.",
+      "confidence": 0.75,
+      "evidence": [],
+      "axioms_used": [],
+      "graph_path": [
+        {
+          "from_node": "Ningaloo Coast World Heritage Area",
+          "from_type": "MPA",
+          "relationship": "COMPARED_WITH",
+          "to_node": "Aldabra Atoll",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "ESV comparisons should account for differences in area, habitat type, and valuation methodology",
+        "Asset ratings reflect composite scoring across multiple dimensions, not just ESV magnitude"
+      ],
+      "verified_claims": [
+        "Ningaloo Coast World Heritage Area ESV: $87.0M",
+        "Aldabra Atoll ESV: $8.2M"
+      ],
+      "unverified_claims": []
+    }
+  }
+}
