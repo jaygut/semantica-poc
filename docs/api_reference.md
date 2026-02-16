@@ -1,8 +1,8 @@
-# MARIS API Reference
+# Nereus API Reference
 
 ## Overview
 
-The MARIS API is a FastAPI server that exposes the Neo4j knowledge graph through a natural-language query pipeline. It translates user questions into parameterized Cypher queries, executes them against the graph, and synthesizes grounded answers with DOI-backed evidence chains.
+The Nereus API (powered by MARIS) is a FastAPI server that exposes the Neo4j knowledge graph through a natural-language query pipeline. It translates user questions into parameterized Cypher queries, executes them against the graph, and synthesizes grounded answers with DOI-backed evidence chains.
 
 All endpoints are prefixed with `/api`. The server reads configuration from environment variables (see `.env.example`).
 

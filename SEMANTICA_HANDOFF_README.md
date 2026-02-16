@@ -1,8 +1,8 @@
-# Semantica × MARIS Knowledge Graph POC
+# Nereus Knowledge Graph POC
 
 ## Handoff Bundle for Mohd Kaif & Semantica Team
 
-**Prepared by:** Jay Gutierrez, Chief Architect - MARIS
+**Prepared by:** Jay Gutierrez, Chief Architect - Nereus (powered by MARIS + Semantica)
 **Date:** January 22, 2026
 **Bundle Version:** 1.0
 
@@ -466,12 +466,12 @@ cert = manager.get_certificate("cabo_pulmo_esv")
 
 ### v3 Intelligence Platform
 
-The **MARIS v3 Intelligence Platform** (`investor_demo/streamlit_app_v3.py`) is a multi-tab dashboard that makes the P0-P4 backend infrastructure visible and interactive for investors. It runs at `http://localhost:8503` with dual-mode operation (Live/Demo):
+The **Nereus v3 Intelligence Platform** (`investor_demo/streamlit_app_v3.py`) is a multi-tab dashboard that makes the P0-P4 backend infrastructure visible and interactive for investors. It runs at `http://localhost:8503` with dual-mode operation (Live/Demo):
 
 | Tab | P0-P4 Infrastructure Surfaced |
 |-----|-------------------------------|
 | **Intelligence Brief** | Provenance chain graph, axiom evidence table, Monte Carlo risk profile |
-| **Ask MARIS (GraphRAG)** | Split-panel with pipeline transparency: CLASSIFY -> QUERY -> SYNTHESIZE -> VALIDATE |
+| **Ask Nereus (GraphRAG)** | Split-panel with pipeline transparency: CLASSIFY -> QUERY -> SYNTHESIZE -> VALIDATE |
 | **Scenario Lab** | Interactive Monte Carlo using `maris.axioms.monte_carlo` and `maris.axioms.sensitivity` |
 | **TNFD Compliance** | Uses `maris.disclosure.leap_generator` and `maris.disclosure.alignment_scorer` for live LEAP generation |
 
@@ -558,4 +558,4 @@ GitHub: github.com/Hawksight-AI/semantica
 
 *"The ocean doesn't need more data. It needs data that investors can trust and act on."*
 
-*— Semantica × MARIS POC Vision*
+*— Nereus POC Vision*

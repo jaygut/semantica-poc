@@ -129,7 +129,7 @@ def render_graphrag_chat(
 
     # Section header
     st.markdown(
-        '<div class="section-header">ASK MARIS - GRAPHRAG INTELLIGENCE</div>'
+        '<div class="section-header">ASK NEREUS - GRAPHRAG INTELLIGENCE</div>'
         '<div class="section-desc">'
         "Natural-language queries with full reasoning pipeline transparency. "
         "Every answer traces back to DOI-backed evidence through the knowledge graph."
@@ -159,11 +159,11 @@ def render_graphrag_chat(
     # Custom text input
     with st.form(key="v3_query_form", clear_on_submit=True):
         user_input = st.text_input(
-            "Ask MARIS anything",
+            "Ask Nereus anything",
             placeholder="e.g., What is the tourism elasticity coefficient?",
             label_visibility="collapsed",
         )
-        submitted = st.form_submit_button("Ask MARIS", width="stretch")
+        submitted = st.form_submit_button("Ask Nereus", width="stretch")
         if submitted and user_input:
             _submit_query(client, user_input, mode)
 

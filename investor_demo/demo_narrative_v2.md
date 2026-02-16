@@ -1,4 +1,4 @@
-# MARIS v2 - Investor Demo Narrative (10 Minutes)
+# Nereus v2 - Investor Demo Narrative (10 Minutes)
 
 ## Pre-Demo Setup
 
@@ -12,7 +12,7 @@
 
 > "The ocean generates $2.5 trillion in economic value annually. But here's the problem - 94% of nature-based carbon credits have been flagged as potentially fraudulent, and ESG rating providers can't even agree with each other. The ocean has a $165 billion trust problem."
 
-**Action:** Show dashboard masthead with MARIS | SEMANTICA branding.
+**Action:** Show dashboard masthead with NEREUS branding and "Powered by MARIS + Semantica".
 
 ---
 
@@ -24,13 +24,13 @@
 
 ---
 
-## 2:30 - 4:00 | Ask MARIS (Scripted Query)
+## 2:30 - 4:00 | Ask Nereus (Scripted Query)
 
 > "But a dashboard is passive. Let me show you something different. Let me ask the system directly."
 
-**Action:** Scroll to "Ask MARIS" section. Click the quick query button: **"What is this site worth?"**
+**Action:** Scroll to "Ask Nereus" section. Click the quick query button: **"What is this site worth?"**
 
-Watch MARIS generate a real-time, sourced response:
+Watch Nereus generate a real-time, sourced response:
 - $29.27M total with confidence interval
 - Four service categories with individual DOI citations
 - Confidence score and axioms used
@@ -55,7 +55,7 @@ Watch MARIS generate a real-time, sourced response:
 
 **Action:** Click: **"Why should I trust the ESV number?"**
 
-Watch MARIS trace the full provenance chain - every bridge axiom, every coefficient, every source paper.
+Watch Nereus trace the full provenance chain - every bridge axiom, every coefficient, every source paper.
 
 > "This is the difference. Other platforms give you a number. We give you the entire reasoning chain."
 
@@ -108,4 +108,4 @@ Then scroll to framework alignment section:
 | Chat not responding | Switch to precomputed: click another quick query |
 | Graph viz doesn't render | "Let me show you the evidence table instead" - expand evidence section |
 | Neo4j down | Dashboard still works on static bundle. Skip live chat, use provenance table |
-| Tough question from audience | "Great question. Let me ask MARIS directly." Type it in the chat. If low confidence, say "The system is transparent about what it doesn't know." |
+| Tough question from audience | "Great question. Let me ask Nereus directly." Type it in the chat. If low confidence, say "The system is transparent about what it doesn't know." |

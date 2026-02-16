@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**MARIS** (Marine Asset Risk Intelligence System) is a provenance-first knowledge graph that creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. Built on the Semantica framework, it is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
+**Nereus** is a provenance-first blue finance platform, powered by MARIS (Marine Asset Risk Intelligence System) + Semantica. It creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. Designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
 
 **Current Status:** Production-ready POC deployed on `main` with Blue Carbon Extension complete. Semantica SDK integration (P0-P4) is complete on `feature/semantica-integration` branch with all gaps closed - including LLM-enhanced axiom discovery, rule compilation, enhanced multi-signal habitat characterization, and hardened API clients. The v3 Intelligence Platform dashboard (multi-tab architecture) is also complete on `feature/semantica-integration`, making the P0-P4 infrastructure visible and interactive. The system comprises a Neo4j knowledge graph (893 nodes, 132 edges) spanning two fully characterized MPA sites (Cabo Pulmo and Shark Bay), a FastAPI query engine with 9 endpoints (7 core + provenance + disclosure), Bearer token authentication and rate limiting, natural-language-to-Cypher classification with LLM response validation, and three investor-facing Streamlit dashboards (v1 static, v2 live, v3 intelligence platform). The document library contains 195 verified papers, 16 fully-evidenced bridge axioms (v1.3 with blue carbon axioms BA-013 through BA-016 and uncertainty quantification), and a Semantica-ready export bundle. The Semantica integration adds W3C PROV-O provenance tracking, multi-site scaling pipeline, cross-domain reasoning engine, TNFD LEAP disclosure automation, LLM-enhanced dynamic axiom discovery with regex fallback, rule compilation extracted from InferenceEngine, and a 6-file SDK bridge layer. Backed by a **910-test suite** (706 unit + 204 integration) with GitHub Actions CI, multi-stage Docker builds, and a composite confidence model. The system also runs in static mode from a pre-computed JSON bundle (63 precomputed responses) for zero-downtime investor demos.
 
@@ -38,7 +38,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 │  FastAPI JSON Response -- answer + evidence + provenance chain + graph path      │
 │       |                                                                          │
 │       v                                                                          │
-│  Streamlit Dashboard -- dark-mode, single-scroll investor UI with Ask MARIS      │
+│  Streamlit Dashboard -- dark-mode, single-scroll investor UI with Ask Nereus     │
 │                         chat and interactive graph explorer                       │
 │                                                                                  │
 │  Three-Layer Translation Model:                                                  │
@@ -86,7 +86,7 @@ cd investor_demo
 streamlit run streamlit_app_v3.py --server.port 8503
 ```
 
-The v3 Intelligence Platform opens at `http://localhost:8503` with 5 tabs: Intelligence Brief, Ask MARIS (GraphRAG), Scenario Lab, Site Scout (deferred), and TNFD Compliance. Every feature has dual-mode operation: LIVE (Neo4j + LLM) and DEMO (precomputed + static bundle).
+The v3 Intelligence Platform opens at `http://localhost:8503` with 5 tabs: Intelligence Brief, Ask Nereus (GraphRAG), Scenario Lab, Site Scout (deferred), and TNFD Compliance. Every feature has dual-mode operation: LIVE (Neo4j + LLM) and DEMO (precomputed + static bundle).
 
 ### v2 - Live System
 
@@ -311,11 +311,11 @@ maris/
 
 investor_demo/
   streamlit_app_v3.py           # v3 Intelligence Platform - multi-tab, dual-mode (live/demo)
-  streamlit_app_v2.py           # v2 Live dashboard - CSS, layout, data, Ask MARIS, Graph Explorer
+  streamlit_app_v2.py           # v2 Live dashboard - CSS, layout, data, Ask Nereus, Graph Explorer
   streamlit_app.py              # v1 Static dashboard - bundle-only, zero dependencies
   api_client.py                 # HTTP client wrapping MARIS API; auto-fallback to precomputed
   components/
-    chat_panel.py               # v2 Ask MARIS query UI with markdown, confidence badges, evidence
+    chat_panel.py               # v2 Ask Nereus query UI with markdown, confidence badges, evidence
     graph_explorer.py           # v2 Plotly network graph with semantic layering
     roadmap_section.py          # Scaling Intelligence section (shared between v1 and v2)
     v3/                         # v3 Intelligence Platform component package

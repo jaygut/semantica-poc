@@ -181,11 +181,11 @@ def render_chat_panel(client):
     # Custom text input (using form to clear on submit and avoid rerun loop)
     with st.form(key="maris_query_form", clear_on_submit=True):
         user_input = st.text_input(
-            "Ask MARIS anything about this site",
+            "Ask Nereus anything about this site",
             placeholder="e.g., What is the tourism elasticity coefficient?",
             label_visibility="collapsed",
         )
-        submitted = st.form_submit_button("Ask MARIS", use_container_width=True)
+        submitted = st.form_submit_button("Ask Nereus", use_container_width=True)
         if submitted and user_input:
             _submit_query(client, user_input)
 

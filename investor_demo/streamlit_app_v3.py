@@ -32,7 +32,7 @@ from investor_demo.components.v3.shared import (  # noqa: E402
 # Page Configuration
 # ---------------------------------------------------------------------------
 st.set_page_config(
-    page_title="MARIS Intelligence Platform",
+    page_title="Nereus Intelligence Platform",
     page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded",
@@ -110,7 +110,7 @@ client = st.session_state.v3_client
 # Sidebar
 # ---------------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("### MARIS | Intelligence Platform")
+    st.markdown("### NEREUS")
 
     # Mode toggle
     live_mode = st.toggle(
@@ -236,7 +236,7 @@ data = get_site_data(site, bundle_data)
 # ---------------------------------------------------------------------------
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "Intelligence Brief",
-    "Ask MARIS",
+    "Ask Nereus",
     "Scenario Lab",
     "Site Scout",
     "TNFD Compliance",
@@ -284,8 +284,8 @@ with tab5:
 # ---------------------------------------------------------------------------
 st.markdown(
     '<div class="app-footer">'
-    "MARIS Intelligence Platform | SEMANTICA - Provenance-first infrastructure "
-    "for blue finance decisions"
+    "NEREUS - Provenance-first infrastructure for blue finance decisions"
+    " &middot; Powered by MARIS + Semantica"
     "</div>",
     unsafe_allow_html=True,
 )

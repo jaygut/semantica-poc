@@ -1,6 +1,6 @@
-# Semantica x MARIS POC - Agentic System
+# Nereus POC - Agentic System
 
-This directory contains the agentic workflow system, document registry, and skills infrastructure for the MARIS knowledge graph. It supports both the live v2 system (Neo4j + FastAPI + Streamlit) and the document curation pipeline that feeds it.
+This directory contains the agentic workflow system, document registry, and skills infrastructure for the Nereus knowledge graph (powered by MARIS + Semantica). It supports both the live v2 system (Neo4j + FastAPI + Streamlit) and the document curation pipeline that feeds it.
 
 ## Current Status
 

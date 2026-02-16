@@ -1,8 +1,8 @@
-# MARIS User Guide
+# Nereus User Guide
 
-## What is MARIS?
+## What is Nereus?
 
-MARIS (Marine Asset Risk Intelligence System) translates peer-reviewed ecological science into investment-grade financial metrics for marine natural capital. Unlike conventional ESG data platforms, MARIS provides full scientific provenance: every number traces back to a DOI-cited source through explicit, auditable bridge axioms.
+Nereus is a provenance-first blue finance platform, powered by MARIS (Marine Asset Risk Intelligence System) + Semantica. It translates peer-reviewed ecological science into investment-grade financial metrics for marine natural capital. Unlike conventional ESG data platforms, Nereus provides full scientific provenance: every number traces back to a DOI-cited source through explicit, auditable bridge axioms.
 
 The system is designed for blue bond underwriters, conservation finance analysts, TNFD working groups, and marine ecologists who need defensible valuations backed by transparent methodology.
 
@@ -57,11 +57,11 @@ The system is designed for blue bond underwriters, conservation finance analysts
 
 ## Using the Dashboard
 
-MARIS provides two dashboard versions: the **v3 Intelligence Platform** (recommended) and the **v2 single-scroll dashboard**.
+Nereus provides two dashboard versions: the **v3 Intelligence Platform** (recommended) and the **v2 single-scroll dashboard**.
 
 ### v3 Intelligence Platform (Recommended)
 
-The v3 dashboard is a multi-tab intelligence platform at `http://localhost:8503` that makes the MARIS backend infrastructure visible and interactive. Every tab has dual-mode operation: **Live** (Neo4j + LLM) and **Demo** (precomputed + static bundle), toggled from the sidebar.
+The v3 dashboard is a multi-tab intelligence platform at `http://localhost:8503` that makes the Nereus backend infrastructure visible and interactive. Every tab has dual-mode operation: **Live** (Neo4j + LLM) and **Demo** (precomputed + static bundle), toggled from the sidebar.
 
 #### Tab 1: Intelligence Brief
 
@@ -76,7 +76,7 @@ The default landing tab presents a comprehensive site overview:
 | **Valuation Composition** | Bar chart showing ecosystem service breakdown with confidence intervals |
 | **Risk Profile** | Monte Carlo distribution (10,000 simulations) with P5/P50/P95 percentiles |
 
-#### Tab 2: Ask MARIS (GraphRAG)
+#### Tab 2: Ask Nereus (GraphRAG)
 
 A split-panel interface showing both the chat and the reasoning pipeline:
 
@@ -122,7 +122,7 @@ The v2 dashboard at `http://localhost:8501` is a single-scroll, dark-mode page d
 
 | Section | What You See |
 |---------|-------------|
-| **Investment Thesis** | Three-paragraph overview: what MARIS is, how Semantica provides provenance, and what context graphs mean for blue finance |
+| **Investment Thesis** | Three-paragraph overview: what Nereus is, how MARIS + Semantica provide provenance, and what context graphs mean for blue finance |
 | **Key Metrics** | 4 KPI cards: Annual ESV ($29.27M), Biomass Recovery (4.63x), NEOLI Score (4/5), Climate Buffer |
 | **Provenance Chain** | Fixed causal graph tracing ecological data through bridge axioms to financial value - the core "trust bridge" |
 | **Bridge Axiom Evidence** | Table mapping key axioms (BA-001, BA-002, BA-011 through BA-016) to plain-English explanations and DOI citations |
@@ -131,7 +131,7 @@ The v2 dashboard at `http://localhost:8501` is a single-scroll, dark-mode page d
 | **Comparison Sites** | 2x2 grid: Papahanaumokuakea (5/5), Cabo Pulmo (4/5), Shark Bay (4/5), Mesoamerican Reef (1-2/5) |
 | **Framework Alignment** | IFC Blue Finance eligible uses and TNFD LEAP four-phase summary |
 | **Scaling Intelligence** | Intelligence stack (public data, ecological, financial layers), 4-phase execution roadmap from 1 to 100+ MPAs |
-| **Ask MARIS** | Natural-language query chat with live provenance-backed answers |
+| **Ask Nereus** | Natural-language query chat with live provenance-backed answers |
 | **Graph Explorer** | Interactive Plotly network visualization of the knowledge graph from Neo4j |
 | **Caveats** | All 7 methodology caveats, displayed for transparency |
 
@@ -144,7 +144,7 @@ The v2 dashboard at `http://localhost:8501` is a single-scroll, dark-mode page d
 
 ### Confidence Levels
 
-MARIS uses two distinct confidence models:
+Nereus uses two distinct confidence models:
 
 **Monte Carlo ESV Confidence** - Statistical uncertainty in ecosystem service values. The confidence slider adjusts which percentile drives the headline ESV figure, based on confidence interval propagation across 10,000 simulations:
 
@@ -154,7 +154,7 @@ MARIS uses two distinct confidence models:
 | Base Case | Median (P50) | ~$28.7M | Central estimate for standard reporting and bond sizing |
 | Optimistic | P95 | ~$36.1M | Best-case for opportunity analysis and upside framing |
 
-**Answer-Level Confidence** - A composite score shown on Ask MARIS responses, computed as:
+**Answer-Level Confidence** - A composite score shown on Ask Nereus responses, computed as:
 
 ```
 composite = tier_base * path_discount * staleness_discount * sample_factor
@@ -171,11 +171,11 @@ Typical score ranges: direct site valuations score 80-88%, mechanism explanation
 
 ---
 
-## Ask MARIS - Natural-Language Queries
+## Ask Nereus - Natural-Language Queries
 
-The Ask MARIS panel accepts natural-language questions about any site in the knowledge graph. Behind the scenes, questions are classified into categories, mapped to Cypher templates, executed against Neo4j, and synthesized into grounded answers with full provenance.
+The Ask Nereus panel accepts natural-language questions about any site in the knowledge graph. Behind the scenes, questions are classified into categories, mapped to Cypher templates, executed against Neo4j, and synthesized into grounded answers with full provenance.
 
-In the **v3 Intelligence Platform** (Tab 2), the GraphRAG interface uses a split-panel layout: chat on the left with a reasoning pipeline panel on the right that shows each step of the query pipeline (CLASSIFY, QUERY GRAPH, SYNTHESIZE, VALIDATE) in real time with Cypher display and confidence breakdown. In the **v2 dashboard**, Ask MARIS appears as a chat panel near the bottom of the page.
+In the **v3 Intelligence Platform** (Tab 2), the GraphRAG interface uses a split-panel layout: chat on the left with a reasoning pipeline panel on the right that shows each step of the query pipeline (CLASSIFY, QUERY GRAPH, SYNTHESIZE, VALIDATE) in real time with Cypher display and confidence breakdown. In the **v2 dashboard**, Ask Nereus appears as a chat panel near the bottom of the page.
 
 ### Example Questions
 
@@ -194,7 +194,7 @@ Each answer includes:
 - **Confidence badge** - Green (>= 0.7), amber (0.4-0.7), or red (< 0.4). Reflects the strength of graph evidence behind the answer, not just LLM certainty.
 - **Axiom tags** - The bridge axioms invoked (e.g. BA-001, BA-002). Each axiom is a peer-reviewed translation rule with explicit coefficients.
 - **Evidence table** - DOI citations with paper title, publication year, and evidence tier (T1 = peer-reviewed journal, the strongest level).
-- **Caveats** - Methodological limitations. MARIS surfaces these proactively rather than burying them.
+- **Caveats** - Methodological limitations. Nereus surfaces these proactively rather than burying them.
 
 ### Site Coverage
 
@@ -202,7 +202,7 @@ Each answer includes:
 
 **Comparison sites** (Great Barrier Reef, Papahanaumokuakea) have governance metadata (NEOLI score, area, asset rating) but not full ecosystem service valuations. Queries about their financial value will note the absence of site-specific valuation data.
 
-When the API is unavailable, Ask MARIS falls back to 63 precomputed responses covering all 5 query categories (valuation, provenance, axiom, comparison, risk). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
+When the API is unavailable, Ask Nereus falls back to 63 precomputed responses covering all 5 query categories (valuation, provenance, axiom, comparison, risk). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
 
 ### Graph Explorer
 

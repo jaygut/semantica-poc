@@ -1,8 +1,8 @@
-# MARIS | SEMANTICA - Investor Demo Dashboard
+# Nereus - Investor Demo Dashboard
 
 ## Overview
 
-Interactive Streamlit dashboards for the **MARIS/Semantica provenance-first blue finance infrastructure**, designed for investor-facing demonstrations. Dark-mode layout with professional financial styling.
+Interactive Streamlit dashboards for the **Nereus provenance-first blue finance platform** (powered by MARIS + Semantica), designed for investor-facing demonstrations. Dark-mode layout with professional financial styling.
 
 **Three operating modes:**
 
@@ -14,7 +14,7 @@ Interactive Streamlit dashboards for the **MARIS/Semantica provenance-first blue
 
 ### v3 - Intelligence Platform (Recommended)
 
-Requires Neo4j and the MARIS API server for Live mode, or runs standalone in Demo mode. See the [root README](../README.md#maris-v2---live-query-system) for full backend setup.
+Requires Neo4j and the MARIS API server for Live mode, or runs standalone in Demo mode. See the [root README](../README.md#nereus-v2---live-query-system) for full backend setup.
 
 ```bash
 # 1. Ensure Neo4j is running and the graph is populated
@@ -37,7 +37,7 @@ cd investor_demo
 streamlit run streamlit_app_v2.py
 ```
 
-The dashboard opens at `http://localhost:8501`. If the API is unreachable, the Ask MARIS panel falls back to precomputed responses automatically.
+The dashboard opens at `http://localhost:8501`. If the API is unreachable, the Ask Nereus panel falls back to precomputed responses automatically.
 
 ### v1 - Static Mode
 

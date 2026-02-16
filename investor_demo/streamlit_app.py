@@ -8,7 +8,7 @@ from pathlib import Path
 # Page Configuration
 # ---------------------------------------------------------------------------
 st.set_page_config(
-    page_title="MARIS | Cabo Pulmo Investment Case",
+    page_title="Nereus | Cabo Pulmo Investment Case",
     page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded",
@@ -81,6 +81,14 @@ st.markdown("""
         text-transform: uppercase;
         color: #5B9BD5;
         margin-bottom: 10px;
+    }
+    .masthead-powered {
+        font-size: 12px;
+        font-weight: 400;
+        color: #64748B;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-top: 4px;
     }
     .masthead h1 {
         font-family: 'Inter', sans-serif;
@@ -458,7 +466,7 @@ AXIOM_INFO = {
 # Sidebar
 # ---------------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("### MARIS | SEMANTICA")
+    st.markdown("### NEREUS")
 
     # Asset info
     site = data["site"]
@@ -529,7 +537,8 @@ if data["framework_alignment"]["tnfd_leap"]["assess"]["opportunity"]:
 
 st.markdown(f"""
 <div class="masthead">
-<div class="masthead-brand">MARIS | SEMANTICA</div>
+<div class="masthead-brand">NEREUS</div>
+<div class="masthead-powered">Powered by MARIS + Semantica</div>
 <h1>{data['site']['name']}</h1>
 <div class="masthead-subtitle">Provenance-First Blue Finance Infrastructure</div>
 <div class="masthead-badges">{ifc_badge}{tnfd_badge}</div>
@@ -1023,7 +1032,8 @@ st.markdown(f"""
 
 st.markdown(f"""
 <div class="app-footer">
-MARIS | SEMANTICA - Provenance-first infrastructure for blue finance decisions
+NEREUS - Provenance-first infrastructure for blue finance decisions
+&nbsp;&middot;&nbsp; Powered by MARIS + Semantica
 &nbsp;&middot;&nbsp; Generated {data['metadata']['generated_at'].split('T')[0]}
 &nbsp;&middot;&nbsp; Schema v{data['metadata']['maris_schema_version']}
 &nbsp;&middot;&nbsp; {data['metadata']['methodology']}

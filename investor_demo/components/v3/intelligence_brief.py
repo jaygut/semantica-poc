@@ -325,7 +325,8 @@ def _render_masthead(nd: dict[str, Any], mode: str) -> None:
     st.markdown(
         f"""
 <div class="masthead">
-<div class="masthead-brand">MARIS | INTELLIGENCE BRIEF {mode_html}</div>
+<div class="masthead-brand">NEREUS | INTELLIGENCE BRIEF {mode_html}</div>
+<div class="masthead-powered">Powered by MARIS + Semantica</div>
 <h1>{site_name}</h1>
 <div class="masthead-subtitle">Provenance-First Blue Finance Infrastructure</div>
 <div class="masthead-badges">{badges}</div>

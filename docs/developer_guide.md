@@ -1,8 +1,8 @@
-# MARIS Developer Guide
+# Nereus Developer Guide
 
 ## System Purpose
 
-MARIS (Marine Asset Risk Intelligence System) is a provenance-first knowledge graph that creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. The system is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
+Nereus is a provenance-first blue finance platform, powered by MARIS (Marine Asset Risk Intelligence System) + Semantica. It creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. The system is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
 
 The v2 live system exposes the curated knowledge foundation through a Neo4j graph database, a FastAPI query engine with natural-language classification, and an investor-facing Streamlit dashboard with interactive provenance visualization.
 

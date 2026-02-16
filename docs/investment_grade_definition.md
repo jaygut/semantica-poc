@@ -1,12 +1,12 @@
-# Investment-Grade Definition for MARIS
+# Investment-Grade Definition for Nereus
 
 ## Purpose
 
-This document defines what "investment-grade" means in the MARIS context. It provides an operational definition grounded in IFC Blue Finance Guidelines, TNFD LEAP framework requirements, and academic ESV standards. This definition replaces informal usage of the term throughout MARIS documentation.
+This document defines what "investment-grade" means in the Nereus platform context. It provides an operational definition grounded in IFC Blue Finance Guidelines, TNFD LEAP framework requirements, and academic ESV standards. This definition replaces informal usage of the term throughout Nereus documentation.
 
-## What "Investment-Grade" Means in MARIS
+## What "Investment-Grade" Means in Nereus
 
-MARIS defines "investment-grade" as meeting seven quantitative criteria for scientific rigor, provenance transparency, and financial applicability. These criteria are informed by:
+Nereus defines "investment-grade" as meeting seven quantitative criteria for scientific rigor, provenance transparency, and financial applicability. These criteria are informed by:
 
 - **IFC Blue Finance Guidelines** (2022): Eligible use of proceeds, alignment with SDG 14, external review recommendations
 - **TNFD LEAP Framework** (2023): Process-based disclosure with transparent data quality reporting
@@ -31,7 +31,7 @@ The term is NOT borrowed from credit rating terminology (Moody's/S&P investment-
 
 ### Criterion 4: Provenance Chain Completeness
 **Requirement**: Every financial metric traces to at least one DOI within 4 hops in the knowledge graph.
-**Rationale**: The core MARIS value proposition is auditability. A financial metric without a traceable evidence chain is not investment-grade, regardless of its accuracy.
+**Rationale**: The core Nereus value proposition is auditability. A financial metric without a traceable evidence chain is not investment-grade, regardless of its accuracy.
 
 ### Criterion 5: Confidence Interval Width
 **Requirement**: 95% CI width must be less than 60% of the point estimate for primary metrics.
@@ -43,7 +43,7 @@ The term is NOT borrowed from credit rating terminology (Moody's/S&P investment-
 
 ### Criterion 7: Framework Alignment
 **Requirement**: Data structure must support at least one of: IFC Blue Finance eligible use of proceeds, TNFD LEAP disclosure phases, or SEEA ecosystem accounting.
-**Rationale**: Institutional investors operate within established frameworks. MARIS outputs must integrate with at least one recognized due diligence process.
+**Rationale**: Institutional investors operate within established frameworks. Nereus outputs must integrate with at least one recognized due diligence process.
 
 ## Compliance Checklist: Cabo Pulmo National Park
 
@@ -61,13 +61,13 @@ The term is NOT borrowed from credit rating terminology (Moody's/S&P investment-
 - Data freshness: Biomass measurement exceeds 10-year threshold (17 years old)
 - Evidence base: Some axioms have fewer than 3 peer-reviewed sources
 
-## What MARIS Does NOT Claim
+## What Nereus Does NOT Claim
 
-1. **Not a credit rating.** The "AAA" internal rating is a composite ecological-governance-financial score used for relative comparison within the MARIS system. It is not a Moody's, S&P, or Fitch credit rating and should never be presented as one.
+1. **Not a credit rating.** The "AAA" internal rating is a composite ecological-governance-financial score used for relative comparison within the Nereus system. It is not a Moody's, S&P, or Fitch credit rating and should never be presented as one.
 
-2. **Not independently audited.** All assessments are self-assessed by the MARIS system. Framework alignment badges (IFC Blue Finance, TNFD LEAP) indicate self-assessed alignment, not certification by those bodies.
+2. **Not independently audited.** All assessments are self-assessed by the Nereus system. Framework alignment badges (IFC Blue Finance, TNFD LEAP) indicate self-assessed alignment, not certification by those bodies.
 
-3. **Not a financial recommendation.** MARIS provides decision-support infrastructure. It does not make buy/sell/hold recommendations and is not a substitute for independent due diligence.
+3. **Not a financial recommendation.** Nereus provides decision-support infrastructure. It does not make buy/sell/hold recommendations and is not a substitute for independent due diligence.
 
 4. **Single reference site.** The system is fully characterized for one site (Cabo Pulmo National Park). Comparison sites (GBR, Papahanaumokuakea) have governance metadata only. Generalizability to other sites has not been demonstrated.
 
@@ -76,10 +76,10 @@ The term is NOT borrowed from credit rating terminology (Moody's/S&P investment-
 ## Recommended Disclosure Language
 
 Instead of:
-> "MARIS produces investment-grade financial metrics."
+> "Nereus produces investment-grade financial metrics."
 
 Use:
-> "MARIS produces DOI-backed financial metrics that meet 5 of 7 internal quality criteria for institutional decision support. See docs/investment_grade_definition.md for the full methodology and compliance checklist."
+> "Nereus produces DOI-backed financial metrics that meet 5 of 7 internal quality criteria for institutional decision support. See docs/investment_grade_definition.md for the full methodology and compliance checklist."
 
 Instead of:
 > "IFC Blue Finance Eligible"
@@ -91,7 +91,7 @@ Instead of:
 > "TNFD LEAP Aligned"
 
 Use:
-> "Anticipates alignment with TNFD LEAP disclosure framework. MARIS data structure follows LEAP phases but has not undergone independent TNFD review."
+> "Anticipates alignment with TNFD LEAP disclosure framework. Nereus data structure follows LEAP phases but has not undergone independent TNFD review."
 
 ## References
 

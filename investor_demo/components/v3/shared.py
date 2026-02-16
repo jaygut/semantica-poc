@@ -119,6 +119,14 @@ V3_CSS = """
         margin: 0 0 6px 0;
         color: #F1F5F9 !important;
     }
+    .masthead-powered {
+        font-size: 12px;
+        font-weight: 400;
+        color: #64748B;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-top: 4px;
+    }
     .masthead-subtitle {
         font-size: 22px;
         color: #94A3B8;
