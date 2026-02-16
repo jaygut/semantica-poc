@@ -1,0 +1,362 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "site": {
+    "@type": "MarineProtectedArea",
+    "@id": "mpa:ningaloo_coast_wha",
+    "name": "Ningaloo Coast World Heritage Area",
+    "country": "Australia",
+    "region": "Eastern Indian Ocean, Western Australia",
+    "coordinates": {
+      "@type": "geo:Point",
+      "latitude": -22.69,
+      "longitude": 113.68
+    },
+    "area_km2": 7050,
+    "marine_park_km2": 2435,
+    "reef_length_km": 260,
+    "designation_year": 2011,
+    "governance": {
+      "management_authority": "DBCA (Department of Biodiversity, Conservation and Attractions) / Parks Australia (Commonwealth waters)",
+      "management_plan_year": 2010,
+      "community_engagement": "high",
+      "local_support": "strong",
+      "indigenous_partnership": "Baiyungu, Thalanyji, and Yinigudura Aboriginal people - Traditional Owners",
+      "notes": "Joint Commonwealth-State management; Resilient Reefs Initiative partner"
+    }
+  },
+
+  "neoli_assessment": {
+    "@type": "NEOLIAssessment",
+    "assessment_date": "2024",
+    "criteria": {
+      "no_take": {
+        "value": true,
+        "notes": "Sanctuary zones with full no-take protection; ~34% of Ningaloo Marine Park is no-take"
+      },
+      "enforced": {
+        "value": true,
+        "notes": "Active DBCA compliance monitoring; aerial and vessel-based patrols; community-based surveillance"
+      },
+      "old": {
+        "value": true,
+        "notes": "13 years since UNESCO World Heritage listing (2011); Ningaloo Marine Park established 1987 (>10 year threshold)"
+      },
+      "large": {
+        "value": true,
+        "notes": "7,050 km2 total World Heritage Area; 2,435 km2 marine park (>100 km2 threshold)"
+      },
+      "isolated": {
+        "value": false,
+        "notes": "Fringing reef along open coastline; connected to Indian Ocean currents"
+      }
+    },
+    "neoli_score": 4,
+    "effectiveness_rating": "high",
+    "source": {
+      "citation": "Edgar et al. 2014 Nature",
+      "doi": "10.1038/nature13022"
+    }
+  },
+
+  "ecological_status": {
+    "@type": "EcologicalAssessment",
+    "primary_habitat": "coral_reef",
+    "reef_type": "fringing",
+    "assessment_year": 2022,
+    "last_validated_date": "2026-02-16",
+    "metrics": {
+      "reef_extent": {
+        "reef_length_km": 260,
+        "notes": "260 km fringing reef - Australia's largest fringing reef; one of world's longest reef systems"
+      },
+      "species_counts": {
+        "coral_species": 300,
+        "fish_species": 500,
+        "notes": "Exceptionally high coral diversity for a fringing reef; 300 coral species and 500 fish species"
+      },
+      "reef_condition": {
+        "live_coral_cover_percent": 50,
+        "trend": "stable with localized coral bleaching events",
+        "notes": "Generally healthy reef with high coral cover; some bleaching documented in 2016 and 2020"
+      },
+      "megafauna": {
+        "whale_shark_aggregation": "Seasonal aggregation March-July; 300-500 individuals/yr",
+        "manta_rays": "Year-round residents; significant population",
+        "humpback_whales": "Seasonal (July-November); calving area",
+        "sea_turtles": "3 species nesting: loggerhead, green, hawksbill",
+        "notes": "Ningaloo whale shark tourism was the first of its kind worldwide (established 1989)"
+      }
+    },
+    "source": {
+      "citation": "DBCA Ningaloo Marine Park monitoring data",
+      "url": "https://www.dbca.wa.gov.au"
+    }
+  },
+
+  "ecosystem_services": {
+    "@type": "EcosystemServiceBundle",
+    "last_validated_date": "2026-02-16",
+    "services": [
+      {
+        "@type": "EcosystemService",
+        "service_type": "tourism",
+        "service_category": "cultural",
+        "annual_value_usd": 73000000,
+        "valuation_method": "market_price",
+        "measurement_year": 2019,
+        "beneficiaries": ["local_community", "tourism_operators", "hospitality", "regional_economy"],
+        "metrics": {
+          "annual_visitors": 280000,
+          "jobs_supported": 1000,
+          "value_added_aud": 110000000,
+          "tourism_share_of_total_value": "90%+",
+          "whale_shark_tourism_contribution_aud": 11500000,
+          "notes": "AU$110M value added (2018-19); >90% attributed to tourism; ~US$73M at 2019 exchange rates"
+        },
+        "source": {
+          "citation": "GDC 2020 Economic Contribution of Ningaloo",
+          "url": "https://www.gdc.wa.gov.au/Profiles/gdc/Assets/ClientData/Economic_contribution_of_Ningaloo_-_FINAL_25_11_2020.pdf"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "fisheries",
+        "service_category": "provisioning",
+        "annual_value_usd": 5000000,
+        "valuation_method": "market_price",
+        "measurement_year": 2019,
+        "beneficiaries": ["recreational_fishers", "charter_operators", "local_economy"],
+        "metrics": {
+          "fishery_type": "Predominantly recreational; commercial fishing limited within marine park",
+          "notes": "Recreational fishing is a significant draw; charter operations contribute to tourism value"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "coastal_protection",
+        "service_category": "regulating",
+        "annual_value_usd": 4500000,
+        "valuation_method": "avoided_cost",
+        "measurement_year": 2022,
+        "metrics": {
+          "protected_coastline_km": 260,
+          "reef_type": "fringing",
+          "notes": "260 km fringing reef provides wave attenuation; economic valuation not specifically included in GDC study"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "carbon_sequestration",
+        "service_category": "regulating",
+        "annual_value_usd": 500000,
+        "valuation_method": "regional_analogue_estimate",
+        "measurement_year": 2024,
+        "metrics": {
+          "notes": "Reef-associated blue carbon; not specifically quantified in published studies; GDC study noted ecosystem services like storm protection and carbon sequestration were not quantified"
+        }
+      }
+    ],
+    "total_annual_value_usd": 83000000
+  },
+
+  "asset_quality_rating": {
+    "@type": "MARISRating",
+    "rating": "AA",
+    "rating_date": "2024-06-15",
+    "rating_rationale": {
+      "ecological_condition": {
+        "score": 0.90,
+        "weight": 0.40,
+        "notes": "260 km fringing reef in good condition; 300 coral species; whale shark aggregation; diverse megafauna"
+      },
+      "governance_effectiveness": {
+        "score": 0.90,
+        "weight": 0.25,
+        "notes": "UNESCO World Heritage; joint Commonwealth-State management; 34% no-take; Traditional Owner partnerships"
+      },
+      "financial_sustainability": {
+        "score": 0.85,
+        "weight": 0.20,
+        "notes": "Tourism generates AU$110M/yr; 1,000 jobs; Resilient Reefs Initiative partner"
+      },
+      "risk_factors": {
+        "score": 0.75,
+        "weight": 0.15,
+        "notes": "Coral bleaching events (2016, 2020); climate-driven warming; remote location limits tourism growth"
+      }
+    },
+    "composite_score": 0.87,
+    "confidence_level": "high"
+  },
+
+  "key_species": [
+    {
+      "@type": "Species",
+      "scientific_name": "Rhincodon typus",
+      "common_name": "Whale shark",
+      "iucn_status": "Endangered",
+      "role_in_ecosystem": "megafauna",
+      "notes": "Ningaloo hosts one of the world's most reliable and accessible whale shark aggregations; first whale shark tourism industry (1989)"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Mobula alfredi",
+      "common_name": "Reef manta ray",
+      "iucn_status": "Vulnerable",
+      "role_in_ecosystem": "megafauna",
+      "notes": "Year-round resident population; important tourism draw alongside whale sharks"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Caretta caretta",
+      "common_name": "Loggerhead sea turtle",
+      "iucn_status": "Vulnerable",
+      "role_in_ecosystem": "nesting_species",
+      "notes": "Major nesting population on Ningaloo coast beaches; Conservation Dependent under Australian law"
+    }
+  ],
+
+  "risk_assessment": {
+    "@type": "RiskProfile",
+    "overall_risk_level": "moderate",
+    "risk_factors": [
+      {
+        "risk_type": "coral_bleaching",
+        "severity": "high",
+        "likelihood": "moderate",
+        "evidence": "Mass bleaching events documented in 2016 and 2020; Leeuwin Current warming trend"
+      },
+      {
+        "risk_type": "climate_change",
+        "severity": "high",
+        "likelihood": "high",
+        "evidence": "Indian Ocean warming; increased frequency of marine heatwaves affecting Western Australian reefs"
+      },
+      {
+        "risk_type": "oil_and_gas",
+        "severity": "moderate",
+        "likelihood": "low",
+        "evidence": "North West Shelf oil and gas industry nearby; spill risk exists though no major incidents at Ningaloo"
+      },
+      {
+        "risk_type": "tourism_pressure",
+        "severity": "low",
+        "likelihood": "moderate",
+        "evidence": "280,000 visitors/yr; managed through zoning and licensing; whale shark interaction codes of conduct"
+      }
+    ],
+    "mitigation": {
+      "governance": "UNESCO World Heritage status; joint Commonwealth-State management; Traditional Owner co-management",
+      "monitoring": "Long-term reef monitoring programs; Resilient Reefs Initiative economic valuation",
+      "adaptation": "Sanctuary zone network provides refugia; Resilient Reefs Initiative developing climate adaptation strategy"
+    }
+  },
+
+  "bridge_axiom_applications": [
+    {
+      "axiom_id": "BA-001",
+      "application": "Tourism revenue linked to coral reef condition and megafauna presence",
+      "calculation": {
+        "tourism_value_usd": 73000000,
+        "whale_shark_premium": "Whale shark tourism alone contributes AU$11.5M",
+        "notes": "Tourism is overwhelmingly dominant (>90% of economic value)"
+      }
+    },
+    {
+      "axiom_id": "BA-004",
+      "application": "Fringing coral reef coastal protection",
+      "calculation": {
+        "reef_length_km": 260,
+        "reef_type": "fringing",
+        "coastal_protection_value_usd": 4500000,
+        "notes": "260 km fringing reef provides continuous wave attenuation"
+      }
+    },
+    {
+      "axiom_id": "BA-012",
+      "application": "Reef degradation to fisheries and tourism loss risk",
+      "calculation": {
+        "current_reef_condition": "good (50% live coral cover)",
+        "bleaching_events": "2016 and 2020",
+        "notes": "Bleaching-driven degradation would directly impact $73M tourism and $5M fisheries"
+      }
+    }
+  ],
+
+  "framework_alignment": {
+    "tnfd_leap": {
+      "status": "anticipates alignment with TNFD LEAP framework",
+      "phases": {
+        "locate": "Ningaloo Coast World Heritage Area - 7,050 km2, UNESCO World Heritage since 2011",
+        "evaluate": "260 km fringing reef; 300 coral species; 500 fish species; whale shark aggregation site",
+        "assess": "$83M annual ESV; AA asset rating; tourism-dominant",
+        "prepare": "Resilient Reefs Initiative developing economic valuation and adaptation strategy"
+      }
+    },
+    "ifc_blue_finance": {
+      "status": "potential alignment with IFC Blue Finance principles",
+      "relevance": "Australian MPA jurisdiction; Resilient Reefs Initiative; tourism-based conservation funding"
+    }
+  },
+
+  "provenance": {
+    "data_sources": [
+      {
+        "source": "GDC 2020 Economic Contribution of Ningaloo",
+        "url": "https://www.gdc.wa.gov.au/Profiles/gdc/Assets/ClientData/Economic_contribution_of_Ningaloo_-_FINAL_25_11_2020.pdf",
+        "data_type": "Comprehensive economic valuation of Ningaloo Coast",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "UNESCO World Heritage Centre",
+        "url": "https://whc.unesco.org/en/list/1369/",
+        "data_type": "Site designation and Outstanding Universal Value statement",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "UNESCO Resilient Reefs Initiative",
+        "url": "https://whc.unesco.org/en/news/2241",
+        "data_type": "First economic valuation launch announcement",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "DBCA - Study reveals Ningaloo Coast an economic hub for WA",
+        "url": "https://www.dbca.wa.gov.au/news/2021/study-reveals-ningaloo-coast-economic-hub-wa",
+        "data_type": "Government economic analysis of Ningaloo",
+        "access_date": "2026-02-16"
+      }
+    ],
+    "compilation_date": "2026-02-16",
+    "compiled_by": "MARIS POC Team"
+  },
+
+  "caveats": [
+    "Economic valuation (AU$110M/yr) uses 2018-19 data; post-COVID tourism recovery may differ; converted at approximate exchange rate to US$73M",
+    "GDC study explicitly noted that ecosystem services like storm protection and carbon sequestration were not quantified; our estimates for these are regional analogues",
+    "Carbon sequestration value is a rough estimate; no site-specific reef carbon measurement program published for Ningaloo",
+    "Fisheries value estimate combines recreational and limited commercial fisheries; primarily recreational value",
+    "Complements Shark Bay within Western Australia's coast but with entirely different habitat profile (fringing reef vs. seagrass meadow)",
+    "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
+  ],
+
+  "demo_value": {
+    "why_ningaloo_for_demo": [
+      "Australia's largest fringing reef - 260 km of continuous coral along the coast",
+      "World's first whale shark tourism industry (established 1989) - iconic megafauna narrative",
+      "Published economic valuation: AU$110M/yr, 280,000 tourists, 1,000 jobs",
+      "Resilient Reefs Initiative partner - climate adaptation leadership",
+      "Complements Shark Bay (seagrass) and Cabo Pulmo (reef recovery) within the portfolio"
+    ],
+    "investor_story": "Ningaloo is where marine megafauna meets economic value. This 260 km fringing reef - Australia's largest - hosts one of the world's most reliable whale shark aggregations, the first whale shark tourism industry (1989), and generates AU$110M/year supporting 1,000 jobs across regional Western Australia. With 300 coral species, 500 fish species, and 34% no-take sanctuary zones, Ningaloo demonstrates that well-managed fringing reef systems are high-value tourism assets. As a Resilient Reefs Initiative partner developing climate adaptation strategies, Ningaloo represents the next generation of reef investment resilience. Nereus rates Ningaloo AA - outstanding ecological condition with a tourism-dominant value proposition.",
+    "key_demo_queries": [
+      "What is Ningaloo's economic value to Western Australia?",
+      "How does whale shark tourism drive Ningaloo's economy?",
+      "How does Ningaloo compare to Cabo Pulmo as a coral reef site?",
+      "What climate risks does Ningaloo face?"
+    ]
+  }
+}

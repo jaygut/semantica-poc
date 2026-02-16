@@ -1,0 +1,384 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "site": {
+    "@type": "MarineProtectedArea",
+    "@id": "mpa:cispata_bay_mca",
+    "name": "Cispata Bay Mangrove Conservation Area",
+    "country": "Colombia",
+    "region": "Caribbean, South America",
+    "coordinates": {
+      "@type": "geo:Point",
+      "latitude": 9.39,
+      "longitude": -75.80
+    },
+    "area_km2": 110,
+    "mangrove_extent_ha": 11000,
+    "vida_manglar_project_ha": 7500,
+    "designation_year": 2014,
+    "governance": {
+      "management_authority": "Conservation International / CVS (Corporacion Autonoma Regional de los Valles del Sinu y del San Jorge) / INVEMAR",
+      "management_plan_year": 2014,
+      "community_engagement": "high",
+      "local_support": "strong",
+      "corporate_partner": "Apple Inc.",
+      "vcs_registration": "Verra Verified Carbon Standard - first registered blue carbon conservation project"
+    }
+  },
+
+  "neoli_assessment": {
+    "@type": "NEOLIAssessment",
+    "assessment_date": "2024",
+    "criteria": {
+      "no_take": {
+        "value": false,
+        "notes": "Conservation area with sustainable use zones; not a strict no-take reserve"
+      },
+      "enforced": {
+        "value": true,
+        "notes": "CVS environmental authority provides enforcement; Conservation International community monitoring"
+      },
+      "old": {
+        "value": true,
+        "notes": "Mangrove conservation efforts since early 2000s; Vida Manglar project since 2014 (>10 years)"
+      },
+      "large": {
+        "value": true,
+        "notes": "11,000 ha (110 km2) mangrove ecosystem; Vida Manglar covers 7,500 ha (>100 km2 threshold for full system)"
+      },
+      "isolated": {
+        "value": false,
+        "notes": "Coastal bay connected to Sinu River estuary and Caribbean Sea; surrounded by communities"
+      }
+    },
+    "neoli_score": 3,
+    "effectiveness_rating": "moderate-high",
+    "source": {
+      "citation": "Edgar et al. 2014 Nature",
+      "doi": "10.1038/nature13022"
+    }
+  },
+
+  "ecological_status": {
+    "@type": "EcologicalAssessment",
+    "primary_habitat": "mangrove_forest",
+    "dominant_species": "Rhizophora mangle",
+    "assessment_year": 2020,
+    "last_validated_date": "2026-02-16",
+    "metrics": {
+      "mangrove_ecosystem": {
+        "total_mangrove_area_ha": 11000,
+        "vida_manglar_project_area_ha": 7500,
+        "vcs_credit_area_ha": 7646,
+        "mangrove_species": ["Rhizophora mangle", "Avicennia germinans", "Laguncularia racemosa"],
+        "notes": "First mangrove forest with complete carbon accounting (above-ground, below-ground, and sediment)"
+      },
+      "carbon_accounting": {
+        "lifetime_co2_sequestration_tonnes": 1000000,
+        "thirty_year_avoided_emissions_tonnes": 939296,
+        "initial_annual_reduction_tonnes": 8500,
+        "accounting_method": "Full carbon - trees + roots + underwater sediments",
+        "notes": "First blue carbon project to include below-ground sediment carbon in credits"
+      }
+    },
+    "source": {
+      "citation": "Conservation International / Verra VCS",
+      "url": "https://www.conservation.org/projects/vida-manglar-carbon-project"
+    }
+  },
+
+  "ecosystem_services": {
+    "@type": "EcosystemServiceBundle",
+    "last_validated_date": "2026-02-16",
+    "services": [
+      {
+        "@type": "EcosystemService",
+        "service_type": "carbon_sequestration",
+        "service_category": "regulating",
+        "annual_value_usd": 1500000,
+        "valuation_method": "market_price",
+        "measurement_year": 2024,
+        "beneficiaries": ["global_climate", "carbon_credit_buyers", "Apple_Inc"],
+        "metrics": {
+          "vcs_credit_area_ha": 7646,
+          "lifetime_sequestration_tonnes_CO2": 1000000,
+          "thirty_year_avoided_emissions_tonnes": 939296,
+          "annual_credit_issuance_tonnes": 31000,
+          "carbon_price_usd_per_vcu": 15,
+          "notes": "Verified Carbon Units issued under Verra VCS; first blue carbon conservation project registered by Verra"
+        },
+        "source": {
+          "citation": "Verra VCS Blue Carbon Conservation Methodology (VM0007 revision)",
+          "url": "https://verra.org/press-release-verra-has-registered-its-first-blue-carbon-conservation-project/"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "fisheries",
+        "service_category": "provisioning",
+        "annual_value_usd": 2800000,
+        "valuation_method": "regional_analogue_estimate",
+        "measurement_year": 2022,
+        "beneficiaries": ["artisanal_fishers", "local_community"],
+        "metrics": {
+          "fisher_livelihoods": "Mangrove-dependent artisanal fisheries; exact number of fishers not published",
+          "nursery_function": "Critical nursery habitat for Caribbean fisheries species",
+          "notes": "Based on Caribbean mangrove fishery productivity estimates; site-specific study needed"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "coastal_protection",
+        "service_category": "regulating",
+        "annual_value_usd": 3200000,
+        "valuation_method": "avoided_cost",
+        "measurement_year": 2022,
+        "metrics": {
+          "protected_coastline_km": 45,
+          "notes": "Mangrove barrier protects coastal communities from Caribbean storms and erosion"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "ecotourism",
+        "service_category": "cultural",
+        "annual_value_usd": 500000,
+        "valuation_method": "regional_analogue_estimate",
+        "measurement_year": 2022,
+        "metrics": {
+          "notes": "Emerging ecotourism program funded by carbon credit revenues; community-based tourism under development"
+        }
+      }
+    ],
+    "total_annual_value_usd": 8000000
+  },
+
+  "asset_quality_rating": {
+    "@type": "MARISRating",
+    "rating": "A",
+    "rating_date": "2024-06-15",
+    "rating_rationale": {
+      "ecological_condition": {
+        "score": 0.75,
+        "weight": 0.40,
+        "notes": "Intact mangrove ecosystem with pioneering full carbon accounting; some degradation at margins"
+      },
+      "governance_effectiveness": {
+        "score": 0.80,
+        "weight": 0.25,
+        "notes": "Conservation International management; VCS registration provides external verification; CVS regulatory oversight"
+      },
+      "financial_sustainability": {
+        "score": 0.85,
+        "weight": 0.20,
+        "notes": "Active VCS credit issuance; Apple corporate partnership; revenue-sharing with communities"
+      },
+      "risk_factors": {
+        "score": 0.70,
+        "weight": 0.15,
+        "notes": "Estuarine sedimentation from Sinu River; coastal development pressure; climate-driven storm damage"
+      }
+    },
+    "composite_score": 0.78,
+    "confidence_level": "moderate-high"
+  },
+
+  "key_species": [
+    {
+      "@type": "Species",
+      "scientific_name": "Rhizophora mangle",
+      "common_name": "Red mangrove",
+      "role_in_ecosystem": "dominant_habitat_former",
+      "carbon_relevance": "Primary carbon stock species - complex root system stores carbon in above-ground biomass and sediments",
+      "notes": "Foundation species for the Cispata Bay mangrove ecosystem"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Crocodylus acutus",
+      "common_name": "American crocodile",
+      "iucn_status": "Vulnerable",
+      "role_in_ecosystem": "apex_predator",
+      "notes": "Mangrove-dependent; indicator species for ecosystem health"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Centropomus undecimalis",
+      "common_name": "Common snook",
+      "role_in_ecosystem": "commercial_predator",
+      "commercial_importance": "high",
+      "notes": "Mangrove-dependent fishery species important for local livelihoods"
+    }
+  ],
+
+  "risk_assessment": {
+    "@type": "RiskProfile",
+    "overall_risk_level": "moderate",
+    "risk_factors": [
+      {
+        "risk_type": "sedimentation",
+        "severity": "moderate",
+        "likelihood": "high",
+        "evidence": "Sinu River delivers sediment loads that can alter mangrove hydrology and species composition"
+      },
+      {
+        "risk_type": "coastal_development",
+        "severity": "moderate",
+        "likelihood": "moderate",
+        "evidence": "Surrounding communities expanding; aquaculture and agriculture pressure at mangrove margins"
+      },
+      {
+        "risk_type": "climate_change",
+        "severity": "moderate",
+        "likelihood": "high",
+        "evidence": "Caribbean hurricane exposure; sea level rise affects mangrove zonation"
+      },
+      {
+        "risk_type": "carbon_market_risk",
+        "severity": "moderate",
+        "likelihood": "moderate",
+        "evidence": "VCU prices fluctuate; market credibility of blue carbon credits still establishing"
+      }
+    ],
+    "mitigation": {
+      "governance": "Conservation International management provides international credibility and monitoring",
+      "monitoring": "INVEMAR research institute provides scientific oversight; VCS verification cycle",
+      "adaptation": "Community revenue-sharing creates local incentive for mangrove protection"
+    }
+  },
+
+  "bridge_axiom_applications": [
+    {
+      "axiom_id": "BA-005",
+      "application": "Mangrove coastal protection for Caribbean coastal communities",
+      "calculation": {
+        "mangrove_area_ha": 11000,
+        "protected_coastline_km": 45,
+        "coastal_protection_value_usd": 3200000,
+        "notes": "Mangrove barrier against Caribbean storms"
+      }
+    },
+    {
+      "axiom_id": "BA-006",
+      "application": "Mangrove nursery habitat supporting artisanal fisheries",
+      "calculation": {
+        "mangrove_area_ha": 11000,
+        "fisheries_value_usd": 2800000,
+        "notes": "Nursery function for Caribbean fishery species"
+      }
+    },
+    {
+      "axiom_id": "BA-007",
+      "application": "Mangrove carbon stock - full accounting (above-ground + below-ground + sediment)",
+      "calculation": {
+        "lifetime_sequestration_tonnes": 1000000,
+        "methodology": "First blue carbon project with complete carbon accounting",
+        "notes": "Pioneering methodology includes below-ground sediment carbon"
+      }
+    },
+    {
+      "axiom_id": "BA-014",
+      "application": "Carbon stock to Verified Carbon Unit credit value",
+      "calculation": {
+        "annual_credits_issued_tonnes": 31000,
+        "carbon_price_usd_per_vcu": 15,
+        "annual_credit_revenue_usd": 465000,
+        "notes": "Active VCS credit issuance; Apple is primary corporate buyer"
+      }
+    }
+  ],
+
+  "financial_instruments": {
+    "carbon_credits": {
+      "instrument": "Verra Verified Carbon Units (VCUs)",
+      "registry": "Verra VCS",
+      "methodology": "VM0007 (revised for blue carbon conservation)",
+      "status": "actively_issuing",
+      "credit_area_ha": 7646,
+      "lifetime_credits_tCO2": 939296,
+      "project_duration_years": 30,
+      "corporate_buyer": "Apple Inc.",
+      "community_benefit": "Revenue-sharing with local communities for sustainable livelihoods and ecotourism",
+      "source": {
+        "citation": "Verra VCS Blue Carbon Conservation Project",
+        "url": "https://verra.org/press-release-verra-has-registered-its-first-blue-carbon-conservation-project/"
+      }
+    }
+  },
+
+  "framework_alignment": {
+    "tnfd_leap": {
+      "status": "anticipates alignment with TNFD LEAP framework",
+      "phases": {
+        "locate": "Cispata Bay Mangrove Conservation Area - 110 km2, Caribbean Colombia",
+        "evaluate": "11,000 ha mangrove with full carbon accounting; 1M tonnes lifetime CO2 sequestration",
+        "assess": "$8M annual ESV; A asset rating; active VCS credit issuance",
+        "prepare": "Verra VCS registered; Apple corporate partnership; community revenue-sharing"
+      }
+    },
+    "verra_vcs": {
+      "status": "registered and actively issuing",
+      "methodology": "VM0007 (REDD+ Methodology Framework, adapted for blue carbon conservation)",
+      "relevance": "First blue carbon conservation project registered by Verra; pioneering methodology"
+    }
+  },
+
+  "provenance": {
+    "data_sources": [
+      {
+        "source": "Conservation International - Vida Manglar Carbon Project",
+        "url": "https://www.conservation.org/projects/vida-manglar-carbon-project",
+        "data_type": "Project description, carbon accounting, and outcomes",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "Verra VCS Press Release",
+        "url": "https://verra.org/press-release-verra-has-registered-its-first-blue-carbon-conservation-project/",
+        "data_type": "VCS registration and methodology",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "Global Landscapes Forum",
+        "url": "https://thinklandscape.globallandscapesforum.org/52335/the-first-mangrove-forest-with-full-carbon-calculation-enters-the-carbon-market/",
+        "data_type": "Full carbon accounting methodology description",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "Apple Newsroom",
+        "url": "https://www.apple.com/newsroom/2019/04/conserving-mangroves-a-lifeline-for-the-world/",
+        "data_type": "Corporate partnership and funding details",
+        "access_date": "2026-02-16"
+      }
+    ],
+    "compilation_date": "2026-02-16",
+    "compiled_by": "MARIS POC Team"
+  },
+
+  "caveats": [
+    "Carbon credit revenue ($465K/yr at $15/VCU) is modest but growing; price per VCU fluctuates with voluntary carbon market conditions",
+    "Fisheries and coastal protection values are regional analogue estimates; no site-specific economic valuation published",
+    "Total ESV ($8M/yr) is conservative; full carbon stock value over 30-year project life is ~$14M at current prices",
+    "Community revenue-sharing model is operational but long-term financial sustainability depends on carbon market stability",
+    "Ecotourism program is nascent; potential for growth but not yet a significant revenue source",
+    "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
+  ],
+
+  "demo_value": {
+    "why_cispata_for_demo": [
+      "First mangrove forest with complete carbon accounting (above-ground + below-ground + sediment)",
+      "First blue carbon conservation project registered by Verra VCS",
+      "Active Verified Carbon Unit issuance with corporate buyer (Apple)",
+      "End-to-end blue finance value chain: measurement -> verification -> credit issuance -> corporate purchase -> community benefit",
+      "Demonstrates BA-014 (carbon stock to credit value) in a live, operational context"
+    ],
+    "investor_story": "Cispata Bay is where blue carbon finance became real. This 11,000-hectare mangrove forest was the first to have its complete carbon measured - above-ground, below-ground, and underwater sediments - and the first blue carbon conservation project registered by Verra. With Apple as the primary corporate buyer of its Verified Carbon Units, Cispata demonstrates the complete value chain from mangrove root to carbon credit. Over 30 years, the Vida Manglar project will avoid 939,296 tonnes of CO2 emissions while generating revenue that flows directly to local communities. Nereus rates Cispata A - proven blue carbon methodology with growing market traction.",
+    "key_demo_queries": [
+      "How does Cispata's full carbon accounting work?",
+      "What is the value chain from mangrove to carbon credit?",
+      "How do local communities benefit from carbon credit revenues?",
+      "How does Cispata compare to other blue carbon projects?"
+    ]
+  }
+}

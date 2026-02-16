@@ -1,0 +1,362 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "site": {
+    "@type": "MarineProtectedArea",
+    "@id": "mpa:raja_ampat_mp",
+    "name": "Raja Ampat Marine Park",
+    "country": "Indonesia",
+    "region": "Coral Triangle, West Papua",
+    "coordinates": {
+      "@type": "geo:Point",
+      "latitude": -0.50,
+      "longitude": 130.50
+    },
+    "area_km2": 20001,
+    "designation_year": 2004,
+    "governance": {
+      "management_authority": "Raja Ampat Marine Park Authority (BLUD UPTD KKP Raja Ampat)",
+      "management_plan_year": 2012,
+      "community_engagement": "high",
+      "local_support": "strong",
+      "mpa_network": "9 MPAs totaling 2,000,109 hectares with multiple-use zoning",
+      "blue_bond_jurisdiction": "Indonesia Sovereign Blue Bond (May 2023)"
+    }
+  },
+
+  "neoli_assessment": {
+    "@type": "NEOLIAssessment",
+    "assessment_date": "2024",
+    "criteria": {
+      "no_take": {
+        "value": true,
+        "notes": "Multiple no-take zones within the 9-MPA network; strictly regulated fishing zones"
+      },
+      "enforced": {
+        "value": true,
+        "notes": "Active marine patrols funded by entrance fees; community-based surveillance; Blue Park Award from Marine Conservation Institute"
+      },
+      "old": {
+        "value": true,
+        "notes": "20 years since initial MPA designation (2004); >10 year threshold"
+      },
+      "large": {
+        "value": true,
+        "notes": "20,001 km2 MPA network (>100 km2 threshold)"
+      },
+      "isolated": {
+        "value": false,
+        "notes": "Connected to broader Coral Triangle marine ecosystem; open-water boundaries"
+      }
+    },
+    "neoli_score": 4,
+    "effectiveness_rating": "high",
+    "source": {
+      "citation": "Edgar et al. 2014 Nature",
+      "doi": "10.1038/nature13022"
+    }
+  },
+
+  "ecological_status": {
+    "@type": "EcologicalAssessment",
+    "primary_habitat": "coral_reef",
+    "secondary_habitats": ["mangrove"],
+    "assessment_year": 2022,
+    "last_validated_date": "2026-02-16",
+    "metrics": {
+      "species_counts": {
+        "coral_species": 553,
+        "fish_species": 1600,
+        "mollusc_species": 699,
+        "crustacean_species": 60,
+        "notes": "More than 75% of the world's known coral species found here; epicenter of global marine biodiversity"
+      },
+      "reef_condition": {
+        "live_coral_cover_percent": 70,
+        "trend": "stable to improving in well-managed zones",
+        "notes": "Raja Ampat maintains some of the highest coral cover in the Coral Triangle"
+      },
+      "mangrove_extent": {
+        "notes": "Extensive mangrove forests along coastlines; exact extent not independently quantified in published literature"
+      }
+    },
+    "source": {
+      "citation": "Allen & Erdmann 2012 Reef Fishes of the East Indies",
+      "notes": "Species counts from cumulative survey data compiled by Conservation International and partners"
+    }
+  },
+
+  "ecosystem_services": {
+    "@type": "EcosystemServiceBundle",
+    "last_validated_date": "2026-02-16",
+    "services": [
+      {
+        "@type": "EcosystemService",
+        "service_type": "tourism",
+        "service_category": "cultural",
+        "annual_value_usd": 52500000,
+        "valuation_method": "market_price",
+        "measurement_year": 2023,
+        "beneficiaries": ["local_community", "dive_operators", "homestay_owners", "regional_economy"],
+        "metrics": {
+          "annual_visitors": 45000,
+          "accommodation_units": "200 homestays + 30 resorts",
+          "tourism_multiplier_usd": 31500000,
+          "entrance_fee_idr_foreign": 1700000,
+          "entrance_fee_idr_domestic": 650000,
+          "revenue_allocation": "60% regency income, 15% village tourism development, 25% operational management"
+        },
+        "notes": "Tourism is the primary sustainable economic driver; revenues fund marine patrols, reef rehabilitation, and waste management"
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "fisheries",
+        "service_category": "provisioning",
+        "annual_value_usd": 15000000,
+        "valuation_method": "regional_analogue_estimate",
+        "measurement_year": 2022,
+        "beneficiaries": ["artisanal_fishers", "local_community", "regional_markets"],
+        "metrics": {
+          "fishery_type": "artisanal and small-scale",
+          "reef_productivity_usd_per_km2": 112000,
+          "notes": "Based on Asia-Pacific average coral reef productivity of $112,000/km2 (Spalding et al. 2017) applied conservatively"
+        },
+        "source": {
+          "citation": "Spalding et al. 2017 Marine Policy",
+          "doi": "10.1016/j.marpol.2017.09.030"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "coastal_protection",
+        "service_category": "regulating",
+        "annual_value_usd": 8000000,
+        "valuation_method": "regional_analogue_estimate",
+        "measurement_year": 2022,
+        "metrics": {
+          "reef_extent_km2": 2178,
+          "notes": "Estimated based on global average reef coastal protection values; site-specific measurement needed"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "carbon_sequestration",
+        "service_category": "regulating",
+        "annual_value_usd": 2500000,
+        "valuation_method": "regional_analogue_estimate",
+        "measurement_year": 2024,
+        "metrics": {
+          "notes": "Mangrove-associated blue carbon; exact extent and sequestration rates not independently published for Raja Ampat"
+        }
+      }
+    ],
+    "total_annual_value_usd": 78000000
+  },
+
+  "asset_quality_rating": {
+    "@type": "MARISRating",
+    "rating": "AA",
+    "rating_date": "2024-06-15",
+    "rating_rationale": {
+      "ecological_condition": {
+        "score": 0.95,
+        "weight": 0.40,
+        "notes": "Epicenter of global marine biodiversity; 75%+ of world's coral species; high live coral cover"
+      },
+      "governance_effectiveness": {
+        "score": 0.85,
+        "weight": 0.25,
+        "notes": "Blue Park Award; 9-MPA network with active management; community-based surveillance; entrance fee funding model"
+      },
+      "financial_sustainability": {
+        "score": 0.80,
+        "weight": 0.20,
+        "notes": "Tourism-funded conservation model; Indonesian blue bond jurisdiction; growing visitor economy"
+      },
+      "risk_factors": {
+        "score": 0.70,
+        "weight": 0.15,
+        "notes": "IUU fishing pressure; mining interests; climate-driven bleaching risk; rapid tourism growth management"
+      }
+    },
+    "composite_score": 0.86,
+    "confidence_level": "high"
+  },
+
+  "key_species": [
+    {
+      "@type": "Species",
+      "scientific_name": "Rhincodon typus",
+      "common_name": "Whale shark",
+      "iucn_status": "Endangered",
+      "role_in_ecosystem": "megafauna",
+      "notes": "Regular seasonal aggregations; major tourism draw"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Manta birostris",
+      "common_name": "Giant oceanic manta ray",
+      "iucn_status": "Endangered",
+      "role_in_ecosystem": "megafauna",
+      "notes": "Raja Ampat hosts one of the world's largest known manta ray populations"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Paradisaea rubra",
+      "common_name": "Red bird-of-paradise",
+      "iucn_status": "Near Threatened",
+      "role_in_ecosystem": "terrestrial_endemic",
+      "notes": "Endemic to Raja Ampat islands; flagship species for terrestrial conservation"
+    }
+  ],
+
+  "risk_assessment": {
+    "@type": "RiskProfile",
+    "overall_risk_level": "moderate",
+    "risk_factors": [
+      {
+        "risk_type": "iuu_fishing",
+        "severity": "moderate",
+        "likelihood": "moderate",
+        "evidence": "Illegal, unreported, and unregulated fishing by external fleets documented; enforcement improving"
+      },
+      {
+        "risk_type": "mining_pressure",
+        "severity": "moderate",
+        "likelihood": "moderate",
+        "evidence": "Nickel mining interests in the region; recent government decisions have protected against mining expansion"
+      },
+      {
+        "risk_type": "climate_change",
+        "severity": "moderate",
+        "likelihood": "high",
+        "evidence": "Coral Triangle warming; bleaching events documented though Raja Ampat has shown relative resilience"
+      },
+      {
+        "risk_type": "tourism_pressure",
+        "severity": "low",
+        "likelihood": "moderate",
+        "evidence": "Rapid growth in visitor numbers; carrying capacity estimated at 21,000/yr (2017 study) vs 45,000 actual visitors"
+      }
+    ],
+    "mitigation": {
+      "governance": "9-MPA network with Blue Park Award recognition; Indonesian government marine protection commitment",
+      "monitoring": "Conservation International and local NGO monitoring programs; community-based surveillance",
+      "adaptation": "Entrance fee system funds ongoing conservation; multiple-use zoning balances protection and livelihoods"
+    }
+  },
+
+  "bridge_axiom_applications": [
+    {
+      "axiom_id": "BA-001",
+      "application": "Tourism revenue linked to exceptional coral reef biodiversity and fish biomass",
+      "calculation": {
+        "biodiversity_index": "highest globally (553 coral, 1600 fish species)",
+        "tourism_value_usd": 52500000,
+        "notes": "World's premier dive destination; biodiversity directly drives tourism demand"
+      }
+    },
+    {
+      "axiom_id": "BA-004",
+      "application": "Coral reef coastal protection for island communities",
+      "calculation": {
+        "reef_extent_km2": 2178,
+        "coastal_protection_value_usd": 8000000,
+        "notes": "Fringing and barrier reefs protect inhabited islands from wave energy"
+      }
+    },
+    {
+      "axiom_id": "BA-012",
+      "application": "Reef degradation to fisheries loss risk assessment",
+      "calculation": {
+        "current_reef_condition": "good (70% live coral cover)",
+        "fisheries_at_risk_usd": 15000000,
+        "notes": "High reef condition maintains fisheries productivity; degradation would directly impact livelihoods"
+      }
+    }
+  ],
+
+  "financial_instruments": {
+    "blue_bond": {
+      "instrument": "Indonesia Sovereign Blue Bond",
+      "year": 2023,
+      "notes": "Raja Ampat falls under Indonesia's sovereign blue bond jurisdiction; bond proceeds support marine conservation across Indonesia",
+      "coral_triangle_initiative": "Coral Triangle Initiative on Coral Reefs, Fisheries and Food Security (CTI-CFF) provides multilateral framework"
+    }
+  },
+
+  "framework_alignment": {
+    "tnfd_leap": {
+      "status": "anticipates alignment with TNFD LEAP framework",
+      "phases": {
+        "locate": "Raja Ampat Marine Park - 20,001 km2, Coral Triangle epicenter",
+        "evaluate": "553 coral species, 1,600 fish species; 70% live coral cover; Blue Park Award",
+        "assess": "$78M annual ESV; AA asset rating; moderate risk profile",
+        "prepare": "Indonesian blue bond jurisdiction; entrance fee-funded conservation model"
+      }
+    },
+    "ifc_blue_finance": {
+      "status": "aligned with IFC Blue Finance principles",
+      "relevance": "Indonesian blue bond program; community-based sustainable tourism model"
+    }
+  },
+
+  "provenance": {
+    "data_sources": [
+      {
+        "source": "Allen & Erdmann 2012",
+        "notes": "Reef Fishes of the East Indies - comprehensive species inventory",
+        "data_type": "Species surveys and biodiversity assessment",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "Spalding et al. 2017 Marine Policy",
+        "doi": "10.1016/j.marpol.2017.09.030",
+        "data_type": "Global coral reef tourism and fisheries economic valuation",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "Marine Conservation Institute Blue Parks",
+        "url": "https://marine-conservation.org/blueparks/awardees/raja-ampat/",
+        "data_type": "MPA effectiveness assessment and Blue Park Award",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "Raja Ampat Marine Park Authority",
+        "url": "https://kkprajaampat.com/en/",
+        "data_type": "MPA management data and entrance fee structure",
+        "access_date": "2026-02-16"
+      }
+    ],
+    "compilation_date": "2026-02-16",
+    "compiled_by": "MARIS POC Team"
+  },
+
+  "caveats": [
+    "Fisheries value is a regional analogue estimate based on Asia-Pacific average reef productivity; site-specific valuation study needed",
+    "Coastal protection and carbon sequestration values are regional analogues; no site-specific economic studies published",
+    "Tourism carrying capacity (21,000/yr from 2017 study) is significantly exceeded by current visitor numbers (45,000+); sustainability implications unclear",
+    "Mangrove extent not independently quantified in published literature for the MPA network specifically",
+    "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
+  ],
+
+  "demo_value": {
+    "why_raja_ampat_for_demo": [
+      "Epicenter of global marine biodiversity - more coral and fish species than anywhere on Earth",
+      "Blue Park Award-winning MPA network with innovative entrance fee funding model",
+      "Indonesian sovereign blue bond jurisdiction",
+      "Community-based conservation and tourism model",
+      "Demonstrates Nereus valuation in the Coral Triangle - world's coral stronghold"
+    ],
+    "investor_story": "Raja Ampat is the crown jewel of marine biodiversity - home to 75% of the world's known coral species and 1,600 reef fish species. Its 9-MPA network, funded by tourism entrance fees and recognized with a Blue Park Award, generates $78M/year in ecosystem services while protecting the world's last great coral stronghold. Under Indonesia's sovereign blue bond program, Raja Ampat demonstrates how biodiversity conservation and blue finance converge. Nereus rates Raja Ampat AA - exceptional ecological value with a proven community-based conservation model.",
+    "key_demo_queries": [
+      "Why is Raja Ampat the most biodiverse marine site on Earth?",
+      "How does the entrance fee model fund conservation?",
+      "What is Raja Ampat's economic value from coral reef services?",
+      "How does Raja Ampat connect to Indonesia's blue bond program?"
+    ]
+  }
+}

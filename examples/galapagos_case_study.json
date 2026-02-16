@@ -1,0 +1,376 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "site": {
+    "@type": "MarineProtectedArea",
+    "@id": "mpa:galapagos_mr",
+    "name": "Galapagos Marine Reserve",
+    "country": "Ecuador",
+    "region": "Eastern Tropical Pacific",
+    "coordinates": {
+      "@type": "geo:Point",
+      "latitude": -0.75,
+      "longitude": -91.00
+    },
+    "area_km2": 198000,
+    "designation_year": 1998,
+    "governance": {
+      "management_authority": "Galapagos National Park Directorate (GNPD)",
+      "management_plan_year": 2014,
+      "community_engagement": "high",
+      "local_support": "moderate",
+      "notes": "UNESCO World Heritage Site extension (2001); expanded from 133,000 km2 to 198,000 km2 in 2022"
+    }
+  },
+
+  "neoli_assessment": {
+    "@type": "NEOLIAssessment",
+    "assessment_date": "2024",
+    "criteria": {
+      "no_take": {
+        "value": true,
+        "notes": "No-take zones within the marine reserve; Hermandad Marine Reserve (60,000 km2 no-take) created 2022"
+      },
+      "enforced": {
+        "value": true,
+        "notes": "Active enforcement by GNPD; VMS tracking on fishing vessels; however IUU fishing remains a challenge at reserve boundaries"
+      },
+      "old": {
+        "value": true,
+        "notes": "26 years since marine reserve establishment (1998); Galapagos NP since 1959 (>10 year threshold)"
+      },
+      "large": {
+        "value": true,
+        "notes": "198,000 km2 marine reserve - one of the world's largest MPAs (>100 km2 threshold)"
+      },
+      "isolated": {
+        "value": true,
+        "notes": "Oceanic archipelago 1,000 km off Ecuador's coast; naturally isolated by deep water"
+      }
+    },
+    "neoli_score": 5,
+    "effectiveness_rating": "very_high",
+    "source": {
+      "citation": "Edgar et al. 2014 Nature",
+      "doi": "10.1038/nature13022"
+    }
+  },
+
+  "ecological_status": {
+    "@type": "EcologicalAssessment",
+    "primary_habitat": "coral_reef",
+    "secondary_habitats": ["kelp_forest", "mangrove"],
+    "assessment_year": 2022,
+    "last_validated_date": "2026-02-16",
+    "metrics": {
+      "species_counts": {
+        "marine_species_total": 2900,
+        "fish_species": 447,
+        "endemic_fish_species": 51,
+        "fish_endemism_percent": 17,
+        "notes": "Nearly 3,000 marine species; 17% fish endemism rate"
+      },
+      "habitat_diversity": {
+        "coral_reefs": "Present in warmer northern and central islands; marginal due to cool Humboldt Current",
+        "kelp_forests": "Deep sea kelp forests mapped in cooler waters; extremely rare in tropical latitudes",
+        "mangroves": "Coastal mangrove stands across multiple islands",
+        "notes": "Unique convergence of tropical, temperate, and cold-water habitats due to Humboldt, Cromwell, and Panama currents"
+      },
+      "mangrove_carbon": {
+        "carbon_stored_tonnes": 1824240,
+        "annual_capture_tonnes": 600,
+        "mangrove_area_ha": 12400,
+        "carbon_value_per_ha_usd": 2940,
+        "source_doi": "10.1016/j.ecolecon.2018.12.014"
+      }
+    },
+    "source": {
+      "citation": "Charles Darwin Foundation research programs",
+      "url": "https://www.darwinfoundation.org"
+    }
+  },
+
+  "ecosystem_services": {
+    "@type": "EcosystemServiceBundle",
+    "last_validated_date": "2026-02-16",
+    "services": [
+      {
+        "@type": "EcosystemService",
+        "service_type": "tourism",
+        "service_category": "cultural",
+        "annual_value_usd": 275000000,
+        "valuation_method": "market_price",
+        "measurement_year": 2018,
+        "beneficiaries": ["local_community", "tourism_operators", "national_economy", "global_visitors"],
+        "metrics": {
+          "annual_visitors": 271238,
+          "visitor_growth_2014_2018": "27%",
+          "jobs_supported": 41000,
+          "mangrove_tourism_value_per_ha_usd": 16958,
+          "mangrove_tourism_total_usd": 62000000,
+          "notes": "Tourism revenues increased from $194M (2014) to $275M (2018); 27% growth"
+        },
+        "source": {
+          "citation": "Charles Darwin Foundation ESV study",
+          "url": "https://www.darwinfoundation.org/en/news/all-news-stories/ecosystem-services-in-the-gmr-and-their-valuation/"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "carbon_sequestration",
+        "service_category": "regulating",
+        "annual_value_usd": 36500000,
+        "valuation_method": "market_price",
+        "measurement_year": 2018,
+        "beneficiaries": ["global_climate", "carbon_credit_buyers"],
+        "metrics": {
+          "carbon_stored_tonnes": 1824240,
+          "carbon_price_usd_per_tonne": 20,
+          "mangrove_area_ha": 12400,
+          "notes": "1.8M tonnes carbon stored in mangroves; valued at $20/tonne (2018 price); $36.5M total stock value"
+        },
+        "source": {
+          "citation": "Tanner et al. 2019 Ecological Economics",
+          "doi": "10.1016/j.ecolecon.2018.12.014"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "fisheries",
+        "service_category": "provisioning",
+        "annual_value_usd": 5900000,
+        "valuation_method": "market_price",
+        "measurement_year": 2018,
+        "beneficiaries": ["artisanal_fishers", "local_community"],
+        "metrics": {
+          "mangrove_fishery_net_benefit_usd": 900000,
+          "total_fisheries_value": "Multi-species artisanal fishery",
+          "notes": "Mangrove-supported fin-fishery provides >$900K net benefits/yr; total fisheries value larger"
+        },
+        "source": {
+          "citation": "Tanner et al. 2019 Ecological Economics",
+          "doi": "10.1016/j.ecolecon.2018.12.014"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "coastal_protection",
+        "service_category": "regulating",
+        "annual_value_usd": 3500000,
+        "valuation_method": "regional_analogue_estimate",
+        "measurement_year": 2022,
+        "metrics": {
+          "notes": "Estimated based on mangrove and reef coastal protection; site-specific avoided cost study not published"
+        }
+      }
+    ],
+    "total_annual_value_usd": 320900000
+  },
+
+  "asset_quality_rating": {
+    "@type": "MARISRating",
+    "rating": "AAA",
+    "rating_date": "2024-06-15",
+    "rating_rationale": {
+      "ecological_condition": {
+        "score": 0.92,
+        "weight": 0.40,
+        "notes": "Unique multi-habitat convergence (coral, kelp, mangrove); 17% fish endemism; naturally isolated oceanic archipelago"
+      },
+      "governance_effectiveness": {
+        "score": 0.90,
+        "weight": 0.25,
+        "notes": "UNESCO World Heritage Site; GNPD active management; reserve expanded in 2022; Hermandad no-take zone"
+      },
+      "financial_sustainability": {
+        "score": 0.88,
+        "weight": 0.20,
+        "notes": "Tourism generates $275M/yr; 41,000 jobs; visitor entrance fees fund conservation"
+      },
+      "risk_factors": {
+        "score": 0.75,
+        "weight": 0.15,
+        "notes": "IUU fishing at boundaries; El Nino bleaching events; invasive species pressure"
+      }
+    },
+    "composite_score": 0.89,
+    "confidence_level": "high"
+  },
+
+  "key_species": [
+    {
+      "@type": "Species",
+      "scientific_name": "Amblyrhynchus cristatus",
+      "common_name": "Marine iguana",
+      "iucn_status": "Vulnerable",
+      "role_in_ecosystem": "endemic_herbivore",
+      "notes": "World's only marine lizard; endemic to Galapagos; major tourism draw"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Chelonoidis niger",
+      "common_name": "Galapagos giant tortoise",
+      "iucn_status": "Vulnerable",
+      "role_in_ecosystem": "keystone_herbivore",
+      "notes": "Iconic Galapagos species; conservation success story"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Sphyrna lewini",
+      "common_name": "Scalloped hammerhead shark",
+      "iucn_status": "Critically Endangered",
+      "role_in_ecosystem": "apex_predator",
+      "notes": "Large aggregations at Gordon Rocks and Wolf/Darwin islands; key indicator of reef health"
+    }
+  ],
+
+  "risk_assessment": {
+    "@type": "RiskProfile",
+    "overall_risk_level": "moderate",
+    "risk_factors": [
+      {
+        "risk_type": "iuu_fishing",
+        "severity": "high",
+        "likelihood": "moderate",
+        "evidence": "Large foreign fishing fleets operate near reserve boundaries; vessels sometimes disable transponders to avoid detection"
+      },
+      {
+        "risk_type": "el_nino_events",
+        "severity": "high",
+        "likelihood": "moderate",
+        "evidence": "El Nino causes warming, coral bleaching, and marine iguana starvation; 1997-98 event caused severe mortality"
+      },
+      {
+        "risk_type": "invasive_species",
+        "severity": "moderate",
+        "likelihood": "high",
+        "evidence": "Introduced rats, cats, and goats threaten terrestrial ecosystems; marine invasives emerging concern"
+      },
+      {
+        "risk_type": "tourism_pressure",
+        "severity": "moderate",
+        "likelihood": "moderate",
+        "evidence": "271,000 visitors/yr; carrying capacity management essential; some sites show wear"
+      }
+    ],
+    "mitigation": {
+      "governance": "UNESCO World Heritage status; GNPD active management; expanded marine reserve (2022)",
+      "monitoring": "Charles Darwin Foundation provides long-term scientific monitoring",
+      "adaptation": "Hermandad Marine Reserve (60,000 km2 no-take) created 2022 to buffer against IUU fishing"
+    }
+  },
+
+  "bridge_axiom_applications": [
+    {
+      "axiom_id": "BA-001",
+      "application": "Tourism revenue linked to marine biodiversity and fish biomass",
+      "calculation": {
+        "tourism_value_usd": 275000000,
+        "endemic_species_premium": "17% fish endemism drives unique tourism proposition",
+        "notes": "Tourism is overwhelmingly the dominant ecosystem service"
+      }
+    },
+    {
+      "axiom_id": "BA-003",
+      "application": "Kelp forest carbon cascade (Galapagos deep kelp)",
+      "calculation": {
+        "kelp_presence": "Deep sea kelp forests documented - rare in tropical latitudes",
+        "notes": "Kelp extent and carbon contribution not yet quantified for Galapagos"
+      }
+    },
+    {
+      "axiom_id": "BA-006",
+      "application": "Mangrove nursery habitat supporting fisheries",
+      "calculation": {
+        "mangrove_area_ha": 12400,
+        "fishery_net_benefit_usd": 900000,
+        "notes": "Mangrove-supported fin-fishery (Tanner et al. 2019)"
+      }
+    },
+    {
+      "axiom_id": "BA-007",
+      "application": "Mangrove carbon stock valuation",
+      "calculation": {
+        "carbon_stored_tonnes": 1824240,
+        "carbon_value_usd": 36500000,
+        "notes": "1.8M tonnes C stored in mangroves at $20/tonne"
+      }
+    }
+  ],
+
+  "framework_alignment": {
+    "tnfd_leap": {
+      "status": "anticipates alignment with TNFD LEAP framework",
+      "phases": {
+        "locate": "Galapagos Marine Reserve - 198,000 km2, UNESCO World Heritage since 2001",
+        "evaluate": "2,900 marine species; coral + kelp + mangrove; 1.8M tonnes C in mangroves",
+        "assess": "$320.9M annual ESV; AAA asset rating; tourism-dominant ($275M/yr)",
+        "prepare": "World Bank blue economy program; emerging carbon credit interest"
+      }
+    },
+    "ifc_blue_finance": {
+      "status": "potential alignment with IFC Blue Finance principles",
+      "relevance": "Mangrove carbon credits and sustainable tourism model"
+    }
+  },
+
+  "provenance": {
+    "data_sources": [
+      {
+        "source": "Charles Darwin Foundation ESV Study",
+        "url": "https://www.darwinfoundation.org/en/news/all-news-stories/ecosystem-services-in-the-gmr-and-their-valuation/",
+        "data_type": "Comprehensive ecosystem service valuation",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "Tanner et al. 2019 Ecological Economics",
+        "doi": "10.1016/j.ecolecon.2018.12.014",
+        "data_type": "Mangrove ecosystem services valuation",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "Wikipedia - Galapagos Marine Reserve",
+        "url": "https://en.wikipedia.org/wiki/Gal%C3%A1pagos_Marine_Reserve",
+        "data_type": "General reserve statistics and species counts",
+        "access_date": "2026-02-16"
+      },
+      {
+        "source": "UNESCO World Heritage Centre",
+        "url": "https://whc.unesco.org/en/list/1/",
+        "data_type": "Site designation and monitoring reports",
+        "access_date": "2026-02-16"
+      }
+    ],
+    "compilation_date": "2026-02-16",
+    "compiled_by": "MARIS POC Team"
+  },
+
+  "caveats": [
+    "Carbon stock value ($36.5M) represents total accumulated stock at $20/tonne (2018 price), not annual sequestration flow",
+    "Kelp forest extent and carbon contribution are not yet quantified for Galapagos; deep-sea kelp is rare and difficult to survey",
+    "Tourism figures are from 2018 and likely higher post-recovery from COVID-19 disruption",
+    "Fisheries value includes multiple species and methods; mangrove-specific fisheries contribution separately quantified at $900K/yr",
+    "Coastal protection value is a regional analogue estimate; no site-specific study published",
+    "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
+  ],
+
+  "demo_value": {
+    "why_galapagos_for_demo": [
+      "Iconic global conservation brand - Darwin's 'enchanted islands'",
+      "Unique multi-habitat convergence (coral, kelp, mangrove) in single reserve",
+      "NEOLI score 5/5 - highest possible effectiveness rating",
+      "Published ESV data: $275M/yr tourism, $36.5M mangrove carbon stock",
+      "$321M total annual ESV demonstrates the scale of marine natural capital"
+    ],
+    "investor_story": "The Galapagos Marine Reserve is the gold standard for marine conservation - a NEOLI 5/5 site spanning 198,000 km2 with the unique convergence of coral, kelp, and mangrove habitats. Generating $321M/year in ecosystem services dominated by $275M in tourism, the Galapagos demonstrates that fully protected marine reserves are among the world's most valuable natural assets. With 1.8M tonnes of carbon stored in its mangroves and emerging blue economy programs, the reserve exemplifies the financial case for marine protection at scale. Nereus rates the Galapagos AAA - the reference standard for marine natural capital.",
+    "key_demo_queries": [
+      "What makes the Galapagos the highest-rated marine site?",
+      "How much carbon is stored in Galapagos mangroves?",
+      "What is the Galapagos Marine Reserve's tourism value?",
+      "How does the Galapagos demonstrate multi-habitat valuation?"
+    ]
+  }
+}
