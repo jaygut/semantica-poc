@@ -375,7 +375,8 @@ def _link_axioms_to_site(session, site_name: str, habitats: set[str]) -> None:
     """Link bridge axioms to a site based on its habitat types."""
     # Coral reef axioms
     if "coral_reef" in habitats:
-        for aid in ("BA-001", "BA-002", "BA-004", "BA-011", "BA-012"):
+        for aid in ("BA-001", "BA-002", "BA-004", "BA-011", "BA-012",
+                     "BA-023", "BA-026", "BA-028", "BA-029"):
             session.run(
                 """
                 MATCH (a:BridgeAxiom {axiom_id: $aid})
@@ -387,7 +388,7 @@ def _link_axioms_to_site(session, site_name: str, habitats: set[str]) -> None:
 
     # Seagrass axioms
     if "seagrass_meadow" in habitats:
-        for aid in ("BA-008", "BA-013"):
+        for aid in ("BA-008", "BA-013", "BA-025"):
             session.run(
                 """
                 MATCH (a:BridgeAxiom {axiom_id: $aid})
@@ -399,7 +400,7 @@ def _link_axioms_to_site(session, site_name: str, habitats: set[str]) -> None:
 
     # Mangrove axioms
     if "mangrove_forest" in habitats:
-        for aid in ("BA-005", "BA-006", "BA-007"):
+        for aid in ("BA-005", "BA-006", "BA-007", "BA-017"):
             session.run(
                 """
                 MATCH (a:BridgeAxiom {axiom_id: $aid})
@@ -411,7 +412,7 @@ def _link_axioms_to_site(session, site_name: str, habitats: set[str]) -> None:
 
     # Kelp axioms
     if "kelp_forest" in habitats:
-        for aid in ("BA-003", "BA-010"):
+        for aid in ("BA-003", "BA-010", "BA-018"):
             session.run(
                 """
                 MATCH (a:BridgeAxiom {axiom_id: $aid})
@@ -424,7 +425,7 @@ def _link_axioms_to_site(session, site_name: str, habitats: set[str]) -> None:
     # Carbon axioms (apply to any site with carbon-relevant habitats)
     carbon_habitats = {"seagrass_meadow", "mangrove_forest", "kelp_forest"}
     if habitats & carbon_habitats:
-        for aid in ("BA-014", "BA-015", "BA-016"):
+        for aid in ("BA-014", "BA-015", "BA-016", "BA-020", "BA-021", "BA-022"):
             session.run(
                 """
                 MATCH (a:BridgeAxiom {axiom_id: $aid})
@@ -433,6 +434,96 @@ def _link_axioms_to_site(session, site_name: str, habitats: set[str]) -> None:
                 """,
                 {"aid": aid, "name": site_name},
             )
+
+    # Cross-cutting axioms (apply to all MPAs)
+    for aid in ("BA-027", "BA-034", "BA-035"):
+        session.run(
+            """
+            MATCH (a:BridgeAxiom {axiom_id: $aid})
+            MATCH (m:MPA {name: $name})
+            MERGE (a)-[:APPLIES_TO]->(m)
+            """,
+            {"aid": aid, "name": site_name},
+        )
+
+
+# ---------------------------------------------------------------------------
+# Concept node populator
+# ---------------------------------------------------------------------------
+def _populate_concepts(session, cfg) -> int:
+    """Populate Concept nodes and their relationships from concepts.json."""
+    concepts_path = Path(cfg.project_root) / "data" / "semantica_export" / "concepts.json"
+    if not concepts_path.exists():
+        print("  WARNING: concepts.json not found, skipping concept population.")
+        return 0
+
+    data = _load_json(concepts_path)
+    count = 0
+
+    for concept in data.get("concepts", []):
+        concept_id = concept.get("concept_id", "")
+        if not concept_id:
+            continue
+
+        # Merge Concept node
+        session.run(
+            """
+            MERGE (c:Concept {concept_id: $concept_id})
+            SET c.name = $name,
+                c.description = $description,
+                c.domain = $domain,
+                c.applicable_habitats = $habitats
+            """,
+            {
+                "concept_id": concept_id,
+                "name": concept.get("name", ""),
+                "description": concept.get("description", ""),
+                "domain": concept.get("domain", ""),
+                "habitats": concept.get("applicable_habitats", []),
+            },
+        )
+        count += 1
+
+        # INVOLVES_AXIOM edges
+        for axiom_id in concept.get("involved_axiom_ids", []):
+            session.run(
+                """
+                MATCH (c:Concept {concept_id: $concept_id})
+                MATCH (ba:BridgeAxiom {axiom_id: $axiom_id})
+                MERGE (c)-[:INVOLVES_AXIOM]->(ba)
+                """,
+                {"concept_id": concept_id, "axiom_id": axiom_id},
+            )
+            count += 1
+
+        # RELEVANT_TO habitat edges
+        for habitat in concept.get("applicable_habitats", []):
+            hab_id = _HABITAT_IDS.get(habitat, habitat)
+            session.run(
+                """
+                MATCH (c:Concept {concept_id: $concept_id})
+                MATCH (h:Habitat {habitat_id: $hab_id})
+                MERGE (c)-[:RELEVANT_TO]->(h)
+                """,
+                {"concept_id": concept_id, "hab_id": hab_id},
+            )
+            count += 1
+
+        # DOCUMENTED_BY edges
+        for doi in concept.get("key_document_dois", []):
+            if doi:
+                session.run(
+                    """
+                    MATCH (c:Concept {concept_id: $concept_id})
+                    MATCH (d:Document {doi: $doi})
+                    MERGE (c)-[:DOCUMENTED_BY]->(d)
+                    """,
+                    {"concept_id": concept_id, "doi": doi},
+                )
+                count += 1
+
+    print(f"  Concepts: {count} nodes/edges merged.")
+    return count
 
 
 # ---------------------------------------------------------------------------
@@ -500,13 +591,14 @@ def _dry_run(case_paths: list[Path], sites: list[tuple[str, Path]]) -> None:
         "2. Entities (from entities.jsonld)",
         "3. Cabo Pulmo enrichment (legacy, via population.py)",
         "4. Shark Bay enrichment (legacy, via population.py)",
-        "5. Bridge Axioms (16 axioms with evidence links)",
+        "5. Bridge Axioms (35 axioms with evidence links)",
         "6. Comparison sites (GBR, Papahanaumokuakea)",
         "7. Curated relationships (15 cross-domain edges)",
         "8. Cross-domain links (habitat-MPA, framework-MPA)",
         "9. Provenance edges (Cabo Pulmo sources)",
-        "10. ALL case study sites (generic populator - new in v4)",
-        "11. Dynamic site registration (query classifier)",
+        "10. ALL case study sites (generic populator)",
+        "11. Concept nodes and relationships (from concepts.json)",
+        "12. Dynamic site registration (query classifier)",
     ]
     for stage in stages:
         print(f"  {stage}")
@@ -607,8 +699,13 @@ def populate_v4(validate: bool = False) -> int:
             total += _populate_case_study_site(session, path)
         print()
 
+        # Populate concepts and their relationships
+        print("Step 4: Populating concept nodes and relationships...")
+        total += _populate_concepts(session, cfg)
+        print()
+
     # Register all sites with the query classifier
-    print("Step 4: Registering sites for query classification...")
+    print("Step 5: Registering sites for query classification...")
     site_names = [name for name, _ in sites]
     n_registered = register_dynamic_sites(site_names)
     print(f"  Registered {n_registered} dynamic site patterns.")
@@ -621,7 +718,7 @@ def populate_v4(validate: bool = False) -> int:
 
     if validate:
         print()
-        print("Step 5: Validating graph...")
+        print("Step 6: Validating graph...")
         _validate_v4(driver, cfg)
 
     driver.close()
@@ -694,6 +791,7 @@ def _validate_v4(driver, cfg) -> None:
         checks["has_mpas"] = node_counts.get("MPA", 0) >= 4
         checks["has_axioms"] = node_counts.get("BridgeAxiom", 0) >= 12
         checks["has_services"] = node_counts.get("EcosystemService", 0) > 0
+        checks["has_concepts"] = node_counts.get("Concept", 0) >= 10
 
         # All axioms have evidence
         result = session.run(
