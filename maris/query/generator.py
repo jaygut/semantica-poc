@@ -19,6 +19,7 @@ _CATEGORY_HOPS = {
     "site_valuation": 1,
     "provenance_drilldown": 2,
     "axiom_explanation": 2,
+    "concept_explanation": 2,
     "comparison": 1,
     "risk_assessment": 3,
     "open_domain": 3,
