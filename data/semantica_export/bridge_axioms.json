@@ -415,13 +415,527 @@
       ],
       "confidence": "medium",
       "validation": "Well-governed no-take MPA provides ~50-year carbon permanence (range 25-100 years)"
+    },
+    {
+      "axiom_id": "BA-017",
+      "name": "mangrove_carbon_sequestration_rate",
+      "domain_from": "ecological",
+      "domain_to": "service",
+      "description": "Mangrove ecosystems sequester atmospheric carbon at high annual rates through biomass accumulation and sediment burial",
+      "formula": "sequestration_tCO2_yr = mangrove_area_ha * sequestration_rate * condition_factor",
+      "coefficients": {
+        "sequestration_rate_tCO2_ha_yr": 6.4,
+        "aboveground_fraction": 0.30
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "donato_2011_mangrove_carbon",
+          "doi": "10.1038/ngeo1123",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "murdiyarso_2023_indonesia_ef",
+          "doi": "10.1186/s13021-023-00233-1",
+          "support_type": "supporting"
+        },
+        {
+          "doc_id": "alongi_2014_mangrove_carbon_update",
+          "doi": "10.1146/annurev-marine-010213-135020",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "high",
+      "validation": "100 ha healthy mangrove sequesters ~640 tCO2/yr (range 210-1,080 tCO2/yr)"
+    },
+    {
+      "axiom_id": "BA-018",
+      "name": "kelp_carbon_export",
+      "domain_from": "ecological",
+      "domain_to": "service",
+      "description": "Kelp forests export dissolved and particulate organic carbon to the deep ocean via DOC/POC pathways",
+      "formula": "carbon_export_tC_yr = kelp_area_ha * export_rate",
+      "coefficients": {
+        "carbon_export_rate_tC_ha_yr": 0.34,
+        "sequestration_efficiency_percent": 11
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "krause_jensen_2016_macroalgae_carbon",
+          "doi": "10.1038/ngeo2790",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "wilson_2025_kelp_seagrass_export",
+          "doi": "10.1126/sciadv.adw1952",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "medium",
+      "validation": "1,000 ha kelp forest exports ~340 tC/yr to deep ocean (range 100-680 tC/yr)"
+    },
+    {
+      "axiom_id": "BA-019",
+      "name": "salt_marsh_carbon_sequestration",
+      "domain_from": "ecological",
+      "domain_to": "service",
+      "description": "Salt marshes sequester atmospheric carbon through annual burial in waterlogged sediments",
+      "formula": "sequestration_tCO2_yr = salt_marsh_area_ha * sequestration_rate * condition_factor",
+      "coefficients": {
+        "sequestration_rate_tCO2_ha_yr": 2.1
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "howard_2017_blue_carbon_primer",
+          "doi": "10.1002/fee.1451",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "mcleod_2021_blue_carbon_methods",
+          "doi": "10.1038/s41467-019-11693-w",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "high",
+      "validation": "100 ha salt marsh sequesters ~210 tCO2/yr (range 90-380 tCO2/yr)"
+    },
+    {
+      "axiom_id": "BA-020",
+      "name": "blue_carbon_additionality",
+      "domain_from": "service",
+      "domain_to": "financial",
+      "description": "Carbon credit projects must demonstrate additionality - the difference between project sequestration and counterfactual baseline",
+      "formula": "creditable_tCO2 = (project_sequestration - baseline) * additionality_rate",
+      "coefficients": {
+        "additionality_rate": 0.50
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "duarte_2025_seagrass_carbon_credits",
+          "doi": "10.1038/s44183-025-00111-y",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "lovelock_2019_blue_carbon_permanence",
+          "doi": "10.3389/fevo.2019.00338",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "medium",
+      "validation": "40-60% of gross sequestration typically qualifies as additional for crediting purposes"
+    },
+    {
+      "axiom_id": "BA-021",
+      "name": "carbon_permanence_discount",
+      "domain_from": "service",
+      "domain_to": "financial",
+      "description": "Blue carbon credits require buffer pool deductions to account for reversibility risk",
+      "formula": "net_credits = gross_credits * (1 - buffer_pool_fraction)",
+      "coefficients": {
+        "buffer_pool_fraction": 0.175
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "lovelock_2025_permanence_risks",
+          "doi": "10.1038/s43247-025-02035-4",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "oreska_2020_seagrass_ghg_offset",
+          "doi": "10.1038/s41598-020-64094-1",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "high",
+      "validation": "10-25% buffer pool deduction applied to gross credits based on site risk profile"
+    },
+    {
+      "axiom_id": "BA-022",
+      "name": "carbon_price_sensitivity",
+      "domain_from": "service",
+      "domain_to": "financial",
+      "description": "Ecosystem service value from blue carbon is sensitive to voluntary carbon market price fluctuations",
+      "formula": "esv_change = sequestration_tCO2_yr * price_change_usd",
+      "coefficients": {
+        "price_range_usd_per_tCO2": [5, 50],
+        "central_price_usd_per_tCO2": 30
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "duarte_2025_seagrass_carbon_credits",
+          "doi": "10.1038/s44183-025-00111-y",
+          "support_type": "primary"
+        }
+      ],
+      "confidence": "medium",
+      "validation": "Carbon ESV ranges 10x across plausible VCM price range ($5-50/tCO2)"
+    },
+    {
+      "axiom_id": "BA-023",
+      "name": "coral_reef_wave_attenuation_coefficient",
+      "domain_from": "ecological",
+      "domain_to": "service",
+      "description": "Coral reef structural complexity determines wave energy reduction with species and depth modulation",
+      "formula": "wave_energy_reduction = f(reef_condition, reef_depth)",
+      "coefficients": {
+        "wave_energy_reduction_healthy_percent": 97,
+        "wave_energy_reduction_degraded_percent": 70,
+        "depth_sensitivity_percent_per_10cm": 2
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "beck_2018_coral_flood_protection",
+          "doi": "10.1038/s41467-018-04568-z",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "reguero_2025_hybrid_restoration",
+          "doi": "10.1126/sciadv.adn4004",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "high",
+      "validation": "Healthy reef: 97% wave energy reduction (94-99%); degraded: 70% (50-85%)"
+    },
+    {
+      "axiom_id": "BA-024",
+      "name": "mangrove_storm_surge_reduction",
+      "domain_from": "ecological",
+      "domain_to": "service",
+      "description": "Mangrove forests attenuate storm surge height proportionally to forest width",
+      "formula": "surge_reduction_cm = mangrove_width_km * reduction_rate_cm_per_km",
+      "coefficients": {
+        "surge_reduction_cm_per_km": 20,
+        "reduction_range_cm_per_km": [5, 50]
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "montgomery_2019_storm_surge_attenuation",
+          "doi": "10.1029/2018GL081636",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "menendez_2020_mangrove_flood_protection",
+          "doi": "10.1038/s41598-020-61136-6",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "high",
+      "validation": "5-50 cm/km storm surge reduction depending on mangrove density and structure"
+    },
+    {
+      "axiom_id": "BA-025",
+      "name": "seagrass_sediment_stabilization",
+      "domain_from": "ecological",
+      "domain_to": "service",
+      "description": "Seagrass meadows stabilize coastal sediments through root binding and wave dampening",
+      "formula": "erosion_prevention_value = seagrass_area_ha * value_per_ha",
+      "coefficients": {
+        "erosion_prevention_value_usd_ha_yr": 8750,
+        "wave_attenuation_percent": 40
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "ondiviela_2025_wave_attenuation",
+          "doi": "10.3389/fmars.2025.1620592",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "nordlund_2023_seagrass_services_review",
+          "doi": "10.1007/s10750-023-05244-0",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "medium",
+      "validation": "Seagrass provides $2,500-15,000/ha/yr erosion prevention; 20-70% wave attenuation"
+    },
+    {
+      "axiom_id": "BA-026",
+      "name": "reef_insurance_trigger_value",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Parametric insurance for coral reefs uses wind speed thresholds to trigger rapid restoration funding",
+      "formula": "payout = f(wind_speed, coverage_area, trigger_threshold)",
+      "coefficients": {
+        "wind_speed_trigger_kmh": 130,
+        "average_payout_usd_per_event": 3500000
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "reguero_2025_hybrid_restoration",
+          "doi": "10.1126/sciadv.adn4004",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "lumbroso_2025_caribbean_nbs",
+          "doi": "10.1111/jfr3.70141",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "medium",
+      "validation": "Wind speed >130 km/h triggers reef insurance payout; avg $3.5M per event"
+    },
+    {
+      "axiom_id": "BA-027",
+      "name": "mpa_spillover_fisheries_value",
+      "domain_from": "ecological",
+      "domain_to": "service",
+      "description": "MPA biomass accumulation generates spillover to adjacent fishing grounds, increasing catches",
+      "formula": "adjacent_catch = baseline_catch * spillover_multiplier",
+      "coefficients": {
+        "adjacent_catch_increase_multiplier": 2.0,
+        "spillover_distance_km": 5
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "hopf_2024_notake_meta",
+          "doi": "10.1002/eap.3027",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "edgar_2014_nature_mpa_neoli",
+          "doi": "10.1038/nature13022",
+          "support_type": "supporting"
+        },
+        {
+          "doc_id": "gaines_2010_designing_networks",
+          "doi": "10.1073/pnas.0906473107",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "high",
+      "validation": "1.5-3x catch increase in areas adjacent to well-managed MPAs"
+    },
+    {
+      "axiom_id": "BA-028",
+      "name": "marine_ecotourism_elasticity",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Visitor WTP for marine ecotourism declines with ecosystem condition loss",
+      "formula": "wtp_decline_percent = coral_cover_loss_percent / 10 * elasticity_coefficient",
+      "coefficients": {
+        "wtp_decline_per_10pct_coral_loss_percent": 22,
+        "minimum_coral_cover_for_tourism_percent": 20
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "wolff_2022_maui_bleaching_economics",
+          "doi": "10.1016/j.ecolecon.2022.107692",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "spalding_2017_coral_tourism_value",
+          "doi": "10.1016/j.marpol.2017.05.014",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "high",
+      "validation": "15-30% WTP decline per 10% coral cover loss; below 20% cover, tourism collapses"
+    },
+    {
+      "axiom_id": "BA-029",
+      "name": "coral_bleaching_tourism_loss",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Coral bleaching reduces reef tourism revenue proportionally to thermal stress severity",
+      "formula": "revenue_decline_percent = degree_heating_weeks * decline_rate",
+      "coefficients": {
+        "revenue_decline_per_dhw_percent": 7,
+        "recovery_time_mild_years": 3,
+        "recovery_time_severe_years": 10
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "wolff_2022_maui_bleaching_economics",
+          "doi": "10.1016/j.ecolecon.2022.107692",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "hughes_2018_spatial_temporal_bleaching",
+          "doi": "10.1126/science.aan8048",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "medium",
+      "validation": "3-12% revenue decline per degree-heating-week; mild recovery 3yr, severe 10yr"
+    },
+    {
+      "axiom_id": "BA-030",
+      "name": "species_richness_insurance_value",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Higher species richness acts as biological insurance, reducing portfolio risk for ecosystem services",
+      "formula": "risk_reduction = richness_increase_percent / 10 * insurance_coefficient",
+      "coefficients": {
+        "risk_reduction_per_10pct_richness_increase_percent": 11,
+        "functional_redundancy_threshold_species": 50
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "edgar_2014_nature_mpa_neoli",
+          "doi": "10.1038/nature13022",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "cinner_2016_bright_spots",
+          "doi": "10.1038/nature18607",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "medium",
+      "validation": "8-15% risk reduction per 10% species richness increase"
+    },
+    {
+      "axiom_id": "BA-031",
+      "name": "debt_for_nature_swap_ratio",
+      "domain_from": "financial",
+      "domain_to": "financial",
+      "description": "Sovereign debt-for-nature swaps convert distressed debt into conservation funding at discounted rates",
+      "formula": "conservation_funding = debt_face_value * discount_fraction * commitment_fraction",
+      "coefficients": {
+        "debt_discount_fraction": 0.40,
+        "conservation_commitment_fraction": 0.30
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "subramaniam_2025_seychelles_blue",
+          "doi": "10.1016/j.marpol.2025.106XXX",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "sumaila_2021_ocean_finance",
+          "doi": "10.1016/j.oneear.2021.06.006",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "medium",
+      "validation": "30-50% discount on face value; Seychelles precedent committed 30% EEZ as MPA"
+    },
+    {
+      "axiom_id": "BA-032",
+      "name": "blue_bond_coupon_premium",
+      "domain_from": "financial",
+      "domain_to": "financial",
+      "description": "Blue bonds may trade at a yield premium (greenium) compared to conventional bonds",
+      "formula": "annual_savings = bond_face_value * greenium_bps / 10000",
+      "coefficients": {
+        "greenium_basis_points": 8,
+        "typical_issuance_usd_million": 100
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "wang_2023_blue_bond_catalyst",
+          "doi": "10.3390/jrfm16030184",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "tucker_2022_blue_bonds_trends",
+          "doi": "10.1016/j.marpol.2022.105219",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "low",
+      "validation": "2-15 bps greenium for blue bonds; market still developing with limited issuances"
+    },
+    {
+      "axiom_id": "BA-033",
+      "name": "ecosystem_restoration_roi",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Active ecosystem restoration generates measurable ROI through recovered ecosystem services",
+      "formula": "bcr = ecosystem_service_value / restoration_cost",
+      "coefficients": {
+        "bcr_mangrove": 10.68,
+        "bcr_coral": 5.0,
+        "bcr_seagrass": 4.0
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "zeng_2025_mangrove_restoration_roi",
+          "doi": "10.1038/s41467-025-56587-2",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "bayraktarov_2016_restoration_costs",
+          "doi": "10.1002/eap.1344",
+          "support_type": "supporting"
+        },
+        {
+          "doc_id": "orth_2020_seagrass_service_recovery",
+          "doi": "10.1126/sciadv.abc6434",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "high",
+      "validation": "BCR 3-15x across habitats; mangrove highest (6.35-15x), coral (3-8x), seagrass (2-7x)"
+    },
+    {
+      "axiom_id": "BA-034",
+      "name": "mpa_network_connectivity_bonus",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Connected MPA networks provide greater portfolio-level value than isolated reserves",
+      "formula": "portfolio_bonus = base_value * connectivity_multiplier",
+      "coefficients": {
+        "portfolio_value_increase_percent": 22,
+        "minimum_network_size_sites": 5
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "gaines_2010_designing_networks",
+          "doi": "10.1073/pnas.0906473107",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "holstein_2015_caribbean_connectivity",
+          "doi": "10.1371/journal.pone.0144199",
+          "support_type": "supporting"
+        },
+        {
+          "doc_id": "cowen_2009_larval_dispersal",
+          "doi": "10.1146/annurev.marine.010908.163757",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "medium",
+      "validation": "15-30% portfolio value increase from network connectivity; min 5 connected sites"
+    },
+    {
+      "axiom_id": "BA-035",
+      "name": "climate_adaptation_avoided_cost",
+      "domain_from": "ecological",
+      "domain_to": "financial",
+      "description": "Ecosystem-based adaptation avoids future infrastructure costs with high benefit-cost ratios vs grey alternatives",
+      "formula": "bcr = grey_infrastructure_cost / eba_investment",
+      "coefficients": {
+        "eba_bcr": 5.0,
+        "cost_savings_vs_grey_percent": 50
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "lumbroso_2025_caribbean_nbs",
+          "doi": "10.1111/jfr3.70141",
+          "support_type": "primary"
+        },
+        {
+          "doc_id": "gattuso_2018_ocean_solutions",
+          "doi": "10.3389/fmars.2018.00337",
+          "support_type": "supporting"
+        },
+        {
+          "doc_id": "roberts_2017_30_percent",
+          "doi": "10.1073/pnas.1701262114",
+          "support_type": "supporting"
+        }
+      ],
+      "confidence": "medium",
+      "validation": "BCR 2-10x for EbA vs grey infrastructure; 30-80% cost savings"
     }
   ],
   "export_metadata": {
-    "generated_at": "2026-02-11T12:00:00Z",
-    "source_version": "1.3",
-    "source_updated": "2026-02-11",
-    "axiom_count": 16,
-    "regeneration_reason": "Added BA-013 through BA-016 blue carbon axioms with research-grounded coefficients"
+    "generated_at": "2026-02-16T12:00:00Z",
+    "source_version": "2.0",
+    "source_updated": "2026-02-16",
+    "axiom_count": 35,
+    "regeneration_reason": "Expanded axiom set from 16 to 35: added BA-017 through BA-035 for mechanism reasoning and Concept node traversal support"
   }
 }
