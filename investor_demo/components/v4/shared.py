@@ -574,6 +574,53 @@ def axiom_tag(axiom_id: str) -> str:
     )
 
 
+def valuation_method_badge(method: str) -> str:
+    """Return HTML for a color-coded ESV valuation method badge.
+
+    Colors indicate evidence strength:
+    - Green (#00C853) for market_price (strongest evidence)
+    - Yellow (#FFD600) for avoided_cost (moderate)
+    - Orange (#FF6D00) for regional_analogue_estimate (weakest)
+    """
+    _METHOD_DISPLAY = {
+        "market_price": "Market Price",
+        "avoided_cost": "Avoided Cost",
+        "regional_analogue_estimate": "Regional Analogue",
+        "expenditure_method": "Expenditure Method",
+    }
+    _METHOD_COLORS = {
+        "market_price": "#00C853",
+        "avoided_cost": "#FFD600",
+        "regional_analogue_estimate": "#FF6D00",
+        "expenditure_method": "#FFD600",
+    }
+    label = _METHOD_DISPLAY.get(method, method.replace("_", " ").title())
+    color = _METHOD_COLORS.get(method, "#94A3B8")
+    return (
+        f'<span style="display:inline-block;padding:2px 8px;border-radius:4px;'
+        f"font-size:12px;font-weight:600;color:{color};"
+        f'background:rgba({_hex_to_rgb(color)},0.15);'
+        f'border:1px solid rgba({_hex_to_rgb(color)},0.3)">{label}</span>'
+    )
+
+
+def esv_quality_ratio(services: list[dict]) -> dict[str, float]:
+    """Compute the proportion of ESV from each valuation method.
+
+    Returns a dict mapping method names to their share of total ESV.
+    """
+    totals: dict[str, float] = {}
+    grand_total = 0.0
+    for svc in services:
+        method = svc.get("valuation_method", "unknown")
+        value = svc.get("annual_value_usd", 0)
+        totals[method] = totals.get(method, 0) + value
+        grand_total += value
+    if grand_total <= 0:
+        return {}
+    return {k: v / grand_total for k, v in totals.items()}
+
+
 def habitat_pill(habitat_id: str) -> str:
     """Return HTML for a habitat type pill."""
     label = _HABITAT_DISPLAY.get(habitat_id, habitat_id.replace("_", " ").title())

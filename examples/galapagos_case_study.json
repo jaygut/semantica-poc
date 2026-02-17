@@ -13,7 +13,7 @@
     "coordinates": {
       "@type": "geo:Point",
       "latitude": -0.75,
-      "longitude": -91.00
+      "longitude": -91.0
     },
     "area_km2": 198000,
     "designation_year": 1998,
@@ -25,7 +25,6 @@
       "notes": "UNESCO World Heritage Site extension (2001); expanded from 133,000 km2 to 198,000 km2 in 2022"
     }
   },
-
   "neoli_assessment": {
     "@type": "NEOLIAssessment",
     "assessment_date": "2024",
@@ -55,14 +54,18 @@
     "effectiveness_rating": "very_high",
     "source": {
       "citation": "Edgar et al. 2014 Nature",
-      "doi": "10.1038/nature13022"
+      "doi": "10.1038/nature13022",
+      "doi_url": "https://doi.org/10.1038/nature13022",
+      "source_tier": "T1"
     }
   },
-
   "ecological_status": {
     "@type": "EcologicalAssessment",
     "primary_habitat": "coral_reef",
-    "secondary_habitats": ["kelp_forest", "mangrove"],
+    "secondary_habitats": [
+      "kelp_forest",
+      "mangrove"
+    ],
     "assessment_year": 2022,
     "last_validated_date": "2026-02-16",
     "metrics": {
@@ -89,10 +92,10 @@
     },
     "source": {
       "citation": "Charles Darwin Foundation research programs",
-      "url": "https://www.darwinfoundation.org"
+      "url": "https://www.darwinfoundation.org",
+      "source_tier": "T2"
     }
   },
-
   "ecosystem_services": {
     "@type": "EcosystemServiceBundle",
     "last_validated_date": "2026-02-16",
@@ -104,7 +107,12 @@
         "annual_value_usd": 275000000,
         "valuation_method": "market_price",
         "measurement_year": 2018,
-        "beneficiaries": ["local_community", "tourism_operators", "national_economy", "global_visitors"],
+        "beneficiaries": [
+          "local_community",
+          "tourism_operators",
+          "national_economy",
+          "global_visitors"
+        ],
         "metrics": {
           "annual_visitors": 271238,
           "visitor_growth_2014_2018": "27%",
@@ -115,7 +123,14 @@
         },
         "source": {
           "citation": "Charles Darwin Foundation ESV study",
-          "url": "https://www.darwinfoundation.org/en/news/all-news-stories/ecosystem-services-in-the-gmr-and-their-valuation/"
+          "url": "https://www.darwinfoundation.org/en/news/all-news-stories/ecosystem-services-in-the-gmr-and-their-valuation/",
+          "source_tier": "T2"
+        },
+        "confidence_interval": {
+          "ci_low": 220000000,
+          "ci_high": 330000000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -125,7 +140,10 @@
         "annual_value_usd": 36500000,
         "valuation_method": "market_price",
         "measurement_year": 2018,
-        "beneficiaries": ["global_climate", "carbon_credit_buyers"],
+        "beneficiaries": [
+          "global_climate",
+          "carbon_credit_buyers"
+        ],
         "metrics": {
           "carbon_stored_tonnes": 1824240,
           "carbon_price_usd_per_tonne": 20,
@@ -134,7 +152,15 @@
         },
         "source": {
           "citation": "Tanner et al. 2019 Ecological Economics",
-          "doi": "10.1016/j.ecolecon.2018.12.014"
+          "doi": "10.1016/j.ecolecon.2018.12.014",
+          "doi_url": "https://doi.org/10.1016/j.ecolecon.2018.12.014",
+          "source_tier": "T1"
+        },
+        "confidence_interval": {
+          "ci_low": 29200000,
+          "ci_high": 43800000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -144,7 +170,10 @@
         "annual_value_usd": 5900000,
         "valuation_method": "market_price",
         "measurement_year": 2018,
-        "beneficiaries": ["artisanal_fishers", "local_community"],
+        "beneficiaries": [
+          "artisanal_fishers",
+          "local_community"
+        ],
         "metrics": {
           "mangrove_fishery_net_benefit_usd": 900000,
           "total_fisheries_value": "Multi-species artisanal fishery",
@@ -152,7 +181,15 @@
         },
         "source": {
           "citation": "Tanner et al. 2019 Ecological Economics",
-          "doi": "10.1016/j.ecolecon.2018.12.014"
+          "doi": "10.1016/j.ecolecon.2018.12.014",
+          "doi_url": "https://doi.org/10.1016/j.ecolecon.2018.12.014",
+          "source_tier": "T1"
+        },
+        "confidence_interval": {
+          "ci_low": 4720000,
+          "ci_high": 7080000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -164,12 +201,17 @@
         "measurement_year": 2022,
         "metrics": {
           "notes": "Estimated based on mangrove and reef coastal protection; site-specific avoided cost study not published"
+        },
+        "confidence_interval": {
+          "ci_low": 1750000,
+          "ci_high": 5250000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       }
     ],
     "total_annual_value_usd": 320900000
   },
-
   "asset_quality_rating": {
     "@type": "MARISRating",
     "rating": "AAA",
@@ -177,17 +219,17 @@
     "rating_rationale": {
       "ecological_condition": {
         "score": 0.92,
-        "weight": 0.40,
+        "weight": 0.4,
         "notes": "Unique multi-habitat convergence (coral, kelp, mangrove); 17% fish endemism; naturally isolated oceanic archipelago"
       },
       "governance_effectiveness": {
-        "score": 0.90,
+        "score": 0.9,
         "weight": 0.25,
         "notes": "UNESCO World Heritage Site; GNPD active management; reserve expanded in 2022; Hermandad no-take zone"
       },
       "financial_sustainability": {
         "score": 0.88,
-        "weight": 0.20,
+        "weight": 0.2,
         "notes": "Tourism generates $275M/yr; 41,000 jobs; visitor entrance fees fund conservation"
       },
       "risk_factors": {
@@ -199,7 +241,6 @@
     "composite_score": 0.89,
     "confidence_level": "high"
   },
-
   "key_species": [
     {
       "@type": "Species",
@@ -227,7 +268,6 @@
       "notes": "Large aggregations at Gordon Rocks and Wolf/Darwin islands; key indicator of reef health"
     }
   ],
-
   "risk_assessment": {
     "@type": "RiskProfile",
     "overall_risk_level": "moderate",
@@ -263,7 +303,6 @@
       "adaptation": "Hermandad Marine Reserve (60,000 km2 no-take) created 2022 to buffer against IUU fishing"
     }
   },
-
   "bridge_axiom_applications": [
     {
       "axiom_id": "BA-001",
@@ -301,7 +340,6 @@
       }
     }
   ],
-
   "framework_alignment": {
     "tnfd_leap": {
       "status": "anticipates alignment with TNFD LEAP framework",
@@ -317,38 +355,41 @@
       "relevance": "Mangrove carbon credits and sustainable tourism model"
     }
   },
-
   "provenance": {
     "data_sources": [
       {
         "source": "Charles Darwin Foundation ESV Study",
         "url": "https://www.darwinfoundation.org/en/news/all-news-stories/ecosystem-services-in-the-gmr-and-their-valuation/",
         "data_type": "Comprehensive ecosystem service valuation",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       },
       {
         "source": "Tanner et al. 2019 Ecological Economics",
         "doi": "10.1016/j.ecolecon.2018.12.014",
+        "doi_url": "https://doi.org/10.1016/j.ecolecon.2018.12.014",
         "data_type": "Mangrove ecosystem services valuation",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T1"
       },
       {
         "source": "Wikipedia - Galapagos Marine Reserve",
         "url": "https://en.wikipedia.org/wiki/Gal%C3%A1pagos_Marine_Reserve",
         "data_type": "General reserve statistics and species counts",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T4"
       },
       {
         "source": "UNESCO World Heritage Centre",
         "url": "https://whc.unesco.org/en/list/1/",
         "data_type": "Site designation and monitoring reports",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       }
     ],
     "compilation_date": "2026-02-16",
     "compiled_by": "MARIS POC Team"
   },
-
   "caveats": [
     "Carbon stock value ($36.5M) represents total accumulated stock at $20/tonne (2018 price), not annual sequestration flow",
     "Kelp forest extent and carbon contribution are not yet quantified for Galapagos; deep-sea kelp is rare and difficult to survey",
@@ -357,7 +398,13 @@
     "Coastal protection value is a regional analogue estimate; no site-specific study published",
     "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
   ],
-
+  "provenance_summary": {
+    "total_sources": 6,
+    "doi_backed": 2,
+    "url_only": 4,
+    "doi_coverage_pct": 33.3,
+    "evidence_tier_distribution": {"T1": 2, "T2": 3, "T3": 0, "T4": 1}
+  },
   "demo_value": {
     "why_galapagos_for_demo": [
       "Iconic global conservation brand - Darwin's 'enchanted islands'",

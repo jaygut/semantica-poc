@@ -26,6 +26,7 @@ from investor_demo.components.v4.shared import (  # noqa: E402
     COLORS,
     axiom_tag,
     fmt_usd,
+    valuation_method_badge,
 )
 from maris.sites.esv_estimator import _HABITAT_AXIOM_MAP  # noqa: E402
 
@@ -297,18 +298,23 @@ def _normalize_site_data(data: dict[str, Any], site: str) -> dict[str, Any]:
                 .replace("_", " ")
                 .title()
             )
+            ci = svc.get("confidence_interval", {})
             out["services"].append({
                 "name": name,
                 "value": svc.get("annual_value_usd", 0),
+                "valuation_method": svc.get("valuation_method", ""),
+                "ci_low": ci.get("ci_low"),
+                "ci_high": ci.get("ci_high"),
             })
-        # Compute Monte Carlo from services
+        # Compute Monte Carlo from services using CI bounds from data
         mc_services = []
         for svc in esv_bundle["services"]:
             val = svc.get("annual_value_usd", 0)
+            ci = svc.get("confidence_interval", {})
             mc_services.append({
                 "value": val,
-                "ci_low": val * 0.7,
-                "ci_high": val * 1.3,
+                "ci_low": ci.get("ci_low", val * 0.7),
+                "ci_high": ci.get("ci_high", val * 1.3),
             })
         try:
             from maris.axioms.monte_carlo import run_monte_carlo
@@ -482,7 +488,15 @@ def _render_kpi_strip(nd: dict[str, Any], *, scenario: str = "p50") -> None:
         with st.expander("ESV Derivation"):
             st.markdown("**Service Breakdown**")
             for svc in sorted(nd["services"], key=lambda s: s["value"], reverse=True):
-                st.markdown(f"- {svc['name']}: **{fmt_usd(svc['value'])}**")
+                method = svc.get("valuation_method", "")
+                badge = f" {valuation_method_badge(method)}" if method else ""
+                ci_low = svc.get("ci_low")
+                ci_high = svc.get("ci_high")
+                ci_text = f" (CI: {fmt_usd(ci_low)} - {fmt_usd(ci_high)})" if ci_low and ci_high else ""
+                st.markdown(
+                    f"- {svc['name']}: **{fmt_usd(svc['value'])}**{ci_text} {badge}",
+                    unsafe_allow_html=True,
+                )
 
             if mc.get("mean") and mc.get("std"):
                 _render_mc_mini(mc)
@@ -838,8 +852,17 @@ def _render_valuation_composition(nd: dict[str, Any]) -> None:
     col_chart, col_ci = st.columns([3, 2])
 
     with col_chart:
-        bar_colors = ["#7C3AED", "#6D28D9", "#5B21B6", "#4C1D95"]
-        colors = [bar_colors[i % len(bar_colors)] for i in range(len(sorted_svcs))]
+        # Color bars by valuation method strength
+        _METHOD_BAR_COLORS = {
+            "market_price": "#00C853",
+            "avoided_cost": "#FFD600",
+            "regional_analogue_estimate": "#FF6D00",
+            "expenditure_method": "#FFD600",
+        }
+        colors = [
+            _METHOD_BAR_COLORS.get(s.get("valuation_method", ""), "#7C3AED")
+            for s in sorted_svcs
+        ]
 
         fig = go.Figure()
         fig.add_trace(go.Bar(

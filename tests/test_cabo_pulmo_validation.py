@@ -100,11 +100,18 @@ class TestMonteCarlo:
         services = []
         for svc in case_study["ecosystem_services"]["services"]:
             val = svc["annual_value_usd"]
-            ci = svc.get("confidence_interval")
+            ci = svc.get("confidence_interval", {})
+            if isinstance(ci, dict):
+                ci_low = ci.get("ci_low", val * 0.8)
+                ci_high = ci.get("ci_high", val * 1.2)
+            elif isinstance(ci, (list, tuple)) and len(ci) >= 2:
+                ci_low, ci_high = ci[0], ci[1]
+            else:
+                ci_low, ci_high = val * 0.8, val * 1.2
             services.append({
                 "value": val,
-                "ci_low": ci[0] if ci else val * 0.8,
-                "ci_high": ci[1] if (ci and len(ci) > 1) else val * 1.2,
+                "ci_low": ci_low,
+                "ci_high": ci_high,
             })
         result = run_monte_carlo(services, n_simulations=10_000, seed=42)
         deviation = abs(result["median"] - 29_270_000) / 29_270_000

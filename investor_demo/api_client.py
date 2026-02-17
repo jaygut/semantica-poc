@@ -176,6 +176,17 @@ class StaticBundleClient:
         }
 
     def query(self, question: str, site: str | None = None) -> dict:
+        # When a site is provided, try site-contextualized variants first
+        # so that "What are the risks?" + site="Cabo Pulmo National Park"
+        # matches the Cabo Pulmo risk response, not a generic one.
+        if site and site.lower() not in question.lower():
+            for variant in [
+                f"{question.rstrip('?')} for {site}?",
+                f"{question.rstrip('?')} {site}?",
+            ]:
+                candidate = self._match(variant)
+                if candidate.get("confidence", 0) > 0:
+                    return candidate
         return self._match(question)
 
     def get_health(self) -> dict:

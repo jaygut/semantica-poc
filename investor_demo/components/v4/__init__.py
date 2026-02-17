@@ -20,3 +20,6 @@ from investor_demo.components.v4.shared import (  # noqa: F401
     render_service_health,
     tier_badge,
 )
+from investor_demo.components.v4.site_intelligence import (  # noqa: F401
+    render_site_intelligence,
+)

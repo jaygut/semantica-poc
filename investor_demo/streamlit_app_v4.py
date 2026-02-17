@@ -105,9 +105,15 @@ if "v4_llm_ok" not in st.session_state:
 # ---------------------------------------------------------------------------
 # API Client (lazy init based on mode)
 # ---------------------------------------------------------------------------
+_V4_PRECOMPUTED = Path(__file__).parent / "precomputed_responses_v4.json"
+
 if "v4_client" not in st.session_state:
-    from api_client import get_client
-    st.session_state.v4_client = get_client()
+    from api_client import get_client, StaticBundleClient as _SBC
+    _client = get_client()
+    # If static fallback, prefer the v4-specific precomputed file
+    if not _client.is_live and _V4_PRECOMPUTED.exists():
+        _client = _SBC(precomputed_path=_V4_PRECOMPUTED)
+    st.session_state.v4_client = _client
 
 client = st.session_state.v4_client
 
@@ -134,7 +140,9 @@ with st.sidebar:
             )
         else:
             from api_client import StaticBundleClient
-            st.session_state.v4_client = StaticBundleClient()
+            st.session_state.v4_client = StaticBundleClient(
+                precomputed_path=_V4_PRECOMPUTED
+            )
         client = st.session_state.v4_client
 
     # Service health panel
@@ -246,7 +254,7 @@ tab_names = [
     "Intelligence Brief",
     "Ask Nereus",
     "Scenario Lab",
-    "Site Scout",
+    "Site Intelligence",
     "TNFD Compliance",
 ]
 tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs(tab_names)
@@ -286,24 +294,8 @@ with tab3:
         )
 
 with tab4:
-    st.markdown("### Site Scout")
-    st.info(
-        "Live MPA characterization coming soon. The auto-characterization pipeline "
-        "(OBIS/WoRMS/Marine Regions) is built and tested - integration into the v4 "
-        "dashboard is planned for the next release."
-    )
-    st.markdown(
-        '<div class="thesis-block">'
-        '<div class="thesis-lead">Pipeline Ready, Dashboard Pending</div>'
-        '<div class="thesis-body">'
-        "The <strong>SiteCharacterizer</strong> can characterize any MPA on Earth "
-        "using OBIS, WoRMS, and Marine Regions APIs. It performs a 5-step pipeline: "
-        "Locate, Populate, Characterize (Bronze/Silver/Gold), Estimate ESV, and Score. "
-        "28 unit tests verify the pipeline. Dashboard integration is deferred to reduce "
-        "demo risk from flaky external APIs."
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
+    from investor_demo.components.v4.site_intelligence import render_site_intelligence
+    render_site_intelligence()
 
 with tab5:
     if is_feature_available(tier, "tnfd_compliance"):

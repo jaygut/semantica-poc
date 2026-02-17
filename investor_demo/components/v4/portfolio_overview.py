@@ -20,8 +20,10 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from investor_demo.components.v4.shared import (  # noqa: E402
     COLORS,
+    esv_quality_ratio,
     fmt_usd,
     get_all_sites,
+    get_site_data,
     habitat_pill,
 )
 
@@ -107,6 +109,32 @@ def _render_kpi_strip(agg: dict[str, Any]) -> None:
             )
 
 
+def _esv_quality_badge(site_name: str) -> str:
+    """Return an HTML badge showing the market-price ESV share for a site."""
+    data = get_site_data(site_name)
+    if not data:
+        return ""
+    services = data.get("ecosystem_services", {}).get("services", [])
+    ratios = esv_quality_ratio(services)
+    mp_pct = ratios.get("market_price", 0)
+    if mp_pct >= 0.7:
+        color = "#00C853"
+        label = f"{mp_pct:.0%} MP"
+    elif mp_pct >= 0.4:
+        color = "#FFD600"
+        label = f"{mp_pct:.0%} MP"
+    else:
+        color = "#FF6D00"
+        label = f"{mp_pct:.0%} MP"
+    r, g, b = int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16)
+    return (
+        f'<span style="display:inline-block;padding:2px 6px;border-radius:4px;'
+        f"font-size:11px;font-weight:600;color:{color};"
+        f"background:rgba({r},{g},{b},0.15);"
+        f'border:1px solid rgba({r},{g},{b},0.3)">{label}</span>'
+    )
+
+
 def _render_site_table(sites: list[dict[str, Any]]) -> None:
     """Render the full portfolio table with habitat pills and tier badges."""
     header = (
@@ -115,6 +143,7 @@ def _render_site_table(sites: list[dict[str, Any]]) -> None:
         "<th>Country</th>"
         "<th>Habitat</th>"
         "<th>ESV</th>"
+        "<th>Quality</th>"
         "<th>Rating</th>"
         "<th>NEOLI</th>"
         "<th>Tier</th>"
@@ -133,6 +162,9 @@ def _render_site_table(sites: list[dict[str, Any]]) -> None:
         # ESV
         esv = s.get("total_esv", 0)
         esv_str = fmt_usd(esv) if esv else "N/A"
+
+        # Data quality badge
+        quality = _esv_quality_badge(s.get("name", ""))
 
         # Rating
         rating = s.get("asset_rating", "-")
@@ -159,6 +191,7 @@ def _render_site_table(sites: list[dict[str, Any]]) -> None:
             f"<td>{s.get('country', '')}</td>"
             f"<td>{h_pill}</td>"
             f"<td style='font-weight:600'>{esv_str}</td>"
+            f"<td>{quality}</td>"
             f"<td style='font-weight:600'>{rating}</td>"
             f"<td>{dots}</td>"
             f"<td><span class='{tier_cls}'>{tier}</span></td>"

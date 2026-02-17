@@ -139,11 +139,12 @@ def _extract_services(data: dict[str, Any], site: str) -> list[dict[str, Any]]:
         raw_name = svc.get("service_type", "unknown")
         canonical = _SERVICE_NAME_MAP.get(raw_name, raw_name.replace("_", " ").title())
         val = float(svc.get("annual_value_usd", 0))
+        ci = svc.get("confidence_interval", {})
         services.append({
             "service_name": canonical,
             "value": val,
-            "ci_low": val * 0.7,
-            "ci_high": val * 1.3,
+            "ci_low": float(ci.get("ci_low", val * 0.7)),
+            "ci_high": float(ci.get("ci_high", val * 1.3)),
         })
 
     return services

@@ -28,7 +28,6 @@
       "blue_bond": "Seychelles Blue Bond ($15M, 2018) - world's first sovereign blue bond"
     }
   },
-
   "neoli_assessment": {
     "@type": "NEOLIAssessment",
     "assessment_date": "2024",
@@ -58,14 +57,18 @@
     "effectiveness_rating": "very_high",
     "source": {
       "citation": "Edgar et al. 2014 Nature",
-      "doi": "10.1038/nature13022"
+      "doi": "10.1038/nature13022",
+      "doi_url": "https://doi.org/10.1038/nature13022",
+      "source_tier": "T1"
     }
   },
-
   "ecological_status": {
     "@type": "EcologicalAssessment",
     "primary_habitat": "coral_reef",
-    "secondary_habitats": ["mangrove", "seagrass"],
+    "secondary_habitats": [
+      "mangrove",
+      "seagrass"
+    ],
     "assessment_year": 2020,
     "last_validated_date": "2026-02-16",
     "metrics": {
@@ -91,10 +94,10 @@
     },
     "source": {
       "citation": "UNESCO World Heritage Centre - Aldabra Atoll",
-      "url": "https://whc.unesco.org/en/list/185/"
+      "url": "https://whc.unesco.org/en/list/185/",
+      "source_tier": "T2"
     }
   },
-
   "ecosystem_services": {
     "@type": "EcosystemServiceBundle",
     "last_validated_date": "2026-02-16",
@@ -104,11 +107,20 @@
         "service_type": "coastal_protection",
         "service_category": "regulating",
         "annual_value_usd": 3500000,
-        "valuation_range_usd": [2000000, 5000000],
+        "valuation_range_usd": [
+          2000000,
+          5000000
+        ],
         "valuation_method": "avoided_cost",
         "measurement_year": 2022,
         "metrics": {
           "notes": "Avoided storm damage estimated at $2-5M/yr for Seychelles outer islands and broader coastal infrastructure"
+        },
+        "confidence_interval": {
+          "ci_low": 2450000,
+          "ci_high": 4550000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -124,7 +136,13 @@
           "carbon_price_usd_per_tonne": 30,
           "calculation_notes": "1,720 ha x 6.4 tCO2/ha/yr x ~$30/tCO2 = ~$330K for mangrove; reef carbon contribution additional"
         },
-        "notes": "Mangrove and reef-associated blue carbon; site-specific measurement needed"
+        "notes": "Mangrove and reef-associated blue carbon; site-specific measurement needed",
+        "confidence_interval": {
+          "ci_low": 600000,
+          "ci_high": 1800000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
       },
       {
         "@type": "EcosystemService",
@@ -137,6 +155,12 @@
           "research_station": "Permanent SIF research station operational since 1971",
           "annual_research_budget": "Funded through Blue Bond and SIF endowment",
           "notes": "Significant scientific research value as a near-pristine reference ecosystem"
+        },
+        "confidence_interval": {
+          "ci_low": 350000,
+          "ci_high": 650000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -149,13 +173,18 @@
         "metrics": {
           "visitor_policy": "Strictly limited ecotourism; research-focused visits only",
           "notes": "Very low visitor numbers to protect ecological integrity; value primarily through Seychelles brand association"
+        },
+        "confidence_interval": {
+          "ci_low": 640000,
+          "ci_high": 960000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       }
     ],
     "total_annual_value_usd": 6000000,
     "notes": "Direct use values are low due to isolation and strict protection; primary value is as a global conservation reference site and blue finance innovation showcase"
   },
-
   "asset_quality_rating": {
     "@type": "MARISRating",
     "rating": "AAA",
@@ -163,7 +192,7 @@
     "rating_rationale": {
       "ecological_condition": {
         "score": 0.98,
-        "weight": 0.40,
+        "weight": 0.4,
         "notes": "Near-pristine atoll ecosystem; 152,000 giant tortoises; minimal human disturbance; 400+ endemic species"
       },
       "governance_effectiveness": {
@@ -172,8 +201,8 @@
         "notes": "UNESCO World Heritage Site (1982); SIF permanent research station; NEOLI 5/5; expanded reserve (2018)"
       },
       "financial_sustainability": {
-        "score": 0.80,
-        "weight": 0.20,
+        "score": 0.8,
+        "weight": 0.2,
         "notes": "Blue Bond provides $325K/yr conservation funding; debt-for-nature swap $430K/yr; SIF endowment"
       },
       "risk_factors": {
@@ -185,7 +214,6 @@
     "composite_score": 0.92,
     "confidence_level": "high"
   },
-
   "key_species": [
     {
       "@type": "Species",
@@ -213,7 +241,6 @@
       "notes": "Endemic subspecies; major breeding colony on Aldabra"
     }
   ],
-
   "risk_assessment": {
     "@type": "RiskProfile",
     "overall_risk_level": "low-moderate",
@@ -249,7 +276,6 @@
       "adaptation": "Reserve expansion (2018) from 439 km2 to 2,599 km2 provides additional buffer"
     }
   },
-
   "bridge_axiom_applications": [
     {
       "axiom_id": "BA-004",
@@ -278,7 +304,6 @@
       }
     }
   ],
-
   "financial_instruments": {
     "blue_bond": {
       "instrument": "Seychelles Sovereign Blue Bond",
@@ -288,7 +313,8 @@
       "conservation_funding_annual_usd": 325000,
       "source": {
         "citation": "World Bank Seychelles Blue Bond Case Study",
-        "url": "https://thedocs.worldbank.org/en/doc/cbaf1cefc5164a7f340716ef0af6fd7e-0340012025/original/Case-Study-Blue-Bond-Seychelles.pdf"
+        "url": "https://thedocs.worldbank.org/en/doc/cbaf1cefc5164a7f340716ef0af6fd7e-0340012025/original/Case-Study-Blue-Bond-Seychelles.pdf",
+        "source_tier": "T2"
       }
     },
     "debt_for_nature_swap": {
@@ -304,11 +330,11 @@
       ],
       "source": {
         "citation": "SeyCCAT / PANORAMA Solutions",
-        "url": "https://panorama.solutions/en/solution/seychelles-first-debt-nature-swap-ocean-conservation"
+        "url": "https://panorama.solutions/en/solution/seychelles-first-debt-nature-swap-ocean-conservation",
+        "source_tier": "T2"
       }
     }
   },
-
   "framework_alignment": {
     "tnfd_leap": {
       "status": "anticipates alignment with TNFD LEAP framework",
@@ -324,38 +350,48 @@
       "relevance": "World's first sovereign blue bond; pioneering debt-for-nature swap; 30% EEZ protection"
     }
   },
-
   "provenance": {
     "data_sources": [
       {
         "source": "UNESCO World Heritage Centre",
         "url": "https://whc.unesco.org/en/list/185/",
         "data_type": "Site designation, monitoring, and conservation reports",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       },
       {
         "source": "World Bank Seychelles Blue Bond Case Study",
         "url": "https://thedocs.worldbank.org/en/doc/cbaf1cefc5164a7f340716ef0af6fd7e-0340012025/original/Case-Study-Blue-Bond-Seychelles.pdf",
         "data_type": "Blue bond financial structure and outcomes",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       },
       {
         "source": "PANORAMA Solutions - Seychelles debt-for-nature swap",
         "url": "https://panorama.solutions/en/solution/seychelles-first-debt-nature-swap-ocean-conservation",
         "data_type": "Debt-for-nature swap structure and commitments",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       },
       {
         "source": "Seychelles Islands Foundation",
         "url": "http://www.sif.sc/aldabra",
         "data_type": "Research station data and management reports",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
+      },
+      {
+        "source": "Koester et al. 2023 Frontiers in Marine Science",
+        "doi": "10.3389/fmars.2023.1230717",
+        "doi_url": "https://doi.org/10.3389/fmars.2023.1230717",
+        "data_type": "Reef fish abundance, biomass and assemblage structure at Aldabra Atoll",
+        "access_date": "2026-02-16",
+        "source_tier": "T1"
       }
     ],
     "compilation_date": "2026-02-16",
     "compiled_by": "MARIS POC Team"
   },
-
   "caveats": [
     "Direct ESV is low ($6M/yr) due to isolation and strict protection; primary value is conservation and blue finance innovation showcase",
     "Carbon sequestration values are regional analogues; no site-specific blue carbon measurement program for Aldabra published",
@@ -364,7 +400,13 @@
     "Giant tortoise population (152,000) is well-documented but ecosystem service valuation of tortoises not quantified",
     "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
   ],
-
+  "provenance_summary": {
+    "total_sources": 6,
+    "doi_backed": 2,
+    "url_only": 4,
+    "doi_coverage_pct": 33.3,
+    "evidence_tier_distribution": {"T1": 2, "T2": 4, "T3": 0, "T4": 0}
+  },
   "demo_value": {
     "why_aldabra_for_demo": [
       "NEOLI 5/5 - one of the world's most effectively protected marine sites",

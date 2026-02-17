@@ -56,3 +56,6 @@ data/registry_purge_report.json
 # Test artifacts
 provenance.db
 *.db
+
+# Runtime PID/log files from launch.sh
+.pids/

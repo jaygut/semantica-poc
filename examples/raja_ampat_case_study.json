@@ -12,8 +12,8 @@
     "region": "Coral Triangle, West Papua",
     "coordinates": {
       "@type": "geo:Point",
-      "latitude": -0.50,
-      "longitude": 130.50
+      "latitude": -0.5,
+      "longitude": 130.5
     },
     "area_km2": 20001,
     "designation_year": 2004,
@@ -26,7 +26,6 @@
       "blue_bond_jurisdiction": "Indonesia Sovereign Blue Bond (May 2023)"
     }
   },
-
   "neoli_assessment": {
     "@type": "NEOLIAssessment",
     "assessment_date": "2024",
@@ -56,14 +55,17 @@
     "effectiveness_rating": "high",
     "source": {
       "citation": "Edgar et al. 2014 Nature",
-      "doi": "10.1038/nature13022"
+      "doi": "10.1038/nature13022",
+      "doi_url": "https://doi.org/10.1038/nature13022",
+      "source_tier": "T1"
     }
   },
-
   "ecological_status": {
     "@type": "EcologicalAssessment",
     "primary_habitat": "coral_reef",
-    "secondary_habitats": ["mangrove"],
+    "secondary_habitats": [
+      "mangrove"
+    ],
     "assessment_year": 2022,
     "last_validated_date": "2026-02-16",
     "metrics": {
@@ -88,7 +90,6 @@
       "notes": "Species counts from cumulative survey data compiled by Conservation International and partners"
     }
   },
-
   "ecosystem_services": {
     "@type": "EcosystemServiceBundle",
     "last_validated_date": "2026-02-16",
@@ -100,7 +101,12 @@
         "annual_value_usd": 52500000,
         "valuation_method": "market_price",
         "measurement_year": 2023,
-        "beneficiaries": ["local_community", "dive_operators", "homestay_owners", "regional_economy"],
+        "beneficiaries": [
+          "local_community",
+          "dive_operators",
+          "homestay_owners",
+          "regional_economy"
+        ],
         "metrics": {
           "annual_visitors": 45000,
           "accommodation_units": "200 homestays + 30 resorts",
@@ -109,7 +115,13 @@
           "entrance_fee_idr_domestic": 650000,
           "revenue_allocation": "60% regency income, 15% village tourism development, 25% operational management"
         },
-        "notes": "Tourism is the primary sustainable economic driver; revenues fund marine patrols, reef rehabilitation, and waste management"
+        "notes": "Tourism is the primary sustainable economic driver; revenues fund marine patrols, reef rehabilitation, and waste management",
+        "confidence_interval": {
+          "ci_low": 42000000,
+          "ci_high": 63000000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
       },
       {
         "@type": "EcosystemService",
@@ -118,7 +130,11 @@
         "annual_value_usd": 15000000,
         "valuation_method": "regional_analogue_estimate",
         "measurement_year": 2022,
-        "beneficiaries": ["artisanal_fishers", "local_community", "regional_markets"],
+        "beneficiaries": [
+          "artisanal_fishers",
+          "local_community",
+          "regional_markets"
+        ],
         "metrics": {
           "fishery_type": "artisanal and small-scale",
           "reef_productivity_usd_per_km2": 112000,
@@ -126,7 +142,15 @@
         },
         "source": {
           "citation": "Spalding et al. 2017 Marine Policy",
-          "doi": "10.1016/j.marpol.2017.09.030"
+          "doi": "10.1016/j.marpol.2017.05.014",
+          "doi_url": "https://doi.org/10.1016/j.marpol.2017.05.014",
+          "source_tier": "T1"
+        },
+        "confidence_interval": {
+          "ci_low": 7500000,
+          "ci_high": 22500000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -139,6 +163,12 @@
         "metrics": {
           "reef_extent_km2": 2178,
           "notes": "Estimated based on global average reef coastal protection values; site-specific measurement needed"
+        },
+        "confidence_interval": {
+          "ci_low": 4000000,
+          "ci_high": 12000000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -150,12 +180,17 @@
         "measurement_year": 2024,
         "metrics": {
           "notes": "Mangrove-associated blue carbon; exact extent and sequestration rates not independently published for Raja Ampat"
+        },
+        "confidence_interval": {
+          "ci_low": 1250000,
+          "ci_high": 3750000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       }
     ],
     "total_annual_value_usd": 78000000
   },
-
   "asset_quality_rating": {
     "@type": "MARISRating",
     "rating": "AA",
@@ -163,7 +198,7 @@
     "rating_rationale": {
       "ecological_condition": {
         "score": 0.95,
-        "weight": 0.40,
+        "weight": 0.4,
         "notes": "Epicenter of global marine biodiversity; 75%+ of world's coral species; high live coral cover"
       },
       "governance_effectiveness": {
@@ -172,12 +207,12 @@
         "notes": "Blue Park Award; 9-MPA network with active management; community-based surveillance; entrance fee funding model"
       },
       "financial_sustainability": {
-        "score": 0.80,
-        "weight": 0.20,
+        "score": 0.8,
+        "weight": 0.2,
         "notes": "Tourism-funded conservation model; Indonesian blue bond jurisdiction; growing visitor economy"
       },
       "risk_factors": {
-        "score": 0.70,
+        "score": 0.7,
         "weight": 0.15,
         "notes": "IUU fishing pressure; mining interests; climate-driven bleaching risk; rapid tourism growth management"
       }
@@ -185,7 +220,6 @@
     "composite_score": 0.86,
     "confidence_level": "high"
   },
-
   "key_species": [
     {
       "@type": "Species",
@@ -214,7 +248,6 @@
       "notes": "Endemic to Raja Ampat islands; flagship species for terrestrial conservation"
     }
   ],
-
   "risk_assessment": {
     "@type": "RiskProfile",
     "overall_risk_level": "moderate",
@@ -250,7 +283,6 @@
       "adaptation": "Entrance fee system funds ongoing conservation; multiple-use zoning balances protection and livelihoods"
     }
   },
-
   "bridge_axiom_applications": [
     {
       "axiom_id": "BA-001",
@@ -280,7 +312,6 @@
       }
     }
   ],
-
   "financial_instruments": {
     "blue_bond": {
       "instrument": "Indonesia Sovereign Blue Bond",
@@ -289,7 +320,6 @@
       "coral_triangle_initiative": "Coral Triangle Initiative on Coral Reefs, Fisheries and Food Security (CTI-CFF) provides multilateral framework"
     }
   },
-
   "framework_alignment": {
     "tnfd_leap": {
       "status": "anticipates alignment with TNFD LEAP framework",
@@ -305,38 +335,41 @@
       "relevance": "Indonesian blue bond program; community-based sustainable tourism model"
     }
   },
-
   "provenance": {
     "data_sources": [
       {
         "source": "Allen & Erdmann 2012",
-        "notes": "Reef Fishes of the East Indies - comprehensive species inventory",
+        "notes": "Reef Fishes of the East Indies - comprehensive species inventory (ISBN: 9780987260000)",
         "data_type": "Species surveys and biodiversity assessment",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T1"
       },
       {
         "source": "Spalding et al. 2017 Marine Policy",
-        "doi": "10.1016/j.marpol.2017.09.030",
+        "doi": "10.1016/j.marpol.2017.05.014",
+        "doi_url": "https://doi.org/10.1016/j.marpol.2017.05.014",
         "data_type": "Global coral reef tourism and fisheries economic valuation",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T1"
       },
       {
         "source": "Marine Conservation Institute Blue Parks",
         "url": "https://marine-conservation.org/blueparks/awardees/raja-ampat/",
         "data_type": "MPA effectiveness assessment and Blue Park Award",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       },
       {
         "source": "Raja Ampat Marine Park Authority",
         "url": "https://kkprajaampat.com/en/",
         "data_type": "MPA management data and entrance fee structure",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       }
     ],
     "compilation_date": "2026-02-16",
     "compiled_by": "MARIS POC Team"
   },
-
   "caveats": [
     "Fisheries value is a regional analogue estimate based on Asia-Pacific average reef productivity; site-specific valuation study needed",
     "Coastal protection and carbon sequestration values are regional analogues; no site-specific economic studies published",
@@ -344,7 +377,13 @@
     "Mangrove extent not independently quantified in published literature for the MPA network specifically",
     "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
   ],
-
+  "provenance_summary": {
+    "total_sources": 5,
+    "doi_backed": 2,
+    "url_only": 3,
+    "doi_coverage_pct": 40.0,
+    "evidence_tier_distribution": {"T1": 3, "T2": 2, "T3": 0, "T4": 0}
+  },
   "demo_value": {
     "why_raja_ampat_for_demo": [
       "Epicenter of global marine biodiversity - more coral and fish species than anywhere on Earth",

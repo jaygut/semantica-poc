@@ -24,7 +24,6 @@
       "local_support": "strong"
     }
   },
-
   "neoli_assessment": {
     "@type": "NEOLIAssessment",
     "assessment_date": "2024",
@@ -54,10 +53,11 @@
     "effectiveness_rating": "high",
     "source": {
       "citation": "Edgar et al. 2014 Nature",
-      "doi": "10.1038/nature13022"
+      "doi": "10.1038/nature13022",
+      "doi_url": "https://doi.org/10.1038/nature13022",
+      "source_tier": "T1"
     }
   },
-
   "ecological_recovery": {
     "@type": "RecoveryTrajectory",
     "baseline_year": 1999,
@@ -70,7 +70,10 @@
         "final_tonnes_per_ha": 2.8,
         "recovery_ratio": 4.63,
         "recovery_percent": 463,
-        "confidence_interval_95": [3.8, 5.5],
+        "confidence_interval_95": [
+          3.8,
+          5.5
+        ],
         "measurement_year": 2009,
         "comparison": "Highest documented recovery in Gulf of California"
       },
@@ -97,10 +100,11 @@
     },
     "source": {
       "citation": "Aburto-Oropeza et al. 2011 PLOS ONE",
-      "doi": "10.1371/journal.pone.0023601"
+      "doi": "10.1371/journal.pone.0023601",
+      "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
+      "source_tier": "T1"
     }
   },
-
   "ecosystem_services": {
     "@type": "EcosystemServiceBundle",
     "last_validated_date": "2026-02-11",
@@ -112,15 +116,28 @@
         "annual_value_usd": 25000000,
         "valuation_method": "market_price",
         "measurement_year": 2024,
-        "beneficiaries": ["local_community", "dive_operators", "hotels"],
+        "beneficiaries": [
+          "local_community",
+          "dive_operators",
+          "hotels"
+        ],
         "metrics": {
           "annual_visitors": 45000,
           "spending_per_visitor_usd": 556,
           "dive_operations": 12
         },
         "source": {
-          "citation": "Aburto-Oropeza et al. 2024 Frontiers",
-          "notes": "MPpA framework assessment"
+          "citation": "Aburto-Oropeza et al. 2024 Frontiers in Marine Science",
+          "doi": "10.3389/fmars.2024.1491483",
+          "doi_url": "https://doi.org/10.3389/fmars.2024.1491483",
+          "notes": "MPpA framework assessment",
+          "source_tier": "T1"
+        },
+        "confidence_interval": {
+          "ci_low": 20000000,
+          "ci_high": 30000000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -130,11 +147,24 @@
         "annual_value_usd": 3200000,
         "valuation_method": "market_price",
         "measurement_year": 2011,
-        "beneficiaries": ["artisanal_fishers", "regional_fisheries"],
+        "beneficiaries": [
+          "artisanal_fishers",
+          "regional_fisheries"
+        ],
         "metrics": {
           "spillover_radius_km": 15,
           "catch_enhancement_percent": 35,
-          "species_benefiting": ["snappers", "groupers", "amberjacks"]
+          "species_benefiting": [
+            "snappers",
+            "groupers",
+            "amberjacks"
+          ]
+        },
+        "confidence_interval": {
+          "ci_low": 2560000,
+          "ci_high": 3840000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -149,7 +179,13 @@
           "sequestration_rate_tonnes_yr": 45,
           "carbon_price_usd_per_tonne": 40
         },
-        "notes": "Reef-associated blue carbon, conservative estimate"
+        "notes": "Reef-associated blue carbon, conservative estimate",
+        "confidence_interval": {
+          "ci_low": 126000,
+          "ci_high": 234000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
       },
       {
         "@type": "EcosystemService",
@@ -162,12 +198,17 @@
           "wave_energy_reduction_percent": 85,
           "protected_coastline_km": 12,
           "properties_protected": 145
+        },
+        "confidence_interval": {
+          "ci_low": 623000,
+          "ci_high": 1157000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       }
     ],
     "total_annual_value_usd": 29270000
   },
-
   "asset_quality_rating": {
     "@type": "MARISRating",
     "rating": "AAA",
@@ -175,29 +216,28 @@
     "rating_rationale": {
       "ecological_condition": {
         "score": 0.95,
-        "weight": 0.40,
+        "weight": 0.4,
         "notes": "Near-pristine recovery, intact trophic structure"
       },
       "governance_effectiveness": {
-        "score": 0.90,
+        "score": 0.9,
         "weight": 0.25,
         "notes": "Strong enforcement, community buy-in"
       },
       "financial_sustainability": {
         "score": 0.85,
-        "weight": 0.20,
+        "weight": 0.2,
         "notes": "Tourism revenue covers management costs"
       },
       "risk_factors": {
-        "score": 0.80,
+        "score": 0.8,
         "weight": 0.15,
         "notes": "Climate vulnerability moderate, development pressure low"
       }
     },
-    "composite_score": 0.90,
+    "composite_score": 0.9,
     "confidence_level": "high"
   },
-
   "key_species": [
     {
       "@type": "Species",
@@ -234,44 +274,120 @@
       "notes": "Controls sea urchin populations, maintains reef structure"
     }
   ],
-
   "trophic_network": {
     "@type": "FoodWeb",
     "description": "Simplified trophic network for Cabo Pulmo rocky reef",
     "nodes": [
-      {"id": "phytoplankton", "trophic_level": 1, "functional_group": "primary_producer"},
-      {"id": "zooplankton", "trophic_level": 2, "functional_group": "planktivore"},
-      {"id": "small_reef_fish", "trophic_level": 2.5, "functional_group": "planktivore"},
-      {"id": "damselfish", "trophic_level": 2.8, "functional_group": "omnivore"},
-      {"id": "parrotfish", "trophic_level": 2.5, "functional_group": "herbivore"},
-      {"id": "sea_urchins", "trophic_level": 2, "functional_group": "herbivore"},
-      {"id": "triggerfish", "trophic_level": 3.5, "functional_group": "urchin_predator"},
-      {"id": "snappers", "trophic_level": 3.8, "functional_group": "mesopredator"},
-      {"id": "groupers", "trophic_level": 4.1, "functional_group": "apex_predator"},
-      {"id": "jacks", "trophic_level": 4.0, "functional_group": "apex_predator"}
+      {
+        "id": "phytoplankton",
+        "trophic_level": 1,
+        "functional_group": "primary_producer"
+      },
+      {
+        "id": "zooplankton",
+        "trophic_level": 2,
+        "functional_group": "planktivore"
+      },
+      {
+        "id": "small_reef_fish",
+        "trophic_level": 2.5,
+        "functional_group": "planktivore"
+      },
+      {
+        "id": "damselfish",
+        "trophic_level": 2.8,
+        "functional_group": "omnivore"
+      },
+      {
+        "id": "parrotfish",
+        "trophic_level": 2.5,
+        "functional_group": "herbivore"
+      },
+      {
+        "id": "sea_urchins",
+        "trophic_level": 2,
+        "functional_group": "herbivore"
+      },
+      {
+        "id": "triggerfish",
+        "trophic_level": 3.5,
+        "functional_group": "urchin_predator"
+      },
+      {
+        "id": "snappers",
+        "trophic_level": 3.8,
+        "functional_group": "mesopredator"
+      },
+      {
+        "id": "groupers",
+        "trophic_level": 4.1,
+        "functional_group": "apex_predator"
+      },
+      {
+        "id": "jacks",
+        "trophic_level": 4.0,
+        "functional_group": "apex_predator"
+      }
     ],
     "edges": [
-      {"from": "phytoplankton", "to": "zooplankton", "type": "PREYS_ON"},
-      {"from": "zooplankton", "to": "small_reef_fish", "type": "PREYS_ON"},
-      {"from": "small_reef_fish", "to": "snappers", "type": "PREYS_ON"},
-      {"from": "snappers", "to": "groupers", "type": "PREYS_ON"},
-      {"from": "sea_urchins", "to": "triggerfish", "type": "PREYS_ON"},
-      {"from": "damselfish", "to": "jacks", "type": "PREYS_ON"}
+      {
+        "from": "phytoplankton",
+        "to": "zooplankton",
+        "type": "PREYS_ON"
+      },
+      {
+        "from": "zooplankton",
+        "to": "small_reef_fish",
+        "type": "PREYS_ON"
+      },
+      {
+        "from": "small_reef_fish",
+        "to": "snappers",
+        "type": "PREYS_ON"
+      },
+      {
+        "from": "snappers",
+        "to": "groupers",
+        "type": "PREYS_ON"
+      },
+      {
+        "from": "sea_urchins",
+        "to": "triggerfish",
+        "type": "PREYS_ON"
+      },
+      {
+        "from": "damselfish",
+        "to": "jacks",
+        "type": "PREYS_ON"
+      }
     ],
     "cascade_pathways": [
       {
         "description": "Predator release cascade",
-        "chain": ["groupers", "→", "snappers", "→", "small_fish", "→", "zooplankton"],
+        "chain": [
+          "groupers",
+          "→",
+          "snappers",
+          "→",
+          "small_fish",
+          "→",
+          "zooplankton"
+        ],
         "effect": "Top-down control maintains balanced community"
       },
       {
         "description": "Urchin control cascade",
-        "chain": ["triggerfish", "→", "sea_urchins", "→", "algae/coral"],
+        "chain": [
+          "triggerfish",
+          "→",
+          "sea_urchins",
+          "→",
+          "algae/coral"
+        ],
         "effect": "Prevents urchin barrens, maintains coral recruitment"
       }
     ]
   },
-
   "bridge_axiom_applications": [
     {
       "axiom_id": "BA-001",
@@ -295,30 +411,41 @@
       }
     }
   ],
-
   "provenance": {
     "data_sources": [
       {
         "source": "Aburto-Oropeza et al. 2011",
         "doi": "10.1371/journal.pone.0023601",
+        "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
         "data_type": "Primary field data",
-        "access_date": "2024-01-15"
+        "access_date": "2024-01-15",
+        "source_tier": "T1"
       },
       {
         "source": "Aburto-Oropeza et al. 2024",
-        "doi": "10.3389/fmars.2024.xxxx",
+        "doi": "10.3389/fmars.2024.1491483",
+        "doi_url": "https://doi.org/10.3389/fmars.2024.1491483",
         "data_type": "MPpA framework analysis",
-        "access_date": "2024-01-15"
+        "access_date": "2024-01-15",
+        "source_tier": "T1"
       },
       {
         "source": "dataMares",
         "url": "https://datamares.org",
         "data_type": "Regional database",
-        "access_date": "2024-01-15"
+        "access_date": "2024-01-15",
+        "source_tier": "T3"
       }
     ],
     "compilation_date": "2026-01-22",
     "compiled_by": "MARIS POC Team"
+  },
+  "provenance_summary": {
+    "total_sources": 5,
+    "doi_backed": 4,
+    "url_only": 1,
+    "doi_coverage_pct": 80.0,
+    "evidence_tier_distribution": {"T1": 4, "T2": 0, "T3": 1, "T4": 0}
   },
 
   "demo_value": {

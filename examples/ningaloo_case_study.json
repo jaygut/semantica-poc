@@ -28,7 +28,6 @@
       "notes": "Joint Commonwealth-State management; Resilient Reefs Initiative partner"
     }
   },
-
   "neoli_assessment": {
     "@type": "NEOLIAssessment",
     "assessment_date": "2024",
@@ -58,10 +57,11 @@
     "effectiveness_rating": "high",
     "source": {
       "citation": "Edgar et al. 2014 Nature",
-      "doi": "10.1038/nature13022"
+      "doi": "10.1038/nature13022",
+      "doi_url": "https://doi.org/10.1038/nature13022",
+      "source_tier": "T1"
     }
   },
-
   "ecological_status": {
     "@type": "EcologicalAssessment",
     "primary_habitat": "coral_reef",
@@ -93,10 +93,10 @@
     },
     "source": {
       "citation": "DBCA Ningaloo Marine Park monitoring data",
-      "url": "https://www.dbca.wa.gov.au"
+      "url": "https://www.dbca.wa.gov.au",
+      "source_tier": "T2"
     }
   },
-
   "ecosystem_services": {
     "@type": "EcosystemServiceBundle",
     "last_validated_date": "2026-02-16",
@@ -108,7 +108,12 @@
         "annual_value_usd": 73000000,
         "valuation_method": "market_price",
         "measurement_year": 2019,
-        "beneficiaries": ["local_community", "tourism_operators", "hospitality", "regional_economy"],
+        "beneficiaries": [
+          "local_community",
+          "tourism_operators",
+          "hospitality",
+          "regional_economy"
+        ],
         "metrics": {
           "annual_visitors": 280000,
           "jobs_supported": 1000,
@@ -119,7 +124,14 @@
         },
         "source": {
           "citation": "GDC 2020 Economic Contribution of Ningaloo",
-          "url": "https://www.gdc.wa.gov.au/Profiles/gdc/Assets/ClientData/Economic_contribution_of_Ningaloo_-_FINAL_25_11_2020.pdf"
+          "url": "https://www.gdc.wa.gov.au/Profiles/gdc/Assets/ClientData/Economic_contribution_of_Ningaloo_-_FINAL_25_11_2020.pdf",
+          "source_tier": "T2"
+        },
+        "confidence_interval": {
+          "ci_low": 58400000,
+          "ci_high": 87600000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -129,10 +141,20 @@
         "annual_value_usd": 5000000,
         "valuation_method": "market_price",
         "measurement_year": 2019,
-        "beneficiaries": ["recreational_fishers", "charter_operators", "local_economy"],
+        "beneficiaries": [
+          "recreational_fishers",
+          "charter_operators",
+          "local_economy"
+        ],
         "metrics": {
           "fishery_type": "Predominantly recreational; commercial fishing limited within marine park",
           "notes": "Recreational fishing is a significant draw; charter operations contribute to tourism value"
+        },
+        "confidence_interval": {
+          "ci_low": 4000000,
+          "ci_high": 6000000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -146,6 +168,12 @@
           "protected_coastline_km": 260,
           "reef_type": "fringing",
           "notes": "260 km fringing reef provides wave attenuation; economic valuation not specifically included in GDC study"
+        },
+        "confidence_interval": {
+          "ci_low": 3150000,
+          "ci_high": 5850000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -157,30 +185,35 @@
         "measurement_year": 2024,
         "metrics": {
           "notes": "Reef-associated blue carbon; not specifically quantified in published studies; GDC study noted ecosystem services like storm protection and carbon sequestration were not quantified"
+        },
+        "confidence_interval": {
+          "ci_low": 250000,
+          "ci_high": 750000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       }
     ],
     "total_annual_value_usd": 83000000
   },
-
   "asset_quality_rating": {
     "@type": "MARISRating",
     "rating": "AA",
     "rating_date": "2024-06-15",
     "rating_rationale": {
       "ecological_condition": {
-        "score": 0.90,
-        "weight": 0.40,
+        "score": 0.9,
+        "weight": 0.4,
         "notes": "260 km fringing reef in good condition; 300 coral species; whale shark aggregation; diverse megafauna"
       },
       "governance_effectiveness": {
-        "score": 0.90,
+        "score": 0.9,
         "weight": 0.25,
         "notes": "UNESCO World Heritage; joint Commonwealth-State management; 34% no-take; Traditional Owner partnerships"
       },
       "financial_sustainability": {
         "score": 0.85,
-        "weight": 0.20,
+        "weight": 0.2,
         "notes": "Tourism generates AU$110M/yr; 1,000 jobs; Resilient Reefs Initiative partner"
       },
       "risk_factors": {
@@ -192,7 +225,6 @@
     "composite_score": 0.87,
     "confidence_level": "high"
   },
-
   "key_species": [
     {
       "@type": "Species",
@@ -222,7 +254,6 @@
       "notes": "Major nesting population on Ningaloo coast beaches; Conservation Dependent under Australian law"
     }
   ],
-
   "risk_assessment": {
     "@type": "RiskProfile",
     "overall_risk_level": "moderate",
@@ -258,7 +289,6 @@
       "adaptation": "Sanctuary zone network provides refugia; Resilient Reefs Initiative developing climate adaptation strategy"
     }
   },
-
   "bridge_axiom_applications": [
     {
       "axiom_id": "BA-001",
@@ -289,7 +319,6 @@
       }
     }
   ],
-
   "framework_alignment": {
     "tnfd_leap": {
       "status": "anticipates alignment with TNFD LEAP framework",
@@ -305,38 +334,40 @@
       "relevance": "Australian MPA jurisdiction; Resilient Reefs Initiative; tourism-based conservation funding"
     }
   },
-
   "provenance": {
     "data_sources": [
       {
         "source": "GDC 2020 Economic Contribution of Ningaloo",
         "url": "https://www.gdc.wa.gov.au/Profiles/gdc/Assets/ClientData/Economic_contribution_of_Ningaloo_-_FINAL_25_11_2020.pdf",
         "data_type": "Comprehensive economic valuation of Ningaloo Coast",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       },
       {
         "source": "UNESCO World Heritage Centre",
         "url": "https://whc.unesco.org/en/list/1369/",
         "data_type": "Site designation and Outstanding Universal Value statement",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       },
       {
         "source": "UNESCO Resilient Reefs Initiative",
         "url": "https://whc.unesco.org/en/news/2241",
         "data_type": "First economic valuation launch announcement",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       },
       {
         "source": "DBCA - Study reveals Ningaloo Coast an economic hub for WA",
         "url": "https://www.dbca.wa.gov.au/news/2021/study-reveals-ningaloo-coast-economic-hub-wa",
         "data_type": "Government economic analysis of Ningaloo",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       }
     ],
     "compilation_date": "2026-02-16",
     "compiled_by": "MARIS POC Team"
   },
-
   "caveats": [
     "Economic valuation (AU$110M/yr) uses 2018-19 data; post-COVID tourism recovery may differ; converted at approximate exchange rate to US$73M",
     "GDC study explicitly noted that ecosystem services like storm protection and carbon sequestration were not quantified; our estimates for these are regional analogues",
@@ -345,7 +376,18 @@
     "Complements Shark Bay within Western Australia's coast but with entirely different habitat profile (fringing reef vs. seagrass meadow)",
     "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
   ],
-
+  "provenance_summary": {
+    "total_sources": 5,
+    "doi_backed": 1,
+    "url_only": 4,
+    "doi_coverage_pct": 20.0,
+    "evidence_tier_distribution": {
+      "T1": 1,
+      "T2": 4,
+      "T3": 0,
+      "T4": 0
+    }
+  },
   "demo_value": {
     "why_ningaloo_for_demo": [
       "Australia's largest fringing reef - 260 km of continuous coral along the coast",

@@ -26,7 +26,6 @@
       "blue_bond": "TNC $364M debt conversion (2021) - 30% ocean protection by 2026"
     }
   },
-
   "neoli_assessment": {
     "@type": "NEOLIAssessment",
     "assessment_date": "2024",
@@ -56,14 +55,18 @@
     "effectiveness_rating": "high",
     "source": {
       "citation": "Edgar et al. 2014 Nature",
-      "doi": "10.1038/nature13022"
+      "doi": "10.1038/nature13022",
+      "doi_url": "https://doi.org/10.1038/nature13022",
+      "source_tier": "T1"
     }
   },
-
   "ecological_status": {
     "@type": "EcologicalAssessment",
     "primary_habitat": "coral_reef",
-    "secondary_habitats": ["mangrove", "seagrass"],
+    "secondary_habitats": [
+      "mangrove",
+      "seagrass"
+    ],
     "assessment_year": 2020,
     "last_validated_date": "2026-02-16",
     "metrics": {
@@ -94,10 +97,11 @@
     },
     "source": {
       "citation": "Baumann et al. 2022 PLOS ONE",
-      "doi": "10.1371/journal.pone.0249155"
+      "doi": "10.1371/journal.pone.0249155",
+      "doi_url": "https://doi.org/10.1371/journal.pone.0249155",
+      "source_tier": "T1"
     }
   },
-
   "ecosystem_services": {
     "@type": "EcosystemServiceBundle",
     "last_validated_date": "2026-02-16",
@@ -107,17 +111,33 @@
         "service_type": "tourism",
         "service_category": "cultural",
         "annual_value_usd": 150000000,
-        "valuation_range_usd": [150000000, 196000000],
+        "valuation_range_usd": [
+          150000000,
+          196000000
+        ],
         "valuation_method": "market_price",
         "measurement_year": 2007,
-        "beneficiaries": ["tourism_operators", "hotels", "dive_shops", "local_community", "government"],
+        "beneficiaries": [
+          "tourism_operators",
+          "hotels",
+          "dive_shops",
+          "local_community",
+          "government"
+        ],
         "metrics": {
           "gdp_contribution_percent": "12-15",
           "notes": "Reef- and mangrove-associated tourism accounts for 12-15% of Belize GDP"
         },
         "source": {
           "citation": "Cooper et al. 2009 WRI Coastal Capital: Belize",
-          "url": "http://pdf.wri.org/coastal_capital_belize_wp.pdf"
+          "url": "http://pdf.wri.org/coastal_capital_belize_wp.pdf",
+          "source_tier": "T2"
+        },
+        "confidence_interval": {
+          "ci_low": 120000000,
+          "ci_high": 180000000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -125,7 +145,10 @@
         "service_type": "coastal_protection",
         "service_category": "regulating",
         "annual_value_usd": 120000000,
-        "valuation_range_usd": [120000000, 180000000],
+        "valuation_range_usd": [
+          120000000,
+          180000000
+        ],
         "valuation_method": "avoided_cost",
         "measurement_year": 2007,
         "metrics": {
@@ -134,7 +157,14 @@
         },
         "source": {
           "citation": "Cooper et al. 2009 WRI Coastal Capital: Belize",
-          "url": "http://pdf.wri.org/coastal_capital_belize_wp.pdf"
+          "url": "http://pdf.wri.org/coastal_capital_belize_wp.pdf",
+          "source_tier": "T2"
+        },
+        "confidence_interval": {
+          "ci_low": 84000000,
+          "ci_high": 156000000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -142,17 +172,35 @@
         "service_type": "fisheries",
         "service_category": "provisioning",
         "annual_value_usd": 14000000,
-        "valuation_range_usd": [14000000, 16000000],
+        "valuation_range_usd": [
+          14000000,
+          16000000
+        ],
         "valuation_method": "market_price",
         "measurement_year": 2007,
-        "beneficiaries": ["artisanal_fishers", "commercial_fishers", "export_markets"],
+        "beneficiaries": [
+          "artisanal_fishers",
+          "commercial_fishers",
+          "export_markets"
+        ],
         "metrics": {
-          "reef_dependent_species": ["lobster", "conch", "finfish"],
+          "reef_dependent_species": [
+            "lobster",
+            "conch",
+            "finfish"
+          ],
           "notes": "Reef- and mangrove-dependent fisheries; lobster and conch are primary export species"
         },
         "source": {
           "citation": "Cooper et al. 2009 WRI Coastal Capital: Belize",
-          "url": "http://pdf.wri.org/coastal_capital_belize_wp.pdf"
+          "url": "http://pdf.wri.org/coastal_capital_belize_wp.pdf",
+          "source_tier": "T2"
+        },
+        "confidence_interval": {
+          "ci_low": 11200000,
+          "ci_high": 16800000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -168,22 +216,30 @@
           "estimated_sequestration_tCO2_yr": 283000,
           "carbon_price_usd_per_tonne": 30,
           "notes": "Estimate based on global mangrove sequestration rates (6.4 tCO2/ha/yr) applied to Belize mangrove and seagrass extent"
+        },
+        "confidence_interval": {
+          "ci_low": 4250000,
+          "ci_high": 12750000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       }
     ],
     "total_annual_value_usd": 292500000,
-    "total_range_usd": [292500000, 400500000],
+    "total_range_usd": [
+      292500000,
+      400500000
+    ],
     "notes": "Combined reef, mangrove, and seagrass services for the BBRRS complex. WRI 2009 total estimate for all Belize coastal services: $395-559M/yr"
   },
-
   "asset_quality_rating": {
     "@type": "MARISRating",
     "rating": "AA",
     "rating_date": "2024-06-15",
     "rating_rationale": {
       "ecological_condition": {
-        "score": 0.80,
-        "weight": 0.40,
+        "score": 0.8,
+        "weight": 0.4,
         "notes": "Three habitat types in one system; reef condition variable with ongoing recovery; removed from UNESCO Danger List 2018"
       },
       "governance_effectiveness": {
@@ -192,12 +248,12 @@
         "notes": "UNESCO World Heritage listing; multi-agency management; $364M blue bond commitment; 30% ocean protection target"
       },
       "financial_sustainability": {
-        "score": 0.90,
-        "weight": 0.20,
+        "score": 0.9,
+        "weight": 0.2,
         "notes": "TNC blue bond provides $4M/yr conservation funding through 2041; tourism generates 12-15% of GDP"
       },
       "risk_factors": {
-        "score": 0.70,
+        "score": 0.7,
         "weight": 0.15,
         "notes": "Climate-driven bleaching events; hurricane exposure; historical development pressure (oil moratorium now in place)"
       }
@@ -205,7 +261,6 @@
     "composite_score": 0.82,
     "confidence_level": "high"
   },
-
   "key_species": [
     {
       "@type": "Species",
@@ -236,7 +291,6 @@
       "notes": "Belize holds the largest population of West Indian manatees in Central America"
     }
   ],
-
   "bridge_axiom_applications": [
     {
       "axiom_id": "BA-001",
@@ -285,7 +339,6 @@
       }
     }
   ],
-
   "financial_instruments": {
     "blue_bond": {
       "instrument": "TNC Blue Bond / Debt-for-Nature Conversion",
@@ -304,11 +357,11 @@
       "credit_enhancement": "US DFC political risk insurance ($610M)",
       "source": {
         "citation": "TNC Belize Debt Conversion Case Study",
-        "url": "https://www.nature.org/content/dam/tnc/nature/en/documents/TNC-Belize-Debt-Conversion-Case-Study.pdf"
+        "url": "https://www.nature.org/content/dam/tnc/nature/en/documents/TNC-Belize-Debt-Conversion-Case-Study.pdf",
+        "source_tier": "T2"
       }
     }
   },
-
   "framework_alignment": {
     "tnfd_leap": {
       "status": "anticipates alignment with TNFD LEAP framework",
@@ -324,38 +377,41 @@
       "relevance": "World's largest debt-for-nature conversion for ocean conservation"
     }
   },
-
   "provenance": {
     "data_sources": [
       {
         "source": "Cooper et al. 2009 WRI Coastal Capital: Belize",
         "url": "http://pdf.wri.org/coastal_capital_belize_wp.pdf",
         "data_type": "Economic valuation of coral reef and mangrove ecosystem services",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       },
       {
         "source": "Baumann et al. 2022 PLOS ONE",
         "doi": "10.1371/journal.pone.0249155",
+        "doi_url": "https://doi.org/10.1371/journal.pone.0249155",
         "data_type": "Twenty years of benthic community monitoring data",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T1"
       },
       {
         "source": "TNC Belize Debt Conversion Case Study",
         "url": "https://www.nature.org/content/dam/tnc/nature/en/documents/TNC-Belize-Debt-Conversion-Case-Study.pdf",
         "data_type": "Blue bond financial structure and conservation commitments",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       },
       {
         "source": "UNESCO World Heritage Centre",
         "url": "https://whc.unesco.org/en/list/764/",
         "data_type": "Site designation and monitoring reports",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
       }
     ],
     "compilation_date": "2026-02-16",
     "compiled_by": "MARIS POC Team"
   },
-
   "caveats": [
     "WRI 2009 valuations use 2007 base-year prices; inflation-adjusted values would be higher",
     "Mangrove coastal protection value ($111-167M/yr) is additional to reef coastal protection ($120-180M/yr) but some overlap may exist",
@@ -363,7 +419,13 @@
     "Reef condition is variable across the reserve system; Hol Chan has better enforcement and condition than more remote sites",
     "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
   ],
-
+  "provenance_summary": {
+    "total_sources": 6,
+    "doi_backed": 2,
+    "url_only": 4,
+    "doi_coverage_pct": 33.3,
+    "evidence_tier_distribution": {"T1": 2, "T2": 4, "T3": 0, "T4": 0}
+  },
   "demo_value": {
     "why_belize_for_demo": [
       "World's largest debt-for-nature conversion for ocean conservation ($364M)",

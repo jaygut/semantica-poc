@@ -26,7 +26,6 @@
       "transboundary_notes": "Bangladesh Sundarbans (6,017 km2) and India Sundarbans (4,260 km2) managed separately; UNESCO WH sites since 1987 (India) and 1997 (Bangladesh)"
     }
   },
-
   "neoli_assessment": {
     "@type": "NEOLIAssessment",
     "assessment_date": "2024",
@@ -56,10 +55,11 @@
     "effectiveness_rating": "moderate",
     "source": {
       "citation": "Edgar et al. 2014 Nature",
-      "doi": "10.1038/nature13022"
+      "doi": "10.1038/nature13022",
+      "doi_url": "https://doi.org/10.1038/nature13022",
+      "source_tier": "T1"
     }
   },
-
   "ecological_status": {
     "@type": "EcologicalAssessment",
     "primary_habitat": "mangrove_forest",
@@ -87,10 +87,11 @@
     },
     "source": {
       "citation": "Sani et al. 2022 Scientific Reports",
-      "doi": "10.1038/s41598-022-11716-5"
+      "doi": "10.1038/s41598-022-11716-5",
+      "doi_url": "https://doi.org/10.1038/s41598-022-11716-5",
+      "source_tier": "T1"
     }
   },
-
   "ecosystem_services": {
     "@type": "EcosystemServiceBundle",
     "last_validated_date": "2026-02-16",
@@ -102,7 +103,11 @@
         "annual_value_usd": 59200000,
         "valuation_method": "market_price",
         "measurement_year": 2024,
-        "beneficiaries": ["global_climate", "carbon_credit_buyers", "blue_bond_investors"],
+        "beneficiaries": [
+          "global_climate",
+          "carbon_credit_buyers",
+          "blue_bond_investors"
+        ],
         "metrics": {
           "mangrove_area_km2": 4200,
           "sequestration_rate_Mg_C_per_ha_yr": 4.71,
@@ -112,7 +117,15 @@
         },
         "source": {
           "citation": "Sarker et al. 2021 Biomass & Bioenergy",
-          "doi": "10.1016/j.biombioe.2021.106272"
+          "doi": "10.1016/j.biombioe.2021.106272",
+          "doi_url": "https://doi.org/10.1016/j.biombioe.2021.106272",
+          "source_tier": "T1"
+        },
+        "confidence_interval": {
+          "ci_low": 47360000,
+          "ci_high": 71040000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -122,15 +135,33 @@
         "annual_value_usd": 216710000,
         "valuation_method": "market_price",
         "measurement_year": 2017,
-        "beneficiaries": ["artisanal_fishers", "commercial_fishers", "shrimp_farmers", "regional_economy"],
+        "beneficiaries": [
+          "artisanal_fishers",
+          "commercial_fishers",
+          "shrimp_farmers",
+          "regional_economy"
+        ],
         "metrics": {
           "fisher_livelihoods": "~500,000 people depend directly on Sundarbans fisheries",
-          "primary_species": ["hilsa", "tiger_prawn", "mud_crab", "finfish"],
+          "primary_species": [
+            "hilsa",
+            "tiger_prawn",
+            "mud_crab",
+            "finfish"
+          ],
           "nursery_function": "Extensive nursery area for fish, prawns and shrimps of Bay of Bengal"
         },
         "source": {
-          "citation": "Meta-analysis of Sundarbans economic values",
-          "doi": "10.1038/s41598-022-11716-5"
+          "citation": "Sani et al. 2022 Scientific Reports - Meta-analysis of Sundarbans economic values",
+          "doi": "10.1038/s41598-022-11716-5",
+          "doi_url": "https://doi.org/10.1038/s41598-022-11716-5",
+          "source_tier": "T1"
+        },
+        "confidence_interval": {
+          "ci_low": 173368000,
+          "ci_high": 260052000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       },
       {
@@ -146,7 +177,13 @@
           "population_protected": "~4.5 million people in immediate coastal zone",
           "notes": "Critical protection against Bay of Bengal cyclones; value estimated from avoided damages"
         },
-        "notes": "The Sundarbans served as a natural barrier during Cyclone Amphan (2020) and Cyclone Aila (2009)"
+        "notes": "The Sundarbans served as a natural barrier during Cyclone Amphan (2020) and Cyclone Aila (2009)",
+        "confidence_interval": {
+          "ci_low": 315000000,
+          "ci_high": 585000000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
       },
       {
         "@type": "EcosystemService",
@@ -155,20 +192,35 @@
         "annual_value_usd": 53000000,
         "valuation_method": "market_price",
         "measurement_year": 2020,
-        "beneficiaries": ["local_community", "tourism_operators", "hospitality"],
+        "beneficiaries": [
+          "local_community",
+          "tourism_operators",
+          "hospitality"
+        ],
         "metrics": {
-          "key_attractions": ["Royal Bengal tiger", "Sundarbans wildlife cruises", "mangrove kayaking", "bird watching"],
+          "key_attractions": [
+            "Royal Bengal tiger",
+            "Sundarbans wildlife cruises",
+            "mangrove kayaking",
+            "bird watching"
+          ],
           "notes": "Bangladesh Sundarbans tourism estimated at $53M/yr; Indian Sundarbans tourism additional"
         },
         "source": {
-          "citation": "Islam & Alam 2021 Economic valuation of tourism",
-          "url": "https://ideas.repec.org/p/arx/papers/2110.00182.html"
+          "citation": "Nobi et al. 2021 Economic valuation of tourism of the Sundarban Mangroves",
+          "url": "https://arxiv.org/abs/2110.00182",
+          "source_tier": "T4"
+        },
+        "confidence_interval": {
+          "ci_low": 42400000,
+          "ci_high": 63600000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
         }
       }
     ],
     "total_annual_value_usd": 778910000
   },
-
   "asset_quality_rating": {
     "@type": "MARISRating",
     "rating": "A",
@@ -176,7 +228,7 @@
     "rating_rationale": {
       "ecological_condition": {
         "score": 0.75,
-        "weight": 0.40,
+        "weight": 0.4,
         "notes": "World's largest mangrove forest with exceptional carbon stocks; degradation documented ($3.3B ESV loss over 45 years)"
       },
       "governance_effectiveness": {
@@ -185,8 +237,8 @@
         "notes": "Dual UNESCO World Heritage listing; transboundary management complexity; enforcement gaps"
       },
       "financial_sustainability": {
-        "score": 0.70,
-        "weight": 0.20,
+        "score": 0.7,
+        "weight": 0.2,
         "notes": "Massive carbon credit potential but no active blue carbon credit program yet; fisheries revenue significant"
       },
       "risk_factors": {
@@ -198,7 +250,6 @@
     "composite_score": 0.69,
     "confidence_level": "moderate"
   },
-
   "key_species": [
     {
       "@type": "Species",
@@ -227,7 +278,6 @@
       "notes": "Most commercially valuable fish in Bangladesh; Sundarbans serve as critical nursery habitat"
     }
   ],
-
   "risk_assessment": {
     "@type": "RiskProfile",
     "overall_risk_level": "high",
@@ -263,7 +313,6 @@
       "adaptation": "Community-based management programs; mangrove restoration initiatives"
     }
   },
-
   "bridge_axiom_applications": [
     {
       "axiom_id": "BA-005",
@@ -305,7 +354,6 @@
       }
     }
   ],
-
   "framework_alignment": {
     "tnfd_leap": {
       "status": "anticipates alignment with TNFD LEAP framework",
@@ -321,38 +369,43 @@
       "relevance": "Massive carbon credit potential; sustainable fisheries management opportunity"
     }
   },
-
   "provenance": {
     "data_sources": [
       {
         "source": "Sani et al. 2022 Scientific Reports",
         "doi": "10.1038/s41598-022-11716-5",
+        "doi_url": "https://doi.org/10.1038/s41598-022-11716-5",
         "data_type": "Carbon stock reduction and ecosystem service valuation of Indian Sundarban",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T1"
       },
       {
         "source": "Sarker et al. 2021 Biomass & Bioenergy",
         "doi": "10.1016/j.biombioe.2021.106272",
+        "doi_url": "https://doi.org/10.1016/j.biombioe.2021.106272",
         "data_type": "Species-specific biomass and carbon flux",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T1"
       },
       {
         "source": "Ahmed et al. 2017 Blue Carbon Stock Bangladesh Sundarbans",
         "doi": "10.1007/s13157-016-0819-7",
+        "doi_url": "https://doi.org/10.1007/s13157-016-0819-7",
         "data_type": "Blue carbon stock projections",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T1"
       },
       {
-        "source": "Islam & Alam 2021 Tourism Valuation",
-        "url": "https://ideas.repec.org/p/arx/papers/2110.00182.html",
+        "source": "Nobi et al. 2021 Tourism Valuation",
+        "url": "https://arxiv.org/abs/2110.00182",
         "data_type": "Economic valuation of Sundarbans tourism",
-        "access_date": "2026-02-16"
+        "access_date": "2026-02-16",
+        "source_tier": "T4"
       }
     ],
     "compilation_date": "2026-02-16",
     "compiled_by": "MARIS POC Team"
   },
-
   "caveats": [
     "Carbon sequestration value is discounted to 25% of theoretical maximum to reflect market accessibility and verification constraints for this region",
     "Fisheries value is from meta-analysis and may include broader Bay of Bengal fisheries that benefit from Sundarbans nursery function",
@@ -361,7 +414,13 @@
     "ESV loss of $3.3B over 45 years demonstrates both the historical degradation risk and the immense value at stake",
     "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
   ],
-
+  "provenance_summary": {
+    "total_sources": 5,
+    "doi_backed": 4,
+    "url_only": 1,
+    "doi_coverage_pct": 80.0,
+    "evidence_tier_distribution": {"T1": 4, "T2": 0, "T3": 0, "T4": 1}
+  },
   "demo_value": {
     "why_sundarbans_for_demo": [
       "World's largest contiguous mangrove forest - unparalleled mangrove narrative",

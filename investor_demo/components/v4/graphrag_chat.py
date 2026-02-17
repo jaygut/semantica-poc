@@ -55,6 +55,38 @@ _TYPE_LABELS: dict[str, str] = {
 }
 _DEFAULT_COLOR = "#5B9BD5"
 
+# Explicit short-name -> canonical-name mapping for robust site resolution.
+# Covers common abbreviations and partial names that users (and quick buttons)
+# might produce. The dynamic site list in _detect_site handles full-name and
+# first-two-word matching; this map catches additional aliases.
+_SHORT_TO_CANONICAL: dict[str, str] = {
+    "cabo pulmo": "Cabo Pulmo National Park",
+    "shark bay": "Shark Bay World Heritage Area",
+    "ningaloo": "Ningaloo Coast World Heritage Area",
+    "ningaloo coast": "Ningaloo Coast World Heritage Area",
+    "belize": "Belize Barrier Reef Reserve System",
+    "belize barrier": "Belize Barrier Reef Reserve System",
+    "belize barrier reef": "Belize Barrier Reef Reserve System",
+    "galapagos": "Galapagos Marine Reserve",
+    "galapagos marine": "Galapagos Marine Reserve",
+    "raja ampat": "Raja Ampat Marine Park",
+    "sundarbans": "Sundarbans Reserve Forest",
+    "sundarbans reserve": "Sundarbans Reserve Forest",
+    "aldabra": "Aldabra Atoll",
+    "aldabra atoll": "Aldabra Atoll",
+    "cispata": "Cispata Bay Mangrove Conservation Area",
+    "cispata bay": "Cispata Bay Mangrove Conservation Area",
+    "cispatá": "Cispata Bay Mangrove Conservation Area",
+    "cispatá bay": "Cispata Bay Mangrove Conservation Area",
+}
+
+# Queries that are site-generic and should be contextualized to the active site
+_GENERIC_QUERY_PATTERNS = (
+    "what are the risks",
+    "what evidence supports the valuation",
+    "what evidence supports",
+)
+
 
 # ---------------------------------------------------------------------------
 # Public entry point
@@ -145,19 +177,26 @@ def _build_quick_queries(site_short: str) -> list[str]:
 
 
 def _detect_site(question: str) -> str | None:
-    """Detect site from question text using dynamic site list."""
+    """Detect site from question text using dynamic site list + alias map."""
     q_lower = question.lower()
     if any(kw in q_lower for kw in _COMPARISON_KEYWORDS):
         return None
     if any(kw in q_lower for kw in _MECHANISM_KEYWORDS):
         return None
+
+    # 1) Check canonical names (full and first-two-word match)
     for name in get_site_names():
-        # Check both full name and first two words
         if name.lower() in q_lower:
             return name
         short = " ".join(name.split()[:2]).lower()
         if short in q_lower:
             return name
+
+    # 2) Check explicit alias map (longest match first to avoid partial hits)
+    for alias in sorted(_SHORT_TO_CANONICAL, key=len, reverse=True):
+        if alias in q_lower:
+            return _SHORT_TO_CANONICAL[alias]
+
     return None
 
 
@@ -193,25 +232,53 @@ def _run_classifier(question: str) -> dict:
         }
 
 
+def _contextualize_query(question: str, site: str | None) -> str:
+    """Prepend the active site to generic queries for better matching.
+
+    Generic queries like "What are the risks?" become
+    "What are the risks for Cabo Pulmo National Park?" so the precomputed
+    response matcher and the live API both resolve to the correct site.
+    """
+    if site is None:
+        return question
+    q_lower = question.lower().rstrip("?").strip()
+    for pattern in _GENERIC_QUERY_PATTERNS:
+        if q_lower == pattern or q_lower.startswith(pattern):
+            # Already has a site suffix - skip
+            if "for " in q_lower[len(pattern):]:
+                return question
+            return f"{question.rstrip('?')} for {site}?"
+    return question
+
+
 def _submit_query(client: Any, question: str, mode: str) -> None:
     """Submit a query, run classification, and store results."""
-    classification = _run_classifier(question) if mode == "live" else {}
-
     site = _detect_site(question)
     if site is None:
         site = st.session_state.get("v4_site")
 
+    # Contextualize generic queries with the active site
+    effective_question = _contextualize_query(question, site)
+
+    classification = _run_classifier(effective_question) if mode == "live" else {}
+
     try:
         start = time.monotonic()
-        response = client.query(question, site=site)
+        response = client.query(effective_question, site=site)
         elapsed_ms = (time.monotonic() - start) * 1000
         response["_query_ms"] = round(elapsed_ms, 1)
     except Exception:
         logger.exception("API query failed for: %s", question)
         try:
+            from pathlib import Path as _Path
+
             from investor_demo.api_client import StaticBundleClient
 
-            fallback_client = StaticBundleClient()
+            _v4_path = _Path(__file__).resolve().parent.parent.parent / "precomputed_responses_v4.json"
+            if _v4_path.exists():
+                fallback_client = StaticBundleClient(precomputed_path=_v4_path)
+            else:
+                fallback_client = StaticBundleClient()
             response = fallback_client.query(question, site=site)
             if (
                 response.get("confidence", 0) == 0.0
@@ -241,6 +308,7 @@ def _submit_query(client: Any, question: str, mode: str) -> None:
 
     st.session_state.v4_chat_history.append({
         "question": question,
+        "effective_question": effective_question,
         "response": response,
         "classification": classification,
     })
@@ -346,6 +414,14 @@ def _render_chat_panel(resp: dict, idx: int) -> None:
     if evidence:
         with st.expander("Show evidence chain", expanded=False):
             st.markdown(_evidence_table(evidence), unsafe_allow_html=True)
+
+    confidence_breakdown = resp.get("confidence_breakdown")
+    if confidence_breakdown and isinstance(confidence_breakdown, dict):
+        with st.expander("Show confidence breakdown", expanded=False):
+            st.markdown(
+                _confidence_breakdown_html(confidence_breakdown),
+                unsafe_allow_html=True,
+            )
 
 
 def _render_pipeline_panel(resp: dict, classification: dict, mode: str) -> None:
@@ -485,6 +561,58 @@ def _evidence_table(evidence: list[dict]) -> str:
         '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">DOI</th>'
         '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">Year</th>'
         f"</tr></thead><tbody>{rows}</tbody></table>"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Confidence breakdown
+# ---------------------------------------------------------------------------
+
+
+def _confidence_breakdown_html(breakdown: dict) -> str:
+    """Render confidence breakdown as a mini-table with bar gauges."""
+    factors = [
+        ("Evidence Tier", "tier_base"),
+        ("Path Length", "path_discount"),
+        ("Data Freshness", "staleness_discount"),
+        ("Source Coverage", "sample_factor"),
+    ]
+    rows = ""
+    for label, key in factors:
+        val = breakdown.get(key, 0.0)
+        pct = int(val * 100)
+        bar_color = (
+            "#66BB6A" if val >= 0.8
+            else "#FFA726" if val >= 0.6
+            else "#EF5350"
+        )
+        rows += (
+            f"<tr>"
+            f'<td style="padding:6px 12px;color:#94A3B8;font-size:13px;'
+            f'border-bottom:1px solid #1E2D48">{label}</td>'
+            f'<td style="padding:6px 12px;border-bottom:1px solid #1E2D48">'
+            f'<div style="display:flex;align-items:center;gap:8px">'
+            f'<div style="flex:1;height:6px;background:#1E2D48;border-radius:3px;'
+            f'overflow:hidden">'
+            f'<div style="width:{pct}%;height:100%;background:{bar_color};'
+            f'border-radius:3px"></div></div>'
+            f'<span style="color:#CBD5E1;font-size:13px;font-weight:600;'
+            f'min-width:35px">{pct}%</span>'
+            f"</div></td></tr>"
+        )
+
+    explanation = _escape(breakdown.get("explanation", ""))
+    composite = int(breakdown.get("composite", 0.0) * 100)
+
+    return (
+        f'<div style="margin-top:4px">'
+        f'<div style="font-size:13px;font-weight:600;color:#94A3B8;margin-bottom:8px">'
+        f"Composite: {composite}%</div>"
+        f'<table style="width:100%;border-collapse:collapse;'
+        f"background:rgba(15,26,46,0.6);border-radius:6px;overflow:hidden;"
+        f'border:1px solid #1E2D48">{rows}</table>'
+        f'<div style="margin-top:8px;font-size:13px;color:#64748B;font-style:italic">'
+        f"{explanation}</div></div>"
     )
 
 
