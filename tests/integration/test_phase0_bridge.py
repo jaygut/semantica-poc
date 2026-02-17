@@ -1,6 +1,6 @@
 """Phase 0 Integration Tests: Semantica SDK Bridge Validation (T0.1-T0.9).
 
-These tests validate the Semantica SDK bridge against real data (16 axioms,
+These tests validate the Semantica SDK bridge against real data (35 axioms,
 2 sites, SQLite persistence). This is the foundational layer - if the bridge
 fails, nothing else works.
 
@@ -134,18 +134,18 @@ class TestT02SQLitePersistence:
 
 @pytest.mark.integration
 class TestT03AxiomConversionRoundTrip:
-    """T0.3: Load all 16 axioms, convert MARIS -> Semantica -> MARIS, verify lossless."""
+    """T0.3: Load all 35 axioms, convert MARIS -> Semantica -> MARIS, verify lossless."""
 
     @pytest.mark.skipif(not _HAS_SEMANTICA, reason="semantica not installed")
-    def test_registry_loads_all_16_axioms(self):
+    def test_registry_loads_all_35_axioms(self):
         from maris.provenance.bridge_axiom_registry import BridgeAxiomRegistry
 
         registry = BridgeAxiomRegistry()
         registry.load(TEMPLATES_PATH, EVIDENCE_PATH)
-        assert registry.count() == 16, f"Expected 16 axioms, got {registry.count()}"
+        assert registry.count() == 35, f"Expected 35 axioms, got {registry.count()}"
 
     @pytest.mark.skipif(not _HAS_SEMANTICA, reason="semantica not installed")
-    def test_all_16_axioms_round_trip_losslessly(self):
+    def test_all_35_axioms_round_trip_losslessly(self):
         from maris.provenance.bridge_axiom_registry import BridgeAxiomRegistry
         from maris.semantica_bridge.axiom_adapter import to_semantica_axiom, from_semantica_axiom
 
@@ -448,11 +448,11 @@ class TestT07ManagerFullLifecycle:
 
             # Verify initial state
             assert mgr.semantica_available is True
-            assert mgr.registry.count() == 16
+            assert mgr.registry.count() == 35
 
             initial_summary = mgr.summary()
             assert initial_summary["semantica_available"] is True
-            assert initial_summary["axioms_loaded"] == 16
+            assert initial_summary["axioms_loaded"] == 35
 
             # Track extraction
             entity_data = mgr.track_extraction(

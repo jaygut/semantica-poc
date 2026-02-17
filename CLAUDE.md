@@ -41,8 +41,10 @@ maris/
   disclosure/       # TNFD LEAP: leap_generator, leap_generator_v4, alignment_scorer
   discovery/        # Pattern detection, LLM detector, axiom candidates
   semantica_bridge/ # SDK adapter: storage, axiom, provenance, integrity adapters
-  config.py         # Centralized config from .env (MARIS_ prefix)
-  config_v4.py      # v4 dynamic site discovery + Neo4j overlay
+  services/ingestion/ # Modular ingestion: case_study_loader, concepts_loader, discovery
+  settings.py       # Pydantic-based configuration (New)
+  config.py         # Legacy wrapper around settings.py
+  config_v4.py      # v4 dynamic site discovery wrapper
 
 investor_demo/
   streamlit_app_v4.py               # v4: 9 sites, 6 tabs, $1.62B (:8504)

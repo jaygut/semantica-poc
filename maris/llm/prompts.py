@@ -26,28 +26,7 @@ Respond with JSON only:
 {{"category": "...", "site": "...", "metrics": [...], "confidence": 0.0}}
 """
 
-# ---------------------------------------------------------------------------
-# Cypher generation
-# ---------------------------------------------------------------------------
 
-CYPHER_GENERATION_PROMPT = """\
-You are a Cypher query generator for a Neo4j marine natural capital knowledge graph.
-
-Node labels: Document, Species, MPA, Habitat, EcosystemService, FinancialInstrument, Framework, BridgeAxiom, Concept, TrophicNode
-Relationship types: GENERATES, EVIDENCED_BY, APPLIES_TO, TRANSLATES, DERIVED_FROM, LOCATED_IN, PREYS_ON
-
-Key properties:
-- MPA: name, total_esv_usd, biomass_ratio, neoli_score, asset_rating
-- EcosystemService: service_name, annual_value_usd, valuation_method, ci_low, ci_high
-- BridgeAxiom: axiom_id, name, category, coefficients_json
-- Document: title, doi, year, source_tier, citation
-
-User question: {question}
-Classification: {category}
-
-Generate a single Cypher query that retrieves the data needed to answer this question.
-Return ONLY the Cypher query, no explanation.
-"""
 
 # ---------------------------------------------------------------------------
 # Response synthesis

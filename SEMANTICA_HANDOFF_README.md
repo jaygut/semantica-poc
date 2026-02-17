@@ -64,7 +64,7 @@ cert = manager.get_certificate("cabo_pulmo_esv")
 | `MarineRegionsClient` | 404 and malformed JSON handling |
 | Bronze/Silver/Gold tier model | Progressive characterization depth |
 
-The v4 platform auto-discovers all 9 Gold-tier sites from `examples/*_case_study.json` via `maris/config_v4.py`.
+The v4 platform auto-discovers all 9 Gold-tier sites from `examples/*_case_study.json` via `maris/services/ingestion/discovery.py`.
 
 ### P2: Cross-Domain Reasoning Engine
 
@@ -192,6 +192,7 @@ pytest tests/ -v
 ```
 
 Integration tests (`tests/integration/`) cover 7 phases: SDK availability, graph integrity, external APIs, query pipeline, disclosure/discovery, stress tests, and LLM-enhanced discovery (7 tests against live DeepSeek).
+A new **Live Ingestion Test** (`tests/integration/test_live_ingestion.py`) verifies the end-to-end `CaseStudyLoader` against a real Neo4j instance.
 
 CI runs on push/PR to `main` via GitHub Actions: ruff lint + pytest.
 

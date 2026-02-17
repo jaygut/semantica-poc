@@ -368,11 +368,11 @@ class TestT53DisclosureProvenanceChain:
 
 @pytest.mark.integration
 class TestT54InferenceEngine:
-    """T5.4: Load all 16 axioms into the inference engine and test forward/backward
+    """T5.4: Load all 35 axioms into the inference engine and test forward/backward
     chaining with real data."""
 
     def _get_engine_and_registry(self):
-        """Load the inference engine with all 16 axioms from real data files."""
+        """Load the inference engine with all 35 axioms from real data files."""
         from maris.provenance.bridge_axiom_registry import BridgeAxiomRegistry
         from maris.reasoning.inference_engine import InferenceEngine
 
@@ -380,11 +380,11 @@ class TestT54InferenceEngine:
             templates_path=TEMPLATES_PATH,
             evidence_path=EVIDENCE_PATH,
         )
-        assert registry.count() == 16, f"Expected 16 axioms, got {registry.count()}"
+        assert registry.count() == 35, f"Expected 35 axioms, got {registry.count()}"
 
         engine = InferenceEngine()
         registered = engine.register_axioms(registry.get_all())
-        assert registered == 16, f"Expected 16 rules registered, got {registered}"
+        assert registered == 35, f"Expected 35 rules registered, got {registered}"
 
         return engine, registry
 
@@ -433,7 +433,7 @@ class TestT54InferenceEngine:
             assert "produces_domain" in item
 
     def test_domain_coverage_of_loaded_axioms(self):
-        """Check that input_domain and output_domain fields are meaningful across all 16 axioms."""
+        """Check that input_domain and output_domain fields are meaningful across all 35 axioms."""
         _, registry = self._get_engine_and_registry()
 
         empty_input = []

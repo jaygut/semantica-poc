@@ -155,4 +155,19 @@ def mock_config():
         cfg.enable_live_graph = True
         cfg.enable_chat = True
         mock.return_value = cfg
-        yield cfg
+@pytest.fixture(scope="session")
+def integration_neo4j_driver():
+    """Real Neo4j driver for integration tests (requires running container)."""
+    from neo4j import GraphDatabase
+    
+    uri = os.getenv("MARIS_NEO4J_URI", "bolt://localhost:7687")
+    user = os.getenv("MARIS_NEO4J_USER", "neo4j")
+    password = os.getenv("MARIS_NEO4J_PASSWORD", "test-password")
+    
+    try:
+        driver = GraphDatabase.driver(uri, auth=(user, password))
+        driver.verify_connectivity()
+        yield driver
+        driver.close()
+    except Exception as e:
+        pytest.skip(f"Neo4j integration skipped: {e}")

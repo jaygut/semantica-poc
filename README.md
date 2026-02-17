@@ -605,8 +605,14 @@ semantica-poc/
 │   │   ├── provenance_adapter.py         # Dual-write provenance manager
 │   │   ├── integrity_adapter.py          # SDK-backed integrity verification
 │   │   └── manager.py                    # SemanticaBackedManager (drop-in replacement)
-│   ├── config.py                          # Centralized env-based configuration
-│   └── config_v4.py                      # v4 dynamic site discovery, Neo4j config overlay
+│   ├── services/                          # ═══ MODULAR SERVICES ═══
+│   │   └── ingestion/                     # Ingestion Logic (Case Studies + Concepts)
+│   │       ├── case_study_loader.py       # Core case study loading
+│   │       ├── concepts_loader.py         # Concept node loading
+│   │       └── discovery.py               # Site discovery logic
+│   ├── settings.py                        # Pydantic-based configuration (New)
+│   ├── config.py                          # Legacy wrapper around settings.py
+│   └── config_v4.py                      # v4 wrapper around settings.py
 │
 ├── investor_demo/                         # ═══ STREAMLIT DASHBOARDS ═══
 │   ├── streamlit_app_v4.py                # v4 Global Scaling Platform (9 sites, 6 tabs, latest)

@@ -132,12 +132,12 @@ def render_graphrag_chat(
     row1 = st.columns(3)
     for i, q in enumerate(quick_queries[:3]):
         with row1[i]:
-            if st.button(q, key=f"v4_quick_{i}", width="stretch"):
+            if st.button(q, key=f"v4_quick_{i}", use_container_width=True):
                 _submit_query(client, q, mode)
     row2 = st.columns(3)
     for i, q in enumerate(quick_queries[3:]):
         with row2[i]:
-            if st.button(q, key=f"v4_quick_{i + 3}", width="stretch"):
+            if st.button(q, key=f"v4_quick_{i + 3}", use_container_width=True):
                 _submit_query(client, q, mode)
 
     with st.form(key="v4_query_form", clear_on_submit=True):
@@ -146,7 +146,7 @@ def render_graphrag_chat(
             placeholder="e.g., What is the tourism elasticity coefficient?",
             label_visibility="collapsed",
         )
-        submitted = st.form_submit_button("Ask Nereus", width="stretch")
+        submitted = st.form_submit_button("Ask Nereus", use_container_width=True)
         if submitted and user_input:
             _submit_query(client, user_input, mode)
 

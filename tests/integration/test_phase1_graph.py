@@ -189,8 +189,8 @@ class TestT11SnapshotBeforeRePopulation:
         # Verify expected counts (from CLAUDE.md: 893 nodes total)
         total = sum(counts.values())
         assert total >= 800, f"Total node count {total} is too low (expected ~893)"
-        assert counts.get("BridgeAxiom", 0) == 16, (
-            f"Expected 16 BridgeAxiom nodes, got {counts.get('BridgeAxiom', 0)}"
+        assert counts.get("BridgeAxiom", 0) == 35, (
+            f"Expected 35 BridgeAxiom nodes, got {counts.get('BridgeAxiom', 0)}"
         )
         assert counts.get("MPA", 0) == 4, (
             f"Expected 4 MPA nodes, got {counts.get('MPA', 0)}"
@@ -219,11 +219,11 @@ class TestT11SnapshotBeforeRePopulation:
         print(f"\nRelationship counts baseline: {json.dumps(counts, indent=2)}")
 
     def test_axiom_evidence_baseline(self):
-        """Verify all 16 axioms have at least one EVIDENCED_BY edge."""
+        """Verify all 35 axioms have at least one EVIDENCED_BY edge."""
         evidence = _get_axiom_evidence_counts()
 
-        assert len(evidence) == 16, (
-            f"Expected 16 BridgeAxiom nodes, got {len(evidence)}"
+        assert len(evidence) == 35, (
+            f"Expected 35 BridgeAxiom nodes, got {len(evidence)}"
         )
 
         for axiom_id, count in evidence.items():
@@ -743,11 +743,11 @@ class TestT15SilverSitePopulation:
 @pytest.mark.integration
 @skip_no_semantica
 class TestT16SemanticaProvenance:
-    """T1.6: Create a SemanticaBackedManager with temp SQLite, track all 16
-    axiom extractions, verify summary shows semantica_entries >= 16."""
+    """T1.6: Create a SemanticaBackedManager with temp SQLite, track all 35
+    axiom extractions, verify summary shows semantica_entries >= 35."""
 
     def test_semantica_provenance_during_population(self):
-        """Track all 16 axiom extractions through SemanticaBackedManager."""
+        """Track all 35 axiom extractions through SemanticaBackedManager."""
         from maris.semantica_bridge.manager import SemanticaBackedManager
 
         with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
@@ -762,8 +762,8 @@ class TestT16SemanticaProvenance:
 
             # Verify initial state
             assert mgr.semantica_available is True
-            assert mgr.registry.count() == 16, (
-                f"Expected 16 axioms in registry, got {mgr.registry.count()}"
+            assert mgr.registry.count() == 35, (
+                f"Expected 35 axioms in registry, got {mgr.registry.count()}"
             )
 
             # Track each axiom extraction
@@ -793,12 +793,12 @@ class TestT16SemanticaProvenance:
             print(f"\nProvenance summary: {json.dumps(summary, indent=2, default=str)}")
 
             assert summary["semantica_available"] is True
-            assert summary["axioms_loaded"] == 16
-            assert summary["semantica_entries"] >= 16, (
-                f"Expected semantica_entries >= 16, got {summary['semantica_entries']}"
+            assert summary["axioms_loaded"] == 35
+            assert summary["semantica_entries"] >= 35, (
+                f"Expected semantica_entries >= 35, got {summary['semantica_entries']}"
             )
 
-            print(f"\nPASS: All 16 axioms tracked in Semantica backend "
+            print(f"\nPASS: All 35 axioms tracked in Semantica backend "
                   f"(entries={summary['semantica_entries']})")
 
         finally:

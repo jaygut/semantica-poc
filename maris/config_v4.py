@@ -13,6 +13,7 @@ import json
 from os import getenv
 from pathlib import Path
 
+from maris.settings import settings
 from maris.config import MARISConfig
 
 
@@ -63,44 +64,33 @@ def _name_from_filename(path: Path) -> str:
 
 
 class MARISConfigV4(MARISConfig):
-    """v4 configuration extending base config with dynamic site discovery.
-
-    Overrides Neo4j connection to target a separate v4 database and replaces
-    hardcoded case_study_paths with dynamic glob-based discovery.
+    """Wrapper to make type checkers happy.
+    
+    Actual implementation is just a configured instance of MARISSettings.
     """
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        # Override Neo4j settings for v4 (separate database)
-        # Use MARIS_NEO4J_URI_V4 if set; otherwise default to port 7688
-        # to avoid accidentally targeting the production database.
-        self.neo4j_uri = getenv(
-            "MARIS_NEO4J_URI_V4",
-            "bolt://localhost:7688",
-        )
-        self.neo4j_database = getenv(
-            "MARIS_NEO4J_DATABASE_V4",
-            "neo4j",
-        )
-
-    @property
-    def case_study_paths(self) -> list[Path]:
-        """All case study files, auto-discovered from examples/."""
-        return discover_case_study_paths(Path(self.project_root))
-
-    @property
-    def discovered_sites(self) -> list[tuple[str, Path]]:
-        """All (canonical_name, path) tuples from discovered case studies."""
-        return discover_site_names(self.case_study_paths)
-
+    pass
 
 # Singleton for v4 config
 _config_v4: MARISConfigV4 | None = None
 
 
 def get_config_v4() -> MARISConfigV4:
-    """Return the singleton v4 config instance."""
+    """Return the v4 config instance (settings configured for v4 DB)."""
     global _config_v4  # noqa: PLW0603
     if _config_v4 is None:
-        _config_v4 = MARISConfigV4()
+        # Create a copy of settings with v4 overrides
+        v4_settings = settings.model_copy(deep=True)
+        
+        # Override Neo4j connection details
+        if v4_settings.neo4j_uri_v4:
+            v4_settings.neo4j_uri = v4_settings.neo4j_uri_v4
+        else:
+            # Fallback to local port 7688 if not specified
+            v4_settings.neo4j_uri = "bolt://localhost:7688"
+            
+        if v4_settings.neo4j_database_v4:
+            v4_settings.neo4j_database = v4_settings.neo4j_database_v4
+            
+        _config_v4 = v4_settings  # type: ignore
+        
     return _config_v4
