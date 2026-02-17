@@ -1,4 +1,4 @@
-"""Site Intelligence tab for Nereus v4 Intelligence Platform.
+"""Site Intelligence tab for Nereus v4 Natural Capital Intelligence.
 
 Replaces the Site Scout placeholder with a full characterization-pipeline
 view. Sections: NEOLI Criteria Matrix, Habitat-Axiom Map, Data Quality
@@ -508,15 +508,17 @@ def _render_pipeline_diagram(sites_data: dict[str, dict[str, Any]]) -> None:
 
 
 def render_site_intelligence(sites_data: dict[str, dict[str, Any]] | None = None) -> None:
-    """Render the Site Intelligence tab.
-
-    Parameters
-    ----------
-    sites_data:
-        Optional pre-loaded dict mapping site names to their full case study
-        JSON data.  If *None*, data is loaded dynamically from
-        ``examples/*_case_study.json``.
-    """
+    """Render the Site Intelligence tab."""
+    st.markdown(
+        """
+        <div class="masthead" style="margin-bottom: 32px;">
+            <div class="masthead-brand">NEREUS | SITE SCOUT</div>
+            <h1 style="font-size: 42px; font-weight: 300; margin-top: 10px; margin-bottom: 5px;">Discovery Pipeline</h1>
+            <div class="masthead-subtitle">Automated MPA characterization and data quality matrix</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     # Load data if not provided
     if sites_data is None:
         sites_data = {}

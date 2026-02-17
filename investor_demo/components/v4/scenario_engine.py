@@ -1,4 +1,4 @@
-"""Scenario Lab - interactive what-if analysis for Nereus v4 Intelligence Platform.
+"""Scenario Lab - interactive what-if analysis for Nereus v4 Natural Capital Intelligence.
 
 Key difference from v3: axiom chains are derived dynamically from site
 habitat types using ``_HABITAT_AXIOM_MAP``. No hardcoded per-site chains.
@@ -260,15 +260,45 @@ def _build_histogram(base_mc: dict[str, Any], scenario_mc: dict[str, Any]) -> go
             annotation_font_color=clr, annotation_font_size=12,
         )
     fig.update_layout(
-        title=dict(text="ESV Distribution - 10,000 Simulations",
-                   font=dict(size=15, color=COLORS["text_heading"])),
+        title=dict(
+            text="ESV Distribution - 10,000 Simulations",
+            font=dict(size=16, color=COLORS["text_heading"]),
+            x=0,
+            y=0.98,
+            xanchor="left"
+        ),
         barmode="overlay",
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color=COLORS["text_body"]),
-        xaxis=dict(title="Total ESV (USD)", gridcolor="#1E293B", tickformat="$,.0f", zeroline=False),
-        yaxis=dict(title="Frequency", gridcolor="#1E293B", zeroline=False),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=13)),
-        margin=dict(l=60, r=20, t=60, b=50), height=380,
+        xaxis=dict(
+            title=dict(
+                text="Total ESV (USD)",
+                font=dict(size=13, color=COLORS["text_secondary"])
+            ),
+            gridcolor="#1E293B",
+            tickformat="$,.0f",
+            zeroline=False,
+        ),
+        yaxis=dict(
+            title=dict(
+                text="Frequency",
+                font=dict(size=13, color=COLORS["text_secondary"])
+            ),
+            gridcolor="#1E293B",
+            zeroline=False,
+        ),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.05,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=12, color=COLORS["text_body"]),
+            bgcolor="rgba(0,0,0,0)"
+        ),
+        margin=dict(l=60, r=30, t=100, b=50),
+        height=400,
     )
     return fig
 
@@ -298,16 +328,40 @@ def _build_tornado(sensitivity: dict[str, Any]) -> go.Figure:
     fig.add_trace(go.Bar(y=names, x=high_deltas, orientation="h",
                          marker_color=COLORS["success"], name="High (+20%)", opacity=0.85))
     fig.update_layout(
-        title=dict(text="Sensitivity Tornado - OAT Analysis",
-                   font=dict(size=15, color=COLORS["text_heading"])),
+        title=dict(
+            text="Sensitivity Tornado - OAT Analysis",
+            font=dict(size=16, color=COLORS["text_heading"]),
+            x=0,
+            y=0.98,
+            xanchor="left"
+        ),
         barmode="relative",
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color=COLORS["text_body"]),
-        xaxis=dict(title="ESV Change from Baseline (USD)", gridcolor="#1E293B",
-                   tickformat="$,.0f", zeroline=True, zerolinecolor="#64748B", zerolinewidth=1),
+        xaxis=dict(
+            title=dict(
+                text="ESV Change from Baseline (USD)",
+                font=dict(size=13, color=COLORS["text_secondary"])
+            ),
+            gridcolor="#1E293B",
+            tickformat="$,.0f",
+            zeroline=True,
+            zerolinecolor="#64748B",
+            zerolinewidth=1,
+        ),
         yaxis=dict(gridcolor="#1E293B"),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font=dict(size=13)),
-        margin=dict(l=150, r=20, t=60, b=50), height=max(280, 80 * len(names)),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.05,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=12, color=COLORS["text_body"]),
+            bgcolor="rgba(0,0,0,0)"
+        ),
+        margin=dict(l=150, r=40, t=100, b=50),
+        height=max(320, 80 * len(names)),
     )
     return fig
 
@@ -415,15 +469,13 @@ def render_scenario_engine(
     """Render the Scenario Lab tab for interactive what-if analysis."""
     short_name = " ".join(site.split()[:2]) if " " in site else site
     st.markdown(
-        f'<div class="section-header">SCENARIO LAB - {short_name}</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<div class="section-desc">'
-        "Adjust environmental and market parameters to model their impact on "
-        "ecosystem service valuations. Monte Carlo simulations recalculate in "
-        "real time using 10,000 triangular-distribution draws per service."
-        "</div>",
+        f"""
+        <div class="masthead">
+            <div class="masthead-brand">NEREUS | SCENARIO LAB</div>
+            <h1 style="font-size: 42px; font-weight: 300; margin-top: 10px; margin-bottom: 5px;">{site}</h1>
+            <div class="masthead-subtitle">Interactive what-if analysis and risk sensitivity modeling</div>
+        </div>
+        """,
         unsafe_allow_html=True,
     )
 

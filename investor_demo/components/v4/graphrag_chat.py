@@ -122,11 +122,13 @@ def render_graphrag_chat(
         st.session_state.v4_chat_history = []
 
     st.markdown(
-        '<div class="section-header">ASK NEREUS - GRAPHRAG INTELLIGENCE</div>'
-        '<div class="section-desc">'
-        "Natural-language queries with full reasoning pipeline transparency. "
-        "Every answer traces back to DOI-backed evidence through the knowledge graph."
-        "</div>",
+        f"""
+        <div class="masthead">
+            <div class="masthead-brand">NEREUS | ASK NEREUS</div>
+            <h1 style="font-size: 42px; font-weight: 300; margin-top: 10px; margin-bottom: 5px;">{context_name}</h1>
+            <div class="masthead-subtitle">GraphRAG-powered conversational intelligence with full provenance</div>
+        </div>
+        """,
         unsafe_allow_html=True,
     )
 

@@ -1,4 +1,4 @@
-"""TNFD Disclosure tab for Nereus v4 Intelligence Platform.
+"""TNFD Disclosure tab for Nereus v4 Natural Capital Intelligence.
 
 Generates a TNFD LEAP disclosure with alignment scoring, per-pillar
 breakdowns, gap analysis, and downloadable outputs. Works with any site
@@ -444,15 +444,13 @@ def render_tnfd_compliance(
         "live" or "demo".
     """
     st.markdown(
-        '<div class="section-header" style="margin-top:0">'
-        "TNFD LEAP Disclosure</div>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<div class="section-desc">Auto-generated TNFD LEAP disclosure from '
-        "the MARIS knowledge graph. All claims traced to DOI-backed evidence "
-        "through bridge axioms. Anticipates alignment with TNFD v1.0 "
-        "recommended disclosures.</div>",
+        f"""
+        <div class="masthead">
+            <div class="masthead-brand">NEREUS | COMPLIANCE AUTO-PILOT</div>
+            <h1 style="font-size: 42px; font-weight: 300; margin-top: 10px; margin-bottom: 5px;">TNFD Disclosure</h1>
+            <div class="masthead-subtitle">Auto-generated LEAP reporting and alignment scoring for {site}</div>
+        </div>
+        """,
         unsafe_allow_html=True,
     )
 

@@ -1,4 +1,4 @@
-"""Intelligence Brief tab for Nereus v4 Intelligence Platform.
+"""Intelligence Brief tab for Nereus v4 Natural Capital Intelligence.
 
 Key difference from v3: axiom chains are derived dynamically from the
 site's habitat types using ``_HABITAT_AXIOM_MAP`` from esv_estimator.py.
@@ -427,24 +427,12 @@ def _render_masthead(nd: dict[str, Any], mode: str) -> None:
             "TNFD LEAP - Anticipates Alignment</span>"
         )
 
-    if mode == "live":
-        mode_html = (
-            '<span class="conn-status conn-live" style="float:right">'
-            '<span class="conn-dot"></span>Live API</span>'
-        )
-    else:
-        mode_html = (
-            '<span class="conn-status conn-static" style="float:right">'
-            '<span class="conn-dot"></span>Demo Mode</span>'
-        )
-
     st.markdown(
         f"""
 <div class="masthead">
-<div class="masthead-brand">NEREUS | INTELLIGENCE BRIEF {mode_html}</div>
-<div class="masthead-powered">Powered by MARIS + Semantica</div>
-<h1>{site_name}</h1>
-<div class="masthead-subtitle">Provenance-First Blue Finance Infrastructure</div>
+<div class="masthead-brand">NEREUS | SITE INTELLIGENCE BRIEF</div>
+<h1 style="font-size: 48px; font-weight: 300; margin-top: 10px; margin-bottom: 5px;">{site_name}</h1>
+<div class="masthead-subtitle">Detailed provenance-first ecological and financial breakdown</div>
 <div class="masthead-badges">{badges}</div>
 </div>
 """,

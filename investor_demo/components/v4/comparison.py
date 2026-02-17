@@ -12,10 +12,15 @@ from investor_demo.components.v4.shared import (
 def render_comparison_tool(all_sites: list[dict[str, Any]]) -> None:
     """Render the multi-site comparison tool."""
     
-    st.markdown("### 📊 Comparative Analytics")
     st.markdown(
-        "Select multiple sites to compare their performance across ecological, "
-        "financial, and governance dimensions."
+        """
+        <div class="masthead">
+            <div class="masthead-brand">NEREUS | COMPARATIVE ANALYTICS</div>
+            <h1 style="font-size: 42px; font-weight: 300; margin-top: 10px; margin-bottom: 5px;">Portfolio Benchmarking</h1>
+            <div class="masthead-subtitle">Side-by-side performance comparison across all portfolio dimensions</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
     # Site selector

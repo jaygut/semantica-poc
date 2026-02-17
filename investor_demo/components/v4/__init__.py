@@ -1,4 +1,4 @@
-"""Nereus v4 Intelligence Platform - component package.
+"""Nereus v4 Natural Capital Intelligence - component package.
 
 Registry-driven, multi-site dashboard. Each module exposes a single render
 function consumed by streamlit_app_v4.py.  All site lists are discovered

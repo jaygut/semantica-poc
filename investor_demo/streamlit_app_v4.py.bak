@@ -1,4 +1,4 @@
-"""Nereus v4 Natural Capital Intelligence - Global Scaling Dashboard.
+"""Nereus v4 Intelligence Platform - Global Scaling Dashboard.
 
 Registry-driven, multi-site dashboard. All site lists are discovered
 dynamically from ``examples/*_case_study.json`` - no hardcoded site names.
@@ -40,7 +40,7 @@ from investor_demo.components.v4.shared import (  # noqa: E402
 # Page Configuration
 # ---------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Nereus Natural Capital Intelligence",
+    page_title="Nereus Intelligence Platform",
     page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded",
@@ -125,21 +125,8 @@ with st.sidebar:
     logo_path = Path(__file__).parent / "assets" / "nereus_logo.png"
     if logo_path.exists():
         st.image(str(logo_path), use_container_width=True)
-    
-    # Prominent Brand Name
-    st.markdown(
-        """
-        <div style="text-align: center; margin-top: -15px; margin-bottom: 25px;">
-            <div style="font-size: 26px; font-weight: 700; letter-spacing: 5px; color: #F1F5F9; text-transform: uppercase; font-family: 'Inter', sans-serif;">
-                NEREUS
-            </div>
-            <div style="font-size: 11px; font-weight: 600; letter-spacing: 2px; color: #5B9BD5; text-transform: uppercase; margin-top: 4px; opacity: 0.8;">
-                MARIS x SEMANTICA
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    else:
+        st.markdown("### NEREUS")
 
     # Mode toggle
     live_mode = st.toggle(
@@ -188,7 +175,7 @@ with st.sidebar:
             st.caption("Queries will use precomputed fallback until the API is started.")
     else:
         st.markdown(
-            '<div class="conn-status conn-static" style="width:100%">'
+            '<div class="conn-status conn-static">'
             '<span class="conn-dot"></span>Demo Mode - Precomputed</div>',
             unsafe_allow_html=True,
         )
@@ -263,31 +250,6 @@ data = get_site_data(site, bundle_data)
 if data is None:
     st.error(f"Failed to load data for {site}.")
     st.stop()
-
-# ---------------------------------------------------------------------------
-# Global Branding Header
-# ---------------------------------------------------------------------------
-st.markdown(
-    f"""
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding: 10px 5px 0 5px;">
-        <div>
-            <div style="font-size: 18px; font-weight: 700; letter-spacing: 5px; color: #F1F5F9; text-transform: uppercase; font-family: 'Inter', sans-serif;">
-                NEREUS <span style="color: #5B9BD5; font-weight: 400; margin-left: 10px; letter-spacing: 2px;">| NATURAL CAPITAL INTELLIGENCE</span>
-            </div>
-            <div style="font-size: 11px; font-weight: 500; letter-spacing: 1.5px; color: #64748B; text-transform: uppercase; margin-top: 6px;">
-                Powered by MARIS + Semantica &middot; Provenance-First Blue Finance Infrastructure
-            </div>
-        </div>
-        <div style="text-align: right;">
-             <div class="conn-status {'conn-live' if mode == 'live' else 'conn-static'}" style="padding: 6px 16px; font-size: 13px;">
-                <span class="conn-dot" style="width: 10px; height: 10px;"></span>
-                {'LIVE INTELLIGENCE MODE' if mode == 'live' else 'DEMO MODE - PRECOMPUTED'}
-            </div>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
 # ---------------------------------------------------------------------------
 # Tab Structure (6 tabs - Portfolio Overview is new)

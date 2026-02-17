@@ -1,4 +1,4 @@
-"""Portfolio Overview tab for Nereus v4 Intelligence Platform.
+"""Portfolio Overview tab for Nereus v4 Natural Capital Intelligence.
 
 NEW in v4: provides a summary grid of all dynamically discovered sites,
 aggregate portfolio statistics, color-coded table with habitat pills
@@ -376,14 +376,13 @@ def render_portfolio_overview(**kwargs: Any) -> None:
     dynamically discovered from ``examples/*_case_study.json``.
     """
     st.markdown(
-        '<div class="section-header" style="margin-top:0">'
-        "Portfolio Overview</div>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<div class="section-desc">Aggregate view across all sites in the '
-        "Nereus portfolio. Sites are discovered dynamically from case study "
-        "data - no hardcoded site lists.</div>",
+        """
+        <div class="masthead">
+            <div class="masthead-brand">NEREUS | GLOBAL PORTFOLIO</div>
+            <h1 style="font-size: 42px; font-weight: 300; margin-top: 5px; margin-bottom: 5px;">Marine Asset Portfolio</h1>
+            <div class="masthead-subtitle">Aggregate performance and risk overview across all discovered MPA sites</div>
+        </div>
+        """,
         unsafe_allow_html=True,
     )
 
