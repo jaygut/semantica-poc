@@ -58,7 +58,7 @@ class TestGetManagerSemanticaPath:
         with patch("maris.config.get_config", return_value=mock_config):
             manager = _get_manager()
 
-        assert manager.registry.count() == 16
+        assert manager.registry.count() == 35
 
     def test_summary_includes_semantica_fields(self, mock_config: MagicMock) -> None:
         """Summary from SemanticaBackedManager includes semantica-specific keys."""
@@ -71,7 +71,7 @@ class TestGetManagerSemanticaPath:
         assert "semantica_available" in summary
         assert "semantica_entries" in summary
         assert "axioms_loaded" in summary
-        assert summary["axioms_loaded"] == 16
+        assert summary["axioms_loaded"] == 35
 
     def test_singleton_returns_same_instance(self, mock_config: MagicMock) -> None:
         """Calling _get_manager() twice returns the same singleton."""
@@ -126,7 +126,7 @@ class TestGetManagerFallback:
         ):
             manager = _get_manager()
 
-        assert manager.registry.count() == 16
+        assert manager.registry.count() == 35
 
     def test_fallback_summary_has_axioms_loaded(self, mock_config: MagicMock) -> None:
         """Fallback summary still includes axioms_loaded."""
@@ -148,7 +148,7 @@ class TestGetManagerFallback:
 
         summary = manager.summary()
         assert "axioms_loaded" in summary
-        assert summary["axioms_loaded"] == 16
+        assert summary["axioms_loaded"] == 35
 
 
 class TestProvenancePersistence:
