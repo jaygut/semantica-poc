@@ -4,7 +4,7 @@
 
 Nereus is a provenance-first blue finance platform, powered by MARIS (Marine Asset Risk Intelligence System) + Semantica. It creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. The system is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
 
-The v4 global scaling milestone exposes the curated knowledge foundation through a Neo4j graph database (938 nodes, 244 edges across 9 Gold-tier MPA sites), a FastAPI query engine with natural-language classification, and an investor-facing Streamlit dashboard with interactive provenance visualization and portfolio-level views.
+The v4 global scaling milestone with Intelligence Upgrade exposes the curated knowledge foundation through a Neo4j graph database (953+ nodes including 15 Concept nodes, 244+ edges across 9 Gold-tier MPA sites), a FastAPI query engine with 6-category natural-language classification (added concept_explanation for mechanism questions), and an investor-facing Streamlit dashboard with interactive provenance visualization and portfolio-level views. The system now resolves mechanism questions ("How does blue carbon work?") without requiring a site anchor.
 
 ## Architecture Overview
 
@@ -13,9 +13,9 @@ User Question (natural language)
      |
      v
  QueryClassifier  -- keyword-first with LLM fallback
-     |              (5 categories: valuation, provenance, axiom, comparison, risk)
+     |              (6 categories: valuation, provenance, axiom, comparison, risk, concept_explanation)
      v
- CypherTemplates  -- 8 templates (5 core + 3 utility), never raw string interpolation
+ CypherTemplates  -- 11 templates (5 core + 3 utility + 3 concept), never raw string interpolation
      |
      v
  QueryExecutor    -- Neo4j bolt driver, parameterized queries only

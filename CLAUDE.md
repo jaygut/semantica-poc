@@ -6,7 +6,7 @@ This file provides guidance to Claude Code when working with this repository.
 
 **Nereus** is a provenance-first blue finance platform, powered by MARIS + Semantica. It creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital.
 
-**Current Status:** v4 Global Scaling Platform - Neo4j knowledge graph (938 nodes, 244 edges), 9 MPA sites across 4 ocean basins, $1.62B aggregate ESV. FastAPI (9 endpoints), four Streamlit dashboards (v1-v4), 195 papers, 16 bridge axioms. 706 unit + 204 integration tests.
+**Current Status:** v4 Global Scaling Platform with Intelligence Upgrade - Neo4j knowledge graph (953+ nodes with 15 Concept nodes pending population, 244+ edges), 9 MPA sites across 4 ocean basins, $1.62B aggregate ESV. FastAPI (9 endpoints, 6 query categories), four Streamlit dashboards (v1-v4), 195 papers, 35 bridge axioms (expanded from 16). 787 unit tests + integration suite.
 
 ---
 
@@ -62,7 +62,7 @@ scripts/
   populate_neo4j_v4.py    # 11-stage populator, auto-discovers examples/*_case_study.json
   populate_neo4j.py       # Legacy 2-site populator (v2/v3)
 
-tests/                    # 706 unit + 204 integration tests
+tests/                    # 787 unit + integration tests (65 new from Intelligence Upgrade)
 launch.sh                 # Unified launcher
 ```
 
@@ -105,13 +105,13 @@ Comparison sites (GBR, Papahanaumokuakea): governance metadata only, no ESV.
 
 ## Key Technical Details
 
-**Three-Layer Translation:** ECOLOGICAL DATA -> BRIDGE AXIOMS (16 rules) -> FINANCIAL METRICS
+**Three-Layer Translation:** ECOLOGICAL DATA -> BRIDGE AXIOMS (35 rules, expanded from 16) -> FINANCIAL METRICS
 
-**Query classification:** site_valuation, provenance_drilldown, axiom_explanation, comparison, risk_assessment. Site resolution via `_SITE_PATTERNS` in `classifier.py`.
+**Query classification (6 categories):** site_valuation, provenance_drilldown, axiom_explanation, comparison, risk_assessment, concept_explanation (NEW). Site resolution via `_SITE_PATTERNS` in `classifier.py`. Concept-based traversal for mechanism questions without site anchor.
 
 **API auth:** Bearer token via `MARIS_API_KEY`. Bypassed with `MARIS_DEMO_MODE=true`. Rate limits: 30/min (query), 60/min (others).
 
-**Graph schema:** 938 nodes (Document 835, EcosystemService 39, Species 17, BridgeAxiom 16, MPA 11, Concept 10, TrophicLevel 10, Habitat 4, FinancialInstrument 3, Framework 3). 244 relationships across 14 types.
+**Graph schema:** 953+ nodes (Document 835, EcosystemService 39, Species 17, BridgeAxiom 35, MPA 11, Concept 15 NEW, TrophicLevel 10, Habitat 4, FinancialInstrument 3, Framework 3). 244+ relationships (added INVOLVES_AXIOM, RELEVANT_TO, DOCUMENTED_BY for concepts).
 
 **Data lineage:** `scripts/populate_neo4j_v4.py` auto-discovers `examples/*_case_study.json` through 11-stage idempotent MERGE pipeline.
 
@@ -120,7 +120,8 @@ Comparison sites (GBR, Papahanaumokuakea): governance metadata only, no ESV.
 ## Extending the System
 
 - **New MPA site:** Create `examples/<name>_case_study.json`, run `python scripts/populate_neo4j_v4.py`
-- **New bridge axiom:** Add to `schemas/bridge_axiom_templates.json` + `data/semantica_export/bridge_axioms.json`, re-run populator
+- **New bridge axiom:** Add to `schemas/bridge_axiom_templates.json` + `data/semantica_export/bridge_axioms.json`, re-run populator. (35 axioms now: BA-001 through BA-035)
+- **New Concept node:** Add to `data/semantica_export/concepts.json`, update `classifier.py` patterns, re-run populator. (15 Concepts: BC-001 through BC-015)
 - **New API endpoint:** Pydantic models in `models.py`, route in `routes/`, register in `main.py`
 
 ---

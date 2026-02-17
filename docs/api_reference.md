@@ -50,10 +50,10 @@ Returns system status including Neo4j connectivity, LLM availability, and graph 
       "Document": 835,
       "EcosystemService": 39,
       "Species": 17,
-      "BridgeAxiom": 16,
+      "BridgeAxiom": 35,
       "MPA": 11,
       "TrophicLevel": 10,
-      "Concept": 10,
+      "Concept": 15,
       "Habitat": 4,
       "FinancialInstrument": 3,
       "Framework": 3
@@ -306,15 +306,15 @@ The Neo4j graph uses the following node labels and relationship types. All nodes
 | `Document` | `doi` | 835 | title, year, source_tier, domain, abstract | Peer-reviewed evidence source from the 195-paper registry |
 | `EcosystemService` | `service_name` or `service_id` | 39 | annual_value_usd, valuation_method, ci_low, ci_high | Valued ecosystem service (e.g. Tourism, Fisheries, Carbon Sequestration) |
 | `Species` | `worms_id` or `name` | 17 | common_name, trophic_level, role_in_ecosystem, commercial_importance | Marine species with WoRMS taxonomic identifiers |
-| `BridgeAxiom` | `axiom_id` | 16 | name, category, description, pattern, coefficients_json, confidence, evidence_tier, ci_low, ci_high, distribution, study_sample_size, effect_size_type | Ecological-to-financial translation rule with peer-reviewed coefficients and uncertainty quantification |
+| `BridgeAxiom` | `axiom_id` | 35 | name, category, description, pattern, coefficients_json, confidence, evidence_tier, ci_low, ci_high, distribution, study_sample_size, effect_size_type | Ecological-to-financial translation rule with peer-reviewed coefficients and uncertainty quantification. 35 axioms (BA-001 through BA-035) covering carbon, coastal protection, tourism, fisheries, and cross-cutting mechanisms |
 | `MPA` | `name` | 11 | area_km2, designation_year, neoli_score, total_esv_usd, biomass_ratio, asset_rating, biomass_measurement_year, last_validated_date, data_freshness_status | Marine Protected Area (9 Gold-tier + 2 comparison) |
 | `TrophicLevel` | `name` | 10 | trophic_level | Trophic network node (apex predator, mesopredator, herbivore, etc.) |
-| `Concept` | `name` | 10 | description | Domain concept (NEOLI Criteria, etc.) |
+| `Concept` | `concept_id` | 15 | name, description, domain, applicable_habitats, involved_axiom_ids | Blue finance domain concept (BC-001 through BC-015): Blue Carbon Sequestration, Coastal Protection, Marine Tourism Economics, Carbon Credits, Reef Insurance, TNFD Disclosure, etc. Enables mechanism questions without site anchor |
 | `Habitat` | `habitat_id` or `name` | 4 | condition | Marine habitat type (coral reef, kelp forest, seagrass meadow, mangrove forest) |
 | `FinancialInstrument` | `instrument_id` | 3 | name, description | Blue finance instrument (blue bond, parametric reef insurance) |
 | `Framework` | `framework_id` | 3 | name, description | Disclosure or accounting framework (TNFD LEAP, SEEA) |
 
-**Total:** 938 nodes, 244 edges
+**Total:** 953+ nodes (includes 15 new Concept nodes pending population), 244+ edges
 
 ### Relationship Types
 
@@ -334,8 +334,11 @@ The Neo4j graph uses the following node labels and relationship types. All nodes
 | `APPLICABLE_TO` | Framework | MPA | 3 | Disclosure framework is applicable to this site |
 | `GOVERNS` | Framework | FinancialInstrument | 3 | Framework governs this instrument type |
 | `APPLIES_TO_HABITAT` | BridgeAxiom | Habitat | 3 | Axiom is applicable to this habitat type |
+| `INVOLVES_AXIOM` | Concept | BridgeAxiom | ~50 NEW | Concept involves this axiom (enables mechanism question routing) |
+| `RELEVANT_TO` | Concept | Concept | ~15 NEW | Concept relationship (future cross-concept traversal) |
+| `DOCUMENTED_BY` | Concept | Document | ~30 NEW | Concept is documented in this peer-reviewed source |
 
-**Total:** 244 edges
+**Total:** 244+ edges (expanded with Concept relationships)
 
 ---
 
