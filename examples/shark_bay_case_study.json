@@ -204,6 +204,7 @@
       "@type": "Species",
       "scientific_name": "Posidonia australis",
       "common_name": "Fibre-ball weed (Australian seagrass)",
+      "worms_aphia_id": 211043,
       "role_in_ecosystem": "dominant_habitat_former",
       "carbon_relevance": "primary carbon stock species - single clone spans 180 km, world's largest known plant",
       "notes": "4,500 years old polyploid clone discovered in 2022"
@@ -212,6 +213,7 @@
       "@type": "Species",
       "scientific_name": "Dugong dugon",
       "common_name": "Dugong",
+      "worms_aphia_id": 254967,
       "iucn_status": "Vulnerable",
       "population_estimate": "10,000-14,000",
       "role_in_ecosystem": "keystone_herbivore",
@@ -222,6 +224,7 @@
       "@type": "Species",
       "scientific_name": "Tursiops aduncus",
       "common_name": "Indo-Pacific bottlenose dolphin",
+      "worms_aphia_id": 137111,
       "role_in_ecosystem": "apex_predator",
       "notes": "Monkey Mia dolphin interaction program - major tourism driver"
     }

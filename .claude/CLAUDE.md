@@ -1,21 +1,22 @@
 # Nereus POC - Agentic System
 
-This directory contains the agentic workflow system, document registry, and skills infrastructure for the Nereus knowledge graph (powered by MARIS + Semantica). It supports both the live v2 system (Neo4j + FastAPI + Streamlit) and the document curation pipeline that feeds it.
+This directory contains the agentic workflow system, document registry, and skills infrastructure for the Nereus knowledge graph (powered by MARIS + Semantica). It supports the v4 Global Scaling Platform (Neo4j + FastAPI + Streamlit) and the document curation pipeline that feeds it.
 
 ## Current Status
 
-### v2 Live System - Deployed on main
+### v4 Global Scaling Platform
 
 | Component | Status | Details |
 |-----------|--------|---------|
-| Neo4j Knowledge Graph | Running | 893 nodes, 132 edges, bolt://localhost:7687 |
+| Neo4j Knowledge Graph | Running | 938 nodes, 244 edges, bolt://localhost:7687 (maris_v4 Enterprise 5.26.8) |
 | FastAPI Query Engine | Running | 9 endpoints (7 core + provenance + disclosure), http://localhost:8000 |
+| v4 Global Scaling Platform | Running | 9 sites, 6 tabs, $1.62B portfolio, http://localhost:8504 |
 | v3 Intelligence Platform | Running | Multi-tab dashboard (5 tabs), http://localhost:8503 |
 | v2 Streamlit Dashboard | Running | Dark-mode dual-site investor UI, http://localhost:8501 |
 | Document Library | Complete | 195 papers, 92% T1, 16 bridge axioms |
 | Semantica Export | Complete | 14 entities, 15 relationships, 16 axioms |
-| Characterized Sites | 2 | Cabo Pulmo ($29.27M ESV) + Shark Bay ($21.5M ESV) |
-| Semantica Integration | Complete | P0-P4 on feature/semantica-integration branch (27 modules, 6-file bridge) |
+| Characterized Sites | 9 | Cabo Pulmo, Shark Bay, Ningaloo, Belize, Galapagos, Raja Ampat, Sundarbans, Aldabra, Cispata Bay |
+| Semantica Integration | Complete | P0-P4 complete (27 modules, 6-file bridge) |
 | Test Suite | 910 | 706 unit + 204 integration tests |
 
 ### Document Library Metrics
@@ -51,16 +52,25 @@ Agentic Curation Layer                     Live System Layer
                                                       │
 cabo_pulmo_case_study.json ────────────────────────────┤
 shark_bay_case_study.json ─────────────────────────────┤
+ningaloo_case_study.json ──────────────────────────────┤
+belize_case_study.json ────────────────────────────────┤
+galapagos_case_study.json ─────────────────────────────┤
+raja_ampat_case_study.json ────────────────────────────┤
+sundarbans_case_study.json ────────────────────────────┤
+aldabra_case_study.json ───────────────────────────────┤
+cispata_bay_case_study.json ───────────────────────────┤
 bridge_axiom_templates.json (16 axioms) ───────────────┤
                                                       │
                                                       v
-                                          scripts/populate_neo4j.py
+                                          scripts/populate_neo4j.py (v2/v3)
+                                          scripts/populate_neo4j_v4.py (v4)
                                                       │
                                                       v
-                                          Neo4j (893 nodes, 132 edges)
+                                          Neo4j (938 nodes, 244 edges)
                                                       │
                                                       v
-                                          FastAPI ──> v3 Intelligence Platform (8503)
+                                          FastAPI ──> v4 Global Scaling Platform (8504)
+                                                  ──> v3 Intelligence Platform (8503)
                                                   ──> v2 Streamlit Dashboard (8501)
 ```
 
@@ -98,6 +108,20 @@ bridge_axiom_templates.json (16 axioms) ─────────────�
     documents/                     # Individual document metadata
     kg_ready/                      # Extracted knowledge for graph population
     reports/                       # Pipeline execution reports
+
+investor_demo/
+  components/
+    v4/                              # v4 Global Scaling Platform components
+      shared.py                      # Dynamic site discovery, tier-aware feature gating
+      portfolio_overview.py          # Tab 0 - Portfolio grid ($1.62B aggregate)
+      intelligence_brief.py          # Tab 1 - Per-site KPIs and provenance
+      graphrag_chat.py               # Tab 2 - GraphRAG with rotated Document labels
+      scenario_engine.py             # Tab 3 - Monte Carlo with site-aware axiom chains
+      tnfd_compliance.py             # Tab 5 - LEAPGeneratorV4, auto-discovered sites
+  streamlit_app_v4.py                # v4 registry-driven 6-tab dashboard on :8504
+
+scripts/
+  populate_neo4j_v4.py               # 11-stage generic populator, auto-discovers case studies
 
 tests/                               # Test suite (910 tests: 706 unit + 204 integration)
   conftest.py                        # Shared fixtures
@@ -252,12 +276,14 @@ pytest tests/ -v
 |------|---------|
 | `../CLAUDE.md` | Root project context (architecture, data lineage, quick start) |
 | `../README.md` | Project overview and implementation roadmap |
+| `../launch.sh` | Unified platform launcher (v1-v4, API, stop) |
 | `../docs/developer_guide.md` | Full architecture, population pipeline, extension guide |
 | `../docs/api_reference.md` | API endpoints, graph schema, query categories |
-| `../docs/user_guide.md` | Dashboard usage, Ask MARIS, confidence levels |
+| `../docs/user_guide.md` | Dashboard usage, Ask Nereus, confidence levels |
 | `../SEMANTICA_HANDOFF_README.md` | Integration guide for Semantica team |
 | `../docs/investment_grade_definition.md` | Investment-grade definition and criteria |
 | `../docs/second_site_characterization_plan.md` | Plan for characterizing a second MPA site |
+| `../ai_docs/scaling/` | v4 scaling research and population guide |
 
 ## External Links
 

@@ -191,6 +191,7 @@
       "@type": "Species",
       "scientific_name": "Rhincodon typus",
       "common_name": "Whale shark",
+      "worms_aphia_id": 105847,
       "iucn_status": "Endangered",
       "role_in_ecosystem": "megafauna",
       "notes": "Regular seasonal aggregations; major tourism draw"
@@ -199,6 +200,7 @@
       "@type": "Species",
       "scientific_name": "Manta birostris",
       "common_name": "Giant oceanic manta ray",
+      "worms_aphia_id": 395057,
       "iucn_status": "Endangered",
       "role_in_ecosystem": "megafauna",
       "notes": "Raja Ampat hosts one of the world's largest known manta ray populations"

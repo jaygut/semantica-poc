@@ -200,6 +200,7 @@
       "@type": "Species",
       "scientific_name": "Chelonia mydas",
       "common_name": "Green sea turtle",
+      "worms_aphia_id": 137206,
       "iucn_status": "Endangered",
       "role_in_ecosystem": "seagrass_grazer",
       "notes": "Aldabra is one of the most important green turtle nesting sites in the Indian Ocean"

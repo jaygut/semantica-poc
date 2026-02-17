@@ -198,6 +198,7 @@
       "@type": "Species",
       "scientific_name": "Rhincodon typus",
       "common_name": "Whale shark",
+      "worms_aphia_id": 105847,
       "iucn_status": "Endangered",
       "role_in_ecosystem": "megafauna",
       "notes": "Ningaloo hosts one of the world's most reliable and accessible whale shark aggregations; first whale shark tourism industry (1989)"
@@ -206,6 +207,7 @@
       "@type": "Species",
       "scientific_name": "Mobula alfredi",
       "common_name": "Reef manta ray",
+      "worms_aphia_id": 894971,
       "iucn_status": "Vulnerable",
       "role_in_ecosystem": "megafauna",
       "notes": "Year-round resident population; important tourism draw alongside whale sharks"
@@ -214,6 +216,7 @@
       "@type": "Species",
       "scientific_name": "Caretta caretta",
       "common_name": "Loggerhead sea turtle",
+      "worms_aphia_id": 137066,
       "iucn_status": "Vulnerable",
       "role_in_ecosystem": "nesting_species",
       "notes": "Major nesting population on Ningaloo coast beaches; Conservation Dependent under Australian law"

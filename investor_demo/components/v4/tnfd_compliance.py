@@ -448,9 +448,9 @@ def render_tnfd_compliance(
 
     try:
         from maris.disclosure.alignment_scorer import AlignmentScorer
-        from maris.disclosure.leap_generator import LEAPGenerator
+        from maris.disclosure.leap_generator_v4 import LEAPGeneratorV4
 
-        generator = LEAPGenerator(project_root=_PROJECT_ROOT)
+        generator = LEAPGeneratorV4(project_root=_PROJECT_ROOT)
         disclosure = generator.generate(site)
 
         scorer = AlignmentScorer()

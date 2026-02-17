@@ -294,6 +294,27 @@ def _populate_case_study_site(session, case_path: Path) -> int:
             habitats_linked.add(hab_id)
             count += 1
 
+    # From ecological_status.secondary_habitats
+    for hab in eco_status.get("secondary_habitats", []):
+        hab_id = _HABITAT_IDS.get(hab)
+        if hab_id and hab_id not in habitats_linked:
+            session.run(
+                """
+                MERGE (h:Habitat {habitat_id: $hab_id})
+                ON CREATE SET h.name = $name
+                WITH h
+                MATCH (m:MPA {name: $mpa_name})
+                MERGE (m)-[:HAS_HABITAT]->(h)
+                """,
+                {
+                    "hab_id": hab_id,
+                    "name": hab.replace("_", " ").title(),
+                    "mpa_name": site_name,
+                },
+            )
+            habitats_linked.add(hab_id)
+            count += 1
+
     # Ecological recovery habitat (coral reef for Cabo Pulmo style)
     if eco_recovery and "coral_reef" not in habitats_linked:
         session.run(
@@ -455,6 +476,10 @@ def _dry_run(case_paths: list[Path], sites: list[tuple[str, Path]]) -> None:
         for h in cs.get("habitats", []):
             h_raw = h if isinstance(h, str) else h.get("habitat_id", "")
             h_id = _HABITAT_IDS.get(h_raw, h_raw)
+            if h_id:
+                habitats.add(h_id)
+        for h in eco.get("secondary_habitats", []):
+            h_id = _HABITAT_IDS.get(h)
             if h_id:
                 habitats.add(h_id)
         if cs.get("ecological_recovery"):

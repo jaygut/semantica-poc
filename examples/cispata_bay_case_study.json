@@ -207,6 +207,7 @@
       "@type": "Species",
       "scientific_name": "Centropomus undecimalis",
       "common_name": "Common snook",
+      "worms_aphia_id": 275955,
       "role_in_ecosystem": "commercial_predator",
       "commercial_importance": "high",
       "notes": "Mangrove-dependent fishery species important for local livelihoods"

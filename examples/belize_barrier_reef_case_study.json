@@ -211,6 +211,7 @@
       "@type": "Species",
       "scientific_name": "Acropora palmata",
       "common_name": "Elkhorn coral",
+      "worms_aphia_id": 207230,
       "iucn_status": "Critically Endangered",
       "role_in_ecosystem": "reef_builder",
       "notes": "Historically dominant reef-building coral; populations declining but recovery efforts underway"
@@ -219,6 +220,7 @@
       "@type": "Species",
       "scientific_name": "Panulirus argus",
       "common_name": "Caribbean spiny lobster",
+      "worms_aphia_id": 107013,
       "role_in_ecosystem": "commercial_keystone",
       "commercial_importance": "high",
       "notes": "Primary export fishery species; reef-dependent for habitat and nursery"
@@ -227,6 +229,7 @@
       "@type": "Species",
       "scientific_name": "Trichechus manatus",
       "common_name": "West Indian manatee",
+      "worms_aphia_id": 137076,
       "iucn_status": "Vulnerable",
       "role_in_ecosystem": "keystone_herbivore",
       "seagrass_dependency": "obligate seagrass grazer",

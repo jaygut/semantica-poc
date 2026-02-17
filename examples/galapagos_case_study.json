@@ -221,6 +221,7 @@
       "@type": "Species",
       "scientific_name": "Sphyrna lewini",
       "common_name": "Scalloped hammerhead shark",
+      "worms_aphia_id": 105819,
       "iucn_status": "Critically Endangered",
       "role_in_ecosystem": "apex_predator",
       "notes": "Large aggregations at Gordon Rocks and Wolf/Darwin islands; key indicator of reef health"

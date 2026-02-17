@@ -34,7 +34,7 @@ _MECHANISM_KEYWORDS = ("how does", "how do", "what is blue carbon")
 _LAYER_ORDER = ["MPA", "Habitat", "EcosystemService", "BridgeAxiom", "Document"]
 _LAYER_Y: dict[str, float] = {
     "MPA": 5.0, "Habitat": 3.8, "EcosystemService": 2.4,
-    "BridgeAxiom": 1.0, "Document": -1.0,
+    "BridgeAxiom": 1.0, "Document": -1.5,
 }
 _NODE_SIZES: dict[str, int] = {
     "MPA": 50, "EcosystemService": 40, "BridgeAxiom": 36,
@@ -523,33 +523,50 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
             hoverinfo="skip", showlegend=False,
         ))
 
-    # Draw nodes
+    # Draw nodes - Document labels rendered as rotated annotations below
+    doc_annotations: list[dict] = []
     for name, info in positions.items():
         node_type = info["type"]
         color = _TYPE_COLORS.get(node_type, _DEFAULT_COLOR)
         size = _NODE_SIZES.get(node_type, 34)
         display_name = name[:35] + "..." if len(name) > 35 else name
+        is_doc = node_type == "Document"
         fig.add_trace(go.Scatter(
-            x=[info["x"]], y=[info["y"]], mode="markers+text",
+            x=[info["x"]], y=[info["y"]],
+            mode="markers" if is_doc else "markers+text",
             marker={"size": size, "color": color, "line": {"width": 2, "color": "#0B1120"}},
-            text=[display_name], textposition="bottom center",
+            text=[] if is_doc else [display_name],
+            textposition="bottom center",
             textfont={"size": 14, "color": "#E2E8F0", "family": "Inter"},
             hoverinfo="text", hovertext=[f"<b>{name}</b><br>Type: {node_type}"],
             showlegend=False,
         ))
+        if is_doc:
+            doc_annotations.append({
+                "x": info["x"], "y": info["y"],
+                "xref": "x", "yref": "y",
+                "text": display_name,
+                "showarrow": False,
+                "textangle": 90,
+                "xanchor": "center",
+                "yanchor": "top",
+                "yshift": -16,
+                "font": {"size": 10, "color": "#94A3B8", "family": "Inter"},
+            })
 
     ys = [p["y"] for p in positions.values()]
     xs = [p["x"] for p in positions.values()]
     fig.update_layout(
-        height=600,
-        margin={"l": 10, "r": 10, "t": 30, "b": 10},
+        height=700,
+        margin={"l": 10, "r": 10, "t": 30, "b": 120},
         xaxis={"showgrid": False, "zeroline": False, "showticklabels": False,
                "range": [min(xs) - 2, max(xs) + 2]},
         yaxis={"showgrid": False, "zeroline": False, "showticklabels": False,
-               "range": [min(ys) - 2, max(ys) + 1.5]},
+               "range": [min(ys) - 5, max(ys) + 1.5]},
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
         font={"family": "Inter", "color": "#CBD5E1"},
+        annotations=doc_annotations,
     )
     st.plotly_chart(fig, width="stretch", key=f"v4_graph_explorer_{idx}")
 

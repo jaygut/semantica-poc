@@ -221,6 +221,7 @@
       "@type": "Species",
       "scientific_name": "Tenualosa ilisha",
       "common_name": "Hilsa shad",
+      "worms_aphia_id": 127148,
       "role_in_ecosystem": "keystone_fishery_species",
       "commercial_importance": "high",
       "notes": "Most commercially valuable fish in Bangladesh; Sundarbans serve as critical nursery habitat"

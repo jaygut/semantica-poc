@@ -1,38 +1,65 @@
-# Nereus - Investor Demo Dashboard
+# Nereus - Investor Demo Dashboards
 
 ## Overview
 
 Interactive Streamlit dashboards for the **Nereus provenance-first blue finance platform** (powered by MARIS + Semantica), designed for investor-facing demonstrations. Dark-mode layout with professional financial styling.
 
-**Three operating modes:**
+**Four operating modes:**
 
-- **v3 (Intelligence Platform - Recommended)** - Multi-tab dashboard that makes the P0-P4 backend infrastructure visible and interactive. 5 tabs: Intelligence Brief, GraphRAG Chat, Scenario Lab, Site Scout, TNFD Compliance. Dual-mode operation (Live/Demo) on every tab.
+- **v4 (Global Scaling Platform - Latest)** - Registry-driven dashboard spanning 9 MPA sites across 4 ocean basins with a $1.62B combined portfolio. 6 tabs: Portfolio Overview, Intelligence Brief, Ask Nereus (GraphRAG), Scenario Lab, Site Scout, TNFD Compliance. All sites discovered dynamically from `examples/*_case_study.json`. Tier-aware feature gating (Gold/Silver/Bronze).
+- **v3 (Intelligence Platform)** - Multi-tab dashboard that makes the P0-P4 backend infrastructure visible and interactive. 5 tabs: Intelligence Brief, GraphRAG Chat, Scenario Lab, Site Scout, TNFD Compliance. Dual-mode operation (Live/Demo) on every tab.
 - **v2 (Live)** - Single-scroll dashboard with Neo4j knowledge graph, FastAPI query engine, and interactive graph explorer. Users can ask natural-language questions and see provenance chains rendered in real time.
 - **v1 (Static)** - Standalone mode powered by a pre-computed JSON bundle. No external services required - ideal for offline demos or when zero-downtime is critical.
 
+### Dashboard Comparison
+
+| Version | Sites | Tabs | Port | Launch |
+|---------|-------|------|------|--------|
+| v4 | 9 (auto-discovered) | 6 | 8504 | `./launch.sh v4` |
+| v3 | 2 | 5 | 8503 | `./launch.sh v3` |
+| v2 | 2 | 2 | 8501 | `./launch.sh v2` |
+| v1 | 1 (static) | 1 | 8500 | `./launch.sh v1` |
+
 ## Quick Start
 
-### v3 - Intelligence Platform (Recommended)
+### v4 - Global Scaling Platform (Latest)
 
-Requires Neo4j and the MARIS API server for Live mode, or runs standalone in Demo mode. See the [root README](../README.md#nereus-v2---live-query-system) for full backend setup.
+Requires Neo4j and the MARIS API server for Live mode, or runs standalone in Demo mode. See the [root README](../README.md#nereus-live-query-system) for full backend setup.
 
 ```bash
-# 1. Ensure Neo4j is running and the graph is populated
-python scripts/populate_neo4j.py
+# Using the unified launcher (recommended):
+./launch.sh v4
+
+# Or manually:
+# 1. Ensure Neo4j is running and the graph is populated (v4: 9 sites)
+python scripts/populate_neo4j_v4.py
 
 # 2. Start the API server (in one terminal)
 uvicorn maris.api.main:app --host 0.0.0.0 --port 8000
 
-# 3. Start the v3 dashboard (in another terminal)
+# 3. Start the v4 dashboard (in another terminal)
+cd investor_demo
+streamlit run streamlit_app_v4.py --server.port 8504
+```
+
+The dashboard opens at `http://localhost:8504`. Toggle between Live and Demo modes in the sidebar. In Demo mode, no external services are required. All 9 MPA sites are discovered dynamically from case study files.
+
+### v3 - Intelligence Platform
+
+```bash
+./launch.sh v3
+# Or manually:
 cd investor_demo
 streamlit run streamlit_app_v3.py --server.port 8503
 ```
 
-The dashboard opens at `http://localhost:8503`. Toggle between Live and Demo modes in the sidebar. In Demo mode, no external services are required.
+The dashboard opens at `http://localhost:8503`. Toggle between Live and Demo modes in the sidebar.
 
 ### v2 - Single-Scroll Dashboard
 
 ```bash
+./launch.sh v2
+# Or manually:
 cd investor_demo
 streamlit run streamlit_app_v2.py
 ```
@@ -42,6 +69,8 @@ The dashboard opens at `http://localhost:8501`. If the API is unreachable, the A
 ### v1 - Static Mode
 
 ```bash
+./launch.sh v1
+# Or manually:
 cd investor_demo
 pip install -r requirements.txt
 streamlit run streamlit_app.py
@@ -80,20 +109,39 @@ Every number displayed in the dashboard traces back to curated, DOI-backed sourc
 | **Curated Relationships** | `data/semantica_export/relationships.json` | 15 cross-domain edges with quantification and mechanism |
 | **Investment-Grade Bundle** | `demos/context_graph_demo/cabo_pulmo_investment_grade_bundle.json` | Pre-computed Monte Carlo results, risk scenarios, framework alignment (used by v1 static mode) |
 
-The v2 live mode queries these through the Neo4j graph (populated by `scripts/populate_neo4j.py`). The v1 static mode reads directly from the investment-grade bundle JSON.
+The v4 and v3 live modes query through the Neo4j graph (populated by `scripts/populate_neo4j_v4.py` for 9 sites). The v2 live mode uses the same graph. The v1 static mode reads directly from the investment-grade bundle JSON.
 
-**Calibration site model:** Cabo Pulmo National Park ($29.27M ESV, tourism-dominant) and Shark Bay World Heritage Area ($21.5M ESV, carbon-dominant) are fully characterized reference sites with complete ecosystem service valuations. Comparison sites (Great Barrier Reef, Papahanaumokuakea) have governance metadata only (NEOLI score, area, asset rating) and do not have financial data in the current graph. See the [Developer Guide](../docs/developer_guide.md#calibration-site-model) for details on adding new sites.
+**Site portfolio:** The v4 platform covers 9 MPA sites across 4 ocean basins with a combined $1.62B portfolio. Each site has a dedicated case study JSON in `examples/` and is auto-discovered by the dashboard via `get_all_sites()` in `shared.py`. Site characterization tiers (Gold/Silver/Bronze) control which features are available per site. See the [Developer Guide](../docs/developer_guide.md#calibration-site-model) for details on adding new sites.
 
 ---
 
 ## Dashboard Architecture
+
+### v4 Tab Structure (registry-driven, dark-mode)
+
+| Tab | Content |
+|-----|---------|
+| **Portfolio Overview** | Grid of all 9 MPA sites with ESV, asset rating, habitat type, country, and characterization tier indicators |
+| **Intelligence Brief** | Per-site KPIs (4 expandable cards), investment thesis, provenance chain graph, axiom evidence table, valuation composition, Monte Carlo risk profile |
+| **Ask Nereus (GraphRAG)** | Split-panel: chat (60%) + reasoning pipeline (40%) showing CLASSIFY -> QUERY -> SYNTHESIZE -> VALIDATE steps with Cypher display, confidence breakdown, and knowledge graph subgraph visualization |
+| **Scenario Lab** | Interactive Monte Carlo with site-aware axiom chains, 4 parameter sliders (carbon price, habitat loss, tourism growth, fisheries change), overlay histogram, tornado sensitivity chart |
+| **Site Scout** | Deferred placeholder (pipeline ready, dashboard pending) |
+| **TNFD Compliance** | TNFD LEAP disclosure with alignment scoring for all 9 sites, per-pillar breakdown (Governance, Strategy, Risk/Impact, Metrics/Targets), gap analysis, download buttons |
+
+**v4 Sidebar:** Mode toggle (Live/Demo), service health panel, site selector (all 9 sites), scenario slider, system metadata.
+
+**Architecture notes:**
+- Dynamic site discovery via `get_all_sites()` in `shared.py` - scans `examples/*_case_study.json`
+- `LEAPGeneratorV4` auto-discovers all case study files for TNFD disclosure generation
+- v4 precomputed responses provide demo fallback when API is offline
+- Tier-aware feature gating: Gold sites get full Monte Carlo and provenance; Silver/Bronze get progressively simpler views
 
 ### v3 Tab Structure (multi-tab, dark-mode)
 
 | Tab | Content |
 |-----|---------|
 | **Intelligence Brief** | KPI strip (4 expandable cards), investment thesis, provenance chain graph, axiom evidence table, valuation composition, Monte Carlo risk profile |
-| **Ask MARIS (GraphRAG)** | Split-panel: chat (60%) + reasoning pipeline (40%) showing CLASSIFY -> QUERY -> SYNTHESIZE -> VALIDATE steps with Cypher display, confidence breakdown, and integrated graph explorer |
+| **Ask Nereus (GraphRAG)** | Split-panel: chat (60%) + reasoning pipeline (40%) showing CLASSIFY -> QUERY -> SYNTHESIZE -> VALIDATE steps with Cypher display, confidence breakdown, and integrated graph explorer |
 | **Scenario Lab** | 4 parameter sliders (carbon price, habitat loss, tourism growth, fisheries change), real-time Monte Carlo recalculation (10k simulations), overlay histogram, tornado sensitivity chart, bridge axiom chain impact |
 | **Site Scout** | Deferred placeholder (pipeline ready, dashboard pending) |
 | **TNFD Compliance** | LEAP disclosure generation, X/14 alignment gauge, per-pillar progress bars, gap analysis, download buttons (Markdown, JSON, Executive Summary) |
@@ -122,24 +170,37 @@ The v2 live mode queries these through the Neo4j graph (populated by `scripts/po
 
 ### Component Files
 
+**v4 Global Scaling Platform:**
+
+| File | Purpose |
+|------|---------|
+| `streamlit_app_v4.py` | Main v4 app - page config, CSS, sidebar, 6-tab structure, dynamic site discovery |
+| `components/v4/__init__.py` | Package init with shared exports |
+| `components/v4/shared.py` | Dynamic site discovery via `get_all_sites()`, tier-aware feature gating, formatters |
+| `components/v4/portfolio_overview.py` | Tab: Portfolio grid ($1.62B aggregate), ESV composition, site cards |
+| `components/v4/intelligence_brief.py` | Tab: Per-site KPIs, provenance graph, axiom evidence, risk profile |
+| `components/v4/graphrag_chat.py` | Tab: Split-panel GraphRAG with pipeline transparency, graph explorer |
+| `components/v4/scenario_engine.py` | Tab: Monte Carlo with site-aware axiom chains, tornado chart |
+| `components/v4/tnfd_compliance.py` | Tab: TNFD LEAP with LEAPGeneratorV4 for all 9 sites |
+
 **v3 Intelligence Platform:**
 
 | File | Purpose |
 |------|---------|
 | `streamlit_app_v3.py` | Main v3 app - page config, CSS, sidebar, 5-tab structure |
 | `components/v3/__init__.py` | Package init with shared exports (COLORS, formatters, health checks) |
-| `components/v3/shared.py` | 26-color palette, V3_CSS (14k chars), formatters (fmt_usd, fmt_pct, confidence_badge, tier_badge), service health, site data loading |
-| `components/v3/intelligence_brief.py` | Tab 1: KPIs, provenance graph, axiom evidence, valuation, risk profile |
-| `components/v3/graphrag_chat.py` | Tab 2: Split-panel GraphRAG with pipeline transparency and graph explorer |
-| `components/v3/scenario_engine.py` | Tab 3: Interactive Monte Carlo with 4 sliders, tornado chart, axiom impact |
-| `components/v3/tnfd_compliance.py` | Tab 5: TNFD LEAP generation, alignment scoring, gap analysis, downloads |
+| `components/v3/shared.py` | 26-color palette, V3_CSS, formatters, service health, site data loading |
+| `components/v3/intelligence_brief.py` | Tab: KPIs, provenance graph, axiom evidence, valuation, risk profile |
+| `components/v3/graphrag_chat.py` | Tab: Split-panel GraphRAG with pipeline transparency |
+| `components/v3/scenario_engine.py` | Tab: Interactive Monte Carlo with 4 sliders, tornado chart |
+| `components/v3/tnfd_compliance.py` | Tab: TNFD LEAP generation, alignment scoring, downloads |
 
 **v2 Dashboard:**
 
 | File | Purpose |
 |------|---------|
 | `streamlit_app_v2.py` | Main v2 dashboard - CSS, layout, data sections |
-| `components/chat_panel.py` | Ask MARIS query UI with markdown rendering, confidence badges, evidence tables |
+| `components/chat_panel.py` | Ask Nereus query UI with markdown rendering, confidence badges, evidence tables |
 | `components/graph_explorer.py` | Plotly network graph with semantic layering (MPA -> Habitat -> Services -> Axioms -> Sources) |
 | `components/roadmap_section.py` | Scaling Intelligence section (intelligence stack + execution roadmap), shared between v1 and v2 |
 
@@ -148,7 +209,8 @@ The v2 live mode queries these through the Neo4j graph (populated by `scripts/po
 | File | Purpose |
 |------|---------|
 | `api_client.py` | HTTP client wrapping MARIS API endpoints; passes Bearer token if `MARIS_API_KEY` is configured; auto-falls back to precomputed responses via TF-IDF keyword matching |
-| `precomputed_responses.json` | Cached responses for 63 queries across all 5 categories (fallback when API is offline) |
+| `precomputed_responses_v4.json` | v4 demo fallback responses for all 9 sites |
+| `precomputed_responses.json` | v3 cached responses for 63 queries (fallback when API is offline) |
 
 ---
 
@@ -180,12 +242,13 @@ Freshness is derived from the `measurement_year` property on MPA nodes and feeds
 
 ## Design Principles
 
-- **Dark mode**: Navy/slate palette (`#0B1120` background, `#162039` card gradient) - shared across v2 and v3
+- **Dark mode**: Navy/slate palette (`#0B1120` background, `#162039` card gradient) - shared across all live versions
+- **v4 registry-driven**: All 9 sites auto-discovered from case study files with tier-aware feature gating
 - **v3 multi-tab**: Organized into 5 focused tabs for deeper exploration of each domain
 - **v2 single-scroll**: Narrative flows from ecology to finance in one continuous page
 - **No emojis**: Professional, sober financial tone appropriate for institutional audiences
 - **Provenance-first**: Every number traces to a DOI-backed source through explicit bridge axioms
-- **Dual-mode operation**: Every v3 tab works in Live (Neo4j + LLM) and Demo (precomputed) modes
+- **Dual-mode operation**: Every v3/v4 tab works in Live (Neo4j + LLM) and Demo (precomputed) modes
 - **Market-price methodology**: Actual expenditure data (not contingent valuation or willingness-to-pay)
 - **Custom HTML/CSS**: All cards, KPIs, and tables use injected HTML for precise visual control
 
@@ -193,7 +256,7 @@ Freshness is derived from the `measurement_year` property on MPA nodes and feeds
 
 ## Dependencies
 
-See `requirements.txt` for v1 (static) or `../requirements-v2.txt` for v2 (live).
+See `requirements.txt` for v1 (static) or `../requirements-v2.txt` for v2/v3/v4 (live).
 
 Core: streamlit, plotly, numpy, pandas, networkx, requests
 
