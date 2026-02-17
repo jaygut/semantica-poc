@@ -25,47 +25,65 @@ The system is designed for blue bond underwriters, conservation finance analysts
 
    > **Security:** The `.env` file contains database passwords and API keys. It is excluded from version control via `.gitignore` and must never be shared or committed.
 
-2. **Populate the knowledge graph** - Load the curated data sources into Neo4j:
+2. **Populate the knowledge graph** - Load all 9 sites into Neo4j:
 
    ```bash
-   python scripts/populate_neo4j.py
+   python scripts/populate_neo4j_v4.py
    ```
 
-   This loads 195 peer-reviewed papers, 16 bridge axioms with DOI-backed evidence, ecosystem service valuations, species data, and trophic network structure from seven curated JSON assets. See the [Developer Guide](developer_guide.md#knowledge-graph-data-lineage) for full data lineage.
+   This loads 195 peer-reviewed papers, 16 bridge axioms with DOI-backed evidence, ecosystem service valuations for 9 Gold-tier MPA sites, species data, and trophic network structure. The v4 populator dynamically discovers all case study files. See the [Developer Guide](developer_guide.md#knowledge-graph-data-lineage) for full data lineage.
 
-3. **Start the API server:**
+3. **Launch the platform (recommended - one command):**
 
    ```bash
+   ./launch.sh v4
+   ```
+
+   This starts Neo4j connectivity checks, the API server, and the v4 dashboard. The v4 dashboard opens at `http://localhost:8504`.
+
+   **Or start services manually:**
+
+   ```bash
+   # Terminal 1: Start the API server
    uvicorn maris.api.main:app --host 0.0.0.0 --port 8000
+
+   # Terminal 2: Start the dashboard
+   cd investor_demo
+   streamlit run streamlit_app_v4.py --server.port 8504
    ```
 
-4. **Start the dashboard:**
+   **Alternative dashboard versions:**
 
    ```bash
-   cd investor_demo
-
-   # v3 Intelligence Platform (recommended)
-   streamlit run streamlit_app_v3.py --server.port 8503
-
-   # v2 single-scroll dashboard (alternative)
-   streamlit run streamlit_app_v2.py
+   ./launch.sh v3   # v3 Intelligence Platform (2 sites, port 8503)
+   ./launch.sh v2   # v2 single-scroll dashboard (port 8501)
+   ./launch.sh v1   # v1 static dashboard (no API, port 8500)
    ```
-
-   The v3 dashboard opens at `http://localhost:8503`. The v2 dashboard opens at `http://localhost:8501`.
 
 ---
 
 ## Using the Dashboard
 
-Nereus provides two dashboard versions: the **v3 Intelligence Platform** (recommended) and the **v2 single-scroll dashboard**.
+Nereus provides four dashboard versions: the **v4 Global Portfolio** (recommended), the **v3 Intelligence Platform**, the **v2 single-scroll dashboard**, and the **v1 static dashboard** (offline/standalone).
 
-### v3 Intelligence Platform (Recommended)
+### v4 Global Portfolio (Recommended)
 
-The v3 dashboard is a multi-tab intelligence platform at `http://localhost:8503` that makes the Nereus backend infrastructure visible and interactive. Every tab has dual-mode operation: **Live** (Neo4j + LLM) and **Demo** (precomputed + static bundle), toggled from the sidebar.
+The v4 dashboard is the global scaling milestone at `http://localhost:8504`, covering all 9 Gold-tier MPA sites across 4 habitat types and 9 countries. It features 6 tabs with dual-mode operation: **Live** (Neo4j + LLM) and **Demo** (precomputed + static bundle), toggled from the sidebar.
 
-#### Tab 1: Intelligence Brief
+#### Tab 1: Portfolio Overview
 
-The default landing tab presents a comprehensive site overview:
+The default landing tab presents a grid view of the entire 9-site portfolio:
+
+| Section | What You See |
+|---------|-------------|
+| **Portfolio Summary** | Total portfolio ESV, site count, habitat coverage, average rating |
+| **Site Grid** | Cards for all 9 sites showing ESV, habitat type, asset rating, and NEOLI score |
+| **Portfolio Composition** | Breakdown by habitat type, geography, and ESV contribution |
+| **Risk Heatmap** | Cross-site risk factors and data freshness indicators |
+
+#### Tab 2: Intelligence Brief
+
+Per-site deep dive with full provenance:
 
 | Section | What You See |
 |---------|-------------|
@@ -76,45 +94,52 @@ The default landing tab presents a comprehensive site overview:
 | **Valuation Composition** | Bar chart showing ecosystem service breakdown with confidence intervals |
 | **Risk Profile** | Monte Carlo distribution (10,000 simulations) with P5/P50/P95 percentiles |
 
-#### Tab 2: Ask Nereus (GraphRAG)
+#### Tab 3: Ask Nereus (GraphRAG)
 
 A split-panel interface showing both the chat and the reasoning pipeline:
 
 - **Left panel (60%)** - Natural-language chat with confidence badges, axiom tags, and evidence tables
 - **Right panel (40%)** - Pipeline transparency showing 4 steps: CLASSIFY (query category detection), QUERY GRAPH (Cypher generation and execution), SYNTHESIZE (LLM grounding with graph context), VALIDATE (confidence scoring and DOI verification)
-- Includes an integrated graph explorer with semantic layering
+- Includes an integrated knowledge graph subgraph explorer with semantic layering
+- Supports queries across all 9 sites
 
-#### Tab 3: Scenario Lab
+#### Tab 4: Scenario Lab
 
-Interactive Monte Carlo simulation with real-time parameter adjustment:
+Interactive Monte Carlo simulation with site-aware axiom chains:
 
+- **Site selector**: Run scenarios against any of the 9 Gold-tier sites
 - **4 parameter sliders**: Carbon price ($10-100/tonne), Habitat loss (0-50%), Tourism growth (-20% to +30%), Fisheries change (-30% to +20%)
 - **Overlay histogram**: Shows how parameter changes shift the ESV distribution relative to the baseline
 - **Tornado sensitivity chart**: Ranks parameters by their impact on total ESV
-- **Bridge axiom chain impact**: Shows how parameter changes flow through BA-013, BA-014, BA-015 to affect the bottom line
+- **Bridge axiom chain impact**: Shows how parameter changes flow through applicable axioms to affect the bottom line
 - Uses `maris.axioms.monte_carlo` and `maris.axioms.sensitivity` engines for real computation
 
-#### Tab 4: Site Scout
+#### Tab 5: Site Scout
 
 Placeholder for live MPA characterization. The auto-characterization pipeline (OBIS/WoRMS/Marine Regions) is built and tested (28 unit tests) but dashboard integration is deferred to reduce demo risk from flaky external APIs.
 
-#### Tab 5: TNFD Compliance
+#### Tab 6: TNFD Compliance
 
-TNFD LEAP disclosure generation and compliance scoring:
+TNFD LEAP disclosure generation and alignment scoring for all 9 sites:
 
+- **Site selector**: Generate LEAP disclosures for any site in the portfolio
 - **Alignment gauge**: X/14 disclosure alignment score
 - **Per-pillar progress bars**: Governance (X/3), Strategy (X/4), Risk & Impact (X/4), Metrics & Targets (X/3)
 - **LEAP phase expanders**: Locate, Evaluate, Assess, Prepare - each with generated content
 - **Gap analysis**: Identifies missing or partial disclosures
 - **Download buttons**: Export as Markdown, JSON, or Executive Summary
 
-#### v3 Sidebar Controls
+#### v4 Sidebar Controls
 
 - **Mode toggle** - Switch between Live Intelligence Mode (Neo4j + LLM) and Demo Mode (precomputed)
 - **Service health panel** - Shows API, Neo4j, and LLM connectivity status (Live mode only)
-- **Site selector** - Cabo Pulmo National Park or Shark Bay World Heritage Area
+- **Site selector** - All 9 Gold-tier sites available
 - **Scenario slider** - Conservative (P5) / Base Case (Median) / Optimistic (P95)
-- **System metadata** - Schema version, site count, bridge axiom count
+- **System metadata** - Schema version, site count (9), bridge axiom count (16)
+
+### v3 Intelligence Platform
+
+The v3 dashboard at `http://localhost:8503` is a multi-tab intelligence platform covering 2 sites (Cabo Pulmo and Shark Bay). It shares the same tab architecture as v4 (5 tabs: Intelligence Brief, Ask Nereus, Scenario Lab, Site Scout, TNFD Compliance) but without the Portfolio Overview tab and limited to 2 sites.
 
 ### v2 Single-Scroll Dashboard
 
@@ -137,7 +162,7 @@ The v2 dashboard at `http://localhost:8501` is a single-scroll, dark-mode page d
 
 #### v2 Sidebar Controls
 
-- **Characterized sites** - Cabo Pulmo ($29.27M ESV, tourism-dominant) and Shark Bay ($21.5M ESV, carbon-dominant) with dual-site architecture summary
+- **Characterized sites** - Cabo Pulmo ($29.3M ESV, tourism-dominant) and Shark Bay ($21.5M ESV, carbon-dominant)
 - **NEOLI alignment** - Visual breakdown of each NEOLI criterion (No-take, Enforced, Old, Large, Isolated) with green/amber indicators
 - **Confidence slider** - Switch between Conservative (P5), Base Case (Median), and Optimistic (P95) Monte Carlo scenarios
 - **Methodology note** - Valuation methodology and data vintage
@@ -175,17 +200,21 @@ Typical score ranges: direct site valuations score 80-88%, mechanism explanation
 
 The Ask Nereus panel accepts natural-language questions about any site in the knowledge graph. Behind the scenes, questions are classified into categories, mapped to Cypher templates, executed against Neo4j, and synthesized into grounded answers with full provenance.
 
-In the **v3 Intelligence Platform** (Tab 2), the GraphRAG interface uses a split-panel layout: chat on the left with a reasoning pipeline panel on the right that shows each step of the query pipeline (CLASSIFY, QUERY GRAPH, SYNTHESIZE, VALIDATE) in real time with Cypher display and confidence breakdown. In the **v2 dashboard**, Ask Nereus appears as a chat panel near the bottom of the page.
+In the **v4 Global Portfolio** (Tab 3) and **v3 Intelligence Platform** (Tab 2), the GraphRAG interface uses a split-panel layout: chat on the left with a reasoning pipeline panel on the right that shows each step of the query pipeline (CLASSIFY, QUERY GRAPH, SYNTHESIZE, VALIDATE) in real time with Cypher display and confidence breakdown. In the **v2 dashboard**, Ask Nereus appears as a chat panel near the bottom of the page.
 
 ### Example Questions
 
 | Question | What You Get |
 |----------|-------------|
-| "What is Cabo Pulmo worth?" | $29.27M ESV breakdown by service type, with DOI citations for each valuation |
+| "What is Cabo Pulmo worth?" | $29.3M ESV breakdown by service type, with DOI citations for each valuation |
+| "What is the Sundarbans ESV?" | $778.9M ESV driven by mangrove ecosystem services with full provenance chain |
 | "What evidence supports the biomass recovery?" | Provenance chain from Aburto-Oropeza et al. 2011 through bridge axioms to financial output |
 | "Explain bridge axiom BA-001" | Translation: fish biomass increase -> up to 84% higher tourism WTP, with coefficients and 3 supporting DOIs |
+| "Compare Galapagos with Belize Barrier Reef" | Side-by-side metrics: ESV, NEOLI score, asset rating, habitat coverage |
 | "Compare Cabo Pulmo with Great Barrier Reef" | Side-by-side metrics: ESV, biomass ratio, NEOLI score, asset rating |
-| "What are the risks if coral degrades?" | Ecosystem service impact estimates under degradation scenarios, with axiom-level risk factors |
+| "What is Aldabra Atoll's carbon value?" | Carbon sequestration ESV from seagrass and mangrove habitats with axiom chain |
+| "What are the risks if coral degrades at Ningaloo?" | Ecosystem service impact estimates under degradation scenarios, with axiom-level risk factors |
+| "How does Raja Ampat's mangrove provide flood protection?" | Axiom-backed coastal protection valuation with DOI evidence |
 
 ### Understanding the Response
 
@@ -198,7 +227,21 @@ Each answer includes:
 
 ### Site Coverage
 
-**Cabo Pulmo National Park** (Mexico) and **Shark Bay World Heritage Area** (Australia) are fully characterized sites with complete ESV data, species records, and bridge axiom links. Cabo Pulmo is coral reef-dominated and tourism-driven ($29.27M ESV); Shark Bay is seagrass-dominated and carbon-driven ($21.5M ESV). Valuation and provenance queries for either site return rich, multi-layered responses.
+All 9 Gold-tier sites are fully characterized with complete ESV data, species records, and bridge axiom links:
+
+| Site | Country | Habitat(s) | ESV | Rating |
+|------|---------|-----------|-----|--------|
+| Sundarbans Reserve Forest | Bangladesh/India | Mangrove | $778.9M | A |
+| Galapagos Marine Reserve | Ecuador | Coral+Kelp+Mangrove | $320.9M | AAA |
+| Belize Barrier Reef Reserve System | Belize | Coral+Mangrove+Seagrass | $292.5M | AA |
+| Ningaloo Coast WHA | Australia | Coral Reef | $83.0M | AA |
+| Raja Ampat Marine Park | Indonesia | Coral+Mangrove | $78.0M | AA |
+| Cabo Pulmo National Park | Mexico | Coral Reef | $29.3M | AAA |
+| Shark Bay WHA | Australia | Seagrass | $21.5M | AA |
+| Cispata Bay Mangrove CA | Colombia | Mangrove | $8.0M | A |
+| Aldabra Atoll | Seychelles | Coral+Mangrove+Seagrass | $6.0M | AAA |
+
+Valuation and provenance queries for any of these sites return rich, multi-layered responses with full DOI-backed evidence chains.
 
 **Comparison sites** (Great Barrier Reef, Papahanaumokuakea) have governance metadata (NEOLI score, area, asset rating) but not full ecosystem service valuations. Queries about their financial value will note the absence of site-specific valuation data.
 
@@ -246,7 +289,7 @@ The dominant parameter is typically Tourism ($25.0M), which accounts for the lar
 
 ## Offline / Demo Mode
 
-Both the v3 and v2 dashboards support **Demo Mode** (toggle in sidebar) which uses precomputed responses and static data bundles - no Neo4j or LLM required.
+The v4, v3, and v2 dashboards all support **Demo Mode** (toggle in sidebar) which uses precomputed responses and static data bundles - no Neo4j or LLM required.
 
 For a fully standalone experience with no external services, run the static v1 dashboard:
 
@@ -266,8 +309,8 @@ This uses a pre-computed JSON bundle (`demos/context_graph_demo/cabo_pulmo_inves
 | Dashboard shows "API unreachable" | Verify the API server is running: `curl http://localhost:8000/api/health` |
 | Neo4j connection refused | Confirm Neo4j is running and the credentials in `.env` match your instance |
 | LLM errors in Ask MARIS | Verify `MARIS_LLM_API_KEY` in `.env` is valid for your chosen provider |
-| Empty graph explorer | Run `python scripts/populate_neo4j.py` to load data into Neo4j |
+| Empty graph explorer | Run `python scripts/populate_neo4j_v4.py` to load data into Neo4j |
 | Import errors on dashboard start | Ensure you are running from inside the `investor_demo/` directory |
-| Queries return empty for comparison sites | Expected behavior - only Cabo Pulmo and Shark Bay have full ESV data (see Site Coverage above) |
+| Queries return empty for comparison sites | Expected behavior - only the 9 Gold-tier sites have full ESV data. Comparison sites (GBR, Papahanaumokuakea) have governance metadata only (see Site Coverage above) |
 | **401 Unauthorized** from API | API key is missing or invalid. Set `MARIS_API_KEY` in `.env` and include `Authorization: Bearer <key>` header in requests |
 | **429 Rate Limited** | Too many requests. The API allows 30 queries/minute and 60 other requests/minute per API key. Wait and retry |

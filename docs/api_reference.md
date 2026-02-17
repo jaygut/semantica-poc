@@ -44,17 +44,17 @@ Returns system status including Neo4j connectivity, LLM availability, and graph 
   "neo4j_connected": true,
   "llm_available": true,
   "graph_stats": {
-    "total_nodes": 893,
-    "total_edges": 132,
+    "total_nodes": 938,
+    "total_edges": 244,
     "node_breakdown": {
-      "Document": 829,
-      "BridgeAxiom": 16,
-      "EcosystemService": 11,
+      "Document": 835,
+      "EcosystemService": 39,
+      "Species": 17,
+      "BridgeAxiom": 35,
+      "MPA": 11,
       "TrophicLevel": 10,
-      "Concept": 10,
+      "Concept": 15,
       "Habitat": 4,
-      "MPA": 4,
-      "Species": 3,
       "FinancialInstrument": 3,
       "Framework": 3
     }
@@ -145,7 +145,7 @@ The primary endpoint. Classifies a natural-language question, selects a Cypher t
 
 #### `GET /api/site/{site_name}`
 
-Retrieve structured data for a specific MPA. Returns full metadata for fully characterized sites (Cabo Pulmo and Shark Bay); returns governance metadata only for comparison sites. Requires authentication (returns 401/429 on failure).
+Retrieve structured data for a specific MPA. Returns full metadata for all 9 Gold-tier characterized sites (Sundarbans, Galapagos, Belize Barrier Reef, Ningaloo, Raja Ampat, Cabo Pulmo, Shark Bay, Cispata Bay, Aldabra); returns governance metadata only for comparison sites (Great Barrier Reef, Papahanaumokuakea). Requires authentication (returns 401/429 on failure).
 
 **Response (`SiteResponse`):**
 
@@ -160,7 +160,7 @@ Retrieve structured data for a specific MPA. Returns full metadata for fully cha
 | `asset_rating` | string | Investment-grade rating (e.g. "AAA", "AA") |
 | `services` | list | Ecosystem service breakdown with per-service values |
 
-> **Data coverage note:** Fully characterized sites (Cabo Pulmo National Park and Shark Bay World Heritage Area) return full ESV, biomass, and service breakdowns. Comparison sites (Great Barrier Reef Marine Park, Papahanaumokuakea Marine National Monument) return governance metadata but null for financial fields. See the [Developer Guide](developer_guide.md#calibration-site-model) for details.
+> **Data coverage note:** All 9 Gold-tier sites return full ESV, biomass, and service breakdowns. Comparison sites (Great Barrier Reef Marine Park, Papahanaumokuakea Marine National Monument) return governance metadata but null for financial fields. See the [Developer Guide](developer_guide.md#site-portfolio-9-gold-tier-sites) for the full portfolio.
 
 ---
 
@@ -188,12 +188,12 @@ Retrieve details for a specific bridge axiom, including its translation coeffici
 
 #### `POST /api/compare`
 
-Compare multiple MPA sites side by side. Returns whatever data is available for each site. Requires authentication (returns 401/429 on failure).
+Compare multiple MPA sites side by side. Returns whatever data is available for each site. All 9 Gold-tier sites have full ESV data; comparison sites return governance metadata only. Requires authentication (returns 401/429 on failure).
 
 **Request body (`CompareRequest`):**
 ```json
 {
-  "site_names": ["Cabo Pulmo National Park", "Great Barrier Reef Marine Park"]
+  "site_names": ["Cabo Pulmo National Park", "Sundarbans Reserve Forest", "Galapagos Marine Reserve"]
 }
 ```
 
@@ -202,12 +202,13 @@ Compare multiple MPA sites side by side. Returns whatever data is available for 
 {
   "sites": [
     {"name": "Cabo Pulmo National Park", "esv_usd": 29270000, "biomass_ratio": 4.63, "neoli_score": 4, "asset_rating": "AAA"},
-    {"name": "Great Barrier Reef Marine Park", "esv_usd": null, "biomass_ratio": null, "neoli_score": 5, "asset_rating": "AA"}
+    {"name": "Sundarbans Reserve Forest", "esv_usd": 778900000, "biomass_ratio": null, "neoli_score": 3, "asset_rating": "A"},
+    {"name": "Galapagos Marine Reserve", "esv_usd": 320900000, "biomass_ratio": null, "neoli_score": 5, "asset_rating": "AAA"}
   ]
 }
 ```
 
-> Comparison sites have governance metadata (NEOLI, area, rating) but not full ESV data. Financial fields return null when service-level valuations are not present in the graph.
+> The 2 comparison sites (Great Barrier Reef, Papahanaumokuakea) have governance metadata (NEOLI, area, rating) but not full ESV data. Financial fields return null when service-level valuations are not present in the graph.
 
 ---
 
@@ -228,6 +229,53 @@ Traverse the knowledge graph from a starting node. Useful for exploring provenan
 #### `GET /api/graph/node/{element_id}`
 
 Retrieve all properties and relationships for a specific node by its Neo4j element ID. Returns the node's labels, properties, and a list of connected neighbors with relationship types and directions. Requires authentication (returns 401/429 on failure).
+
+---
+
+### Provenance
+
+#### `GET /api/provenance/{entity_id}`
+
+Retrieve the W3C PROV-O provenance lineage for a tracked entity, including the full chain of activities and agents involved in its derivation. Requires authentication (returns 401/429 on failure).
+
+**Response fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `entity_id` | string | The tracked entity identifier |
+| `lineage` | list | Chain of provenance activities (extraction, axiom application, etc.) |
+| `certificate` | object | Provenance certificate with integrity checksums |
+
+#### `GET /api/provenance/{entity_id}/markdown`
+
+Returns a Markdown-formatted provenance certificate for the specified entity. Suitable for embedding in reports or TNFD disclosures.
+
+#### `GET /api/provenance`
+
+Returns a summary of the provenance store, including entity count and storage backend status.
+
+---
+
+### Disclosure
+
+#### `POST /api/disclosure/tnfd-leap`
+
+Generate a TNFD LEAP (Locate, Evaluate, Assess, Prepare) disclosure for a specified site. The v4 generator auto-discovers all case study sites. Requires authentication (returns 401/429 on failure).
+
+**Request body:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `site_name` | string | Canonical site name (e.g. "Cabo Pulmo National Park") |
+
+**Response fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `site_name` | string | Site the disclosure was generated for |
+| `alignment_score` | object | X/14 alignment score with per-pillar breakdown |
+| `leap_phases` | object | Content for each LEAP phase (Locate, Evaluate, Assess, Prepare) |
+| `gaps` | list | Identified disclosure gaps |
 
 ---
 
@@ -253,37 +301,44 @@ The Neo4j graph uses the following node labels and relationship types. All nodes
 
 ### Node Labels
 
-| Label | Merge Key | Key Properties | Description |
-|-------|-----------|----------------|-------------|
-| `MPA` | `name` | area_km2, designation_year, neoli_score, total_esv_usd, biomass_ratio, asset_rating, biomass_measurement_year, last_validated_date, data_freshness_status | Marine Protected Area |
-| `EcosystemService` | `service_name` or `service_id` | annual_value_usd, valuation_method, ci_low, ci_high | Valued ecosystem service (e.g. Tourism, Fisheries, Carbon Sequestration) |
-| `BridgeAxiom` | `axiom_id` | name, category, description, pattern, coefficients_json, confidence, evidence_tier, ci_low, ci_high, distribution, study_sample_size, effect_size_type | Ecological-to-financial translation rule with peer-reviewed coefficients and uncertainty quantification |
-| `Document` | `doi` | title, year, source_tier, domain, abstract | Peer-reviewed evidence source from the 195-paper registry |
-| `Habitat` | `habitat_id` or `name` | condition | Marine habitat type (coral reef, kelp forest, seagrass meadow, mangrove forest) |
-| `Species` | `worms_id` or `name` | common_name, trophic_level, role_in_ecosystem, commercial_importance | Marine species with WoRMS taxonomic identifiers |
-| `TrophicLevel` | `name` | trophic_level | Trophic network node (apex predator, mesopredator, herbivore, etc.) |
-| `FinancialInstrument` | `instrument_id` | name, description | Blue finance instrument (blue bond, parametric reef insurance) |
-| `Framework` | `framework_id` | name, description | Disclosure or accounting framework (TNFD LEAP, SEEA) |
-| `Concept` | `name` | description | Domain concept (NEOLI Criteria, etc.) |
+| Label | Merge Key | Count | Key Properties | Description |
+|-------|-----------|-------|----------------|-------------|
+| `Document` | `doi` | 835 | title, year, source_tier, domain, abstract | Peer-reviewed evidence source from the 195-paper registry |
+| `EcosystemService` | `service_name` or `service_id` | 39 | annual_value_usd, valuation_method, ci_low, ci_high | Valued ecosystem service (e.g. Tourism, Fisheries, Carbon Sequestration) |
+| `Species` | `worms_id` or `name` | 17 | common_name, trophic_level, role_in_ecosystem, commercial_importance | Marine species with WoRMS taxonomic identifiers |
+| `BridgeAxiom` | `axiom_id` | 35 | name, category, description, pattern, coefficients_json, confidence, evidence_tier, ci_low, ci_high, distribution, study_sample_size, effect_size_type | Ecological-to-financial translation rule with peer-reviewed coefficients and uncertainty quantification. 35 axioms (BA-001 through BA-035) covering carbon, coastal protection, tourism, fisheries, and cross-cutting mechanisms |
+| `MPA` | `name` | 11 | area_km2, designation_year, neoli_score, total_esv_usd, biomass_ratio, asset_rating, biomass_measurement_year, last_validated_date, data_freshness_status | Marine Protected Area (9 Gold-tier + 2 comparison) |
+| `TrophicLevel` | `name` | 10 | trophic_level | Trophic network node (apex predator, mesopredator, herbivore, etc.) |
+| `Concept` | `concept_id` | 15 | name, description, domain, applicable_habitats, involved_axiom_ids | Blue finance domain concept (BC-001 through BC-015): Blue Carbon Sequestration, Coastal Protection, Marine Tourism Economics, Carbon Credits, Reef Insurance, TNFD Disclosure, etc. Enables mechanism questions without site anchor |
+| `Habitat` | `habitat_id` or `name` | 4 | condition | Marine habitat type (coral reef, kelp forest, seagrass meadow, mangrove forest) |
+| `FinancialInstrument` | `instrument_id` | 3 | name, description | Blue finance instrument (blue bond, parametric reef insurance) |
+| `Framework` | `framework_id` | 3 | name, description | Disclosure or accounting framework (TNFD LEAP, SEEA) |
+
+**Total:** 953+ nodes (includes 15 new Concept nodes pending population), 244+ edges
 
 ### Relationship Types
 
-| Relationship | From | To | Description |
-|-------------|------|----|-------------|
-| `GENERATES` | MPA | EcosystemService | MPA produces this ecosystem service |
-| `APPLIES_TO` | BridgeAxiom | MPA | Axiom applies to this site |
-| `TRANSLATES` | BridgeAxiom | EcosystemService | Axiom converts ecological state to this service value |
-| `EVIDENCED_BY` | BridgeAxiom | Document | Axiom is backed by this peer-reviewed source |
-| `HAS_HABITAT` | MPA | Habitat | MPA contains this habitat type |
-| `INHABITS` | Species | Habitat | Species lives in this habitat |
-| `LOCATED_IN` | Species | MPA | Species is found in this MPA |
-| `PREYS_ON` | TrophicLevel | TrophicLevel | Trophic interaction in the food web |
-| `PART_OF_FOODWEB` | TrophicLevel | MPA | Trophic level exists within this site |
-| `PROVIDES` | Habitat | EcosystemService | Habitat type generates this service |
-| `DERIVED_FROM` | MPA | Document | Site data is sourced from this paper |
-| `APPLICABLE_TO` | Framework | MPA | Disclosure framework is applicable to this site |
-| `GOVERNS` | Framework | FinancialInstrument | Framework governs this instrument type |
-| `APPLIES_TO_HABITAT` | BridgeAxiom | Habitat | Axiom is applicable to this habitat type |
+| Relationship | From | To | Count | Description |
+|-------------|------|----|-------|-------------|
+| `APPLIES_TO` | BridgeAxiom | MPA | 77 | Axiom applies to this site |
+| `GENERATES` | MPA | EcosystemService | 36 | MPA produces this ecosystem service |
+| `EVIDENCED_BY` | BridgeAxiom | Document | 28 | Axiom is backed by this peer-reviewed source |
+| `DERIVED_FROM` | MPA | Document | 20 | Site data is sourced from this paper |
+| `LOCATED_IN` | Species | MPA | 18 | Species is found in this MPA |
+| `TRANSLATES` | BridgeAxiom | EcosystemService | 16 | Axiom converts ecological state to this service value |
+| `HAS_HABITAT` | MPA | Habitat | 14 | MPA contains this habitat type |
+| `INHABITS` | Species | Habitat | 10 | Species lives in this habitat |
+| `PREYS_ON` | TrophicLevel | TrophicLevel | 7 | Trophic interaction in the food web |
+| `PART_OF_FOODWEB` | TrophicLevel | MPA | 5 | Trophic level exists within this site |
+| `PROVIDES` | Habitat | EcosystemService | 4 | Habitat type generates this service |
+| `APPLICABLE_TO` | Framework | MPA | 3 | Disclosure framework is applicable to this site |
+| `GOVERNS` | Framework | FinancialInstrument | 3 | Framework governs this instrument type |
+| `APPLIES_TO_HABITAT` | BridgeAxiom | Habitat | 3 | Axiom is applicable to this habitat type |
+| `INVOLVES_AXIOM` | Concept | BridgeAxiom | ~50 NEW | Concept involves this axiom (enables mechanism question routing) |
+| `RELEVANT_TO` | Concept | Concept | ~15 NEW | Concept relationship (future cross-concept traversal) |
+| `DOCUMENTED_BY` | Concept | Document | ~30 NEW | Concept is documented in this peer-reviewed source |
+
+**Total:** 244+ edges (expanded with Concept relationships)
 
 ---
 
@@ -331,5 +386,6 @@ The API reads all settings from environment variables with `MARIS_` prefix. Copy
 | `MARIS_DEMO_MODE` | false | When true, uses precomputed responses instead of live LLM calls and bypasses authentication |
 | `MARIS_API_KEY` | - | Bearer token for API authentication (required unless demo mode is enabled) |
 | `MARIS_CORS_ORIGINS` | http://localhost:8501 | Allowed CORS origins (comma-separated for multiple) |
+| `MARIS_PROVENANCE_DB` | provenance.db | SQLite database path for W3C PROV-O provenance persistence |
 
 > **Security:** The `.env` file contains secrets and must never be committed. It is excluded via `.gitignore`.

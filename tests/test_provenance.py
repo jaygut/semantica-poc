@@ -340,8 +340,8 @@ class TestBridgeAxiomRegistry:
             evidence_path=EVIDENCE_PATH,
         )
 
-    def test_load_all_16_axioms(self, registry):
-        assert registry.count() == 16
+    def test_load_all_35_axioms(self, registry):
+        assert registry.count() == 35
 
     def test_get_ba001(self, registry):
         ba = registry.get("BA-001")
@@ -354,11 +354,11 @@ class TestBridgeAxiomRegistry:
 
     def test_get_all(self, registry):
         all_axioms = registry.get_all()
-        assert len(all_axioms) == 16
+        assert len(all_axioms) == 35
 
     def test_all_axiom_ids_present(self, registry):
         ids = {a.axiom_id for a in registry.get_all()}
-        for i in range(1, 17):
+        for i in range(1, 36):
             assert f"BA-{i:03d}" in ids
 
     def test_axiom_has_source_doi(self, registry):
@@ -504,7 +504,7 @@ class TestMARISProvenanceManager:
         )
 
     def test_initialization(self, manager):
-        assert manager.registry.count() == 16
+        assert manager.registry.count() == 35
         # MARIS system agent should be registered
         agent = manager.provenance.get_agent("maris:system")
         assert agent is not None
@@ -562,7 +562,7 @@ class TestMARISProvenanceManager:
         assert "entities" in s
         assert "activities" in s
         assert "agents" in s
-        assert s["axioms_loaded"] == 16
+        assert s["axioms_loaded"] == 35
 
 
 # ============================================================================

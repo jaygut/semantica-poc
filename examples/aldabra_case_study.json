@@ -1,0 +1,426 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "site": {
+    "@type": "MarineProtectedArea",
+    "@id": "mpa:aldabra_atoll",
+    "name": "Aldabra Atoll",
+    "country": "Seychelles",
+    "region": "Western Indian Ocean",
+    "coordinates": {
+      "@type": "geo:Point",
+      "latitude": -9.42,
+      "longitude": 46.33
+    },
+    "area_km2": 2599,
+    "atoll_land_area_km2": 155,
+    "lagoon_area_km2": 210,
+    "designation_year": 1982,
+    "governance": {
+      "management_authority": "Seychelles Islands Foundation (SIF)",
+      "management_plan_year": 2016,
+      "community_engagement": "low",
+      "local_support": "not_applicable",
+      "notes": "Uninhabited atoll; managed by SIF research station staff; no permanent human settlement",
+      "blue_bond": "Seychelles Blue Bond ($15M, 2018) - world's first sovereign blue bond"
+    }
+  },
+  "neoli_assessment": {
+    "@type": "NEOLIAssessment",
+    "assessment_date": "2024",
+    "criteria": {
+      "no_take": {
+        "value": true,
+        "notes": "Special Nature Reserve with strict no-take enforcement; no extractive activities permitted"
+      },
+      "enforced": {
+        "value": true,
+        "notes": "Permanent SIF research station provides continuous enforcement; remote location limits unauthorized access"
+      },
+      "old": {
+        "value": true,
+        "notes": "42 years since UNESCO World Heritage listing (1982); protected since 1976 as Special Nature Reserve (>10 year threshold)"
+      },
+      "large": {
+        "value": true,
+        "notes": "2,599 km2 expanded reserve (2018 expansion from original 439 km2) (>100 km2 threshold)"
+      },
+      "isolated": {
+        "value": true,
+        "notes": "Remote atoll 1,150 km from Mahe; surrounded by deep ocean; extremely isolated"
+      }
+    },
+    "neoli_score": 5,
+    "effectiveness_rating": "very_high",
+    "source": {
+      "citation": "Edgar et al. 2014 Nature",
+      "doi": "10.1038/nature13022",
+      "doi_url": "https://doi.org/10.1038/nature13022",
+      "source_tier": "T1"
+    }
+  },
+  "ecological_status": {
+    "@type": "EcologicalAssessment",
+    "primary_habitat": "coral_reef",
+    "secondary_habitats": [
+      "mangrove",
+      "seagrass"
+    ],
+    "assessment_year": 2020,
+    "last_validated_date": "2026-02-16",
+    "metrics": {
+      "reef_extent": {
+        "seaward_reef_km2": 53,
+        "lagoon_reef_km2": 19.24,
+        "total_reef_km2": 72.24,
+        "notes": "Atoll reef complex surrounding the lagoon"
+      },
+      "mangrove_extent": {
+        "area_ha": 1720,
+        "notes": "Mangrove stands along lagoon shores; important breeding habitat"
+      },
+      "species_counts": {
+        "fish_species_per_3km2": 185,
+        "endemic_species_and_subspecies": 400,
+        "giant_tortoise_population": 152000,
+        "notes": "Over 400 endemic species and subspecies; world's largest giant tortoise population"
+      },
+      "reef_condition": {
+        "notes": "Among the richest reefs in the western Indian Ocean; minimal human disturbance due to isolation"
+      }
+    },
+    "source": {
+      "citation": "UNESCO World Heritage Centre - Aldabra Atoll",
+      "url": "https://whc.unesco.org/en/list/185/",
+      "source_tier": "T2"
+    }
+  },
+  "ecosystem_services": {
+    "@type": "EcosystemServiceBundle",
+    "last_validated_date": "2026-02-16",
+    "services": [
+      {
+        "@type": "EcosystemService",
+        "service_type": "coastal_protection",
+        "service_category": "regulating",
+        "annual_value_usd": 3500000,
+        "valuation_range_usd": [
+          2000000,
+          5000000
+        ],
+        "valuation_method": "avoided_cost",
+        "measurement_year": 2022,
+        "metrics": {
+          "notes": "Avoided storm damage estimated at $2-5M/yr for Seychelles outer islands and broader coastal infrastructure"
+        },
+        "confidence_interval": {
+          "ci_low": 2450000,
+          "ci_high": 4550000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "carbon_sequestration",
+        "service_category": "regulating",
+        "annual_value_usd": 1200000,
+        "valuation_method": "regional_analogue_estimate",
+        "measurement_year": 2024,
+        "metrics": {
+          "mangrove_area_ha": 1720,
+          "estimated_sequestration_tCO2_per_ha_yr": 6.4,
+          "carbon_price_usd_per_tonne": 30,
+          "calculation_notes": "1,720 ha x 6.4 tCO2/ha/yr x ~$30/tCO2 = ~$330K for mangrove; reef carbon contribution additional"
+        },
+        "notes": "Mangrove and reef-associated blue carbon; site-specific measurement needed",
+        "confidence_interval": {
+          "ci_low": 600000,
+          "ci_high": 1800000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "research_and_education",
+        "service_category": "cultural",
+        "annual_value_usd": 500000,
+        "valuation_method": "expenditure_method",
+        "measurement_year": 2022,
+        "metrics": {
+          "research_station": "Permanent SIF research station operational since 1971",
+          "annual_research_budget": "Funded through Blue Bond and SIF endowment",
+          "notes": "Significant scientific research value as a near-pristine reference ecosystem"
+        },
+        "confidence_interval": {
+          "ci_low": 350000,
+          "ci_high": 650000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "ecotourism",
+        "service_category": "cultural",
+        "annual_value_usd": 800000,
+        "valuation_method": "market_price",
+        "measurement_year": 2022,
+        "metrics": {
+          "visitor_policy": "Strictly limited ecotourism; research-focused visits only",
+          "notes": "Very low visitor numbers to protect ecological integrity; value primarily through Seychelles brand association"
+        },
+        "confidence_interval": {
+          "ci_low": 640000,
+          "ci_high": 960000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
+      }
+    ],
+    "total_annual_value_usd": 6000000,
+    "notes": "Direct use values are low due to isolation and strict protection; primary value is as a global conservation reference site and blue finance innovation showcase"
+  },
+  "asset_quality_rating": {
+    "@type": "MARISRating",
+    "rating": "AAA",
+    "rating_date": "2024-06-15",
+    "rating_rationale": {
+      "ecological_condition": {
+        "score": 0.98,
+        "weight": 0.4,
+        "notes": "Near-pristine atoll ecosystem; 152,000 giant tortoises; minimal human disturbance; 400+ endemic species"
+      },
+      "governance_effectiveness": {
+        "score": 0.95,
+        "weight": 0.25,
+        "notes": "UNESCO World Heritage Site (1982); SIF permanent research station; NEOLI 5/5; expanded reserve (2018)"
+      },
+      "financial_sustainability": {
+        "score": 0.8,
+        "weight": 0.2,
+        "notes": "Blue Bond provides $325K/yr conservation funding; debt-for-nature swap $430K/yr; SIF endowment"
+      },
+      "risk_factors": {
+        "score": 0.85,
+        "weight": 0.15,
+        "notes": "Remote location provides natural protection; climate change (sea level rise, ocean acidification) is primary threat"
+      }
+    },
+    "composite_score": 0.92,
+    "confidence_level": "high"
+  },
+  "key_species": [
+    {
+      "@type": "Species",
+      "scientific_name": "Aldabrachelys gigantea",
+      "common_name": "Aldabra giant tortoise",
+      "iucn_status": "Vulnerable",
+      "population_estimate": "152,000",
+      "role_in_ecosystem": "keystone_herbivore",
+      "notes": "World's largest population of giant tortoises; Aldabra is the only place where they survived naturally"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Chelonia mydas",
+      "common_name": "Green sea turtle",
+      "worms_aphia_id": 137206,
+      "iucn_status": "Endangered",
+      "role_in_ecosystem": "seagrass_grazer",
+      "notes": "Aldabra is one of the most important green turtle nesting sites in the Indian Ocean"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Fregata minor aldabrensis",
+      "common_name": "Aldabra frigatebird",
+      "role_in_ecosystem": "seabird",
+      "notes": "Endemic subspecies; major breeding colony on Aldabra"
+    }
+  ],
+  "risk_assessment": {
+    "@type": "RiskProfile",
+    "overall_risk_level": "low-moderate",
+    "risk_factors": [
+      {
+        "risk_type": "sea_level_rise",
+        "severity": "high",
+        "likelihood": "high",
+        "evidence": "Low-lying atoll (max elevation 8m); sea level rise threatens terrestrial habitats and giant tortoise nesting areas"
+      },
+      {
+        "risk_type": "ocean_acidification",
+        "severity": "moderate",
+        "likelihood": "high",
+        "evidence": "Coral reef calcification rates declining globally; Western Indian Ocean reefs affected"
+      },
+      {
+        "risk_type": "marine_debris",
+        "severity": "moderate",
+        "likelihood": "high",
+        "evidence": "Remote location accumulates ocean plastic debris; SIF conducts regular cleanup operations"
+      },
+      {
+        "risk_type": "invasive_species",
+        "severity": "low",
+        "likelihood": "low",
+        "evidence": "Strict biosecurity protocols; isolation provides natural protection"
+      }
+    ],
+    "mitigation": {
+      "governance": "UNESCO World Heritage status; SIF permanent research and management presence",
+      "monitoring": "Continuous ecological monitoring since 1971; long-term datasets",
+      "adaptation": "Reserve expansion (2018) from 439 km2 to 2,599 km2 provides additional buffer"
+    }
+  },
+  "bridge_axiom_applications": [
+    {
+      "axiom_id": "BA-004",
+      "application": "Coral reef coastal protection for Seychelles outer islands",
+      "calculation": {
+        "reef_extent_km2": 72.24,
+        "avoided_damages_usd": 3500000,
+        "notes": "Atoll reef complex provides wave attenuation"
+      }
+    },
+    {
+      "axiom_id": "BA-005",
+      "application": "Mangrove coastal protection within lagoon system",
+      "calculation": {
+        "mangrove_area_ha": 1720,
+        "notes": "Lagoon mangroves stabilize shoreline and provide storm buffering"
+      }
+    },
+    {
+      "axiom_id": "BA-007",
+      "application": "Mangrove carbon stock",
+      "calculation": {
+        "mangrove_area_ha": 1720,
+        "estimated_carbon_stock_tCO2": 50000,
+        "notes": "Conservative estimate based on regional mangrove carbon density"
+      }
+    }
+  ],
+  "financial_instruments": {
+    "blue_bond": {
+      "instrument": "Seychelles Sovereign Blue Bond",
+      "amount_usd": 15000000,
+      "year": 2018,
+      "notes": "World's first sovereign blue bond; proceeds support marine conservation and sustainable fisheries",
+      "conservation_funding_annual_usd": 325000,
+      "source": {
+        "citation": "World Bank Seychelles Blue Bond Case Study",
+        "url": "https://thedocs.worldbank.org/en/doc/cbaf1cefc5164a7f340716ef0af6fd7e-0340012025/original/Case-Study-Blue-Bond-Seychelles.pdf",
+        "source_tier": "T2"
+      }
+    },
+    "debt_for_nature_swap": {
+      "instrument": "Seychelles Debt-for-Nature Swap",
+      "amount_usd": 21600000,
+      "year": 2015,
+      "restructured_by": "TNC / SeyCCAT",
+      "annual_conservation_funding_usd": 430000,
+      "commitments": [
+        "30% of EEZ designated as MPA",
+        "5 High Biodiversity Protection Areas (203,071 km2)",
+        "Marine Spatial Plan implementation"
+      ],
+      "source": {
+        "citation": "SeyCCAT / PANORAMA Solutions",
+        "url": "https://panorama.solutions/en/solution/seychelles-first-debt-nature-swap-ocean-conservation",
+        "source_tier": "T2"
+      }
+    }
+  },
+  "framework_alignment": {
+    "tnfd_leap": {
+      "status": "anticipates alignment with TNFD LEAP framework",
+      "phases": {
+        "locate": "Aldabra Atoll - 2,599 km2, UNESCO World Heritage since 1982",
+        "evaluate": "Near-pristine atoll; 152,000 giant tortoises; 400+ endemic species; NEOLI 5/5",
+        "assess": "$6M annual ESV; AAA asset rating; low direct use value but extraordinary conservation value",
+        "prepare": "Blue bond ($15M) + debt-for-nature swap ($21.6M) provide ongoing conservation funding"
+      }
+    },
+    "ifc_blue_finance": {
+      "status": "gold standard for IFC Blue Finance principles",
+      "relevance": "World's first sovereign blue bond; pioneering debt-for-nature swap; 30% EEZ protection"
+    }
+  },
+  "provenance": {
+    "data_sources": [
+      {
+        "source": "UNESCO World Heritage Centre",
+        "url": "https://whc.unesco.org/en/list/185/",
+        "data_type": "Site designation, monitoring, and conservation reports",
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
+      },
+      {
+        "source": "World Bank Seychelles Blue Bond Case Study",
+        "url": "https://thedocs.worldbank.org/en/doc/cbaf1cefc5164a7f340716ef0af6fd7e-0340012025/original/Case-Study-Blue-Bond-Seychelles.pdf",
+        "data_type": "Blue bond financial structure and outcomes",
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
+      },
+      {
+        "source": "PANORAMA Solutions - Seychelles debt-for-nature swap",
+        "url": "https://panorama.solutions/en/solution/seychelles-first-debt-nature-swap-ocean-conservation",
+        "data_type": "Debt-for-nature swap structure and commitments",
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
+      },
+      {
+        "source": "Seychelles Islands Foundation",
+        "url": "http://www.sif.sc/aldabra",
+        "data_type": "Research station data and management reports",
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
+      },
+      {
+        "source": "Koester et al. 2023 Frontiers in Marine Science",
+        "doi": "10.3389/fmars.2023.1230717",
+        "doi_url": "https://doi.org/10.3389/fmars.2023.1230717",
+        "data_type": "Reef fish abundance, biomass and assemblage structure at Aldabra Atoll",
+        "access_date": "2026-02-16",
+        "source_tier": "T1"
+      }
+    ],
+    "compilation_date": "2026-02-16",
+    "compiled_by": "MARIS POC Team"
+  },
+  "caveats": [
+    "Direct ESV is low ($6M/yr) due to isolation and strict protection; primary value is conservation and blue finance innovation showcase",
+    "Carbon sequestration values are regional analogues; no site-specific blue carbon measurement program for Aldabra published",
+    "Coastal protection value ($2-5M/yr) is estimated and refers to broader Seychelles island infrastructure, not Aldabra specifically",
+    "Blue Bond conservation funding ($325K/yr) is allocated across all Seychelles MPAs, not solely Aldabra",
+    "Giant tortoise population (152,000) is well-documented but ecosystem service valuation of tortoises not quantified",
+    "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
+  ],
+  "provenance_summary": {
+    "total_sources": 6,
+    "doi_backed": 2,
+    "url_only": 4,
+    "doi_coverage_pct": 33.3,
+    "evidence_tier_distribution": {"T1": 2, "T2": 4, "T3": 0, "T4": 0}
+  },
+  "demo_value": {
+    "why_aldabra_for_demo": [
+      "NEOLI 5/5 - one of the world's most effectively protected marine sites",
+      "World's first sovereign blue bond ($15M, Seychelles 2018)",
+      "Pioneering debt-for-nature swap ($21.6M) with 30% EEZ protection commitment",
+      "Near-pristine reference ecosystem - 152,000 giant tortoises, 400+ endemic species",
+      "Gold standard for blue finance innovation and governance"
+    ],
+    "investor_story": "Aldabra Atoll is where blue finance was invented. The Seychelles' pioneering $15M blue bond - the world's first - and $21.6M debt-for-nature swap together committed 30% of the nation's ocean to protection. Aldabra itself is a NEOLI 5/5 reference ecosystem: uninhabited, strictly enforced, 42 years old, 2,599 km2, and surrounded by deep ocean. Its 152,000 giant tortoises and 400+ endemic species represent irreplaceable natural capital. While direct ESV is modest ($6M/yr), Aldabra's true value lies in proving that blue finance instruments work. Nereus rates Aldabra AAA - the institutional blueprint for marine conservation finance.",
+    "key_demo_queries": [
+      "How did Seychelles structure the world's first blue bond?",
+      "What makes Aldabra a NEOLI 5/5 reference site?",
+      "How does the debt-for-nature swap fund marine conservation?",
+      "How does Aldabra compare to other blue finance jurisdictions?"
+    ]
+  }
+}

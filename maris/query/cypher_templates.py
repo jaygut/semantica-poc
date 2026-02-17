@@ -80,6 +80,30 @@ TEMPLATES: dict[str, dict] = {
         """,
         "parameters": ["axiom_id"],
     },
+    "axiom_by_concept": {
+        "name": "axiom_by_concept",
+        "category": "axiom_explanation",
+        "default_limit": _DETAIL_LIMIT,
+        "cypher": """
+            MATCH (ba:BridgeAxiom)
+            WHERE ba.name CONTAINS $concept_term
+               OR ba.description CONTAINS $concept_term
+               OR ba.axiom_id IN $axiom_ids
+            OPTIONAL MATCH (ba)-[:EVIDENCED_BY]->(d:Document)
+            OPTIONAL MATCH (ba)-[:APPLIES_TO]->(m:MPA)
+            OPTIONAL MATCH (ba)-[:TRANSLATES]->(es:EcosystemService)
+            OPTIONAL MATCH (ba)-[:APPLIES_TO_HABITAT]->(h:Habitat)
+            RETURN ba.axiom_id AS axiom_id, ba.name AS axiom_name,
+                   ba.description AS description, ba.coefficient AS coefficient,
+                   ba.category AS category,
+                   collect(DISTINCT {doi: d.doi, title: d.title, year: d.year, tier: d.source_tier}) AS evidence,
+                   collect(DISTINCT m.name) AS applicable_sites,
+                   collect(DISTINCT es.service_name) AS services,
+                   collect(DISTINCT h.habitat_id) AS habitats
+            LIMIT $result_limit
+        """,
+        "parameters": ["concept_term", "axiom_ids"],
+    },
     "comparison": {
         "name": "comparison",
         "category": "comparison",
@@ -127,6 +151,52 @@ TEMPLATES: dict[str, dict] = {
             LIMIT $result_limit
         """,
         "parameters": ["site_name"],
+    },
+
+    # ------------------------------------------------------------------
+    # Concept-aware query templates (Phase II)
+    # ------------------------------------------------------------------
+    "mechanism_chain": {
+        "name": "mechanism_chain",
+        "category": "concept_explanation",
+        "default_limit": _DETAIL_LIMIT,
+        "cypher": """
+            MATCH (c:Concept {concept_id: $concept_id})
+            MATCH (c)-[:INVOLVES_AXIOM]->(ba:BridgeAxiom)
+            OPTIONAL MATCH (ba)-[:EVIDENCED_BY]->(d:Document)
+            OPTIONAL MATCH (ba)-[:TRANSLATES]->(es:EcosystemService)
+            OPTIONAL MATCH (ba)-[:APPLIES_TO_HABITAT]->(h:Habitat)
+            WITH ba, collect(DISTINCT d) AS docs, collect(DISTINCT es) AS services,
+                 collect(DISTINCT h.habitat_id) AS habitats
+            ORDER BY ba.axiom_id
+            RETURN ba.axiom_id AS axiom_id, ba.name AS name,
+                   ba.description AS description, ba.category AS category,
+                   ba.coefficient AS coefficient,
+                   [d IN docs | {doi: d.doi, title: d.title, tier: d.source_tier}] AS evidence,
+                   [s IN services | s.service_name] AS services,
+                   habitats
+            LIMIT $result_limit
+        """,
+        "parameters": ["concept_id"],
+    },
+    "concept_overview": {
+        "name": "concept_overview",
+        "category": "concept_explanation",
+        "default_limit": _DETAIL_LIMIT,
+        "cypher": """
+            MATCH (c:Concept)
+            WHERE c.name CONTAINS $search_term OR c.concept_id = $concept_id
+            OPTIONAL MATCH (c)-[:INVOLVES_AXIOM]->(ba:BridgeAxiom)
+            OPTIONAL MATCH (c)-[:DOCUMENTED_BY]->(d:Document)
+            OPTIONAL MATCH (c)-[:RELEVANT_TO]->(h:Habitat)
+            RETURN c.concept_id AS concept_id, c.name AS name,
+                   c.description AS description, c.domain AS domain,
+                   collect(DISTINCT ba.axiom_id) AS axiom_ids,
+                   collect(DISTINCT {doi: d.doi, title: d.title}) AS key_papers,
+                   collect(DISTINCT h.habitat_id) AS habitats
+            LIMIT $result_limit
+        """,
+        "parameters": ["search_term", "concept_id"],
     },
 
     # ------------------------------------------------------------------

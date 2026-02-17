@@ -256,6 +256,8 @@ def _submit_query(client: Any, question: str, mode: str) -> None:
 
     # Detect site for API call
     site = _detect_site(question)
+    if site is None:
+        site = st.session_state.get("v3_site")
 
     # Call the API / static client
     try:

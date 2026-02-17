@@ -4,7 +4,7 @@
 
 Nereus is a provenance-first blue finance platform, powered by MARIS (Marine Asset Risk Intelligence System) + Semantica. It creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. The system is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
 
-The v2 live system exposes the curated knowledge foundation through a Neo4j graph database, a FastAPI query engine with natural-language classification, and an investor-facing Streamlit dashboard with interactive provenance visualization.
+The v4 global scaling milestone with Intelligence Upgrade exposes the curated knowledge foundation through a Neo4j graph database (953+ nodes including 15 Concept nodes, 244+ edges across 9 Gold-tier MPA sites), a FastAPI query engine with 6-category natural-language classification (added concept_explanation for mechanism questions), and an investor-facing Streamlit dashboard with interactive provenance visualization and portfolio-level views. The system now resolves mechanism questions ("How does blue carbon work?") without requiring a site anchor.
 
 ## Architecture Overview
 
@@ -13,9 +13,9 @@ User Question (natural language)
      |
      v
  QueryClassifier  -- keyword-first with LLM fallback
-     |              (5 categories: valuation, provenance, axiom, comparison, risk)
+     |              (6 categories: valuation, provenance, axiom, comparison, risk, concept_explanation)
      v
- CypherTemplates  -- 8 templates (5 core + 3 utility), never raw string interpolation
+ CypherTemplates  -- 11 templates (5 core + 3 utility + 3 concept), never raw string interpolation
      |
      v
  QueryExecutor    -- Neo4j bolt driver, parameterized queries only
@@ -47,7 +47,8 @@ maris/
   graph/                      # Neo4j integration layer
     connection.py             # Bolt driver singleton, run_query() helper
     schema.py                 # Uniqueness constraints and indexes
-    population.py             # 8-stage population pipeline from curated JSON assets
+    population.py             # Legacy 8-stage population pipeline (Cabo Pulmo + Shark Bay)
+    population_v4.py          # v4 11-stage generic populator with dynamic site discovery
     validation.py             # Post-population integrity checks
   query/                      # NL-to-Cypher pipeline
     classifier.py             # Two-tier classification: keyword regex (case-insensitive BA, DOI, risk patterns, comparison tie-break) + LLM fallback
@@ -108,9 +109,11 @@ maris/
     integrity_adapter.py      # Integrity verification backed by Semantica checksums
     manager.py                # SemanticaBackedManager - drop-in replacement with SQLite persistence
   config.py                   # Centralized configuration from .env
+  config_v4.py                # v4 dynamic site discovery, separate Neo4j config overlay
 
 investor_demo/
-  streamlit_app_v3.py          # v3 Intelligence Platform (multi-tab, recommended)
+  streamlit_app_v4.py          # v4 Global Portfolio dashboard (9 sites, 6 tabs, recommended)
+  streamlit_app_v3.py          # v3 Intelligence Platform (multi-tab, 2 sites)
   streamlit_app_v2.py          # v2 dashboard (live API + static bundle)
   streamlit_app.py             # v1 dashboard (static bundle only)
   api_client.py                # HTTP client for MARIS API with auto-fallback
@@ -132,16 +135,18 @@ investor_demo/
 
 | Script | Purpose |
 |--------|---------|
-| `scripts/populate_neo4j.py` | Orchestrates the 8-stage graph population pipeline |
+| `scripts/populate_neo4j_v4.py` | v4 11-stage generic populator with dynamic site discovery (recommended) |
+| `scripts/populate_neo4j.py` | Legacy 8-stage population pipeline (Cabo Pulmo + Shark Bay only) |
 | `scripts/validate_graph.py` | Verifies node counts, relationship integrity, axiom evidence chains |
 | `scripts/demo_healthcheck.py` | Pre-demo verification: Neo4j + API + dashboard connectivity |
 | `scripts/run_ingestion.py` | Full PDF-to-graph ingestion pipeline |
+| `launch.sh` | One-command launcher for any dashboard version + API (see Running the Stack) |
 
 ---
 
 ## Knowledge Graph Data Lineage
 
-The graph is populated from **seven curated data sources**, each serving a distinct role in the provenance chain. All population operations use `MERGE` (idempotent) so the pipeline is safe to re-run.
+The graph is populated from curated data sources through the v4 generic populator (`scripts/populate_neo4j_v4.py`), which uses dynamic site discovery to automatically find and load all case study JSON files in `examples/*_case_study.json`. All population operations use `MERGE` (idempotent) so the pipeline is safe to re-run.
 
 ### Source Datasets
 
@@ -157,14 +162,10 @@ The graph is populated from **seven curated data sources**, each serving a disti
 │     14 JSON-LD instances        -> Species, MPA, Habitat, EcosystemService,  │
 │     (WoRMS, FishBase, TNFD)       FinancialInstrument, Framework, Concept    │
 │                                                                              │
-│  3. Cabo Pulmo Case Study       examples/cabo_pulmo_case_study.json         │
-│     Reference calibration site  -> MPA enrichment (NEOLI, biomass, ESV),     │
-│     (coral reef, tourism)         EcosystemService values, Species nodes,   │
-│                                    TrophicLevel food web, GENERATES edges    │
-│                                                                              │
-│  3b. Shark Bay Case Study       examples/shark_bay_case_study.json          │
-│      Second calibration site    -> MPA enrichment (NEOLI, seagrass, ESV),    │
-│      (seagrass, carbon)           EcosystemService values, GENERATES edges  │
+│  3. Case Study JSONs            examples/*_case_study.json                   │
+│     9 Gold-tier MPA sites       -> MPA enrichment (NEOLI, ESV, habitats),    │
+│     (dynamic discovery)           EcosystemService values, Species nodes,    │
+│                                   TrophicLevel food web, GENERATES edges     │
 │                                                                              │
 │  4. Bridge Axiom Templates      schemas/bridge_axiom_templates.json         │
 │     + Evidence Mapping          data/semantica_export/bridge_axioms.json     │
@@ -175,58 +176,52 @@ The graph is populated from **seven curated data sources**, each serving a disti
 │     15 cross-domain edges       -> Typed relationship edges with             │
 │     with quantification           quantification, mechanism, confidence      │
 │                                                                              │
-│  6. Comparison Sites            Hardcoded in population.py                   │
+│  6. Comparison Sites            Hardcoded in population_v4.py                │
 │     Great Barrier Reef,         -> MPA nodes with basic metadata only        │
 │     Papahanaumokuakea             (NEOLI, area, rating - no service values)  │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Population Pipeline (8 stages)
+### Population Pipeline (v4 - 11 stages)
 
-The `scripts/populate_neo4j.py` script calls `maris.graph.population.populate_graph()`, which executes eight stages in order:
+The `scripts/populate_neo4j_v4.py` script uses `maris.config_v4` for dynamic site discovery, automatically finding all `examples/*_case_study.json` files and populating them through a generic pipeline. No per-site population functions or classifier patterns are needed - just create a case study JSON and run the populator.
 
-| Stage | Function | Source File | Creates |
-|-------|----------|-------------|---------|
-| 1 | `_populate_documents()` | `document_index.json` | 195 Document nodes with DOI, tier, domain |
+| Stage | Function | Source | Creates |
+|-------|----------|--------|---------|
+| 1 | `_populate_documents()` | `document_index.json` | 835 Document nodes with DOI, tier, domain |
 | 2 | `_populate_entities()` | `entities.jsonld` | Species, MPA, Habitat, EcosystemService, etc. |
-| 3 | `_populate_cabo_pulmo()` | `cabo_pulmo_case_study.json` | Enriches MPA with NEOLI/biomass/ESV; creates services, species, trophic nodes |
-| 3b | `_populate_shark_bay()` | `shark_bay_case_study.json` | Enriches MPA with NEOLI/seagrass/ESV; creates carbon, fisheries, tourism, coastal services |
-| 4 | `_populate_bridge_axioms()` | `bridge_axiom_templates.json` + `bridge_axioms.json` | 16 BridgeAxiom nodes (12 core + 4 blue carbon); EVIDENCED_BY, APPLIES_TO, TRANSLATES edges |
-| 5 | `_populate_comparison_sites()` | Hardcoded | Great Barrier Reef, Papahanaumokuakea MPA nodes |
-| 6 | `_populate_relationships()` | `relationships.json` | 15 cross-domain relationship edges |
-| 7 | `_populate_cross_domain_links()` | Hardcoded | Structural edges (HAS_HABITAT, PROVIDES, INHABITS, GOVERNS, etc.) |
-| 8 | `_populate_provenance()` | `cabo_pulmo_case_study.json` | DERIVED_FROM edges linking MPA to source Documents |
+| 3 | `_discover_sites()` | `examples/*_case_study.json` | Discovers all case study files dynamically |
+| 4 | `_populate_site(site)` | Each case study JSON | MPA enrichment (NEOLI, ESV, habitats), EcosystemService values, Species nodes, TrophicLevel food web |
+| 5 | `_populate_site_services(site)` | Each case study JSON | GENERATES edges linking MPA to EcosystemService |
+| 6 | `_populate_site_species(site)` | Each case study JSON | Species nodes with LOCATED_IN and INHABITS edges |
+| 7 | `_populate_bridge_axioms()` | `bridge_axiom_templates.json` + `bridge_axioms.json` | 16 BridgeAxiom nodes; EVIDENCED_BY, APPLIES_TO, TRANSLATES edges |
+| 8 | `_populate_comparison_sites()` | Hardcoded | Great Barrier Reef, Papahanaumokuakea MPA nodes |
+| 9 | `_populate_relationships()` | `relationships.json` | Cross-domain relationship edges |
+| 10 | `_populate_cross_domain_links()` | Dynamic | Structural edges (HAS_HABITAT, PROVIDES, INHABITS, GOVERNS, etc.) |
+| 11 | `_populate_provenance()` | All case study JSONs | DERIVED_FROM edges linking each MPA to source Documents |
 
-### Calibration Site Model
+The legacy `scripts/populate_neo4j.py` (8-stage) is still available but only loads Cabo Pulmo and Shark Bay.
 
-The system has two fully characterized reference sites with contrasting ESV profiles:
+### Site Portfolio (9 Gold-Tier Sites)
 
-**Cabo Pulmo National Park** (Mexico) - coral reef-dominated, tourism-driven ESV:
+The system has 9 fully characterized Gold-tier sites spanning 4 habitat types and 9 countries. The portfolio demonstrates the framework's habitat-agnostic design across coral reef, seagrass, mangrove, and multi-habitat ecosystems.
 
-| Property | Value | Source |
-|----------|-------|--------|
-| Total ESV | $29.27M/year (market-price) | `cabo_pulmo_case_study.json` |
-| Tourism | $25.0M (market-price expenditure) | Marcos-Castillo et al. 2024 |
-| Biomass ratio | 4.63x recovery, CI [3.8, 5.5] | Aburto-Oropeza et al. 2011 |
-| NEOLI score | 4/5 criteria met | Edgar et al. 2014 framework |
-| Asset rating | AAA (composite 0.90) | Derived from NEOLI + ESV + CI |
+| Site | Country | Habitat(s) | ESV | Rating |
+|------|---------|-----------|-----|--------|
+| Sundarbans Reserve Forest | Bangladesh/India | Mangrove | $778.9M | A |
+| Galapagos Marine Reserve | Ecuador | Coral+Kelp+Mangrove | $320.9M | AAA |
+| Belize Barrier Reef Reserve System | Belize | Coral+Mangrove+Seagrass | $292.5M | AA |
+| Ningaloo Coast WHA | Australia | Coral Reef | $83.0M | AA |
+| Raja Ampat Marine Park | Indonesia | Coral+Mangrove | $78.0M | AA |
+| Cabo Pulmo National Park | Mexico | Coral Reef | $29.3M | AAA |
+| Shark Bay WHA | Australia | Seagrass | $21.5M | AA |
+| Cispata Bay Mangrove CA | Colombia | Mangrove | $8.0M | A |
+| Aldabra Atoll | Seychelles | Coral+Mangrove+Seagrass | $6.0M | AAA |
 
-**Shark Bay World Heritage Area** (Australia) - seagrass-dominated, carbon-driven ESV:
+**Comparison sites** (Great Barrier Reef Marine Park, Papahanaumokuakea Marine National Monument) are populated with governance metadata only (area, designation year, NEOLI score, asset rating). They do not have ecosystem service valuations or bridge axiom links.
 
-| Property | Value | Source |
-|----------|-------|--------|
-| Total ESV | $21.5M/year (market-price) | `shark_bay_case_study.json` |
-| Carbon sequestration | $12.1M (0.84 tCO2/ha/yr, $30/tonne) | Arias-Ortiz et al. 2018 |
-| Fisheries | $5.2M (MSC-certified prawn fishery) | Market-price method |
-| Tourism | $3.4M (108K visitors/year) | Tourism WA data |
-| Coastal protection | $0.8M (40% wave reduction) | Avoided cost method |
-| Seagrass extent | 4,800 km2 (world's largest) | Direct survey |
-| NEOLI score | 4/5 criteria met | Edgar et al. 2014 framework |
-
-**Comparison sites** (Great Barrier Reef Marine Park, Papahanaumokuakea Marine National Monument) are populated with governance metadata only (area, designation year, NEOLI score, asset rating). They do not have ecosystem service valuations or bridge axiom links. The dual-site architecture demonstrates the framework's habitat-agnostic design: tourism-dominant (Cabo Pulmo) vs. carbon-dominant (Shark Bay).
-
-To add full coverage for another site, create a case study JSON following the structure of `examples/cabo_pulmo_case_study.json` or `examples/shark_bay_case_study.json` and add a population function in `maris/graph/population.py`.
+To add a new site, create a case study JSON in `examples/<site_name>_case_study.json` following the structure of any existing case study and run `python scripts/populate_neo4j_v4.py`. The v4 populator discovers new case study files automatically - no manual population functions or classifier patterns are needed.
 
 ### Evidence Tier System
 
@@ -283,10 +278,14 @@ pip install -r requirements-v2.txt
 ### Populate the Knowledge Graph
 
 ```bash
+# v4 populator (recommended) - dynamic site discovery, 9 sites
+python scripts/populate_neo4j_v4.py
+
+# Legacy populator - Cabo Pulmo + Shark Bay only
 python scripts/populate_neo4j.py
 ```
 
-This executes the 8-stage pipeline described above, loading all curated data sources into Neo4j. The script is idempotent (uses MERGE operations) and safe to re-run.
+The v4 populator executes the 11-stage pipeline described above, dynamically discovering and loading all case study JSON files from `examples/`. The script is idempotent (uses MERGE operations) and safe to re-run.
 
 ### Verify the Graph
 
@@ -294,11 +293,35 @@ This executes the 8-stage pipeline described above, loading all curated data sou
 python scripts/validate_graph.py
 ```
 
-Checks node counts by label, relationship integrity, and that all 16 bridge axioms have at least one EVIDENCED_BY edge to a Document node.
+Checks node counts by label (938 nodes expected), relationship integrity (244 edges expected), and that all 16 bridge axioms have at least one EVIDENCED_BY edge to a Document node.
 
 ---
 
 ## Running the Stack
+
+### One-Command Launcher (Recommended)
+
+```bash
+# v4 Global Portfolio (9 sites, 6 tabs) - recommended
+./launch.sh v4
+
+# v3 Intelligence Platform (2 sites, 5 tabs)
+./launch.sh v3
+
+# v2 Single-scroll dashboard
+./launch.sh v2
+
+# v1 Static dashboard (no API needed)
+./launch.sh v1
+
+# API server only
+./launch.sh api
+
+# Stop all running services
+./launch.sh stop
+```
+
+The launcher handles environment loading, Neo4j connectivity checks, API startup, and dashboard process management. PID files are stored in `.pids/` for clean shutdown.
 
 ### Manual (3 terminals)
 
@@ -313,14 +336,17 @@ uvicorn maris.api.main:app --host 0.0.0.0 --port 8000
 # Terminal 3: Start the investor dashboard
 cd investor_demo
 
-# v3 Intelligence Platform (recommended) - multi-tab with pipeline transparency
+# v4 Global Portfolio (recommended) - 9 sites, 6 tabs
+streamlit run streamlit_app_v4.py --server.port 8504
+
+# v3 Intelligence Platform (alternative) - 2 sites, 5 tabs
 streamlit run streamlit_app_v3.py --server.port 8503
 
-# v2 dashboard (alternative) - single-scroll with Ask MARIS chat
+# v2 dashboard (alternative) - single-scroll with Ask Nereus chat
 streamlit run streamlit_app_v2.py
 ```
 
-The v3 dashboard opens at `http://localhost:8503` with 5 tabs: Intelligence Brief, Ask MARIS (GraphRAG), Scenario Lab, Site Scout, and TNFD Compliance. Each tab has dual-mode operation (Live/Demo) toggled from the sidebar. The v2 dashboard opens at `http://localhost:8501`.
+The v4 dashboard opens at `http://localhost:8504` with 6 tabs: Portfolio Overview, Intelligence Brief, Ask Nereus (GraphRAG), Scenario Lab, Site Scout, and TNFD Compliance. Each tab has dual-mode operation (Live/Demo) toggled from the sidebar. The v3 dashboard opens at `http://localhost:8503`. The v2 dashboard opens at `http://localhost:8501`.
 
 ### Docker Compose
 
@@ -479,10 +505,12 @@ These fields feed into the Monte Carlo simulation and sensitivity analysis to pr
 
 ### Adding a New Site
 
-1. Create a case study JSON following the structure of `examples/cabo_pulmo_case_study.json` or `examples/shark_bay_case_study.json` with site metadata, NEOLI assessment, ecological recovery metrics, ecosystem service valuations (with DOI sources and valuation methods), and key species
-2. Add a population function in `maris/graph/population.py` (pattern: `_populate_cabo_pulmo()` or `_populate_shark_bay()`)
-3. Add the site's canonical name to the classifier's `_SITE_PATTERNS` in `maris/query/classifier.py`
-4. Run `python scripts/populate_neo4j.py` to load the new site
+In v4, adding a new MPA site requires only two steps:
+
+1. Create a case study JSON at `examples/<site_name>_case_study.json` following the structure of any existing case study (e.g. `examples/cabo_pulmo_case_study.json`) with site metadata, NEOLI assessment, ecological recovery metrics, ecosystem service valuations (with DOI sources and valuation methods), and key species
+2. Run `python scripts/populate_neo4j_v4.py` to load the new site
+
+The v4 populator discovers case study files automatically via `maris/config_v4.py` dynamic site discovery. No manual population functions, classifier patterns, or config changes are needed - the generic pipeline handles all site types.
 
 ### Adding a New Cypher Template
 
@@ -506,7 +534,7 @@ These fields feed into the Monte Carlo simulation and sensitivity analysis to pr
 
 1. Add the axiom definition to `schemas/bridge_axiom_templates.json` with coefficients, applicable habitats, DOI-backed sources, and uncertainty fields (see below)
 2. Add the evidence mapping to `data/semantica_export/bridge_axioms.json`
-3. Run `python scripts/populate_neo4j.py` to create the BridgeAxiom node and evidence edges
+3. Run `python scripts/populate_neo4j_v4.py` to create the BridgeAxiom node and evidence edges
 
 ---
 
@@ -609,7 +637,7 @@ Expected: JSON response with `answer`, `confidence` >= 0.5, `evidence` array wit
 python scripts/validate_graph.py
 ```
 
-Checks: node counts per label, all BridgeAxiom nodes have EVIDENCED_BY edges, all MPA nodes have GENERATES edges to EcosystemService nodes.
+Checks: node counts per label (938 nodes, 244 edges across 11 MPA nodes), all BridgeAxiom nodes have EVIDENCED_BY edges, all MPA nodes have GENERATES edges to EcosystemService nodes.
 
 ---
 

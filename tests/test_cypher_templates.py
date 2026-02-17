@@ -116,3 +116,110 @@ class TestTemplateFields:
     def test_graph_traverse_has_limit(self):
         t = get_template("graph_traverse")
         assert "LIMIT" in t["cypher"]
+
+
+class TestAxiomByConceptTemplate:
+    """Tests for the axiom_by_concept template (Phase I intelligence upgrade)."""
+
+    def test_axiom_by_concept_exists(self):
+        t = get_template("axiom_by_concept")
+        assert t is not None
+
+    def test_axiom_by_concept_has_required_keys(self):
+        t = get_template("axiom_by_concept")
+        assert t["category"] == "axiom_explanation"
+        assert "concept_term" in t["parameters"]
+        assert "axiom_ids" in t["parameters"]
+
+    def test_axiom_by_concept_uses_parameters(self):
+        t = get_template("axiom_by_concept")
+        cypher = t["cypher"]
+        assert "$concept_term" in cypher
+        assert "$axiom_ids" in cypher
+        assert "$result_limit" in cypher
+
+    def test_axiom_by_concept_returns_expected_fields(self):
+        t = get_template("axiom_by_concept")
+        cypher = t["cypher"]
+        assert "AS axiom_id" in cypher
+        assert "AS axiom_name" in cypher
+        assert "AS evidence" in cypher
+        assert "AS applicable_sites" in cypher
+
+    def test_axiom_by_concept_has_limit(self):
+        t = get_template("axiom_by_concept")
+        assert "LIMIT" in t["cypher"]
+
+
+class TestMechanismChainTemplate:
+    """Tests for mechanism_chain and concept_overview templates (Phase II)."""
+
+    def test_mechanism_chain_exists(self):
+        t = get_template("mechanism_chain")
+        assert t is not None
+
+    def test_mechanism_chain_category(self):
+        t = get_template("mechanism_chain")
+        assert t["category"] == "concept_explanation"
+
+    def test_mechanism_chain_parameters(self):
+        t = get_template("mechanism_chain")
+        assert "concept_id" in t["parameters"]
+
+    def test_mechanism_chain_uses_concept_id_param(self):
+        t = get_template("mechanism_chain")
+        assert "$concept_id" in t["cypher"]
+
+    def test_mechanism_chain_has_limit(self):
+        t = get_template("mechanism_chain")
+        assert "LIMIT" in t["cypher"]
+
+    def test_mechanism_chain_traverses_involves_axiom(self):
+        t = get_template("mechanism_chain")
+        assert "INVOLVES_AXIOM" in t["cypher"]
+
+    def test_mechanism_chain_returns_expected_fields(self):
+        t = get_template("mechanism_chain")
+        cypher = t["cypher"]
+        assert "AS axiom_id" in cypher
+        assert "AS name" in cypher
+        assert "AS description" in cypher
+        assert "AS evidence" in cypher
+
+    def test_concept_overview_exists(self):
+        t = get_template("concept_overview")
+        assert t is not None
+
+    def test_concept_overview_category(self):
+        t = get_template("concept_overview")
+        assert t["category"] == "concept_explanation"
+
+    def test_concept_overview_parameters(self):
+        t = get_template("concept_overview")
+        assert "search_term" in t["parameters"]
+        assert "concept_id" in t["parameters"]
+
+    def test_concept_overview_uses_parameters(self):
+        t = get_template("concept_overview")
+        cypher = t["cypher"]
+        assert "$search_term" in cypher
+        assert "$concept_id" in cypher
+
+    def test_concept_overview_has_limit(self):
+        t = get_template("concept_overview")
+        assert "LIMIT" in t["cypher"]
+
+    def test_concept_overview_returns_expected_fields(self):
+        t = get_template("concept_overview")
+        cypher = t["cypher"]
+        assert "AS concept_id" in cypher
+        assert "AS name" in cypher
+        assert "AS description" in cypher
+        assert "AS domain" in cypher
+
+    def test_concept_explanation_category_has_templates(self):
+        results = templates_for_category("concept_explanation")
+        assert len(results) >= 2
+        names = [t["name"] for t in results]
+        assert "mechanism_chain" in names
+        assert "concept_overview" in names

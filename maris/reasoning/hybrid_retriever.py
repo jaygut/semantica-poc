@@ -99,6 +99,16 @@ class HybridRetriever:
                 context.add_edge(edge)
             graph_ranked = [n.node_id for n in graph_context.nodes]
             modes["graph"] = len(graph_ranked)
+        elif self._executor:
+            # Concept-based retrieval: start from axiom nodes matching question keywords
+            concept_results = self._concept_retrieve(question)
+            concept_context = build_context_from_results(concept_results)
+            for node in concept_context.nodes:
+                context.add_node(node)
+            for edge in concept_context.edges:
+                context.add_edge(edge)
+            graph_ranked = [n.node_id for n in concept_context.nodes]
+            modes["graph"] = len(graph_ranked)
 
         # 2. Keyword matching against context nodes
         keyword_ranked = self._keyword_retrieve(question, context)
@@ -177,3 +187,50 @@ class HybridRetriever:
 
         scored.sort(key=lambda x: x[1], reverse=True)
         return [node_id for node_id, _ in scored]
+
+    def _concept_retrieve(self, question: str) -> list[dict[str, Any]]:
+        """Retrieve graph context via concept/axiom keyword matching."""
+        concept_terms = self._extract_concept_terms(question)
+        if not concept_terms:
+            return []
+
+        # Use axiom_by_concept template if available
+        try:
+            result = self._executor.execute(
+                "axiom_by_concept",
+                {"concept_term": concept_terms[0], "axiom_ids": []},
+            )
+            return result.get("results", [])
+        except Exception:
+            logger.exception("Concept retrieval failed for question=%s", question[:80])
+            return []
+
+    def _extract_concept_terms(self, question: str) -> list[str]:
+        """Extract concept keywords from a question for axiom matching."""
+        q_lower = question.lower()
+        _CONCEPT_KEYWORDS = {
+            "carbon": "carbon",
+            "sequestration": "carbon",
+            "sequester": "carbon",
+            "blue carbon": "carbon",
+            "tourism": "tourism",
+            "biomass": "biomass",
+            "fisheries": "fisheries",
+            "coastal protection": "protection",
+            "flood protection": "protection",
+            "mangrove": "mangrove",
+            "seagrass": "seagrass",
+            "kelp": "kelp",
+            "coral": "coral",
+            "restoration": "restoration",
+            "resilience": "resilience",
+            "degradation": "degradation",
+            "biodiversity": "biodiversity",
+            "insurance": "insurance",
+            "bond": "bond",
+        }
+        terms = []
+        for keyword, concept in _CONCEPT_KEYWORDS.items():
+            if keyword in q_lower and concept not in terms:
+                terms.append(concept)
+        return terms

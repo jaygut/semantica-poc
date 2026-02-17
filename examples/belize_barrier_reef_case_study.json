@@ -1,0 +1,445 @@
+{
+  "@context": {
+    "@vocab": "https://maris.ocean/ontology/",
+    "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+    "prov": "http://www.w3.org/ns/prov#"
+  },
+  "site": {
+    "@type": "MarineProtectedArea",
+    "@id": "mpa:belize_barrier_reef_rs",
+    "name": "Belize Barrier Reef Reserve System",
+    "country": "Belize",
+    "region": "Caribbean, Central America",
+    "coordinates": {
+      "@type": "geo:Point",
+      "latitude": 17.32,
+      "longitude": -87.53
+    },
+    "area_km2": 960,
+    "reef_complex_km2": 1400,
+    "designation_year": 1996,
+    "governance": {
+      "management_authority": "Belize Fisheries Department / Belize Audubon Society / WCS",
+      "management_plan_year": 2016,
+      "community_engagement": "high",
+      "local_support": "strong",
+      "blue_bond": "TNC $364M debt conversion (2021) - 30% ocean protection by 2026"
+    }
+  },
+  "neoli_assessment": {
+    "@type": "NEOLIAssessment",
+    "assessment_date": "2024",
+    "criteria": {
+      "no_take": {
+        "value": true,
+        "notes": "Multiple no-take replenishment zones within BBRRS; Hol Chan Marine Reserve includes strict no-take areas since 1987"
+      },
+      "enforced": {
+        "value": true,
+        "notes": "Variable enforcement across sites; Hol Chan well-enforced with regular patrols, other areas less consistently patrolled"
+      },
+      "old": {
+        "value": true,
+        "notes": "28 years since UNESCO World Heritage listing (1996); Hol Chan established 1987 (>10 year threshold)"
+      },
+      "large": {
+        "value": true,
+        "notes": "960 km2 reserve system; full reef complex ~1,400 km2 (>100 km2 threshold)"
+      },
+      "isolated": {
+        "value": false,
+        "notes": "Part of Mesoamerican Barrier Reef System; connected to adjacent marine areas"
+      }
+    },
+    "neoli_score": 4,
+    "effectiveness_rating": "high",
+    "source": {
+      "citation": "Edgar et al. 2014 Nature",
+      "doi": "10.1038/nature13022",
+      "doi_url": "https://doi.org/10.1038/nature13022",
+      "source_tier": "T1"
+    }
+  },
+  "ecological_status": {
+    "@type": "EcologicalAssessment",
+    "primary_habitat": "coral_reef",
+    "secondary_habitats": [
+      "mangrove",
+      "seagrass"
+    ],
+    "assessment_year": 2020,
+    "last_validated_date": "2026-02-16",
+    "metrics": {
+      "reef_extent": {
+        "barrier_reef_length_km": 300,
+        "notes": "Second longest barrier reef in the world after Great Barrier Reef"
+      },
+      "species_counts": {
+        "coral_species": 65,
+        "fish_species": 500,
+        "mollusc_species": 350,
+        "hydroid_species": 45,
+        "marine_flora_taxa": 247
+      },
+      "reef_condition": {
+        "live_coral_cover_percent": 16,
+        "trend": "variable - some recovery post-bleaching, ongoing monitoring",
+        "notes": "Twenty-year monitoring shows benthic community shifts; removed from UNESCO Danger List in 2018 after oil moratorium"
+      },
+      "mangrove_extent": {
+        "area_km2": 760,
+        "notes": "Extensive coastal mangrove fringe; critical nursery habitat"
+      },
+      "seagrass_extent": {
+        "area_km2": 370,
+        "notes": "Seagrass beds within lagoon and back-reef areas"
+      }
+    },
+    "source": {
+      "citation": "Baumann et al. 2022 PLOS ONE",
+      "doi": "10.1371/journal.pone.0249155",
+      "doi_url": "https://doi.org/10.1371/journal.pone.0249155",
+      "source_tier": "T1"
+    }
+  },
+  "ecosystem_services": {
+    "@type": "EcosystemServiceBundle",
+    "last_validated_date": "2026-02-16",
+    "services": [
+      {
+        "@type": "EcosystemService",
+        "service_type": "tourism",
+        "service_category": "cultural",
+        "annual_value_usd": 150000000,
+        "valuation_range_usd": [
+          150000000,
+          196000000
+        ],
+        "valuation_method": "market_price",
+        "measurement_year": 2007,
+        "beneficiaries": [
+          "tourism_operators",
+          "hotels",
+          "dive_shops",
+          "local_community",
+          "government"
+        ],
+        "metrics": {
+          "gdp_contribution_percent": "12-15",
+          "notes": "Reef- and mangrove-associated tourism accounts for 12-15% of Belize GDP"
+        },
+        "source": {
+          "citation": "Cooper et al. 2009 WRI Coastal Capital: Belize",
+          "url": "http://pdf.wri.org/coastal_capital_belize_wp.pdf",
+          "source_tier": "T2"
+        },
+        "confidence_interval": {
+          "ci_low": 120000000,
+          "ci_high": 180000000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "coastal_protection",
+        "service_category": "regulating",
+        "annual_value_usd": 120000000,
+        "valuation_range_usd": [
+          120000000,
+          180000000
+        ],
+        "valuation_method": "avoided_cost",
+        "measurement_year": 2007,
+        "metrics": {
+          "wave_energy_reduction_percent": 75,
+          "notes": "Emergent reef crests mitigate over 75% of wave energy; mangroves provide additional $111-167M/yr in avoided damages"
+        },
+        "source": {
+          "citation": "Cooper et al. 2009 WRI Coastal Capital: Belize",
+          "url": "http://pdf.wri.org/coastal_capital_belize_wp.pdf",
+          "source_tier": "T2"
+        },
+        "confidence_interval": {
+          "ci_low": 84000000,
+          "ci_high": 156000000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "fisheries",
+        "service_category": "provisioning",
+        "annual_value_usd": 14000000,
+        "valuation_range_usd": [
+          14000000,
+          16000000
+        ],
+        "valuation_method": "market_price",
+        "measurement_year": 2007,
+        "beneficiaries": [
+          "artisanal_fishers",
+          "commercial_fishers",
+          "export_markets"
+        ],
+        "metrics": {
+          "reef_dependent_species": [
+            "lobster",
+            "conch",
+            "finfish"
+          ],
+          "notes": "Reef- and mangrove-dependent fisheries; lobster and conch are primary export species"
+        },
+        "source": {
+          "citation": "Cooper et al. 2009 WRI Coastal Capital: Belize",
+          "url": "http://pdf.wri.org/coastal_capital_belize_wp.pdf",
+          "source_tier": "T2"
+        },
+        "confidence_interval": {
+          "ci_low": 11200000,
+          "ci_high": 16800000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
+      },
+      {
+        "@type": "EcosystemService",
+        "service_type": "carbon_sequestration",
+        "service_category": "regulating",
+        "annual_value_usd": 8500000,
+        "valuation_method": "regional_analogue_estimate",
+        "measurement_year": 2024,
+        "metrics": {
+          "mangrove_area_km2": 760,
+          "seagrass_area_km2": 370,
+          "estimated_sequestration_tCO2_yr": 283000,
+          "carbon_price_usd_per_tonne": 30,
+          "notes": "Estimate based on global mangrove sequestration rates (6.4 tCO2/ha/yr) applied to Belize mangrove and seagrass extent"
+        },
+        "confidence_interval": {
+          "ci_low": 4250000,
+          "ci_high": 12750000,
+          "confidence_level": 0.9,
+          "method": "literature_range"
+        }
+      }
+    ],
+    "total_annual_value_usd": 292500000,
+    "total_range_usd": [
+      292500000,
+      400500000
+    ],
+    "notes": "Combined reef, mangrove, and seagrass services for the BBRRS complex. WRI 2009 total estimate for all Belize coastal services: $395-559M/yr"
+  },
+  "asset_quality_rating": {
+    "@type": "MARISRating",
+    "rating": "AA",
+    "rating_date": "2024-06-15",
+    "rating_rationale": {
+      "ecological_condition": {
+        "score": 0.8,
+        "weight": 0.4,
+        "notes": "Three habitat types in one system; reef condition variable with ongoing recovery; removed from UNESCO Danger List 2018"
+      },
+      "governance_effectiveness": {
+        "score": 0.85,
+        "weight": 0.25,
+        "notes": "UNESCO World Heritage listing; multi-agency management; $364M blue bond commitment; 30% ocean protection target"
+      },
+      "financial_sustainability": {
+        "score": 0.9,
+        "weight": 0.2,
+        "notes": "TNC blue bond provides $4M/yr conservation funding through 2041; tourism generates 12-15% of GDP"
+      },
+      "risk_factors": {
+        "score": 0.7,
+        "weight": 0.15,
+        "notes": "Climate-driven bleaching events; hurricane exposure; historical development pressure (oil moratorium now in place)"
+      }
+    },
+    "composite_score": 0.82,
+    "confidence_level": "high"
+  },
+  "key_species": [
+    {
+      "@type": "Species",
+      "scientific_name": "Acropora palmata",
+      "common_name": "Elkhorn coral",
+      "worms_aphia_id": 207230,
+      "iucn_status": "Critically Endangered",
+      "role_in_ecosystem": "reef_builder",
+      "notes": "Historically dominant reef-building coral; populations declining but recovery efforts underway"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Panulirus argus",
+      "common_name": "Caribbean spiny lobster",
+      "worms_aphia_id": 107013,
+      "role_in_ecosystem": "commercial_keystone",
+      "commercial_importance": "high",
+      "notes": "Primary export fishery species; reef-dependent for habitat and nursery"
+    },
+    {
+      "@type": "Species",
+      "scientific_name": "Trichechus manatus",
+      "common_name": "West Indian manatee",
+      "worms_aphia_id": 137076,
+      "iucn_status": "Vulnerable",
+      "role_in_ecosystem": "keystone_herbivore",
+      "seagrass_dependency": "obligate seagrass grazer",
+      "notes": "Belize holds the largest population of West Indian manatees in Central America"
+    }
+  ],
+  "bridge_axiom_applications": [
+    {
+      "axiom_id": "BA-001",
+      "application": "Tourism revenue linked to coral reef condition and fish biomass",
+      "calculation": {
+        "reef_condition": "variable",
+        "tourism_value_usd": 150000000,
+        "notes": "Reef-associated tourism is the primary economic driver at 12-15% of GDP"
+      }
+    },
+    {
+      "axiom_id": "BA-004",
+      "application": "Coral reef coastal protection via wave energy reduction",
+      "calculation": {
+        "wave_energy_reduction_percent": 75,
+        "avoided_damages_usd": 120000000,
+        "notes": "WRI estimate of reef-mediated coastal protection services"
+      }
+    },
+    {
+      "axiom_id": "BA-005",
+      "application": "Mangrove coastal protection and wave attenuation",
+      "calculation": {
+        "mangrove_area_km2": 760,
+        "additional_protection_value_usd": 111000000,
+        "notes": "Mangrove protection value additional to reef protection (WRI 2009)"
+      }
+    },
+    {
+      "axiom_id": "BA-006",
+      "application": "Mangrove nursery habitat supporting fisheries production",
+      "calculation": {
+        "mangrove_area_km2": 760,
+        "fishery_dependency": "high",
+        "fisheries_value_usd": 14000000,
+        "notes": "Lobster, conch, and finfish species depend on mangrove nursery habitat"
+      }
+    },
+    {
+      "axiom_id": "BA-013",
+      "application": "Seagrass carbon sequestration",
+      "calculation": {
+        "seagrass_extent_km2": 370,
+        "sequestration_rate_tCO2_per_ha_yr": 0.84,
+        "notes": "Applied using Shark Bay analogue rate; site-specific measurement needed"
+      }
+    }
+  ],
+  "financial_instruments": {
+    "blue_bond": {
+      "instrument": "TNC Blue Bond / Debt-for-Nature Conversion",
+      "amount_usd": 364000000,
+      "year": 2021,
+      "structure": "Belize retired $553M Superbond via $364M Blue Loan; $189M principal reduction",
+      "conservation_funding_usd": 180000000,
+      "funding_period_years": 20,
+      "annual_conservation_funding_usd": 4000000,
+      "commitments": [
+        "30% of territorial ocean under protection by 2026",
+        "Marine Spatial Planning process",
+        "Independent Conservation Fund"
+      ],
+      "arranger": "Credit Suisse",
+      "credit_enhancement": "US DFC political risk insurance ($610M)",
+      "source": {
+        "citation": "TNC Belize Debt Conversion Case Study",
+        "url": "https://www.nature.org/content/dam/tnc/nature/en/documents/TNC-Belize-Debt-Conversion-Case-Study.pdf",
+        "source_tier": "T2"
+      }
+    }
+  },
+  "framework_alignment": {
+    "tnfd_leap": {
+      "status": "anticipates alignment with TNFD LEAP framework",
+      "phases": {
+        "locate": "Belize Barrier Reef Reserve System - 960 km2, UNESCO World Heritage since 1996",
+        "evaluate": "Three habitat types (coral, mangrove, seagrass); 65 coral species, 500+ fish species",
+        "assess": "$292.5M annual ESV; AA asset rating; active blue bond financing",
+        "prepare": "TNC blue bond provides $4M/yr conservation funding; 30% ocean protection commitment"
+      }
+    },
+    "ifc_blue_finance": {
+      "status": "aligned with IFC Blue Finance principles",
+      "relevance": "World's largest debt-for-nature conversion for ocean conservation"
+    }
+  },
+  "provenance": {
+    "data_sources": [
+      {
+        "source": "Cooper et al. 2009 WRI Coastal Capital: Belize",
+        "url": "http://pdf.wri.org/coastal_capital_belize_wp.pdf",
+        "data_type": "Economic valuation of coral reef and mangrove ecosystem services",
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
+      },
+      {
+        "source": "Baumann et al. 2022 PLOS ONE",
+        "doi": "10.1371/journal.pone.0249155",
+        "doi_url": "https://doi.org/10.1371/journal.pone.0249155",
+        "data_type": "Twenty years of benthic community monitoring data",
+        "access_date": "2026-02-16",
+        "source_tier": "T1"
+      },
+      {
+        "source": "TNC Belize Debt Conversion Case Study",
+        "url": "https://www.nature.org/content/dam/tnc/nature/en/documents/TNC-Belize-Debt-Conversion-Case-Study.pdf",
+        "data_type": "Blue bond financial structure and conservation commitments",
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
+      },
+      {
+        "source": "UNESCO World Heritage Centre",
+        "url": "https://whc.unesco.org/en/list/764/",
+        "data_type": "Site designation and monitoring reports",
+        "access_date": "2026-02-16",
+        "source_tier": "T2"
+      }
+    ],
+    "compilation_date": "2026-02-16",
+    "compiled_by": "MARIS POC Team"
+  },
+  "caveats": [
+    "WRI 2009 valuations use 2007 base-year prices; inflation-adjusted values would be higher",
+    "Mangrove coastal protection value ($111-167M/yr) is additional to reef coastal protection ($120-180M/yr) but some overlap may exist",
+    "Carbon sequestration value is a regional analogue estimate based on global mangrove/seagrass rates; site-specific measurement needed",
+    "Reef condition is variable across the reserve system; Hol Chan has better enforcement and condition than more remote sites",
+    "All financial figures are indicative estimates for POC demonstration purposes and should not be used for investment decisions without independent verification"
+  ],
+  "provenance_summary": {
+    "total_sources": 6,
+    "doi_backed": 2,
+    "url_only": 4,
+    "doi_coverage_pct": 33.3,
+    "evidence_tier_distribution": {"T1": 2, "T2": 4, "T3": 0, "T4": 0}
+  },
+  "demo_value": {
+    "why_belize_for_demo": [
+      "World's largest debt-for-nature conversion for ocean conservation ($364M)",
+      "Three habitat types (coral, mangrove, seagrass) in single reserve system",
+      "Second longest barrier reef in the world",
+      "Published WRI economic valuation with breakdown by service type",
+      "Active blue bond with measurable conservation commitments"
+    ],
+    "investor_story": "The Belize Barrier Reef Reserve System demonstrates how blue finance mechanisms can scale. TNC's $364M debt conversion - the world's largest for ocean conservation - reduced Belize's national debt by 12% of GDP while securing $180M over 20 years for marine protection. With reef, mangrove, and seagrass services contributing $293-401M/year to the economy (12-15% of GDP), the investment case is clear: healthy marine ecosystems are bankable assets. Nereus rates Belize AA - strong fundamentals with the world's most advanced blue finance structure.",
+    "key_demo_queries": [
+      "What is the economic value of Belize's barrier reef system?",
+      "How does the TNC blue bond structure work for marine conservation?",
+      "What ecosystem services does the Belize reserve system provide?",
+      "How does Belize compare to other blue bond jurisdictions?"
+    ]
+  }
+}

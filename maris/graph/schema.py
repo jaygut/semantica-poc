@@ -14,12 +14,15 @@ SCHEMA_STATEMENTS = [
     "CREATE CONSTRAINT instrument_id IF NOT EXISTS FOR (fi:FinancialInstrument) REQUIRE fi.instrument_id IS UNIQUE",
     "CREATE CONSTRAINT framework_id IF NOT EXISTS FOR (fw:Framework) REQUIRE fw.framework_id IS UNIQUE",
     "CREATE CONSTRAINT trophic_node_id IF NOT EXISTS FOR (t:TrophicLevel) REQUIRE t.node_id IS UNIQUE",
+    "CREATE CONSTRAINT concept_id IF NOT EXISTS FOR (c:Concept) REQUIRE c.concept_id IS UNIQUE",
 
     # ===== INDEXES =====
     "CREATE INDEX document_tier IF NOT EXISTS FOR (d:Document) ON (d.source_tier)",
     "CREATE INDEX document_domain IF NOT EXISTS FOR (d:Document) ON (d.domain)",
     "CREATE INDEX species_name IF NOT EXISTS FOR (s:Species) ON (s.scientific_name)",
     "CREATE INDEX mpa_neoli IF NOT EXISTS FOR (m:MPA) ON (m.neoli_score)",
+    "CREATE INDEX concept_name IF NOT EXISTS FOR (c:Concept) ON (c.name)",
+    "CREATE INDEX concept_domain IF NOT EXISTS FOR (c:Concept) ON (c.domain)",
 
     # ===== FULLTEXT INDEX =====
     "CREATE FULLTEXT INDEX document_fulltext IF NOT EXISTS FOR (d:Document) ON EACH [d.abstract, d.title]",

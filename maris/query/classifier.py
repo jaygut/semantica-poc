@@ -31,11 +31,19 @@ _KEYWORD_RULES: list[tuple[str, list[str]]] = [
         r"\bhow does.+(?:translat|lead to|convert|become)",
         r"\b(?:mechanism|translat)",
     ]),
+    ("concept_explanation", [
+        r"\bwhat\s+(?:is|are)\b.*\b(?:blue.?carbon|carbon.?credit|coastal.?protect|blue.?bond|nature.?based|tnfd|ecosystem.?service)\b",
+        r"\bhow\b.*\b(?:blue.?carbon|carbon|coastal|ecosystem|nature)\b.*\b(?:work|function|operate)\b",
+        r"\bexplain\b.*\b(?:blue.?carbon|carbon|protection|restoration|resilience|trophic|biodiversity)\b",
+        r"\bwhat\s+(?:is|are)\b.*\b(?:debt.?for.?nature|reef.?insurance|parametric|mpa.?network|trophic.?cascade)\b",
+    ]),
     ("axiom_explanation", [
         r"\b(?:bridge.?axiom|axiom|coefficient)\b",
         r"\b(?:[Bb][Aa]-\d{3})\b",
-        r"\b(?:seagrass|blue.?carbon).*(?:sequester|carbon|mechanism|how)\b",
-        r"\bhow\b.*\b(?:seagrass|mangrove)\b.*\b(?:sequester|carbon|store)\b",
+        r"\b(?:seagrass|blue.?carbon|mangrove|kelp).*(?:sequest\w*|carbon|mechanism)\b",
+        r"\bhow\b.*\b(?:seagrass|mangrove|kelp|coral|blue.?carbon)\b.*\b(?:sequest\w*|work|store|accumulate|protect|value)\b",
+        r"\bhow\b.*\b(?:carbon|biomass|tourism|fisheries|coastal)\b.*\b(?:translat\w*|convert|valued?|work)\b",
+        r"\bwhat\s+(?:is|are)\b.*\b(?:bridge.?axiom|blue.?carbon|carbon.?credit|carbon.?sequest\w*)\b",
     ]),
     ("comparison", [
         r"\b(?:compar|versus|vs\.?|differ|rank|benchmark)\b",
@@ -222,7 +230,7 @@ class QueryClassifier:
             # its default category.
             if (
                 not result.pop("_llm_failed", False)
-                and result.get("confidence", 0) < 0.4
+                and result.get("confidence", 0) < 0.25
             ):
                 result["category"] = "open_domain"
             return result

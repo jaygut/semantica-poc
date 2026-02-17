@@ -265,3 +265,156 @@ class TestClassifierGapFixes:
         """Verify 'benchmark' also triggers comparison tie-break over site_valuation."""
         result = classifier.classify("Benchmark the MPAs by ESV")
         assert result["category"] == "comparison"
+
+
+# ---- Mechanism/concept classification (Phase I intelligence upgrade) ----
+
+class TestMechanismClassification:
+    """Tests for mechanism/concept questions (Phase I intelligence upgrade)."""
+
+    def test_blue_carbon_sequestration_how(self, classifier):
+        """The core bug: 'sequestration' must match axiom_explanation."""
+        result = classifier.classify("How does blue carbon sequestration work?")
+        assert result["category"] == "axiom_explanation"
+
+    def test_mangrove_carbon_storage(self, classifier):
+        result = classifier.classify("How do mangroves store carbon?")
+        assert result["category"] == "axiom_explanation"
+
+    def test_seagrass_carbon_sequestration(self, classifier):
+        result = classifier.classify("How does seagrass sequester carbon?")
+        assert result["category"] == "axiom_explanation"
+
+    def test_kelp_carbon_mechanism(self, classifier):
+        result = classifier.classify("How does kelp carbon sequestration work?")
+        assert result["category"] == "axiom_explanation"
+
+    def test_coral_reef_protection(self, classifier):
+        result = classifier.classify("How do coral reefs protect coastlines?")
+        assert result["category"] == "axiom_explanation"
+
+    def test_what_is_blue_carbon(self, classifier):
+        result = classifier.classify("What is blue carbon?")
+        # May route to concept_explanation (Phase II) or axiom_explanation
+        assert result["category"] in ("axiom_explanation", "concept_explanation")
+
+    def test_what_is_carbon_sequestration(self, classifier):
+        result = classifier.classify("What is carbon sequestration?")
+        assert result["category"] == "axiom_explanation"
+
+    def test_how_carbon_valued(self, classifier):
+        result = classifier.classify("How is seagrass carbon valued?")
+        assert result["category"] == "axiom_explanation"
+
+    def test_how_biomass_translates_to_tourism(self, classifier):
+        result = classifier.classify("How does biomass translate to tourism value?")
+        # This may match provenance_drilldown due to "translate" pattern
+        assert result["category"] in ("axiom_explanation", "provenance_drilldown")
+
+    def test_sequestering_form(self, classifier):
+        """Test -ing form of sequester with habitat-first pattern."""
+        result = classifier.classify("How do mangroves sequester carbon effectively?")
+        assert result["category"] == "axiom_explanation"
+
+    def test_sequestered_form(self, classifier):
+        """Test -ed form via seagrass sequester+store pattern."""
+        result = classifier.classify("How does seagrass sequester and store carbon?")
+        assert result["category"] == "axiom_explanation"
+
+    def test_mechanism_confidence_above_threshold(self, classifier):
+        """Mechanism questions should have reasonable confidence."""
+        result = classifier.classify("How does blue carbon sequestration work?")
+        assert result["confidence"] >= 0.6
+
+    def test_mangrove_accumulate(self, classifier):
+        result = classifier.classify("How do mangroves accumulate carbon?")
+        assert result["category"] == "axiom_explanation"
+
+    def test_coastal_protection_valued(self, classifier):
+        result = classifier.classify("How is coastal protection valued financially?")
+        assert result["category"] == "axiom_explanation"
+
+
+# ---- LLM threshold change (Phase I intelligence upgrade) ----
+
+class TestLLMThresholdChange:
+    """Tests for lowered LLM confidence threshold (0.25 instead of 0.4)."""
+
+    def test_llm_confidence_030_not_rerouted(self):
+        """LLM at 0.30 confidence should NOT be rerouted to open_domain."""
+        mock_llm = MagicMock()
+        mock_llm.complete_json.return_value = {
+            "category": "axiom_explanation",
+            "confidence": 0.30,
+        }
+        c = QueryClassifier(llm=mock_llm)
+        result = c.classify("tell me about the underwater flora habitat")
+        assert result["category"] == "axiom_explanation"
+
+    def test_llm_confidence_020_rerouted(self):
+        """LLM at 0.20 confidence SHOULD be rerouted to open_domain."""
+        mock_llm = MagicMock()
+        mock_llm.complete_json.return_value = {
+            "category": "axiom_explanation",
+            "confidence": 0.20,
+        }
+        c = QueryClassifier(llm=mock_llm)
+        result = c.classify("completely unrelated gibberish question")
+        assert result["category"] == "open_domain"
+
+
+# ---- Concept explanation classification (Phase II intelligence upgrade) ----
+
+class TestConceptExplanationClassification:
+    """Tests for concept_explanation query category (Phase II)."""
+
+    def test_what_is_blue_carbon(self, classifier):
+        result = classifier.classify("What is blue carbon?")
+        assert result["category"] == "concept_explanation"
+
+    def test_how_do_carbon_credits_work(self, classifier):
+        result = classifier.classify("How do carbon credits work?")
+        assert result["category"] == "concept_explanation"
+
+    def test_explain_trophic_cascade_economics(self, classifier):
+        result = classifier.classify("Explain trophic cascade economics")
+        assert result["category"] == "concept_explanation"
+
+    def test_what_is_reef_insurance(self, classifier):
+        result = classifier.classify("What is reef insurance?")
+        assert result["category"] == "concept_explanation"
+
+    def test_what_are_nature_based_solutions(self, classifier):
+        result = classifier.classify("What are nature-based solutions?")
+        assert result["category"] == "concept_explanation"
+
+    def test_what_is_coastal_protect(self, classifier):
+        result = classifier.classify("What is coastal protect services?")
+        assert result["category"] == "concept_explanation"
+
+    def test_how_does_ecosystem_restoration_work(self, classifier):
+        result = classifier.classify("How does ecosystem restoration work?")
+        assert result["category"] == "concept_explanation"
+
+    def test_explain_resilience(self, classifier):
+        result = classifier.classify("Explain climate resilience in marine ecosystems")
+        assert result["category"] == "concept_explanation"
+
+    def test_does_not_misclassify_site_valuation(self, classifier):
+        """ESV queries must stay as site_valuation, not concept_explanation."""
+        result = classifier.classify("What is the ESV of Cabo Pulmo?")
+        assert result["category"] == "site_valuation"
+
+    def test_does_not_misclassify_axiom_explanation(self, classifier):
+        """Explicit axiom references must stay as axiom_explanation."""
+        result = classifier.classify("Explain bridge axiom BA-001")
+        assert result["category"] == "axiom_explanation"
+
+    def test_does_not_misclassify_comparison(self, classifier):
+        """Comparison queries must stay as comparison."""
+        result = classifier.classify("Compare Cabo Pulmo and Great Barrier Reef")
+        assert result["category"] == "comparison"
+
+    def test_concept_confidence_above_threshold(self, classifier):
+        result = classifier.classify("What is blue carbon?")
+        assert result["confidence"] >= 0.6

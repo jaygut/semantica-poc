@@ -1,14 +1,15 @@
 # Nereus - Blue Natural Capital Intelligence
 
 **Translating ecological complexity into investment-grade natural capital assets.**
-**Powered by MARIS (Marine Asset Risk Intelligence System) + Semantica** — provenance-first knowledge engineering for ocean finance.
+**Powered by MARIS (Marine Asset Risk Intelligence System) + Semantica** - provenance-first knowledge engineering for ocean finance.
 **Where ocean science meets investment intelligence.**
 
-[![Status](https://img.shields.io/badge/Status-Library%20Complete-brightgreen)]()
+[![Status](https://img.shields.io/badge/Status-v4%20Global%20Scaling-brightgreen)]()
+[![Sites](https://img.shields.io/badge/MPA%20Sites-9-blue)]()
+[![Portfolio](https://img.shields.io/badge/Portfolio-$1.62B-green)]()
 [![Papers](https://img.shields.io/badge/Literature-195%20Papers-green)]()
 [![Evidence](https://img.shields.io/badge/T1%20Sources-92%25-brightgreen)]()
-[![Abstracts](https://img.shields.io/badge/Abstracts-67%25-yellow)]()
-[![Axioms](https://img.shields.io/badge/Bridge%20Axioms-16%2F16-brightgreen)]()
+[![Axioms](https://img.shields.io/badge/Bridge%20Axioms-35%2F35-brightgreen)]()
 
 ---
 
@@ -16,13 +17,11 @@
 
 This repository contains the **complete knowledge foundation** for a proof-of-concept knowledge graph system that bridges marine ecological science with blue finance frameworks. The goal: enable investors, asset managers, and conservation organizations to make data-driven decisions about marine natural capital with full scientific provenance.
 
-**Current Status:** The document library reconstruction is complete with **195 verified papers**, **5 critical paper extractions**, and a **Semantica-ready export bundle** containing 14 entities, 15 relationships, and 16 fully-evidenced bridge axioms. A **live Nereus v2 system** (Neo4j knowledge graph + FastAPI query engine + Streamlit dashboard) demonstrates the full end-to-end pipeline: natural language questions are classified, translated to Cypher, executed against the graph, and answered with full provenance and interactive graph visualization. The **Nereus v3 Intelligence Platform** is a multi-tab dashboard that makes the P0-P4 backend infrastructure visible and interactive: Intelligence Brief, GraphRAG Chat with pipeline transparency, interactive Scenario Lab (Monte Carlo with parameter sliders), and TNFD Compliance with LEAP generation and alignment scoring. The system also runs in static mode from a pre-computed JSON bundle (63 precomputed responses) for zero-downtime investor demos. The API is secured with Bearer token authentication and rate limiting. **Semantica SDK integration (P0-P4) is complete**: W3C PROV-O provenance tracking, multi-site scaling pipeline (with hardened OBIS area resolution, WoRMS 204 fix, and Marine Regions 404 handling), cross-domain reasoning engine with rule compilation, TNFD LEAP disclosure automation, and LLM-enhanced dynamic axiom discovery with regex fallback are all implemented across 27 modules with a Semantica bridge layer for SDK interop. The classifier has been hardened with four regex gap fixes (case-insensitive BA IDs, DOI keywords, risk patterns, comparison tie-break). The codebase is validated by a **910-test suite** (706 unit + 204 integration) with CI via GitHub Actions and 0 ruff lint errors.
-
-**Implementation Timeline:** **8 weeks** - This POC follows a compressed 8-week implementation schedule focused on **Semantica integration** for entity extraction, relationship extraction, graph construction, and GraphRAG query execution. See [Implementation Roadmap](#implementation-roadmap) for detailed week-by-week breakdown.
+**Current Status:** The **Nereus v4 Global Scaling Platform with Intelligence Upgrade** is the latest production milestone - a registry-driven dashboard spanning **9 MPA sites across 4 ocean basins** with a combined portfolio value of **$1.62B**. The system features a Neo4j knowledge graph (953+ nodes including 15 Concept nodes, 244+ edges), a FastAPI query engine with **6 query categories** (added concept_explanation for mechanism questions), and four Streamlit dashboard versions (v1 static, v2 live, v3 intelligence platform, v4 global scaling platform). The v4 dashboard discovers all sites dynamically from case study files, supports tier-aware feature gating (Gold/Silver/Bronze), and provides 6 tabs: Portfolio Overview, Intelligence Brief, Ask Nereus (GraphRAG), Scenario Lab, Site Scout, and TNFD Compliance. The document library contains **195 verified papers**, **35 fully-evidenced bridge axioms** (expanded from 16 to cover carbon, coastal protection, tourism, fisheries, and cross-cutting mechanisms), and a **Semantica-ready export bundle** with 14 entities and 15 relationships. **Intelligence Upgrade Phase I & II complete**: Fixed classifier regex (sequest\w*), lowered LLM confidence threshold, added axiom_by_concept Cypher template, enabled siteless graph traversal via HybridRetriever, created 15 Concept nodes (BC-001 to BC-015), expanded axioms 16->35 (BA-017 to BA-035), built chain templates (mechanism_chain, concept_overview), added concept_explanation query category, ~20 precomputed concept responses, and population stages 12-15. **Mechanism questions now work**: "How does blue carbon sequestration work?" routes via Concept->BridgeAxiom without site anchor. The API is secured with Bearer token authentication and rate limiting. **Semantica SDK integration (P0-P4) is complete**: W3C PROV-O provenance tracking, multi-site scaling pipeline, cross-domain reasoning engine with rule compilation, TNFD LEAP disclosure automation, and LLM-enhanced dynamic axiom discovery are all implemented across 27 modules with a Semantica bridge layer for SDK interop. A unified launcher (`./launch.sh v1|v2|v3|v4|api|stop`) orchestrates all services. The codebase is validated by a **787-test suite** (unit tests, 65 new from Intelligence Upgrade) with CI via GitHub Actions and 0 ruff lint errors.
 
 **The Problem:** A $175B annual funding gap exists for ocean conservation. Investors can't trust opaque ecological claims. Scientists can't translate their findings into financial terms. The result: capital doesn't flow to where it's needed.
 
-**The Solution:** Nereus — a knowledge graph platform, powered by MARIS + Semantica, that creates auditable, traceable pathways from peer-reviewed ecological data to investment-grade financial metrics. MARIS provides the intelligence engine; Semantica serves as the core framework for entity extraction, relationship extraction, graph construction, and GraphRAG query execution.
+**The Solution:** Nereus - a knowledge graph platform, powered by MARIS + Semantica, that creates auditable, traceable pathways from peer-reviewed ecological data to investment-grade financial metrics. MARIS provides the intelligence engine; Semantica serves as the core framework for entity extraction, relationship extraction, graph construction, and GraphRAG query execution.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -69,27 +68,35 @@ This repository contains the **complete knowledge foundation** for a proof-of-co
 |----------|------|---------|
 | 1 | [`data/semantica_export/entities.jsonld`](./data/semantica_export/entities.jsonld) | 14 entities with JSON-LD context (WoRMS, FishBase, TNFD) |
 | 2 | [`data/semantica_export/relationships.json`](./data/semantica_export/relationships.json) | 15 typed relationships with provenance |
-| 3 | [`data/semantica_export/bridge_axioms.json`](./data/semantica_export/bridge_axioms.json) | 16 bridge axioms with 3+ evidence sources each |
+| 3 | [`data/semantica_export/bridge_axioms.json`](./data/semantica_export/bridge_axioms.json) | 35 bridge axioms (BA-001 to BA-035) with 3+ evidence sources each |
 | 4 | [`data/semantica_export/document_corpus.json`](./data/semantica_export/document_corpus.json) | 195-paper corpus summary |
 | 5 | [`data/sample_extractions/`](./data/sample_extractions/) | 5 critical paper extractions |
 
-### Day 1 Tasks
+### Python SDK Integration
 
-```bash
-# 1. Ingest the MARIS export bundle
-semantica ingest data/semantica_export/entities.jsonld
-semantica ingest data/semantica_export/relationships.json
-semantica ingest data/semantica_export/bridge_axioms.json
+```python
+from maris.semantica_bridge import SemanticaBackedManager, SEMANTICA_AVAILABLE
 
-# 2. Index the document corpus
-semantica index data/semantica_export/document_corpus.json
+# Drop-in replacement for MARISProvenanceManager with SQLite persistence
+manager = SemanticaBackedManager(
+    templates_path="schemas/bridge_axiom_templates.json",
+    db_path="provenance.db",
+)
 
-# 3. Test a validation query
-semantica query "What ecological factors explain Cabo Pulmo's 463% recovery?"
+# Track entity extraction with dual-write (MARIS + Semantica)
+manager.track_extraction("cabo_pulmo_esv", "EcosystemService", "10.1371/...")
 
-# 4. Validate bridge axiom BA-002 (no-take → biomass)
-semantica validate --axiom BA-002 --site cabo_pulmo
+# Execute translation chains through bridge axioms
+result = manager.execute_chain(
+    axiom_ids=["BA-002", "BA-001"],
+    input_data={"biomass_ratio": 4.63, "base_tourism": 25_000_000},
+)
+
+# Get provenance certificate (JSON or Markdown)
+cert = manager.get_certificate("cabo_pulmo_esv")
 ```
+
+See [SEMANTICA_HANDOFF_README.md](SEMANTICA_HANDOFF_README.md) for full integration architecture and P0-P4 module details.
 
 ### Environment Setup (Recommended: uv)
 
@@ -219,7 +226,7 @@ Keep (inputs and ground truth for reproducibility):
 
 ## Semantica Export Bundle
 
-The Nereus pipeline generates a **Semantica-ready export bundle** designed for direct ingestion into [Semantica](https://github.com/Hawksight-AI/semantica) — an open-source framework that transforms unstructured data into validated, explainable, and auditable knowledge.
+The Nereus pipeline generates a **Semantica-ready export bundle** designed for direct ingestion into [Semantica](https://github.com/Hawksight-AI/semantica) - an open-source framework that transforms unstructured data into validated, explainable, and auditable knowledge.
 
 ### How Nereus Fits Into Semantica
 
@@ -316,30 +323,15 @@ All 16 bridge axioms now have **3+ supporting sources** (12 core + 4 blue carbon
 | BA-015 | Habitat Loss Carbon Emission | 3 | Arias-Ortiz 2018 |
 | BA-016 | MPA Protection Carbon Permanence | 3 | IPCC 2019 |
 
-### Ingesting Into Semantica
+### Using the Semantica Bridge
 
-```bash
-# 1. Clone Semantica
-git clone https://github.com/Hawksight-AI/semantica.git
-cd semantica
-
-# 2. Load the MARIS export bundle
-semantica ingest ../semantica-poc/data/semantica_export/entities.jsonld
-semantica ingest ../semantica-poc/data/semantica_export/relationships.json
-semantica ingest ../semantica-poc/data/semantica_export/bridge_axioms.json
-
-# 3. Index the document corpus
-semantica index ../semantica-poc/data/semantica_export/document_corpus.json
-
-# 4. Validate with a test query
-semantica query "What explains Cabo Pulmo's biomass recovery?" --cite
-```
+The Nereus codebase includes a 6-file Semantica SDK bridge layer (`maris/semantica_bridge/`) that provides drop-in integration. See [SEMANTICA_HANDOFF_README.md](SEMANTICA_HANDOFF_README.md) for full architecture details, API usage examples, and P0-P4 module documentation.
 
 ---
 
-## Nereus v2 - Live Query System
+## Nereus Live Query System
 
-The v2 layer adds a **live knowledge graph and query engine** on top of the curated knowledge foundation. Users can ask natural-language questions and receive grounded answers with interactive provenance visualization.
+The live layer adds a **knowledge graph and query engine** on top of the curated knowledge foundation. Users can ask natural-language questions and receive grounded answers with interactive provenance visualization.
 
 ### Architecture
 
@@ -350,7 +342,7 @@ User Question (NL)
         |
    [Cypher Template]  -- 8 parameterized templates (5 core + 3 utility)
         |
-   [Neo4j Graph]  -- 893 nodes, 132 relationships
+   [Neo4j Graph]  -- 938 nodes, 244 relationships, 9 MPA sites
         |
    [LLM Synthesis]  -- DeepSeek/Claude/GPT-4 (configurable)
         |
@@ -379,21 +371,35 @@ uv pip install -r requirements-v2.txt
 
 > **Security:** The `.env` file contains your API keys and is excluded from git via `.gitignore`. Never commit `.env` - use `.env.example` as the template. Key variables: `MARIS_LLM_API_KEY` (LLM provider), `MARIS_API_KEY` (API Bearer token), `MARIS_CORS_ORIGINS` (allowed origins, default `http://localhost:8501`).
 
+### Quick Start (Unified Launcher - Recommended)
+
+```bash
+# v4 Global Scaling Platform (9 sites, 6 tabs)
+./launch.sh v4
+
+# Other versions
+./launch.sh v3    # Intelligence Platform (2 sites, 5 tabs, port 8503)
+./launch.sh v2    # Single-scroll dashboard (2 sites, port 8501)
+./launch.sh v1    # Static mode (1 site, no external services, port 8500)
+./launch.sh api   # API server only (port 8000)
+./launch.sh stop  # Stop all services
+```
+
 ### Quick Start (Manual)
 
 ```bash
 # 1. Start Neo4j (via Desktop or Docker)
 # Default: bolt://localhost:7687, user: neo4j, password: maris-dev
 
-# 2. Populate the knowledge graph
-python scripts/populate_neo4j.py
+# 2. Populate the knowledge graph (v4: 9 sites, dynamic discovery)
+python scripts/populate_neo4j_v4.py
 
 # 3. Start the API server
 uvicorn maris.api.main:app --host 0.0.0.0 --port 8000
 
-# 4. Start the dashboard (in a separate terminal)
+# 4. Start the v4 dashboard (in a separate terminal)
 cd investor_demo
-streamlit run streamlit_app_v2.py
+streamlit run streamlit_app_v4.py --server.port 8504
 ```
 
 ### Quick Start (Docker Compose)
@@ -599,25 +605,36 @@ semantica-poc/
 │   │   ├── provenance_adapter.py         # Dual-write provenance manager
 │   │   ├── integrity_adapter.py          # SDK-backed integrity verification
 │   │   └── manager.py                    # SemanticaBackedManager (drop-in replacement)
-│   └── config.py                          # Centralized env-based configuration
+│   ├── config.py                          # Centralized env-based configuration
+│   └── config_v4.py                      # v4 dynamic site discovery, Neo4j config overlay
 │
-├── investor_demo/                         # ═══ STREAMLIT DASHBOARD ═══
-│   ├── streamlit_app_v3.py                # v3 Intelligence Platform (multi-tab, recommended)
+├── investor_demo/                         # ═══ STREAMLIT DASHBOARDS ═══
+│   ├── streamlit_app_v4.py                # v4 Global Scaling Platform (9 sites, 6 tabs, latest)
+│   ├── streamlit_app_v3.py                # v3 Intelligence Platform (multi-tab)
 │   ├── streamlit_app_v2.py                # v2 dashboard (live API + static bundle)
 │   ├── streamlit_app.py                   # v1 dashboard (static bundle only)
 │   ├── components/
+│   │   ├── v4/                            # v4 Global Scaling Platform components
+│   │   │   ├── __init__.py                # Package init with shared exports
+│   │   │   ├── shared.py                  # Dynamic site discovery, tier-aware feature gating
+│   │   │   ├── portfolio_overview.py      # Tab: Portfolio grid ($1.62B aggregate)
+│   │   │   ├── intelligence_brief.py      # Tab: Per-site KPIs, provenance, axiom evidence
+│   │   │   ├── graphrag_chat.py           # Tab: Split-panel GraphRAG with pipeline transparency
+│   │   │   ├── scenario_engine.py         # Tab: Monte Carlo with site-aware axiom chains
+│   │   │   └── tnfd_compliance.py         # Tab: TNFD LEAP for all 9 sites
 │   │   ├── v3/                            # v3 Intelligence Platform components
 │   │   │   ├── __init__.py                # Package init with shared exports
 │   │   │   ├── shared.py                  # Colors, CSS, formatters, service health
-│   │   │   ├── intelligence_brief.py      # Tab 1: KPIs, provenance graph, axiom evidence
-│   │   │   ├── graphrag_chat.py           # Tab 2: Split-panel GraphRAG with pipeline transparency
-│   │   │   ├── scenario_engine.py         # Tab 3: Interactive Monte Carlo with parameter sliders
-│   │   │   └── tnfd_compliance.py         # Tab 5: TNFD LEAP generation + alignment scoring
+│   │   │   ├── intelligence_brief.py      # Tab: KPIs, provenance graph, axiom evidence
+│   │   │   ├── graphrag_chat.py           # Tab: Split-panel GraphRAG with pipeline transparency
+│   │   │   ├── scenario_engine.py         # Tab: Interactive Monte Carlo with parameter sliders
+│   │   │   └── tnfd_compliance.py         # Tab: TNFD LEAP generation + alignment scoring
 │   │   ├── chat_panel.py                  # Ask Nereus query interface (v2)
 │   │   ├── graph_explorer.py              # Interactive provenance visualization (v2)
 │   │   └── roadmap_section.py             # Scaling Intelligence section (shared v1/v2)
 │   ├── api_client.py                      # HTTP client for MARIS API
-│   ├── precomputed_responses.json         # Fallback responses for demo mode (63 queries)
+│   ├── precomputed_responses_v4.json      # v4 demo fallback for all 9 sites
+│   ├── precomputed_responses.json         # v3 fallback responses (63 queries)
 │   └── README.md                          # Dashboard architecture and usage
 │
 ├── schemas/                               # ═══ INGEST THESE FIRST ═══
@@ -634,7 +651,8 @@ semantica-poc/
 │   └── sample_extractions/                # 5 critical paper extractions
 │
 ├── scripts/
-│   ├── populate_neo4j.py                  # Graph population (schema + data)
+│   ├── populate_neo4j_v4.py               # v4 population (11-stage, dynamic site discovery)
+│   ├── populate_neo4j.py                  # Legacy population (2-site, v2/v3)
 │   ├── demo_healthcheck.py                # Pre-demo system verification
 │   ├── validate_graph.py                  # Post-population integrity checks
 │   └── run_ingestion.py                   # PDF ingestion pipeline
@@ -679,9 +697,18 @@ semantica-poc/
 │   ├── developer_guide.md                 # Development setup and patterns
 │   └── user_guide.md                      # End-user query guide
 │
-└── examples/
-    ├── cabo_pulmo_case_study.json         # AAA reference site (coral reef, tourism-dominant)
-    ├── shark_bay_case_study.json          # Second reference site (seagrass, carbon-dominant)
+├── launch.sh                              # Unified launcher (v1|v2|v3|v4|api|stop)
+│
+└── examples/                              # ═══ 9 MPA CASE STUDIES ═══
+    ├── cabo_pulmo_case_study.json         # AAA reference (Mexico, coral reef, $29.3M)
+    ├── shark_bay_case_study.json          # AA reference (Australia, seagrass, $21.5M)
+    ├── galapagos_case_study.json          # AAA (Ecuador, coral+kelp+mangrove, $320.9M)
+    ├── belize_barrier_reef_case_study.json # AA (Belize, coral+mangrove+seagrass, $292.5M)
+    ├── sundarbans_case_study.json         # A (Bangladesh/India, mangrove, $778.9M)
+    ├── ningaloo_case_study.json           # AA (Australia, coral reef, $83.0M)
+    ├── raja_ampat_case_study.json         # AA (Indonesia, coral+mangrove, $78.0M)
+    ├── cispata_bay_case_study.json        # A (Colombia, mangrove, $8.0M)
+    ├── aldabra_case_study.json            # AAA (Seychelles, coral+mangrove+seagrass, $6.0M)
     └── sample_queries.md                  # 11 GraphRAG query templates
 ```
 
@@ -731,7 +758,7 @@ MARIS operates on a **three-layer translation model** that converts ecological m
 
 ## Bridge Axioms
 
-Bridge axioms are the **core innovation** — explicit, quantified rules that translate ecological states into financial values. Each axiom has:
+Bridge axioms are the **core innovation** - explicit, quantified rules that translate ecological states into financial values. Each axiom has:
 
 - **Antecedent**: Ecological condition (measurable)
 - **Consequent**: Financial implication (calculable)
@@ -801,9 +828,9 @@ All entities use **JSON-LD** format with external identifier linking.
 | `MarineProtectedArea` | neoli_criteria, effectiveness_rating, area_km2 | WDPA ID |
 | `EcosystemService` | service_type, valuation_usd_ha_yr, evidence_tier | CICES code |
 | `FinancialInstrument` | instrument_type, kpis, verification_standard | ISIN (if applicable) |
-| `DisclosureFramework` | framework_name, required_metrics, update_frequency | — |
-| `Observation` | value, unit, methodology, timestamp | — |
-| `BridgeAxiom` | antecedent, consequent, confidence, provenance | — |
+| `DisclosureFramework` | framework_name, required_metrics, update_frequency | - |
+| `Observation` | value, unit, methodology, timestamp | - |
+| `BridgeAxiom` | antecedent, consequent, confidence, provenance | - |
 
 ### Relationship Types (14)
 
@@ -987,15 +1014,55 @@ A correctly functioning Nereus system should:
 
 ---
 
-## Investor Demo Dashboard
+## Investor Demo Dashboards
 
-The repository includes three dashboard versions, each building on the previous:
+The repository includes four dashboard versions, each building on the previous:
 
-### v3 Intelligence Platform (Recommended)
+### v4 Global Scaling Platform (Latest)
+
+The v4 dashboard is a **registry-driven global scaling platform** spanning 9 MPA sites across 4 ocean basins with a combined portfolio value of $1.62B. All sites are discovered dynamically from `examples/*_case_study.json` files.
+
+```bash
+./launch.sh v4
+# Or manually:
+cd investor_demo
+streamlit run streamlit_app_v4.py --server.port 8504
+```
+
+Opens at `http://localhost:8504` with 6 tabs:
+
+| Tab | Content |
+|-----|---------|
+| **Portfolio Overview** | Grid of all 9 MPA sites with ESV, asset rating, habitat type, country, and tier indicators |
+| **Intelligence Brief** | Per-site KPIs, provenance chain graph, axiom evidence table, valuation composition, Monte Carlo risk profile |
+| **Ask Nereus (GraphRAG)** | Split-panel: chat on left (60%), reasoning pipeline on right (40%) showing CLASSIFY -> QUERY -> SYNTHESIZE -> VALIDATE steps with Cypher display, confidence breakdown, and knowledge graph subgraph visualization |
+| **Scenario Lab** | Interactive Monte Carlo with site-aware axiom chains, 4 parameter sliders, overlay histogram, tornado sensitivity chart |
+| **Site Scout** | Deferred (placeholder with pipeline-ready description) |
+| **TNFD Compliance** | TNFD LEAP disclosure with alignment scoring for all 9 sites, per-pillar breakdown, gap analysis, download buttons |
+
+**Sidebar:** Mode toggle (Live/Demo), service health panel, site selector (all 9 sites), scenario slider, system metadata.
+
+### Portfolio ($1.62B across 9 MPA sites)
+
+| Site | Country | Habitat | ESV | Rating |
+|------|---------|---------|-----|--------|
+| Sundarbans Reserve Forest | Bangladesh/India | Mangrove | $778.9M | A |
+| Galapagos Marine Reserve | Ecuador | Coral+Kelp+Mangrove | $320.9M | AAA |
+| Belize Barrier Reef | Belize | Coral+Mangrove+Seagrass | $292.5M | AA |
+| Ningaloo Coast WHA | Australia | Coral Reef | $83.0M | AA |
+| Raja Ampat Marine Park | Indonesia | Coral+Mangrove | $78.0M | AA |
+| Cabo Pulmo National Park | Mexico | Coral Reef | $29.3M | AAA |
+| Shark Bay WHA | Australia | Seagrass | $21.5M | AA |
+| Cispata Bay Mangrove CA | Colombia | Mangrove | $8.0M | A |
+| Aldabra Atoll | Seychelles | Coral+Mangrove+Seagrass | $6.0M | AAA |
+
+### v3 Intelligence Platform
 
 The v3 dashboard is a **multi-tab intelligence platform** that makes the P0-P4 backend infrastructure visible and interactive. Every feature has dual-mode operation: LIVE (Neo4j + LLM) and DEMO (precomputed + static bundle).
 
 ```bash
+./launch.sh v3
+# Or manually:
 cd investor_demo
 streamlit run streamlit_app_v3.py --server.port 8503
 ```
@@ -1014,9 +1081,11 @@ Opens at `http://localhost:8503` with 5 tabs:
 
 ### v2 Dashboard (Single-Scroll)
 
-The v2 dashboard is the original single-scroll investor UI with Ask Nereus chat and interactive graph explorer. Requires Neo4j + API server running (see [Nereus v2 - Live Query System](#nereus-v2---live-query-system)):
+The v2 dashboard is the original single-scroll investor UI with Ask Nereus chat and interactive graph explorer. Requires Neo4j + API server running (see [Nereus Live Query System](#nereus-live-query-system)):
 
 ```bash
+./launch.sh v2
+# Or manually:
 cd investor_demo
 streamlit run streamlit_app_v2.py
 ```
@@ -1028,6 +1097,8 @@ Opens at `http://localhost:8501`. Sections include: Masthead, Investment Thesis,
 No external services needed:
 
 ```bash
+./launch.sh v1
+# Or manually:
 cd investor_demo
 pip install -r requirements.txt
 streamlit run streamlit_app.py
@@ -1094,25 +1165,15 @@ The system is designed to answer complex, multi-hop questions with full provenan
 
 ---
 
-## Implementation Roadmap
+## Implementation Milestones
 
-**Total Duration:** 8 weeks  
-**Timeline:** Compressed schedule focused on Semantica integration and core functionality
-
-### Phase 0: Document Library Reconstruction ✅ COMPLETE
-
-- [x] Validate initial registry (70 papers)
-- [x] Enrich abstracts via CrossRef/OpenAlex/Semantic Scholar APIs
-- [x] Expand library to 195 papers across 10 domains
-- [x] Extract knowledge from 5 critical papers
-- [x] Generate Semantica export bundle (4 files)
-- [x] Evidence 16 bridge axioms with 3+ sources each
+All development milestones are complete. The platform is production-ready with the v4 Global Scaling Platform as the latest milestone.
 
 ---
 
 ## Semantica SDK Integration (P0-P4) - Complete
 
-The Semantica framework (v0.2.7+) has been integrated across five priority tiers, adding 27 modules and 690+ new tests. Implementation lives on the `feature/semantica-integration` branch with 11 commits. All P0-P4 gaps have been closed in the final polish phase.
+The Semantica framework (v0.2.7+) has been integrated across five priority tiers, adding 27 modules and 690+ new tests. All P0-P4 gaps have been closed.
 
 ### P0: Automated Provenance Chains - Complete
 
@@ -1174,28 +1235,28 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 
 ---
 
-## Original Implementation Phases (All Complete)
+## Implementation Phases (All Complete)
 
-### Phase 0: Document Library Reconstruction ✅ COMPLETE
+### Document Library + Core System ✅ COMPLETE
 
-- [x] Validate initial registry (70 papers)
-- [x] Enrich abstracts via CrossRef/OpenAlex/Semantic Scholar APIs
-- [x] Expand library to 195 papers across 10 domains
-- [x] Extract knowledge from 5 critical papers
-- [x] Generate Semantica export bundle (4 files)
-- [x] Evidence 16 bridge axioms with 3+ sources each
-
-### Phases 1-4: Core System ✅ COMPLETE
-
-- [x] Neo4j knowledge graph (893 nodes, 132 edges)
+- [x] Neo4j knowledge graph (938 nodes, 244 edges, 9 MPA sites)
 - [x] FastAPI query engine with 9 endpoints (7 core + provenance + disclosure)
-- [x] Streamlit investor dashboard with dual-site support
+- [x] Streamlit investor dashboards (v1 static, v2 live, v3 intelligence, v4 global scaling)
 - [x] NL-to-Cypher classification (5 categories + open_domain)
 - [x] 16 bridge axioms with Monte Carlo simulation
 - [x] Composite confidence model (GRADE/IPCC-inspired)
 - [x] Bearer token auth + rate limiting + CORS
 - [x] Multi-stage Docker builds
 - [x] GitHub Actions CI pipeline
+
+### Phase 5: Global Scaling (v4) ✅ COMPLETE
+
+- [x] Registry-driven site discovery from `examples/*_case_study.json`
+- [x] 9 MPA sites across 4 ocean basins ($1.62B combined portfolio)
+- [x] v4 Global Scaling Platform dashboard (6 tabs, port 8504)
+- [x] Tier-aware feature gating (Gold/Silver/Bronze)
+- [x] LEAPGeneratorV4 with auto-discovery of all case study files
+- [x] Unified launcher (`./launch.sh v1|v2|v3|v4|api|stop`)
 
 ---
 
@@ -1222,10 +1283,11 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 | API authentication | Bearer token + rate limiting |
 | Docker builds | Multi-stage API + Dashboard |
 | CI pipeline | GitHub Actions (lint + test) |
-| Semantica SDK integration | P0-P4 complete (27 modules, 6-file bridge layer) on feature/semantica-integration |
+| Semantica SDK integration | P0-P4 complete (27 modules, 6-file bridge layer) |
 | Provenance tracking | W3C PROV-O with SQLite persistence |
 | TNFD disclosure | LEAP automation with 14-disclosure alignment scoring |
-| Multi-site scaling | Bronze/Silver/Gold characterization pipeline |
+| Multi-site scaling | 9 MPA sites, $1.62B portfolio, 4 ocean basins |
+| v4 Global Scaling Platform | Registry-driven, 6 tabs, tier-aware feature gating |
 
 ---
 
@@ -1258,7 +1320,7 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 |------|---------|
 | `Semantica_POC_Conceptual_Framework.md` | Full conceptual architecture (35KB) |
 | `SYSTEM_OVERVIEW.md` | Detailed system design |
-| `SEMANTICA_HANDOFF_README.md` | Integration instructions |
+| `SEMANTICA_HANDOFF_README.md` | Semantica SDK integration guide (P0-P4 modules, bridge layer) |
 | `ai_docs/RECONSTRUCTION_COMPLETE.md` | Pipeline reconstruction report |
 | `.claude/registry/document_index.json` | Full bibliography with metadata (195 papers) |
 
@@ -1273,9 +1335,11 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 | `maris/api/models.py` | Pydantic request/response schemas |
 | `maris/query/cypher_templates.py` | 8 parameterized Cypher query templates |
 | `maris/graph/population.py` | Graph population from curated JSON assets |
-| `investor_demo/streamlit_app_v3.py` | v3 Intelligence Platform (multi-tab, recommended) |
+| `investor_demo/streamlit_app_v4.py` | v4 Global Scaling Platform (9 sites, 6 tabs, latest) |
+| `investor_demo/streamlit_app_v3.py` | v3 Intelligence Platform (multi-tab) |
 | `investor_demo/streamlit_app_v2.py` | v2 dashboard with live API integration |
-| `investor_demo/components/v3/` | v3 tab components (intelligence brief, GraphRAG, scenario, TNFD) |
+| `investor_demo/components/v3/` | v3/v4 tab components (intelligence brief, GraphRAG, scenario, TNFD) |
+| `launch.sh` | Unified service launcher (v1/v2/v3/v4/api/stop) |
 | `scripts/populate_neo4j.py` | Idempotent graph population script |
 | `scripts/demo_healthcheck.py` | Pre-demo system verification |
 | `Dockerfile.api` | Multi-stage API container (python:3.11-slim, non-root) |
@@ -1321,7 +1385,7 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 
 ## Contact
 
-**Project Lead:** Jay Gutierrez (Cross-System Architect) — [biome-translator.emergent.host](https://biome-translator.emergent.host/)  
+**Project Lead:** Jay Gutierrez (Cross-System Architect) - [biome-translator.emergent.host](https://biome-translator.emergent.host/)  
 **Semantica Integration:** Mohd Kaif (Lead Developer)  
 **Repository:** [github.com/jaygut/semantica-poc](https://github.com/jaygut/semantica-poc)
 
@@ -1333,4 +1397,4 @@ This project is licensed under the [MIT License](LICENSE) - see the LICENSE file
 
 ---
 
-*Blue Natural Capital Knowledge Engineering — Where ocean science meets investment intelligence.*
+*Blue Natural Capital Knowledge Engineering - Where ocean science meets investment intelligence.*

@@ -1,4 +1,8 @@
-"""Shared CSS, color constants, formatters, and utilities for v3 components."""
+"""Shared CSS, color constants, formatters, and utilities for v4 components.
+
+Key difference from v3: all site lists are discovered dynamically from
+``examples/*_case_study.json``. No hardcoded site maps.
+"""
 
 from __future__ import annotations
 
@@ -10,7 +14,7 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Color constants
+# Color constants (identical to v3)
 # ---------------------------------------------------------------------------
 COLORS: dict[str, str] = {
     "bg_app": "#0B1120",
@@ -44,9 +48,28 @@ COLORS: dict[str, str] = {
 }
 
 # ---------------------------------------------------------------------------
-# CSS - reuse v2 dark-mode palette, add v3 classes
+# Habitat display helpers
 # ---------------------------------------------------------------------------
-V3_CSS = """
+_HABITAT_DISPLAY: dict[str, str] = {
+    "coral_reef": "Coral Reef",
+    "seagrass_meadow": "Seagrass",
+    "mangrove_forest": "Mangrove",
+    "kelp_forest": "Kelp Forest",
+    "mixed": "Mixed",
+}
+
+_HABITAT_COLORS: dict[str, str] = {
+    "coral_reef": "#F59E0B",
+    "seagrass_meadow": "#10B981",
+    "mangrove_forest": "#059669",
+    "kelp_forest": "#6366F1",
+    "mixed": "#8B5CF6",
+}
+
+# ---------------------------------------------------------------------------
+# CSS - reuse v3 dark-mode palette, add v4 portfolio classes
+# ---------------------------------------------------------------------------
+V4_CSS = """
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
     /* ---- Global (Dark Mode) ---- */
@@ -342,7 +365,7 @@ V3_CSS = """
         box-shadow: 0 0 0 1px rgba(91, 155, 213, 0.3) !important;
     }
 
-    /* ---- v3 NEW: Pipeline steps ---- */
+    /* ---- Pipeline steps ---- */
     .pipeline-step {
         background: linear-gradient(145deg, #0F1A2E 0%, #162039 100%);
         border: 1px solid #1E293B;
@@ -378,10 +401,10 @@ V3_CSS = """
         padding: 2px 6px; border-radius: 3px; font-size: 13px;
     }
 
-    /* ---- v3 NEW: Split panel ---- */
+    /* ---- Split panel ---- */
     .split-panel { display: flex; gap: 20px; }
 
-    /* ---- v3 NEW: Cypher block ---- */
+    /* ---- Cypher block ---- */
     .cypher-block {
         background: #0A0F1C; border: 1px solid #1E293B; border-radius: 6px;
         padding: 12px 16px; font-family: 'Fira Code', 'Courier New', monospace;
@@ -389,7 +412,7 @@ V3_CSS = """
         line-height: 1.5; white-space: pre-wrap; word-break: break-word;
     }
 
-    /* ---- v3 NEW: Confidence gauge ---- */
+    /* ---- Confidence gauge ---- */
     .confidence-gauge {
         display: inline-flex; align-items: center; gap: 8px;
     }
@@ -398,7 +421,7 @@ V3_CSS = """
     }
     .confidence-gauge .gauge-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
 
-    /* ---- v3 NEW: Parameter impact ---- */
+    /* ---- Parameter impact ---- */
     .parameter-impact {
         font-weight: 600; font-size: 16px; display: inline-block;
         padding: 2px 8px; border-radius: 4px;
@@ -407,17 +430,17 @@ V3_CSS = """
     .parameter-impact.negative { color: #EF4444; background: rgba(239, 68, 68, 0.1); }
     .parameter-impact.neutral { color: #94A3B8; background: rgba(148, 163, 184, 0.1); }
 
-    /* ---- v3 NEW: Tab container ---- */
+    /* ---- Tab container ---- */
     .tab-container { padding: 0 4px; }
 
-    /* ---- v3 NEW: NEOLI dots ---- */
+    /* ---- NEOLI dots ---- */
     .neoli-row { display: flex; gap: 10px; align-items: center; margin: 6px 0; }
     .neoli-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
     .neoli-filled { background-color: #66BB6A; }
     .neoli-empty { background-color: #1E293B; border: 1px solid #334155; }
     .neoli-label { font-size: 18px; color: #B0BEC5 !important; }
 
-    /* ---- v3 NEW: Comparison Cards ---- */
+    /* ---- Comparison Cards ---- */
     .comp-card {
         background: linear-gradient(145deg, #162039 0%, #1A2744 100%);
         border-radius: 10px; padding: 24px 28px; border: 1px solid #243352; height: 100%;
@@ -426,7 +449,7 @@ V3_CSS = """
     .comp-score { font-size: 17px; font-weight: 600; color: #5B9BD5; margin-bottom: 12px; }
     .comp-card p { font-size: 18px; color: #B0BEC5; line-height: 1.5; margin: 0 0 8px 0; }
 
-    /* ---- v3 NEW: Pillar progress bars ---- */
+    /* ---- Pillar progress bars ---- */
     .pillar-bar {
         background: linear-gradient(145deg, #162039 0%, #1A2744 100%);
         border-radius: 10px; padding: 18px 22px; border: 1px solid #243352;
@@ -444,6 +467,39 @@ V3_CSS = """
     }
     .pillar-bar .pillar-fill {
         height: 100%; border-radius: 3px; transition: width 0.4s ease;
+    }
+
+    /* ---- v4 NEW: Portfolio table ---- */
+    .portfolio-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 16px;
+        background: linear-gradient(145deg, #162039 0%, #1A2744 100%);
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #243352;
+    }
+    .portfolio-table th {
+        text-align: left; padding: 16px 20px; font-size: 13px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 1.5px; color: #94A3B8;
+        border-bottom: 1px solid #243352; background: rgba(10, 18, 38, 0.5);
+    }
+    .portfolio-table td {
+        padding: 14px 20px; color: #CBD5E1; border-bottom: 1px solid #1E2D48;
+        vertical-align: middle;
+    }
+    .portfolio-table tr:last-child td { border-bottom: none; }
+    .portfolio-table tr:hover td { background: rgba(91, 155, 213, 0.05); }
+
+    /* ---- v4 NEW: Tier badge (table) ---- */
+    .tier-gold { color: #F59E0B; font-weight: 600; }
+    .tier-silver { color: #94A3B8; font-weight: 600; }
+    .tier-bronze { color: #A0522D; font-weight: 600; }
+
+    /* ---- v4 NEW: Habitat pill ---- */
+    .habitat-pill {
+        display: inline-block; padding: 3px 10px; border-radius: 12px;
+        font-size: 13px; font-weight: 600; margin-right: 4px;
     }
 </style>
 """
@@ -468,11 +524,7 @@ def fmt_pct(val: float) -> str:
 
 
 def confidence_badge(score: float | None) -> str:
-    """Return HTML for a color-coded confidence badge.
-
-    When *score* is ``None`` or ``0.0`` (typically a demo/fallback response),
-    a muted "DEMO MODE" badge is shown instead of an alarming red "0%".
-    """
+    """Return HTML for a color-coded confidence badge."""
     if score is None or score == 0.0:
         return (
             '<span style="display:inline-block;padding:4px 14px;border-radius:4px;'
@@ -522,6 +574,70 @@ def axiom_tag(axiom_id: str) -> str:
     )
 
 
+def valuation_method_badge(method: str) -> str:
+    """Return HTML for a color-coded ESV valuation method badge.
+
+    Colors indicate evidence strength:
+    - Green (#00C853) for market_price (strongest evidence)
+    - Yellow (#FFD600) for avoided_cost (moderate)
+    - Orange (#FF6D00) for regional_analogue_estimate (weakest)
+    """
+    _METHOD_DISPLAY = {
+        "market_price": "Market Price",
+        "avoided_cost": "Avoided Cost",
+        "regional_analogue_estimate": "Regional Analogue",
+        "expenditure_method": "Expenditure Method",
+    }
+    _METHOD_COLORS = {
+        "market_price": "#00C853",
+        "avoided_cost": "#FFD600",
+        "regional_analogue_estimate": "#FF6D00",
+        "expenditure_method": "#FFD600",
+    }
+    label = _METHOD_DISPLAY.get(method, method.replace("_", " ").title())
+    color = _METHOD_COLORS.get(method, "#94A3B8")
+    return (
+        f'<span style="display:inline-block;padding:2px 8px;border-radius:4px;'
+        f"font-size:12px;font-weight:600;color:{color};"
+        f'background:rgba({_hex_to_rgb(color)},0.15);'
+        f'border:1px solid rgba({_hex_to_rgb(color)},0.3)">{label}</span>'
+    )
+
+
+def esv_quality_ratio(services: list[dict]) -> dict[str, float]:
+    """Compute the proportion of ESV from each valuation method.
+
+    Returns a dict mapping method names to their share of total ESV.
+    """
+    totals: dict[str, float] = {}
+    grand_total = 0.0
+    for svc in services:
+        method = svc.get("valuation_method", "unknown")
+        value = svc.get("annual_value_usd", 0)
+        totals[method] = totals.get(method, 0) + value
+        grand_total += value
+    if grand_total <= 0:
+        return {}
+    return {k: v / grand_total for k, v in totals.items()}
+
+
+def habitat_pill(habitat_id: str) -> str:
+    """Return HTML for a habitat type pill."""
+    label = _HABITAT_DISPLAY.get(habitat_id, habitat_id.replace("_", " ").title())
+    color = _HABITAT_COLORS.get(habitat_id, "#5B9BD5")
+    return (
+        f'<span class="habitat-pill" style="color:{color};'
+        f'background:rgba({_hex_to_rgb(color)},0.15);'
+        f'border:1px solid rgba({_hex_to_rgb(color)},0.3)">{label}</span>'
+    )
+
+
+def _hex_to_rgb(hex_color: str) -> str:
+    """Convert #RRGGBB to 'r,g,b' string for rgba()."""
+    h = hex_color.lstrip("#")
+    return f"{int(h[0:2], 16)},{int(h[2:4], 16)},{int(h[4:6], 16)}"
+
+
 def render_service_health(status: dict[str, bool]) -> str:
     """Return sidebar health indicator HTML."""
     items = ""
@@ -532,7 +648,6 @@ def render_service_health(status: dict[str, bool]) -> str:
         if ok and api_up:
             dot_color, text = "#66BB6A", "Connected"
         elif ok and not api_up:
-            # Service is reachable directly but API isn't proxying it
             dot_color, text = "#66BB6A", "Ready"
         elif key == "api":
             dot_color, text = "#EF5350", "Not running"
@@ -581,11 +696,7 @@ def _check_llm_direct() -> bool:
 
 
 def check_services(api_base: str = "http://localhost:8000") -> dict[str, bool]:
-    """Check Neo4j, LLM, and API connectivity independently.
-
-    First tries the MARIS API health endpoint. If the API is down, checks
-    Neo4j and LLM directly so the sidebar shows accurate per-service status.
-    """
+    """Check Neo4j, LLM, and API connectivity independently."""
     result: dict[str, bool] = {"neo4j": False, "llm": False, "api": False}
     try:
         import requests
@@ -600,47 +711,204 @@ def check_services(api_base: str = "http://localhost:8000") -> dict[str, bool]:
     except Exception:
         pass
 
-    # API is down - check services directly
     result["neo4j"] = _check_neo4j_direct()
     result["llm"] = _check_llm_direct()
     return result
 
 
 # ---------------------------------------------------------------------------
-# Data loading utilities
+# Dynamic site discovery
 # ---------------------------------------------------------------------------
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+_EXAMPLES_DIR = _PROJECT_ROOT / "examples"
 
-_CASE_STUDY_MAP: dict[str, str] = {
-    "Cabo Pulmo National Park": "examples/cabo_pulmo_case_study.json",
-    "Shark Bay World Heritage Area": "examples/shark_bay_case_study.json",
+
+def _discover_case_studies() -> list[Path]:
+    """Scan examples/ for all *_case_study.json files."""
+    if not _EXAMPLES_DIR.is_dir():
+        return []
+    return sorted(_EXAMPLES_DIR.glob("*_case_study.json"))
+
+
+def _load_case_study_json(path: Path) -> dict[str, Any] | None:
+    """Load and return a case study JSON, or None on error."""
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except Exception:
+        logger.warning("Failed to load case study: %s", path)
+        return None
+
+
+def _extract_site_meta(data: dict[str, Any], path: Path) -> dict[str, Any]:
+    """Extract summary metadata from a case study JSON for the portfolio."""
+    site = data.get("site", {})
+    eco = data.get("ecological_status", {})
+    esv_block = data.get("ecosystem_services", {})
+    rating = data.get("asset_quality_rating", {})
+    neoli = data.get("neoli_assessment", {})
+    fin = data.get("financial_output", {})
+
+    # Determine primary habitat
+    primary_habitat = eco.get("primary_habitat", "")
+    if not primary_habitat:
+        # Infer from ecosystem services or site data
+        svc_types = [
+            s.get("service_type", "") for s in esv_block.get("services", [])
+        ]
+        if "carbon_sequestration" in svc_types:
+            primary_habitat = "seagrass_meadow"
+        elif any("reef" in site.get("name", "").lower() for _ in [1]):
+            primary_habitat = "coral_reef"
+
+    # Determine total ESV
+    total_esv = fin.get("market_price_esv_usd", 0)
+    if not total_esv:
+        total_esv = esv_block.get("total_annual_value_usd", 0)
+
+    # Determine tier (Gold if rich data, Silver if less)
+    has_trophic = bool(data.get("trophic_network"))
+    has_recovery = bool(data.get("ecological_recovery"))
+    has_risk = bool(data.get("risk_assessment"))
+    if has_trophic or has_recovery or has_risk:
+        tier = "Gold"
+    elif esv_block.get("services"):
+        tier = "Silver"
+    else:
+        tier = "Bronze"
+
+    return {
+        "name": site.get("name", path.stem.replace("_case_study", "").replace("_", " ").title()),
+        "country": site.get("country", "Unknown"),
+        "region": site.get("region", ""),
+        "area_km2": site.get("area_km2", 0),
+        "designation_year": site.get("designation_year", 0),
+        "primary_habitat": primary_habitat,
+        "total_esv": total_esv,
+        "asset_rating": rating.get("rating", ""),
+        "composite_score": rating.get("composite_score", 0.0),
+        "neoli_score": neoli.get("neoli_score", eco.get("neoli_score", 0)),
+        "tier": tier,
+        "path": str(path),
+        "n_services": len(esv_block.get("services", [])),
+        "dominant_species": eco.get("dominant_species", ""),
+    }
+
+
+def get_all_sites() -> list[dict[str, Any]]:
+    """Discover and return metadata for all available case study sites.
+
+    Scans ``examples/*_case_study.json`` and returns a list of site
+    metadata dicts sorted by total ESV (descending).
+    """
+    sites: list[dict[str, Any]] = []
+    for path in _discover_case_studies():
+        data = _load_case_study_json(path)
+        if data is None:
+            continue
+        meta = _extract_site_meta(data, path)
+        sites.append(meta)
+    return sorted(sites, key=lambda s: s["total_esv"], reverse=True)
+
+
+def get_site_names() -> list[str]:
+    """Return canonical site names from all discovered case studies."""
+    return [s["name"] for s in get_all_sites()]
+
+
+def get_site_data(
+    site_name: str,
+    bundle_data: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    """Load site-specific data by canonical name.
+
+    For Cabo Pulmo, the static bundle is preferred (richer structure)
+    when available. For all other sites, loads from case study JSON.
+    """
+    if site_name == "Cabo Pulmo National Park" and bundle_data:
+        return bundle_data
+
+    # Dynamic lookup from examples/
+    for path in _discover_case_studies():
+        data = _load_case_study_json(path)
+        if data is None:
+            continue
+        name = data.get("site", {}).get("name", "")
+        if name == site_name:
+            return data
+
+    return None
+
+
+def get_site_summary(site_name: str) -> str:
+    """Generate a sidebar summary string from site data."""
+    for path in _discover_case_studies():
+        data = _load_case_study_json(path)
+        if data is None:
+            continue
+        name = data.get("site", {}).get("name", "")
+        if name != site_name:
+            continue
+        meta = _extract_site_meta(data, path)
+        habitat_label = _HABITAT_DISPLAY.get(
+            meta["primary_habitat"],
+            meta["primary_habitat"].replace("_", " ").title(),
+        )
+        area = meta["area_km2"]
+        area_str = f"{area:,.0f} km2" if area else "N/A"
+        year = meta["designation_year"]
+        year_str = f"Est. {year}" if year else ""
+        esv_str = fmt_usd(meta["total_esv"]) if meta["total_esv"] else "N/A"
+        parts = [f"**{meta['country']}**"]
+        if area_str != "N/A":
+            parts.append(area_str)
+        if year_str:
+            parts.append(year_str)
+        line1 = " - ".join(parts)
+        line2 = f"{habitat_label} - {esv_str} ESV"
+        return f"{line1}\n{line2}"
+    return ""
+
+
+# ---------------------------------------------------------------------------
+# Tier-aware rendering helpers
+# ---------------------------------------------------------------------------
+
+# Data quality tiers determine which dashboard features are available
+TIER_FEATURES: dict[str, dict[str, bool]] = {
+    "Gold": {
+        "intelligence_brief": True,
+        "graphrag_chat": True,
+        "scenario_lab": True,
+        "tnfd_compliance": True,
+        "portfolio": True,
+    },
+    "Silver": {
+        "intelligence_brief": True,
+        "graphrag_chat": True,
+        "scenario_lab": True,
+        "tnfd_compliance": True,
+        "portfolio": True,
+    },
+    "Bronze": {
+        "intelligence_brief": False,
+        "graphrag_chat": False,
+        "scenario_lab": False,
+        "tnfd_compliance": False,
+        "portfolio": True,
+    },
 }
 
 
-def get_case_study_path(site_name: str) -> Path | None:
-    """Resolve canonical site name to case study JSON path."""
-    rel = _CASE_STUDY_MAP.get(site_name)
-    if rel is None:
-        return None
-    return _PROJECT_ROOT / rel
+def is_feature_available(tier: str, feature: str) -> bool:
+    """Check if a dashboard feature is available for a given data tier."""
+    return TIER_FEATURES.get(tier, TIER_FEATURES["Bronze"]).get(feature, False)
 
 
-def get_site_data(site_name: str, bundle_data: dict[str, Any]) -> dict[str, Any] | None:
-    """Extract site-specific data from bundle or case study JSON.
-
-    For Cabo Pulmo, the static bundle is preferred (richer structure).
-    For other sites, loads from case study JSON on disk.
-    """
-    if site_name == "Cabo Pulmo National Park":
-        return bundle_data
-
-    case_path = get_case_study_path(site_name)
-    if case_path and case_path.exists():
-        try:
-            with open(case_path) as f:
-                return json.load(f)
-        except Exception:
-            logger.warning("Failed to load case study for %s", site_name)
-
-    return None
+def get_site_tier(site_name: str) -> str:
+    """Look up the data quality tier for a site."""
+    for site in get_all_sites():
+        if site["name"] == site_name:
+            return site["tier"]
+    return "Bronze"

@@ -1,8 +1,12 @@
-"""MARIS v3 Intelligence Platform - Multi-tab dashboard.
+"""Nereus v4 Intelligence Platform - Global Scaling Dashboard.
 
-A live intelligence platform that makes the P0-P4 infrastructure visible
-and interactive. Every feature has dual-mode operation: LIVE (Neo4j + LLM)
-and DEMO (precomputed + static bundle).
+Registry-driven, multi-site dashboard. All site lists are discovered
+dynamically from ``examples/*_case_study.json`` - no hardcoded site names.
+Runs on port 8504 by default.
+
+Usage:
+    cd investor_demo
+    streamlit run streamlit_app_v4.py --server.port 8504
 """
 
 import json
@@ -21,10 +25,14 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from investor_demo.components.v3.shared import (  # noqa: E402
-    V3_CSS,
+from investor_demo.components.v4.shared import (  # noqa: E402
+    V4_CSS,
     check_services,
+    get_all_sites,
     get_site_data,
+    get_site_summary,
+    get_site_tier,
+    is_feature_available,
     render_service_health,
 )
 
@@ -39,7 +47,7 @@ st.set_page_config(
 )
 
 # Inject CSS
-st.markdown(V3_CSS, unsafe_allow_html=True)
+st.markdown(V4_CSS, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
 # Data Loading (cached)
@@ -63,48 +71,51 @@ def _load_bundle() -> dict | None:
         return json.load(f)
 
 
-@st.cache_data
-def _load_case_study(path_str: str) -> dict | None:
-    """Load a case study JSON by path string."""
-    p = Path(path_str)
-    if p.exists():
-        with open(p) as f:
-            return json.load(f)
-    return None
-
-
 bundle_data = _load_bundle()
-if not bundle_data:
+
+# ---------------------------------------------------------------------------
+# Dynamic Site Discovery
+# ---------------------------------------------------------------------------
+all_sites = get_all_sites()
+site_names = [s["name"] for s in all_sites]
+
+if not site_names:
     st.error(
-        "Data bundle not found. Run the notebook to generate "
-        "cabo_pulmo_investment_grade_bundle.json first."
+        "No case study files found in examples/. "
+        "Add *_case_study.json files to populate the portfolio."
     )
     st.stop()
 
 # ---------------------------------------------------------------------------
 # Session State Initialization
 # ---------------------------------------------------------------------------
-if "v3_mode" not in st.session_state:
-    st.session_state.v3_mode = "demo"
-if "v3_site" not in st.session_state:
-    st.session_state.v3_site = "Cabo Pulmo National Park"
-if "v3_chat_history" not in st.session_state:
-    st.session_state.v3_chat_history = []
-if "v3_scenario" not in st.session_state:
-    st.session_state.v3_scenario = "p50"
-if "v3_neo4j_ok" not in st.session_state:
-    st.session_state.v3_neo4j_ok = False
-if "v3_llm_ok" not in st.session_state:
-    st.session_state.v3_llm_ok = False
+if "v4_mode" not in st.session_state:
+    st.session_state.v4_mode = "demo"
+if "v4_site" not in st.session_state:
+    st.session_state.v4_site = site_names[0]
+if "v4_chat_history" not in st.session_state:
+    st.session_state.v4_chat_history = []
+if "v4_scenario" not in st.session_state:
+    st.session_state.v4_scenario = "p50"
+if "v4_neo4j_ok" not in st.session_state:
+    st.session_state.v4_neo4j_ok = False
+if "v4_llm_ok" not in st.session_state:
+    st.session_state.v4_llm_ok = False
 
 # ---------------------------------------------------------------------------
 # API Client (lazy init based on mode)
 # ---------------------------------------------------------------------------
-if "v3_client" not in st.session_state:
-    from api_client import get_client
-    st.session_state.v3_client = get_client()
+_V4_PRECOMPUTED = Path(__file__).parent / "precomputed_responses_v4.json"
 
-client = st.session_state.v3_client
+if "v4_client" not in st.session_state:
+    from api_client import get_client, StaticBundleClient as _SBC
+    _client = get_client()
+    # If static fallback, prefer the v4-specific precomputed file
+    if not _client.is_live and _V4_PRECOMPUTED.exists():
+        _client = _SBC(precomputed_path=_V4_PRECOMPUTED)
+    st.session_state.v4_client = _client
+
+client = st.session_state.v4_client
 
 # ---------------------------------------------------------------------------
 # Sidebar
@@ -115,31 +126,32 @@ with st.sidebar:
     # Mode toggle
     live_mode = st.toggle(
         "Live Intelligence Mode",
-        value=st.session_state.v3_mode == "live",
+        value=st.session_state.v4_mode == "live",
         help="Switch between live (Neo4j + LLM) and demo (precomputed) modes",
+        key="v4_live_toggle",
     )
     new_mode = "live" if live_mode else "demo"
-    if new_mode != st.session_state.v3_mode:
-        st.session_state.v3_mode = new_mode
-        # Re-initialize client on mode change
+    if new_mode != st.session_state.v4_mode:
+        st.session_state.v4_mode = new_mode
         if new_mode == "live":
             from api_client import LiveAPIClient
-            st.session_state.v3_client = LiveAPIClient(
+            st.session_state.v4_client = LiveAPIClient(
                 api_key=os.environ.get("MARIS_API_KEY", "")
             )
         else:
             from api_client import StaticBundleClient
-            st.session_state.v3_client = StaticBundleClient()
-        client = st.session_state.v3_client
+            st.session_state.v4_client = StaticBundleClient(
+                precomputed_path=_V4_PRECOMPUTED
+            )
+        client = st.session_state.v4_client
 
     # Service health panel
-    if st.session_state.v3_mode == "live":
+    if st.session_state.v4_mode == "live":
         status = check_services()
-        st.session_state.v3_neo4j_ok = status["neo4j"]
-        st.session_state.v3_llm_ok = status["llm"]
+        st.session_state.v4_neo4j_ok = status["neo4j"]
+        st.session_state.v4_llm_ok = status["llm"]
         st.markdown(render_service_health(status), unsafe_allow_html=True)
         if not status["api"]:
-            # API not running - show actionable guidance
             if status["neo4j"] and status["llm"]:
                 st.info(
                     "Neo4j and LLM are ready. Start the API server to unlock live queries:\n\n"
@@ -165,31 +177,33 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # Site selector
+    # Site selector - dynamic from discovered sites
     st.markdown("### Site Selection")
-    site_options = ["Cabo Pulmo National Park", "Shark Bay World Heritage Area"]
     selected_site = st.selectbox(
         "Select MPA site",
-        site_options,
-        index=site_options.index(st.session_state.v3_site)
-        if st.session_state.v3_site in site_options
+        site_names,
+        index=site_names.index(st.session_state.v4_site)
+        if st.session_state.v4_site in site_names
         else 0,
         label_visibility="collapsed",
+        key="v4_site_select",
     )
-    if selected_site != st.session_state.v3_site:
-        st.session_state.v3_site = selected_site
+    if selected_site != st.session_state.v4_site:
+        st.session_state.v4_site = selected_site
 
-    # Site summary
-    if selected_site == "Cabo Pulmo National Park":
-        st.markdown(
-            "**Mexico** - 71 km2 - Est. 1995\n"
-            "Coral reef - Tourism-dominant - $29.27M ESV"
-        )
-    else:
-        st.markdown(
-            "**Australia** - 23,000 km2 - Est. 1991\n"
-            "Seagrass - Carbon-dominant - $21.5M ESV"
-        )
+    # Dynamic site summary
+    summary = get_site_summary(selected_site)
+    if summary:
+        st.markdown(summary)
+
+    # Tier indicator
+    tier = get_site_tier(selected_site)
+    tier_colors = {"Gold": "#F59E0B", "Silver": "#94A3B8", "Bronze": "#A0522D"}
+    st.markdown(
+        f'<span style="font-size:13px;font-weight:600;color:{tier_colors.get(tier, "#94A3B8")}">'
+        f"Data Tier: {tier}</span>",
+        unsafe_allow_html=True,
+    )
 
     st.markdown("---")
 
@@ -199,24 +213,21 @@ with st.sidebar:
         "Valuation confidence",
         options=["Conservative (P5)", "Base Case (Median)", "Optimistic (P95)"],
         value="Base Case (Median)",
+        key="v4_scenario_slider",
     )
     if "Conservative" in scenario_choice:
-        st.session_state.v3_scenario = "p5"
+        st.session_state.v4_scenario = "p5"
     elif "Optimistic" in scenario_choice:
-        st.session_state.v3_scenario = "p95"
+        st.session_state.v4_scenario = "p95"
     else:
-        st.session_state.v3_scenario = "p50"
+        st.session_state.v4_scenario = "p50"
 
     st.markdown("---")
 
-    # System metadata footer
+    # System metadata footer - dynamic counts
+    n_sites = len(all_sites)
     st.markdown(
-        f"<span style='font-size:13px;color:#64748B'>"
-        f"Schema: v{bundle_data['metadata']['maris_schema_version']}</span>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        "<span style='font-size:13px;color:#64748B'>Sites: 2 characterized, 2 comparison</span>",
+        f"<span style='font-size:13px;color:#64748B'>Sites: {n_sites} discovered</span>",
         unsafe_allow_html=True,
     )
     st.markdown(
@@ -227,8 +238,8 @@ with st.sidebar:
 # ---------------------------------------------------------------------------
 # Load site-specific data
 # ---------------------------------------------------------------------------
-site = st.session_state.v3_site
-mode = st.session_state.v3_mode
+site = st.session_state.v4_site
+mode = st.session_state.v4_mode
 data = get_site_data(site, bundle_data)
 
 if data is None:
@@ -236,52 +247,64 @@ if data is None:
     st.stop()
 
 # ---------------------------------------------------------------------------
-# Tab Structure
+# Tab Structure (6 tabs - Portfolio Overview is new)
 # ---------------------------------------------------------------------------
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab_names = [
+    "Portfolio",
     "Intelligence Brief",
     "Ask Nereus",
     "Scenario Lab",
-    "Site Scout",
+    "Site Intelligence",
     "TNFD Compliance",
-])
+]
+tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs(tab_names)
+
+tier = get_site_tier(site)
+
+with tab0:
+    from investor_demo.components.v4.portfolio_overview import render_portfolio_overview
+    render_portfolio_overview()
 
 with tab1:
-    from investor_demo.components.v3.intelligence_brief import render_intelligence_brief
-    render_intelligence_brief(data, site, mode, scenario=st.session_state.v3_scenario)
+    if is_feature_available(tier, "intelligence_brief"):
+        from investor_demo.components.v4.intelligence_brief import render_intelligence_brief
+        render_intelligence_brief(data, site, mode, scenario=st.session_state.v4_scenario)
+    else:
+        st.info(
+            f"{site} has Bronze-tier data. Intelligence Brief requires Silver or Gold data quality. "
+            "Add ecosystem service valuations to the case study JSON to unlock this tab."
+        )
 
 with tab2:
-    from investor_demo.components.v3.graphrag_chat import render_graphrag_chat
-    render_graphrag_chat(data, site, mode, client=client)
+    if is_feature_available(tier, "graphrag_chat"):
+        from investor_demo.components.v4.graphrag_chat import render_graphrag_chat
+        render_graphrag_chat(data, site, mode, client=client)
+    else:
+        st.info(
+            f"{site} has Bronze-tier data. Ask Nereus requires Silver or Gold data quality."
+        )
 
 with tab3:
-    from investor_demo.components.v3.scenario_engine import render_scenario_engine
-    render_scenario_engine(data, site, mode)
+    if is_feature_available(tier, "scenario_lab"):
+        from investor_demo.components.v4.scenario_engine import render_scenario_engine
+        render_scenario_engine(data, site, mode)
+    else:
+        st.info(
+            f"{site} has Bronze-tier data. Scenario Lab requires Silver or Gold data quality."
+        )
 
 with tab4:
-    # DEFERRED - placeholder only
-    st.markdown("### Site Scout")
-    st.info(
-        "Live MPA characterization coming soon. The auto-characterization pipeline "
-        "(OBIS/WoRMS/Marine Regions) is built and tested - integration into v3 "
-        "dashboard is planned for the next release."
-    )
-    st.markdown(
-        '<div class="thesis-block">'
-        '<div class="thesis-lead">Pipeline Ready, Dashboard Pending</div>'
-        '<div class="thesis-body">'
-        "The <strong>SiteCharacterizer</strong> can characterize any MPA on Earth "
-        "using OBIS, WoRMS, and Marine Regions APIs. It performs a 5-step pipeline: "
-        "Locate, Populate, Characterize (Bronze/Silver/Gold), Estimate ESV, and Score. "
-        "28 unit tests verify the pipeline. Dashboard integration is deferred to reduce "
-        "demo risk from flaky external APIs."
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
+    from investor_demo.components.v4.site_intelligence import render_site_intelligence
+    render_site_intelligence()
 
 with tab5:
-    from investor_demo.components.v3.tnfd_compliance import render_tnfd_compliance
-    render_tnfd_compliance(data, site, mode)
+    if is_feature_available(tier, "tnfd_compliance"):
+        from investor_demo.components.v4.tnfd_compliance import render_tnfd_compliance
+        render_tnfd_compliance(data, site, mode)
+    else:
+        st.info(
+            f"{site} has Bronze-tier data. TNFD Compliance requires Silver or Gold data quality."
+        )
 
 # ---------------------------------------------------------------------------
 # Footer

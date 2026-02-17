@@ -1,9 +1,10 @@
-"""Intelligence Brief tab for MARIS v3 Intelligence Platform.
+"""Intelligence Brief tab for Nereus v4 Intelligence Platform.
 
-Renders an interactive, drill-down-capable intelligence brief for a
-selected MPA site. Every KPI card is expandable to reveal the reasoning
-chain - bridge axiom derivations, Monte Carlo distributions, and
-DOI-backed evidence.
+Key difference from v3: axiom chains are derived dynamically from the
+site's habitat types using ``_HABITAT_AXIOM_MAP`` from esv_estimator.py.
+No hardcoded ``_SITE_AXIOMS`` dict.  The ``_normalize_site_data()``
+function handles any case study JSON with graceful fallback for missing
+fields.
 """
 
 from __future__ import annotations
@@ -21,16 +22,18 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from investor_demo.components.v3.shared import (  # noqa: E402
+from investor_demo.components.v4.shared import (  # noqa: E402
     COLORS,
     axiom_tag,
     fmt_usd,
+    valuation_method_badge,
 )
+from maris.sites.esv_estimator import _HABITAT_AXIOM_MAP  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Axiom info - plain-English descriptions and citations
+# Axiom info - plain-English descriptions and citations (all 16)
 # ---------------------------------------------------------------------------
 
 AXIOM_INFO: dict[str, dict[str, str]] = {
@@ -51,6 +54,70 @@ AXIOM_INFO: dict[str, dict[str, str]] = {
         "citation": "Hopf et al. 2024",
         "doi": "10.1002/eap.3027",
     },
+    "BA-003": {
+        "meaning": (
+            "Sea otter presence enables kelp forest expansion, increasing "
+            "carbon sequestration through trophic cascade"
+        ),
+        "citation": "Wilmers et al. 2012",
+        "doi": "10.3389/fevo.2012.00012",
+    },
+    "BA-004": {
+        "meaning": (
+            "Coral reef structural complexity reduces wave energy, "
+            "providing coastal flood protection"
+        ),
+        "citation": "Ferrario et al. 2014",
+        "doi": "10.1038/ncomms4794",
+    },
+    "BA-005": {
+        "meaning": (
+            "Mangrove forests provide coastal flood protection, reducing "
+            "wave height by 66% over 100m of forest width"
+        ),
+        "citation": "Menendez et al. 2020",
+        "doi": "10.1038/s41598-020-61136-6",
+    },
+    "BA-006": {
+        "meaning": (
+            "Mangrove forests serve as nursery habitat, supporting "
+            "commercial fisheries production"
+        ),
+        "citation": "zu Ermgassen et al. 2020",
+        "doi": "10.1016/j.ecss.2020.106975",
+    },
+    "BA-007": {
+        "meaning": (
+            "Mangrove sediments store 1,023 tCO2/ha on average, "
+            "among the highest carbon-dense ecosystems"
+        ),
+        "citation": "Alongi 2020",
+        "doi": "10.1016/j.scitotenv.2020.141360",
+    },
+    "BA-008": {
+        "meaning": (
+            "Seagrass meadows generate tradeable carbon credits "
+            "under voluntary standards (Verra VCS VM0033)"
+        ),
+        "citation": "Emmer et al. 2023",
+        "doi": "10.3390/su15010345",
+    },
+    "BA-009": {
+        "meaning": (
+            "Mangrove restoration yields benefit-cost ratios of 3:1 to 10:1 "
+            "when including ecosystem service values"
+        ),
+        "citation": "Su et al. 2021",
+        "doi": "10.1016/j.ecolecon.2021.107048",
+    },
+    "BA-010": {
+        "meaning": (
+            "Kelp forests provide estimated $500B/yr in global ecosystem "
+            "services including carbon, fisheries, and coastal protection"
+        ),
+        "citation": "Eger et al. 2023",
+        "doi": "10.1038/s41467-023-37385-0",
+    },
     "BA-011": {
         "meaning": (
             "Protected reefs suffer 30% less damage from climate "
@@ -58,14 +125,6 @@ AXIOM_INFO: dict[str, dict[str, str]] = {
         ),
         "citation": "Ortiz-Villa et al. 2024",
         "doi": "10.1111/gcb.17477",
-    },
-    "BA-004": {
-        "meaning": (
-            "Coral reef structural complexity reduces wave energy, "
-            "providing coastal flood protection"
-        ),
-        "source": "Ferrario et al. 2014",
-        "doi": "10.1038/ncomms4794",
     },
     "BA-012": {
         "meaning": (
@@ -109,11 +168,52 @@ AXIOM_INFO: dict[str, dict[str, str]] = {
     },
 }
 
-# Which axioms to display per site
-_SITE_AXIOMS: dict[str, list[str]] = {
-    "Cabo Pulmo National Park": ["BA-001", "BA-002", "BA-004", "BA-011", "BA-012"],
-    "Shark Bay World Heritage Area": ["BA-013", "BA-014", "BA-015", "BA-016"],
-}
+
+def _get_site_axioms(data: dict[str, Any]) -> list[str]:
+    """Derive applicable axiom IDs from site habitat types.
+
+    Uses ``_HABITAT_AXIOM_MAP`` from esv_estimator.py to map habitats
+    to bridge axioms. Falls back to ``bridge_axioms_applied`` in the
+    data if habitat detection fails.
+    """
+    axiom_ids: list[str] = []
+
+    # 1. Try primary_habitat from ecological_status
+    primary = data.get("ecological_status", {}).get("primary_habitat", "")
+    if primary and primary in _HABITAT_AXIOM_MAP:
+        for entry in _HABITAT_AXIOM_MAP[primary]:
+            aid = entry["axiom_id"]
+            if aid not in axiom_ids:
+                axiom_ids.append(aid)
+
+    # 2. Also check additional habitats if present
+    habitats = data.get("ecological_status", {}).get("habitats", [])
+    for hab in habitats:
+        hab_id = hab.get("habitat_id", "") if isinstance(hab, dict) else ""
+        if hab_id and hab_id in _HABITAT_AXIOM_MAP:
+            for entry in _HABITAT_AXIOM_MAP[hab_id]:
+                aid = entry["axiom_id"]
+                if aid not in axiom_ids:
+                    axiom_ids.append(aid)
+
+    # 3. Fallback: extract from bridge_axioms_applied in the data
+    if not axiom_ids:
+        for ax in data.get("bridge_axioms_applied", data.get("bridge_axiom_applications", [])):
+            aid = ax.get("axiom_id", "") if isinstance(ax, dict) else ""
+            if aid and aid not in axiom_ids:
+                axiom_ids.append(aid)
+
+    # 4. Infer common cross-habitat axioms
+    # BA-002 and BA-011 apply to all MPA sites with NEOLI
+    neoli = data.get("neoli_assessment", {}).get("neoli_score")
+    if neoli is None:
+        neoli = data.get("ecological_status", {}).get("neoli_score")
+    if neoli and neoli >= 3:
+        for general_axiom in ("BA-002", "BA-011", "BA-016"):
+            if general_axiom not in axiom_ids:
+                axiom_ids.append(general_axiom)
+
+    return axiom_ids
 
 
 # ---------------------------------------------------------------------------
@@ -124,10 +224,8 @@ _SITE_AXIOMS: dict[str, list[str]] = {
 def _normalize_site_data(data: dict[str, Any], site: str) -> dict[str, Any]:
     """Normalize bundle or case study data into a common internal format.
 
-    Cabo Pulmo bundles have ``financial_output.services_breakdown`` and
-    ``risk_assessment.monte_carlo_summary``.  Shark Bay case studies have
-    ``ecosystem_services.services[]`` and no pre-computed Monte Carlo.
-    This function maps both into a shared structure.
+    Works for any site with valid case study JSON. Missing fields are
+    handled gracefully with sensible defaults.
     """
     out: dict[str, Any] = {
         "site_name": site,
@@ -148,6 +246,7 @@ def _normalize_site_data(data: dict[str, Any], site: str) -> dict[str, Any]:
         "metadata": data.get("metadata", {}),
         "comparison_sites": data.get("comparison_sites", []),
         "framework_alignment": data.get("framework_alignment", {}),
+        "primary_habitat": data.get("ecological_status", {}).get("primary_habitat", ""),
     }
 
     # --- Cabo Pulmo bundle format ---
@@ -162,7 +261,6 @@ def _normalize_site_data(data: dict[str, Any], site: str) -> dict[str, Any]:
                 })
         out["ci_95"] = fin.get("market_price_esv_ci_95_usd")
 
-        # Monte Carlo from bundle
         mc = data.get("risk_assessment", {}).get("monte_carlo_summary", {})
         if mc:
             pcts = mc.get("percentiles_usd", {})
@@ -175,27 +273,22 @@ def _normalize_site_data(data: dict[str, Any], site: str) -> dict[str, Any]:
                 "n_simulations": mc.get("n_simulations", 10000),
             }
 
-        # Climate buffer / degradation from bundle
         clim = data.get("risk_assessment", {}).get("climate_resilience", {})
         if clim:
             out["climate_buffer"] = {
-                "disturbance_reduction_pct": clim.get(
-                    "disturbance_reduction_percent", 0
-                ),
+                "disturbance_reduction_pct": clim.get("disturbance_reduction_percent", 0),
                 "recovery_boost_pct": clim.get("recovery_boost_percent", 0),
                 "source_doi": clim.get("source_doi", ""),
             }
         deg = data.get("risk_assessment", {}).get("degradation_risk", {})
         if deg:
             out["degradation_risk"] = {
-                "loss_central_pct": deg.get(
-                    "productivity_loss_central_percent", 0
-                ),
+                "loss_central_pct": deg.get("productivity_loss_central_percent", 0),
                 "loss_range_pct": deg.get("productivity_loss_range_percent", []),
                 "source_doi": deg.get("source_doi", ""),
             }
 
-    # --- Case study format (Shark Bay and raw Cabo Pulmo) ---
+    # --- Case study format (generic) ---
     esv_bundle = data.get("ecosystem_services", {})
     if esv_bundle.get("services") and not fin.get("services_breakdown"):
         out["esv_total"] = esv_bundle.get("total_annual_value_usd", 0)
@@ -205,18 +298,23 @@ def _normalize_site_data(data: dict[str, Any], site: str) -> dict[str, Any]:
                 .replace("_", " ")
                 .title()
             )
+            ci = svc.get("confidence_interval", {})
             out["services"].append({
                 "name": name,
                 "value": svc.get("annual_value_usd", 0),
+                "valuation_method": svc.get("valuation_method", ""),
+                "ci_low": ci.get("ci_low"),
+                "ci_high": ci.get("ci_high"),
             })
-        # Compute Monte Carlo from services
+        # Compute Monte Carlo from services using CI bounds from data
         mc_services = []
         for svc in esv_bundle["services"]:
             val = svc.get("annual_value_usd", 0)
+            ci = svc.get("confidence_interval", {})
             mc_services.append({
                 "value": val,
-                "ci_low": val * 0.7,
-                "ci_high": val * 1.3,
+                "ci_low": ci.get("ci_low", val * 0.7),
+                "ci_high": ci.get("ci_high", val * 1.3),
             })
         try:
             from maris.axioms.monte_carlo import run_monte_carlo
@@ -249,8 +347,7 @@ def _normalize_site_data(data: dict[str, Any], site: str) -> dict[str, Any]:
         out["neoli_criteria_detail"] = criteria
     elif eco_status.get("neoli_score") is not None:
         out["neoli_score"] = eco_status["neoli_score"]
-        bd = eco_status.get("neoli_breakdown", {})
-        out["neoli_breakdown"] = bd
+        out["neoli_breakdown"] = eco_status.get("neoli_breakdown", {})
 
     # --- Biomass ---
     bio_bundle = eco_status.get("biomass_ratio")
@@ -274,6 +371,11 @@ def _normalize_site_data(data: dict[str, Any], site: str) -> dict[str, Any]:
     sg_extent = data.get("site", {}).get("seagrass_extent_km2")
     if sg_extent:
         out["seagrass_extent"] = sg_extent
+
+    # --- Mangrove metrics ---
+    mangrove_extent = data.get("site", {}).get("mangrove_extent_km2")
+    if mangrove_extent:
+        out["mangrove_extent"] = mangrove_extent
 
     # --- Asset rating ---
     rating = data.get("asset_quality_rating", {})
@@ -307,7 +409,6 @@ def _render_masthead(nd: dict[str, Any], mode: str) -> None:
     site_name = nd["site_name"]
     fa = nd.get("framework_alignment", {})
 
-    # Determine badges
     badges = ""
     ifc = fa.get("ifc_blue_finance", {})
     if ifc.get("eligible_use_of_proceeds") or ifc.get("status"):
@@ -326,7 +427,6 @@ def _render_masthead(nd: dict[str, Any], mode: str) -> None:
             "TNFD LEAP - Anticipates Alignment</span>"
         )
 
-    mode_html = ""
     if mode == "live":
         mode_html = (
             '<span class="conn-status conn-live" style="float:right">'
@@ -386,19 +486,22 @@ def _render_kpi_strip(nd: dict[str, Any], *, scenario: str = "p50") -> None:
             unsafe_allow_html=True,
         )
         with st.expander("ESV Derivation"):
-            # Service breakdown list
             st.markdown("**Service Breakdown**")
-            for svc in sorted(
-                nd["services"], key=lambda s: s["value"], reverse=True
-            ):
-                st.markdown(f"- {svc['name']}: **{fmt_usd(svc['value'])}**")
+            for svc in sorted(nd["services"], key=lambda s: s["value"], reverse=True):
+                method = svc.get("valuation_method", "")
+                badge = f" {valuation_method_badge(method)}" if method else ""
+                ci_low = svc.get("ci_low")
+                ci_high = svc.get("ci_high")
+                ci_text = f" (CI: {fmt_usd(ci_low)} - {fmt_usd(ci_high)})" if ci_low and ci_high else ""
+                st.markdown(
+                    f"- {svc['name']}: **{fmt_usd(svc['value'])}**{ci_text} {badge}",
+                    unsafe_allow_html=True,
+                )
 
-            # Mini Monte Carlo chart
             if mc.get("mean") and mc.get("std"):
                 _render_mc_mini(mc)
 
-            # Axiom chain
-            axiom_ids = _SITE_AXIOMS.get(nd["site_name"], [])
+            axiom_ids = _get_site_axioms(nd.get("_raw_data", {}))
             if axiom_ids:
                 st.markdown("**Bridge Axiom Chain**")
                 for aid in axiom_ids:
@@ -429,18 +532,7 @@ def _render_kpi_strip(nd: dict[str, Any], *, scenario: str = "p50") -> None:
                     f"Observed fish biomass recovery of **{bio['central']}x** "
                     f"baseline over a 10-year no-take period."
                 )
-                st.markdown(
-                    f"95% confidence interval: [{ci[0]}x, {ci[1]}x]"
-                )
-                st.markdown(
-                    "**Translation path:** Biomass recovery (BA-002) drives "
-                    "tourism willingness-to-pay (BA-001), which constitutes "
-                    "the dominant share of total ESV."
-                )
-                st.markdown(
-                    "Source: Aburto-Oropeza et al. 2011 "
-                    "([DOI](https://doi.org/10.1371/journal.pone.0023601))"
-                )
+                st.markdown(f"95% confidence interval: [{ci[0]}x, {ci[1]}x]")
         elif carbon:
             rate = carbon.get("rate_tCO2_per_ha_yr", 0)
             st.markdown(
@@ -448,31 +540,20 @@ def _render_kpi_strip(nd: dict[str, Any], *, scenario: str = "p50") -> None:
 <div class="kpi-card">
 <div class="kpi-label">Carbon Sequestration</div>
 <div class="kpi-value">{rate} tCO2/ha/yr</div>
-<div class="kpi-context">Seagrass sediment burial pathway</div>
+<div class="kpi-context">Sediment burial pathway</div>
 </div>
 """,
                 unsafe_allow_html=True,
             )
             with st.expander("Carbon Derivation"):
-                extent = nd.get("seagrass_extent")
+                extent = nd.get("seagrass_extent") or nd.get("mangrove_extent")
                 st.markdown(
-                    f"Seagrass meadows sequester carbon at **{rate} tCO2/ha/yr** "
-                    f"through sediment burial."
+                    f"Sequestration rate: **{rate} tCO2/ha/yr** through sediment burial."
                 )
                 if extent:
-                    annual = rate * extent * 100  # km2 to ha
-                    st.markdown(
-                        f"Seagrass extent: **{extent:,.0f} km2** "
-                        f"({extent * 100:,.0f} ha)"
-                    )
-                    st.markdown(
-                        f"Annual sequestration: ~{annual:,.0f} tCO2/yr "
-                        f"x $30/tonne = **{fmt_usd(annual * 30)}**"
-                    )
-                st.markdown(
-                    "Source: Arias-Ortiz et al. 2018 "
-                    "([DOI](https://doi.org/10.1038/s41558-018-0096-y))"
-                )
+                    annual = rate * extent * 100
+                    st.markdown(f"Habitat extent: **{extent:,.0f} km2** ({extent * 100:,.0f} ha)")
+                    st.markdown(f"Annual sequestration: ~{annual:,.0f} tCO2/yr x $30/tonne = **{fmt_usd(annual * 30)}**")
         else:
             st.markdown(
                 """
@@ -490,16 +571,10 @@ def _render_kpi_strip(nd: dict[str, Any], *, scenario: str = "p50") -> None:
         neoli = nd.get("neoli_score", 0)
         bd = nd.get("neoli_breakdown", {})
         met_letters = []
-        if bd.get("no_take"):
-            met_letters.append("No-take")
-        if bd.get("enforced"):
-            met_letters.append("Enforced")
-        if bd.get("old"):
-            met_letters.append("Old")
-        if bd.get("large"):
-            met_letters.append("Large")
-        if bd.get("isolated"):
-            met_letters.append("Isolated")
+        for key, label in [("no_take", "No-take"), ("enforced", "Enforced"),
+                           ("old", "Old"), ("large", "Large"), ("isolated", "Isolated")]:
+            if bd.get(key):
+                met_letters.append(label)
         context_text = ", ".join(met_letters) if met_letters else ""
 
         st.markdown(
@@ -537,15 +612,12 @@ def _render_kpi_strip(nd: dict[str, Any], *, scenario: str = "p50") -> None:
                 if notes:
                     st.caption(notes)
 
-            st.markdown(
-                "Source: Edgar et al. 2014 Nature "
-                "([DOI](https://doi.org/10.1038/nature13022))"
-            )
-
-    # --- KPI 4: Climate Buffer / Seagrass Extent ---
+    # --- KPI 4: Site-specific metric ---
     with k4:
         cb = nd.get("climate_buffer")
         sg_ext = nd.get("seagrass_extent")
+        mg_ext = nd.get("mangrove_extent")
+        area = nd.get("_raw_data", {}).get("site", {}).get("area_km2")
         if cb:
             st.markdown(
                 f"""
@@ -557,45 +629,39 @@ def _render_kpi_strip(nd: dict[str, Any], *, scenario: str = "p50") -> None:
 """,
                 unsafe_allow_html=True,
             )
-            with st.expander("Climate Buffer Methodology"):
-                st.markdown(
-                    f"Protected reefs suffer **{cb['disturbance_reduction_pct']}%** "
-                    f"less damage from climate disturbances."
-                )
-                st.markdown(
-                    f"Recovery is **{cb['recovery_boost_pct']}%** faster "
-                    f"after disturbance events."
-                )
-                if cb.get("source_doi"):
-                    doi = cb["source_doi"]
-                    st.markdown(
-                        f"Source: [DOI](https://doi.org/{doi})"
-                    )
         elif sg_ext:
             st.markdown(
                 f"""
 <div class="kpi-card">
 <div class="kpi-label">Seagrass Extent</div>
 <div class="kpi-value">{sg_ext:,.0f} km2</div>
-<div class="kpi-context">World's largest seagrass meadow</div>
+<div class="kpi-context">Primary habitat area</div>
 </div>
 """,
                 unsafe_allow_html=True,
             )
-            with st.expander("Seagrass Methodology"):
-                st.markdown(
-                    f"Shark Bay hosts **{sg_ext:,.0f} km2** of seagrass "
-                    f"meadows, the largest documented seagrass ecosystem "
-                    f"globally."
-                )
-                st.markdown(
-                    "The dominant species *Posidonia australis* includes a "
-                    "single 4,500-year-old polyploid clone spanning 180 km."
-                )
-                st.markdown(
-                    "Source: Arias-Ortiz et al. 2018 "
-                    "([DOI](https://doi.org/10.1038/s41558-018-0096-y))"
-                )
+        elif mg_ext:
+            st.markdown(
+                f"""
+<div class="kpi-card">
+<div class="kpi-label">Mangrove Extent</div>
+<div class="kpi-value">{mg_ext:,.0f} km2</div>
+<div class="kpi-context">Primary habitat area</div>
+</div>
+""",
+                unsafe_allow_html=True,
+            )
+        elif area:
+            st.markdown(
+                f"""
+<div class="kpi-card">
+<div class="kpi-label">Protected Area</div>
+<div class="kpi-value">{area:,.0f} km2</div>
+<div class="kpi-context">Total MPA extent</div>
+</div>
+""",
+                unsafe_allow_html=True,
+            )
         else:
             st.markdown(
                 """
@@ -632,26 +698,19 @@ def _render_mc_mini(mc: dict[str, Any]) -> None:
     fig = go.Figure()
     fig.add_trace(
         go.Scatter(
-            x=x,
-            y=y,
-            mode="lines",
-            fill="tozeroy",
+            x=x, y=y, mode="lines", fill="tozeroy",
             line=dict(color=COLORS["accent_blue"], width=2),
             fillcolor="rgba(91, 155, 213, 0.15)",
             hoverinfo="skip",
         )
     )
-
     for val, lbl, clr, dash in [
         (mc.get("p5", 0), "P5", "#EF5350", "dash"),
         (mc.get("median", 0), "Median", "#F1F5F9", "solid"),
         (mc.get("p95", 0), "P95", "#66BB6A", "dash"),
     ]:
         fig.add_vline(
-            x=val,
-            line_dash=dash,
-            line_color=clr,
-            line_width=1,
+            x=val, line_dash=dash, line_color=clr, line_width=1,
             annotation_text=f"{lbl}: {fmt_usd(val)}",
             annotation_font=dict(size=11, color=clr),
             annotation_position="top",
@@ -660,24 +719,20 @@ def _render_mc_mini(mc: dict[str, Any]) -> None:
     fig.update_layout(
         height=200,
         margin=dict(l=0, r=0, t=30, b=20),
-        xaxis=dict(
-            tickprefix="$",
-            showgrid=True,
-            gridcolor="#1E293B",
-            tickfont=dict(color="#94A3B8", size=11),
-        ),
+        xaxis=dict(tickprefix="$", showgrid=True, gridcolor="#1E293B",
+                   tickfont=dict(color="#94A3B8", size=11)),
         yaxis=dict(visible=False),
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
         showlegend=False,
     )
-    st.plotly_chart(fig, width="stretch", key="v3_brief_monte_carlo")
+    st.plotly_chart(fig, width="stretch", key="v4_brief_monte_carlo")
     n = mc.get("n_simulations", 10_000)
     st.caption(f"*{n:,} Monte Carlo simulations, triangular distribution*")
 
 
 def _render_investment_thesis(nd: dict[str, Any]) -> None:
-    """Render the site-aware investment thesis block."""
+    """Render template-based investment thesis from site metadata."""
     st.markdown(
         '<div class="section-header">Investment Thesis</div>',
         unsafe_allow_html=True,
@@ -687,52 +742,44 @@ def _render_investment_thesis(nd: dict[str, Any]) -> None:
     esv = nd["esv_total"]
     n_axioms_system = 16
 
-    if site == "Cabo Pulmo National Park":
-        body = (
-            f"<strong>MARIS</strong> (Marine Asset Risk Intelligence System) "
-            f"is the marine-domain intelligence layer that converts ecological "
-            f"field data into investment-grade financial metrics. It contains "
-            f"195 curated papers, <strong>{n_axioms_system} bridge axioms</strong> "
-            f"(quantitative translation rules that convert ecological "
-            f"measurements into financial estimates, each with documented "
-            f"coefficients and 95% confidence intervals), and 8 entity schemas "
-            f"covering species, habitats, MPAs, and ecosystem services."
-            f"<br><br>"
-            f"Cabo Pulmo demonstrates what happens when marine protection is "
-            f"done right. A degraded reef transformed into a thriving ecosystem "
-            f"generating <strong>{fmt_usd(esv)}</strong> annually - dominated "
-            f"by tourism revenue driven by a 4.63x biomass recovery. Every "
-            f"dollar traces through bridge axioms back to peer-reviewed field "
-            f"measurements."
-        )
-    elif site == "Shark Bay World Heritage Area":
-        extent = nd.get("seagrass_extent", 4800)
-        body = (
-            f"<strong>MARIS</strong> (Marine Asset Risk Intelligence System) "
-            f"is the marine-domain intelligence layer that converts ecological "
-            f"field data into investment-grade financial metrics. It contains "
-            f"195 curated papers, <strong>{n_axioms_system} bridge axioms</strong> "
-            f"(quantitative translation rules that convert ecological "
-            f"measurements into financial estimates, each with documented "
-            f"coefficients and 95% confidence intervals), and 8 entity schemas "
-            f"covering species, habitats, MPAs, and ecosystem services."
-            f"<br><br>"
-            f"Shark Bay holds the world's largest seagrass carbon stock across "
-            f"<strong>{extent:,.0f} km2</strong> of meadows, generating "
-            f"<strong>{fmt_usd(esv)}</strong> annually - dominated by $12.1M "
-            f"in blue carbon sequestration value. The 2011 marine heatwave "
-            f"(36% seagrass loss, 2-9 Tg CO2 released) demonstrates the "
-            f"permanence risk that investors must price into carbon credit "
-            f"instruments. Every valuation traces through bridge axioms BA-013 "
-            f"through BA-016 to peer-reviewed sources."
+    # Determine dominant service
+    top_service = ""
+    top_value = 0
+    for svc in nd["services"]:
+        if svc["value"] > top_value:
+            top_value = svc["value"]
+            top_service = svc["name"]
+
+    habitat = nd.get("primary_habitat", "marine").replace("_", " ")
+    preamble = (
+        f"<strong>MARIS</strong> (Marine Asset Risk Intelligence System) "
+        f"is the marine-domain intelligence layer that converts ecological "
+        f"field data into investment-grade financial metrics. It contains "
+        f"195 curated papers, <strong>{n_axioms_system} bridge axioms</strong> "
+        f"(quantitative translation rules that convert ecological "
+        f"measurements into financial estimates, each with documented "
+        f"coefficients and 95% confidence intervals), and 8 entity schemas "
+        f"covering species, habitats, MPAs, and ecosystem services."
+    )
+
+    if top_service and esv:
+        details = (
+            f"<br><br>{site} generates <strong>{fmt_usd(esv)}</strong> "
+            f"annually in ecosystem service value, dominated by "
+            f"<strong>{fmt_usd(top_value)}</strong> in {top_service}. "
+            f"Primary habitat: {habitat}. "
+            f"Every dollar traces through bridge axioms back to "
+            f"peer-reviewed field measurements."
         )
     else:
-        body = (
-            f"<strong>MARIS</strong> values {site} ecosystem services at "
+        details = (
+            f"<br><br><strong>MARIS</strong> values {site} ecosystem services at "
             f"<strong>{fmt_usd(esv)}</strong> annually. "
             f"Every claim is backed by {n_axioms_system} bridge axioms and "
             f"traceable to DOI-backed peer-reviewed sources."
         )
+
+    body = preamble + details
 
     st.markdown(
         f"""
@@ -745,271 +792,8 @@ def _render_investment_thesis(nd: dict[str, Any]) -> None:
     )
 
 
-def _render_provenance_graph(nd: dict[str, Any]) -> None:
-    """Render the site-aware provenance chain graph."""
-    st.markdown(
-        '<div class="section-header">Provenance Chain</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<div class="section-desc">This graph is the core of the '
-        "infrastructure. It is not a visualization of AI reasoning; it is "
-        "a deterministic, auditable map where every node represents verified "
-        "ecological or financial state and every edge applies a documented, "
-        "peer-reviewed translation rule. An auditor can trace any financial "
-        "claim back to the original field measurement.</div>",
-        unsafe_allow_html=True,
-    )
-
-    fig = go.Figure()
-
-    layer_x = {
-        "site": 0.0,
-        "ecological": 1.2,
-        "services": 2.4,
-        "financial": 3.6,
-        "risk": 1.8,
-    }
-
-    node_colors = {
-        "site": "#2563EB",
-        "ecological": "#059669",
-        "service": "#7C3AED",
-        "financial": "#D97706",
-        "risk_good": "#10B981",
-        "risk_bad": "#EF4444",
-    }
-
-    site = nd["site_name"]
-    esv = nd["esv_total"]
-    neoli = nd["neoli_score"]
-    services = nd["services"]
-
-    # Build nodes and edges per site
-    if site == "Cabo Pulmo National Park":
-        bio = nd.get("biomass_ratio", {})
-        bio_val = bio.get("central", 4.63) if bio else 4.63
-        cb = nd.get("climate_buffer", {})
-        dr = nd.get("degradation_risk", {})
-
-        svc_map = {s["name"].lower(): s["value"] for s in services}
-
-        nodes = [
-            ("site", "Cabo Pulmo NP\nEst. 1995",
-             layer_x["site"], 0.50, "site", 55, "circle"),
-            ("neoli", f"NEOLI {neoli}/5\nGovernance Score",
-             layer_x["ecological"], 1.00, "ecological", 40, "diamond"),
-            ("biomass", f"Biomass {bio_val}x\nRecovery Ratio",
-             layer_x["ecological"], 0.00, "ecological", 40, "diamond"),
-            ("tourism", f"Tourism\n{fmt_usd(svc_map.get('tourism', 25000000))}",
-             layer_x["services"], 1.20, "service", 36, "circle"),
-            ("fisheries", f"Fisheries\n{fmt_usd(svc_map.get('fisheries spillover', svc_map.get('fisheries', 3200000)))}",
-             layer_x["services"], 0.72, "service", 32, "circle"),
-            ("carbon", f"Carbon\n{fmt_usd(svc_map.get('carbon sequestration', svc_map.get('carbon', 180000)))}",
-             layer_x["services"], 0.28, "service", 28, "circle"),
-            ("protection", f"Coastal Protection\n{fmt_usd(svc_map.get('coastal protection', 890000))}",
-             layer_x["services"], -0.20, "service", 28, "circle"),
-            ("esv", f"Total ESV\n{fmt_usd(esv)}/yr",
-             layer_x["financial"], 0.50, "financial", 60, "circle"),
-        ]
-
-        if cb:
-            nodes.append((
-                "resilience",
-                f"Climate Buffer\n-{cb.get('disturbance_reduction_pct', 30)}% Impact",
-                layer_x["risk"], -0.42, "risk_good", 28, "square",
-            ))
-        if dr:
-            nodes.append((
-                "degradation",
-                f"Degradation Risk\n-{dr.get('loss_central_pct', 35)}% if Unprotected",
-                layer_x["risk"], -0.65, "risk_bad", 28, "square",
-            ))
-
-        edges = [
-            ("site", "neoli", "assessed as", False),
-            ("site", "biomass", "observed", False),
-            ("neoli", "biomass", "BA-002: No-take reserves\naccumulate 4.63x biomass", True),
-            ("biomass", "tourism", "BA-001: Biomass drives\ntourism value (+84% WTP)", True),
-            ("biomass", "fisheries", "Spillover to\nadjacent fisheries", False),
-            ("biomass", "carbon", "Reef-associated\nblue carbon", False),
-            ("biomass", "protection", "Structural\ncomplexity", False),
-            ("tourism", "esv", "", False),
-            ("fisheries", "esv", "", False),
-            ("carbon", "esv", "", False),
-            ("protection", "esv", "", False),
-        ]
-        if cb:
-            edges.append(("neoli", "resilience", "BA-011: MPA\nresilience premium", True))
-        if dr:
-            edges.append(("neoli", "degradation", "BA-012: Risk if\nprotection fails", True))
-
-    else:
-        # Shark Bay - carbon-dominant flow
-        svc_map = {s["name"].lower(): s["value"] for s in services}
-
-        nodes = [
-            ("site", "Shark Bay WHA\nEst. 1991",
-             layer_x["site"], 0.50, "site", 55, "circle"),
-            ("seagrass", "Seagrass\n4,800 km2",
-             layer_x["ecological"], 0.85, "ecological", 40, "diamond"),
-            ("neoli_node", f"NEOLI {neoli}/5\nGovernance",
-             layer_x["ecological"], 0.15, "ecological", 36, "diamond"),
-            ("carbon", f"Carbon Seq.\n{fmt_usd(svc_map.get('carbon sequestration', 12100000))}",
-             layer_x["services"], 1.10, "service", 36, "circle"),
-            ("fisheries", f"Fisheries\n{fmt_usd(svc_map.get('fisheries', 5200000))}",
-             layer_x["services"], 0.60, "service", 32, "circle"),
-            ("tourism", f"Tourism\n{fmt_usd(svc_map.get('tourism', 3400000))}",
-             layer_x["services"], 0.20, "service", 28, "circle"),
-            ("protection", f"Coastal Protection\n{fmt_usd(svc_map.get('coastal protection', 800000))}",
-             layer_x["services"], -0.20, "service", 28, "circle"),
-            ("esv", f"Total ESV\n{fmt_usd(esv)}/yr",
-             layer_x["financial"], 0.50, "financial", 60, "circle"),
-            ("heatwave", "Heatwave Risk\n-36% seagrass (2011)",
-             layer_x["risk"], -0.42, "risk_bad", 28, "square"),
-            ("permanence", "Permanence\nGuarantee (BA-016)",
-             layer_x["risk"], -0.65, "risk_good", 28, "square"),
-        ]
-
-        edges = [
-            ("site", "seagrass", "hosts", False),
-            ("site", "neoli_node", "assessed as", False),
-            ("seagrass", "carbon", "BA-013: 0.84 tCO2/ha/yr\nsequestration rate", True),
-            ("carbon", "esv", "BA-014: $30/tCO2\ncredit value", True),
-            ("seagrass", "fisheries", "Nursery habitat\nfor MSC fishery", False),
-            ("seagrass", "tourism", "World Heritage\nattraction", False),
-            ("seagrass", "protection", "Wave attenuation\n40% reduction", False),
-            ("fisheries", "esv", "", False),
-            ("tourism", "esv", "", False),
-            ("protection", "esv", "", False),
-            ("seagrass", "heatwave", "BA-015: 294 tCO2/ha\nreleased if lost", True),
-            ("neoli_node", "permanence", "BA-016: MPA protection\ncarbon permanence", True),
-        ]
-
-    node_map = {n[0]: (n[2], n[3]) for n in nodes}
-
-    # Layer backgrounds
-    layer_regions = [
-        (layer_x["site"] - 0.25, layer_x["site"] + 0.25,
-         "SITE", "rgba(37, 99, 235, 0.06)"),
-        (layer_x["ecological"] - 0.35, layer_x["ecological"] + 0.35,
-         "ECOLOGICAL STATE", "rgba(5, 150, 105, 0.06)"),
-        (layer_x["services"] - 0.35, layer_x["services"] + 0.35,
-         "ECOSYSTEM SERVICES", "rgba(124, 58, 237, 0.06)"),
-        (layer_x["financial"] - 0.25, layer_x["financial"] + 0.25,
-         "FINANCIAL VALUE", "rgba(217, 119, 6, 0.06)"),
-    ]
-
-    for x0, x1, _title, fillcolor in layer_regions:
-        fig.add_shape(
-            type="rect",
-            x0=x0, x1=x1, y0=-0.30, y1=1.32,
-            fillcolor=fillcolor,
-            line=dict(color="rgba(255,255,255,0.03)", width=1),
-            layer="below",
-        )
-
-    # Draw edges
-    for src, tgt, label, is_axiom in edges:
-        if src not in node_map or tgt not in node_map:
-            continue
-        x0, y0 = node_map[src]
-        x1, y1 = node_map[tgt]
-        edge_color = "#5B9BD5" if is_axiom else "#334155"
-        edge_width = 2.5 if is_axiom else 1.5
-        fig.add_trace(go.Scatter(
-            x=[x0, x1], y=[y0, y1],
-            mode="lines",
-            line=dict(color=edge_color, width=edge_width),
-            hoverinfo="skip",
-            showlegend=False,
-        ))
-        fig.add_annotation(
-            x=x1, y=y1, ax=x0, ay=y0,
-            xref="x", yref="y", axref="x", ayref="y",
-            showarrow=True,
-            arrowhead=3, arrowsize=1.5, arrowwidth=1.5,
-            arrowcolor="#5B9BD5" if is_axiom else "#475569",
-            standoff=14,
-        )
-        if label:
-            lbl_color = "#E2E8F0" if is_axiom else "#94A3B8"
-            lbl_size = 13
-            fig.add_annotation(
-                x=(x0 + x1) / 2, y=(y0 + y1) / 2,
-                text=label,
-                showarrow=False,
-                font=dict(size=lbl_size, color=lbl_color, family="Inter"),
-                bgcolor="rgba(11,17,32,0.92)",
-                bordercolor=(
-                    "rgba(91,155,213,0.15)" if is_axiom
-                    else "rgba(0,0,0,0)"
-                ),
-                borderpad=4,
-                borderwidth=1,
-            )
-
-    # Draw nodes
-    for nid, label, x, y, color_key, size, symbol in nodes:
-        color = node_colors[color_key]
-        fig.add_trace(go.Scatter(
-            x=[x], y=[y],
-            mode="markers",
-            marker=dict(size=size + 12, color=color, opacity=0.15, symbol=symbol),
-            hoverinfo="skip",
-            showlegend=False,
-        ))
-        text_pos = (
-            "bottom center" if nid in ("site", "esv") else "top center"
-        )
-        fig.add_trace(go.Scatter(
-            x=[x], y=[y],
-            mode="markers+text",
-            marker=dict(
-                size=size, color=color,
-                line=dict(width=2, color="#0B1120"), symbol=symbol,
-            ),
-            text=[label],
-            textposition=text_pos,
-            textfont=dict(size=14, color="#E2E8F0", family="Inter"),
-            hoverinfo="text",
-            hovertext=[label.replace("\n", " ")],
-            showlegend=False,
-        ))
-
-    # Layer headers
-    for lx, ltxt, lclr in [
-        (layer_x["site"], "SITE", "#2563EB"),
-        (layer_x["ecological"], "ECOLOGICAL STATE", "#059669"),
-        (layer_x["services"], "ECOSYSTEM SERVICES", "#7C3AED"),
-        (layer_x["financial"], "FINANCIAL VALUE", "#D97706"),
-    ]:
-        fig.add_annotation(
-            x=lx, y=1.42, text=ltxt, showarrow=False,
-            font=dict(size=14, color=lclr, family="Inter"),
-        )
-
-    fig.update_layout(
-        height=900,
-        margin=dict(l=20, r=20, t=50, b=40),
-        xaxis=dict(
-            showgrid=False, zeroline=False, showticklabels=False,
-            range=[-0.5, 4.1],
-        ),
-        yaxis=dict(
-            showgrid=False, zeroline=False, showticklabels=False,
-            range=[-0.80, 1.58],
-        ),
-        plot_bgcolor="rgba(0,0,0,0)",
-        paper_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="Inter", color="#CBD5E1"),
-    )
-
-    st.plotly_chart(fig, width="stretch", key="v3_brief_provenance_chain")
-
-
 def _render_axiom_evidence_table(nd: dict[str, Any]) -> None:
-    """Render the bridge axiom evidence table for the selected site."""
+    """Render the bridge axiom evidence table, derived dynamically."""
     st.markdown(
         '<div class="subsection-header">Bridge Axiom Evidence</div>',
         unsafe_allow_html=True,
@@ -1021,13 +805,10 @@ def _render_axiom_evidence_table(nd: dict[str, Any]) -> None:
         unsafe_allow_html=True,
     )
 
-    axiom_ids = _SITE_AXIOMS.get(nd["site_name"], [])
+    axiom_ids = _get_site_axioms(nd.get("_raw_data", {}))
     if not axiom_ids:
-        # Fall back to any axioms we find in the data
-        for ax in nd.get("bridge_axioms_applied", []):
-            aid = ax.get("axiom_id", "") if isinstance(ax, dict) else ""
-            if aid and aid not in axiom_ids:
-                axiom_ids.append(aid)
+        st.info("No bridge axiom mappings available for this site's habitat type.")
+        return
 
     rows = ""
     for aid in axiom_ids:
@@ -1058,21 +839,29 @@ def _render_valuation_composition(nd: dict[str, Any]) -> None:
     )
     st.markdown(
         '<div class="section-desc">Fully decomposed, transparent valuation '
-        "built from market-price methodology. No black-box models. Every "
-        "service value traces to a specific bridge axiom and peer-reviewed "
-        "coefficient.</div>",
+        "built from market-price methodology. Every service value traces "
+        "to a specific bridge axiom and peer-reviewed coefficient.</div>",
         unsafe_allow_html=True,
     )
 
     sorted_svcs = sorted(nd["services"], key=lambda s: s["value"], reverse=True)
+    if not sorted_svcs:
+        st.info("No ecosystem service data available for this site.")
+        return
 
     col_chart, col_ci = st.columns([3, 2])
 
     with col_chart:
-        # Color gradient for bars
-        bar_colors = ["#7C3AED", "#6D28D9", "#5B21B6", "#4C1D95"]
+        # Color bars by valuation method strength
+        _METHOD_BAR_COLORS = {
+            "market_price": "#00C853",
+            "avoided_cost": "#FFD600",
+            "regional_analogue_estimate": "#FF6D00",
+            "expenditure_method": "#FFD600",
+        }
         colors = [
-            bar_colors[i % len(bar_colors)] for i in range(len(sorted_svcs))
+            _METHOD_BAR_COLORS.get(s.get("valuation_method", ""), "#7C3AED")
+            for s in sorted_svcs
         ]
 
         fig = go.Figure()
@@ -1095,15 +884,13 @@ def _render_valuation_composition(nd: dict[str, Any]) -> None:
                 title_font=dict(size=14, color="#94A3B8"),
                 tickfont=dict(color="#94A3B8", size=13),
             ),
-            yaxis=dict(
-                showgrid=False, automargin=True,
-                tickfont=dict(color="#CBD5E1", size=15),
-            ),
+            yaxis=dict(showgrid=False, automargin=True,
+                       tickfont=dict(color="#CBD5E1", size=15)),
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)",
             font=dict(family="Inter", color="#CBD5E1"),
         )
-        st.plotly_chart(fig, width="stretch", key="v3_brief_valuation_bar")
+        st.plotly_chart(fig, width="stretch", key="v4_brief_valuation_bar")
 
     with col_ci:
         mc = nd.get("monte_carlo", {})
@@ -1140,8 +927,7 @@ def _render_risk_profile(nd: dict[str, Any]) -> None:
         '<div class="section-desc">Quantified uncertainty is a feature of '
         "trustworthy infrastructure, not a weakness. MARIS propagates "
         "confidence intervals through every calculation rather than "
-        "presenting false precision. Open the Scenario Lab tab for "
-        "interactive analysis.</div>",
+        "presenting false precision.</div>",
         unsafe_allow_html=True,
     )
 
@@ -1150,9 +936,7 @@ def _render_risk_profile(nd: dict[str, Any]) -> None:
         mean_val = mc["mean"]
         std_val = mc["std"]
 
-        x = np.linspace(
-            mean_val - 4 * std_val, mean_val + 4 * std_val, 500
-        )
+        x = np.linspace(mean_val - 4 * std_val, mean_val + 4 * std_val, 500)
         y = (
             (1 / (std_val * np.sqrt(2 * np.pi)))
             * np.exp(-0.5 * ((x - mean_val) / std_val) ** 2)
@@ -1165,7 +949,6 @@ def _render_risk_profile(nd: dict[str, Any]) -> None:
             fillcolor="rgba(91, 155, 213, 0.12)",
             hoverinfo="skip",
         ))
-
         for val, lbl, clr, dash in [
             (mc.get("p5", 0), "P5 Downside", "#EF5350", "dash"),
             (mc.get("median", 0), "Median", "#F1F5F9", "solid"),
@@ -1183,8 +966,7 @@ def _render_risk_profile(nd: dict[str, Any]) -> None:
             margin=dict(l=0, r=0, t=40, b=40),
             xaxis=dict(
                 title="Annual Ecosystem Service Value (USD)",
-                tickprefix="$",
-                showgrid=True, gridcolor="#1E293B",
+                tickprefix="$", showgrid=True, gridcolor="#1E293B",
                 title_font=dict(size=14, color="#94A3B8"),
                 tickfont=dict(color="#94A3B8", size=13),
             ),
@@ -1194,82 +976,27 @@ def _render_risk_profile(nd: dict[str, Any]) -> None:
             showlegend=False,
             font=dict(family="Inter", color="#CBD5E1"),
         )
-        st.plotly_chart(fig, width="stretch", key="v3_brief_risk_dist")
+        st.plotly_chart(fig, width="stretch", key="v4_brief_risk_dist")
 
-    # Risk factor cards
-    site = nd["site_name"]
-    if site == "Cabo Pulmo National Park":
-        cb = nd.get("climate_buffer", {})
-        dr = nd.get("degradation_risk", {})
-        if cb or dr:
-            rc1, rc2 = st.columns(2)
-            if dr:
-                with rc1:
-                    loss_range = dr.get("loss_range_pct", [25, 50])
-                    range_str = (
-                        f"{loss_range[0]}-{loss_range[1]}%"
-                        if len(loss_range) == 2
-                        else ""
-                    )
-                    doi = dr.get("source_doi", "")
-                    doi_link = f"https://doi.org/{doi}" if doi else "#"
-                    st.markdown(
-                        f"""
-<div class="risk-card risk-card-red">
-<h4>Degradation Risk (BA-012)</h4>
-<p>{dr.get('loss_central_pct', 35)}% fisheries productivity loss if protection
-fails (range: {range_str}).
-Source: <a href="{doi_link}" target="_blank">{AXIOM_INFO.get('BA-012', {}).get('citation', '')}</a></p>
-</div>
-""",
-                        unsafe_allow_html=True,
-                    )
-            if cb:
-                with rc2:
-                    doi = cb.get("source_doi", "")
-                    doi_link = f"https://doi.org/{doi}" if doi else "#"
-                    st.markdown(
-                        f"""
-<div class="risk-card risk-card-green">
-<h4>Resilience Benefit (BA-011)</h4>
-<p>{cb.get('disturbance_reduction_pct', 30)}% reduction in climate disturbance impact,
-with {cb.get('recovery_boost_pct', 20)}% faster recovery after disturbance events.
-Source: <a href="{doi_link}" target="_blank">{AXIOM_INFO.get('BA-011', {}).get('citation', '')}</a></p>
-</div>
-""",
-                        unsafe_allow_html=True,
-                    )
-    else:
-        # Shark Bay risk cards
-        rc1, rc2 = st.columns(2)
-        with rc1:
-            st.markdown(
-                """
-<div class="risk-card risk-card-red">
-<h4>Heatwave Risk (BA-015)</h4>
-<p>The 2011 marine heatwave destroyed 36% of Shark Bay's seagrass, releasing
-2-9 Tg CO2. Warming Indian Ocean increases heatwave frequency.
-Source: <a href="https://doi.org/10.1038/s41558-018-0096-y" target="_blank">Arias-Ortiz et al. 2018</a></p>
-</div>
-""",
-                unsafe_allow_html=True,
-            )
-        with rc2:
-            st.markdown(
-                """
-<div class="risk-card risk-card-green">
-<h4>Permanence Guarantee (BA-016)</h4>
-<p>MPA protection with NEOLI 4+/5 provides 25-100 year carbon permanence
-guarantee. UNESCO World Heritage status provides additional protection framework.
-Source: <a href="https://doi.org/10.1038/s41558-024-02206-5" target="_blank">Lovelock et al. 2025</a></p>
-</div>
-""",
-                unsafe_allow_html=True,
-            )
+    # Risk factor cards from data
+    risk_factors = nd.get("_raw_data", {}).get("risk_assessment", {}).get("risk_factors", [])
+    if risk_factors:
+        cols = st.columns(min(len(risk_factors), 2))
+        for i, rf in enumerate(risk_factors[:4]):
+            severity = rf.get("severity", "medium")
+            card_class = "risk-card-red" if severity == "high" else "risk-card-green"
+            with cols[i % 2]:
+                st.markdown(
+                    f'<div class="risk-card {card_class}">'
+                    f'<h4>{rf.get("risk_type", "Risk Factor")}</h4>'
+                    f'<p>{rf.get("description", "")}</p>'
+                    f"</div>",
+                    unsafe_allow_html=True,
+                )
 
 
 def _render_data_quality(nd: dict[str, Any]) -> None:
-    """Render data quality indicators, staleness warnings, and caveats."""
+    """Render data quality indicators and caveats."""
     st.markdown(
         '<div class="section-header">Data Quality & Caveats</div>',
         unsafe_allow_html=True,
@@ -1318,23 +1045,22 @@ def render_intelligence_brief(
     Parameters
     ----------
     data:
-        Static bundle (Cabo Pulmo) or case study JSON (Shark Bay).
+        Static bundle (Cabo Pulmo) or case study JSON (any site).
     site:
-        Canonical site name (e.g. "Cabo Pulmo National Park").
+        Canonical site name.
     mode:
         "live" or "demo".
     scenario:
         Monte Carlo percentile for headline ESV: "p5", "p50", or "p95".
     """
     nd = _normalize_site_data(data, site)
+    nd["_raw_data"] = data  # keep original for habitat lookup
 
     _render_masthead(nd, mode)
 
-    # Data source label
     source = "Investment-grade bundle" if "financial_output" in data else "Case study JSON"
     st.caption(f"Data source: {source}")
 
-    # Disclaimer
     meta = nd.get("metadata", {})
     disclaimer = meta.get("disclaimer", "")
     if disclaimer:
@@ -1342,7 +1068,6 @@ def render_intelligence_brief(
 
     _render_investment_thesis(nd)
     _render_kpi_strip(nd, scenario=scenario)
-    _render_provenance_graph(nd)
     _render_axiom_evidence_table(nd)
     _render_valuation_composition(nd)
     _render_risk_profile(nd)
