@@ -400,6 +400,14 @@ def render_portfolio_overview(**kwargs: Any) -> None:
     # ---- 1. KPI Strip ----
     _render_kpi_strip(agg)
 
+    # ---- 2. Global Map ----
+    st.markdown(
+        '<div class="section-header">Global Footprint</div>',
+        unsafe_allow_html=True,
+    )
+    from investor_demo.components.v4.map_viz import render_global_map
+    render_global_map(sites)
+
     # ---- 2. Site Table ----
     st.markdown(
         '<div class="section-header">Site Portfolio</div>',

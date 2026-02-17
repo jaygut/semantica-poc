@@ -34,5 +34,8 @@ openai==1.59.9
 # Rate limiting
 slowapi>=0.1.9
 
+# PDF Generation
+reportlab>=4.0
+
 # Semantica framework (W3C PROV-O provenance, knowledge graph, reasoning)
 semantica>=0.2.7

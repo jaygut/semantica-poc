@@ -251,19 +251,24 @@ if data is None:
 # ---------------------------------------------------------------------------
 tab_names = [
     "Portfolio",
+    "Analytics",
     "Intelligence Brief",
     "Ask Nereus",
     "Scenario Lab",
     "Site Intelligence",
     "TNFD Compliance",
 ]
-tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs(tab_names)
+tab0, tab_analytics, tab1, tab2, tab3, tab4, tab5 = st.tabs(tab_names)
 
 tier = get_site_tier(site)
 
 with tab0:
     from investor_demo.components.v4.portfolio_overview import render_portfolio_overview
     render_portfolio_overview()
+
+with tab_analytics:
+    from investor_demo.components.v4.comparison import render_comparison_tool
+    render_comparison_tool(all_sites)
 
 with tab1:
     if is_feature_available(tier, "intelligence_brief"):

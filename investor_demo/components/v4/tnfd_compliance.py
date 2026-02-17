@@ -352,6 +352,7 @@ scenario analysis (STR-C).</p>
 def _render_download_buttons(
     disclosure: Any,
     site_slug: str,
+    site_data: dict[str, Any],
 ) -> None:
     """Render three download buttons for disclosure outputs."""
     try:
@@ -360,13 +361,18 @@ def _render_download_buttons(
             render_markdown,
             render_summary,
         )
+        from investor_demo.components.v4.reporting import generate_tnfd_pdf
 
         md_content = render_markdown(disclosure)
         json_content = render_json(disclosure)
         summary_content = render_summary(disclosure)
+        
+        # Generate PDF
+        pdf_bytes = generate_tnfd_pdf(site_data.get("site", {}), md_content)
+        
     except Exception as e:
         logger.warning("Failed to render disclosure outputs: %s", e)
-        st.caption("Download buttons unavailable - renderer error.")
+        st.caption(f"Download buttons unavailable - renderer error: {e}")
         return
 
     st.markdown(
@@ -375,26 +381,34 @@ def _render_download_buttons(
         unsafe_allow_html=True,
     )
 
-    dl1, dl2, dl3 = st.columns(3)
+    dl1, dl2, dl3, dl4 = st.columns(4)
     with dl1:
         st.download_button(
-            label="Download Markdown",
+            label="📄 PDF Report",
+            data=pdf_bytes,
+            file_name=f"tnfd_report_{site_slug}.pdf",
+            mime="application/pdf",
+            key=f"v4_dl_pdf_{site_slug}",
+        )
+    with dl2:
+        st.download_button(
+            label="⬇️ Markdown",
             data=md_content,
             file_name=f"tnfd_leap_{site_slug}.md",
             mime="text/markdown",
             key=f"v4_dl_md_{site_slug}",
         )
-    with dl2:
+    with dl3:
         st.download_button(
-            label="Download JSON",
+            label="⬇️ JSON",
             data=json_content,
             file_name=f"tnfd_leap_{site_slug}.json",
             mime="application/json",
             key=f"v4_dl_json_{site_slug}",
         )
-    with dl3:
+    with dl4:
         st.download_button(
-            label="Executive Summary",
+            label="⬇️ Summary",
             data=summary_content,
             file_name=f"tnfd_executive_summary_{site_slug}.md",
             mime="text/markdown",
@@ -526,7 +540,7 @@ def render_tnfd_compliance(
     # ---- 4. Download Buttons ----
     try:
         site_slug = site.lower().replace(" ", "_")
-        _render_download_buttons(disclosure, site_slug)
+        _render_download_buttons(disclosure, site_slug, data)
     except Exception as dl_err:
         logger.warning("Download buttons render failed: %s", dl_err)
         st.caption(f"Downloads unavailable: {dl_err}")

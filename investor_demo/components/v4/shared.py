@@ -792,7 +792,10 @@ def _extract_site_meta(data: dict[str, Any], path: Path) -> dict[str, Any]:
         "tier": tier,
         "path": str(path),
         "n_services": len(esv_block.get("services", [])),
+        "n_services": len(esv_block.get("services", [])),
         "dominant_species": eco.get("dominant_species", ""),
+        "latitude": site.get("coordinates", {}).get("latitude"),
+        "longitude": site.get("coordinates", {}).get("longitude"),
     }
 
 

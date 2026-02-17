@@ -166,12 +166,13 @@ The **v4 dashboard** (`investor_demo/streamlit_app_v4.py`) is the primary invest
 
 | Tab | Content |
 |-----|---------|
-| Portfolio Overview | Grid of all 9 sites with ESV, rating, habitat, tier indicators |
+| Portfolio Overview | **[NEW] Global 3D Map** + Grid of all 9 sites with ESV, rating, habitat, tier indicators |
+| Analytics | **[NEW] Multi-Site Comparison** with Radar (scoring) & Bar (valuation) charts |
 | Intelligence Brief | Per-site KPIs, provenance graph, axiom evidence, risk profile |
-| Ask Nereus (GraphRAG) | Split-panel chat with pipeline transparency (CLASSIFY -> QUERY -> SYNTHESIZE -> VALIDATE) |
+| Ask Nereus (GraphRAG) | **[NEW] Context-aware** chat with site-specific queries + pipeline transparency |
 | Scenario Lab | Interactive Monte Carlo with site-aware axiom chains, tornado sensitivity |
 | Site Scout | Deferred placeholder |
-| TNFD Compliance | LEAP disclosure with alignment scoring for all 9 sites |
+| TNFD Compliance | LEAP disclosure with **[NEW] PDF Export** & alignment scoring for all 9 sites |
 
 Launch with `./launch.sh v4` or manually:
 

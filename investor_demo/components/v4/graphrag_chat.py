@@ -97,6 +97,7 @@ def render_graphrag_chat(
     data: dict,
     site: str,
     mode: str,
+    site_name: str | None = None,
     **kwargs: Any,
 ) -> None:
     """Render the GraphRAG Chat tab."""
@@ -105,9 +106,17 @@ def render_graphrag_chat(
         st.error("No API client provided. Cannot render GraphRAG Chat.")
         return
 
-    # Derive short name
-    parts = site.split()
-    site_short = " ".join(parts[:2]) if len(parts) >= 2 else site
+    # Derive context
+    # If site_name is provided (from dynamic selection), use it.
+    # Otherwise fallback to the raw 'site' key logic.
+    if site_name:
+        context_name = site_name
+        parts = site_name.split()
+        site_short = " ".join(parts[:2]) if len(parts) >= 2 else site_name
+    else:
+        context_name = site
+        parts = site.split()
+        site_short = " ".join(parts[:2]) if len(parts) >= 2 else site
 
     if "v4_chat_history" not in st.session_state:
         st.session_state.v4_chat_history = []
@@ -122,7 +131,7 @@ def render_graphrag_chat(
     )
 
     # Quick query buttons
-    quick_queries = _build_quick_queries(site_short)
+    quick_queries = _build_quick_queries(site_short, context_name)
     st.markdown(
         '<div style="font-size:15px;font-weight:600;color:#94A3B8;'
         'margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">'
@@ -159,16 +168,58 @@ def render_graphrag_chat(
 # ---------------------------------------------------------------------------
 
 
-def _build_quick_queries(site_short: str) -> list[str]:
+def _build_quick_queries(site_short: str, full_name: str) -> list[str]:
     """Return 6 quick-query strings, personalized to the active site."""
-    return [
+    defaults = [
         f"What is {site_short} worth?",
         "What evidence supports the valuation?",
-        "How does BA-001 work?",
+        "How is NEOLI calculated?",
         "Compare sites in the portfolio",
-        "What are the risks?",
+        f"What are the risks for {site_short}?",
         "How does blue carbon sequestration work?",
     ]
+    
+    # Specific overrides based on site content
+    lower_name = full_name.lower()
+    
+    if "galapagos" in lower_name:
+        return [
+            "How does El Niño impact Galapagos?",
+            "What is the value of hammerhead shark tourism?",
+            "How does the NEOLI score explain recovery?",
+            "Compare Galapagos to Cabo Pulmo",
+            "What conflict exists with industrial fishing?",
+            defaults[5]
+        ]
+    elif "cabo pulmo" in lower_name:
+        return [
+            "What drove the 463% biomass recovery?",
+            "What is the total ecosystem service value?",
+            "How did community enforcement help?",
+            "Compare to other Gulf of California sites",
+            "What are the top 3 species recovering?",
+            defaults[5]
+        ]
+    elif "ningaloo" in lower_name:
+        return [
+            "What is the value of whale shark tourism?",
+            "How does the Leeuwin Current affect biodiversity?",
+            "What evidence supports the resilience rating?",
+            "Compare tourism revenue to fisheries",
+            "What are the threats from oil and gas?",
+            defaults[5]
+        ]
+    elif "belize" in lower_name:
+        return [
+            "What is the value of storm protection?",
+            "How does coral bleaching risk affect value?",
+            "What is the impact of mangrove loss?",
+            "Compare coastal protection to tourism value",
+            "What is the status of the barrier reef?",
+            defaults[5]
+        ]
+        
+    return defaults
 
 
 # ---------------------------------------------------------------------------
