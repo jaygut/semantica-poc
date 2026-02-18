@@ -118,6 +118,27 @@ class TestTemplateFields:
         assert "LIMIT" in t["cypher"]
 
 
+class TestWarningRegression:
+    def test_site_valuation_uses_safe_ci_property_access(self):
+        cypher = get_template("site_valuation")["cypher"]
+        assert "es.ci_low" not in cypher
+        assert "es.ci_high" not in cypher
+        assert "properties(es)['ci_low']" in cypher
+        assert "properties(es)['ci_high']" in cypher
+
+    def test_risk_assessment_uses_safe_ci_property_access(self):
+        cypher = get_template("risk_assessment")["cypher"]
+        assert "es.ci_low" not in cypher
+        assert "es.ci_high" not in cypher
+        assert "properties(es)['ci_low']" in cypher
+        assert "properties(es)['ci_high']" in cypher
+
+    def test_provenance_uses_safe_citation_property_access(self):
+        cypher = get_template("provenance_drilldown")["cypher"]
+        assert "d.citation" not in cypher
+        assert "properties(d)['citation']" in cypher
+
+
 class TestAxiomByConceptTemplate:
     """Tests for the axiom_by_concept template (Phase I intelligence upgrade)."""
 

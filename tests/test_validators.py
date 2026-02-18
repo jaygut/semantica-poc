@@ -40,22 +40,22 @@ class TestSchemaValidation:
 
     def test_wrong_type_confidence_coerced(self):
         response = {"answer": "test", "confidence": "high", "evidence": [], "caveats": []}
-        cleaned, issues = validate_response_schema(response)
+        cleaned, _issues = validate_response_schema(response)
         assert isinstance(cleaned["confidence"], float)
 
     def test_confidence_clamped_above_one(self):
         response = {"answer": "test", "confidence": 1.5, "evidence": [], "caveats": []}
-        cleaned, issues = validate_response_schema(response)
+        cleaned, _issues = validate_response_schema(response)
         assert cleaned["confidence"] <= 1.0
 
     def test_confidence_clamped_below_zero(self):
         response = {"answer": "test", "confidence": -0.5, "evidence": [], "caveats": []}
-        cleaned, issues = validate_response_schema(response)
+        cleaned, _issues = validate_response_schema(response)
         assert cleaned["confidence"] >= 0.0
 
     def test_normal_confidence_unchanged(self):
         response = {"answer": "test", "confidence": 0.85, "evidence": [], "caveats": []}
-        cleaned, issues = validate_response_schema(response)
+        cleaned, _issues = validate_response_schema(response)
         assert cleaned["confidence"] == 0.85
 
 
@@ -97,7 +97,7 @@ class TestClaimVerification:
         assert len(verified) > 0 or len(unverified) >= 0
 
     def test_empty_context_all_unverified(self):
-        verified, unverified = verify_numerical_claims("The ESV is $29.27M.", {})
+        _verified, unverified = verify_numerical_claims("The ESV is $29.27M.", {})
         assert len(unverified) > 0
 
     def test_no_claims_empty_result(self):
@@ -106,7 +106,7 @@ class TestClaimVerification:
         assert len(unverified) == 0
 
     def test_none_context(self):
-        verified, unverified = verify_numerical_claims("Value is $100M.", None)
+        _verified, unverified = verify_numerical_claims("Value is $100M.", None)
         assert len(unverified) > 0
 
 
@@ -117,12 +117,23 @@ class TestDOIValidation:
         evidence = [{"doi": "10.1016/j.ecolecon.2024.108163"}]
         validated, issues = validate_evidence_dois(evidence)
         assert validated[0]["doi_valid"] is True
-        assert len(issues) == 0
+        assert validated[0]["doi_verification_status"] in {
+            "verified",
+            "unverified",
+            "unresolvable",
+        }
+        assert not any("invalid_format" in issue for issue in issues)
 
     def test_valid_doi_nature(self):
         evidence = [{"doi": "10.1038/nature12345"}]
         validated, issues = validate_evidence_dois(evidence)
         assert validated[0]["doi_valid"] is True
+        assert validated[0]["doi_verification_status"] in {
+            "verified",
+            "unverified",
+            "unresolvable",
+        }
+        assert not any("invalid_format" in issue for issue in issues)
 
     def test_invalid_doi_no_prefix(self):
         evidence = [{"doi": "fake-doi-123"}]
@@ -132,13 +143,28 @@ class TestDOIValidation:
 
     def test_empty_doi(self):
         evidence = [{"doi": ""}]
-        validated, issues = validate_evidence_dois(evidence)
+        validated, _issues = validate_evidence_dois(evidence)
         assert validated[0]["doi_valid"] is False
+        assert validated[0]["doi_verification_status"] == "missing"
 
     def test_missing_doi(self):
         evidence = [{"title": "No DOI paper"}]
+        validated, _issues = validate_evidence_dois(evidence)
+        assert validated[0]["doi_valid"] is False
+        assert validated[0]["doi_verification_status"] == "missing"
+
+    def test_placeholder_doi_blocked(self):
+        evidence = [{"doi": "10.1016/j.marpol.2025.106XXX"}]
         validated, issues = validate_evidence_dois(evidence)
         assert validated[0]["doi_valid"] is False
+        assert validated[0]["doi_verification_status"] == "placeholder_blocked"
+        assert any("placeholder_blocked" in issue for issue in issues)
+
+    def test_doi_url_normalized(self):
+        evidence = [{"doi": "https://doi.org/10.1038/s41467-025-59204-4"}]
+        validated, _issues = validate_evidence_dois(evidence)
+        assert validated[0]["doi"] == "10.1038/s41467-025-59204-4"
+        assert validated[0]["doi_valid"] is True
 
 
 # ---- Empty graph context ----
@@ -219,3 +245,13 @@ class TestFullValidation:
         }
         result = validate_llm_response(response, {})
         assert len(result["unverified_claims"]) > 0
+
+    def test_full_pipeline_surfaces_doi_caveats(self):
+        response = {
+            "answer": "Provenance is available.",
+            "confidence": 0.8,
+            "evidence": [{"doi": "10.1016/j.marpol.2025.106XXX", "title": "Placeholder"}],
+            "caveats": [],
+        }
+        result = validate_llm_response(response, {})
+        assert any("placeholder_blocked" in caveat for caveat in result["caveats"])

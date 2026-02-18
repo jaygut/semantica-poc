@@ -78,6 +78,18 @@ class TestCategoryMatching:
         result = classifier.classify("What if reef degradation occurs?")
         assert result["category"] == "risk_assessment"
 
+    def test_risk_assessment_governance_keyword(self, classifier):
+        result = classifier.classify(
+            "What are the governance risks for Raja Ampat Marine Park?"
+        )
+        assert result["category"] == "risk_assessment"
+
+    def test_provenance_methodology_keyword(self, classifier):
+        result = classifier.classify(
+            "What methodology supports the Cispata Bay carbon accounting issuance?"
+        )
+        assert result["category"] == "provenance_drilldown"
+
 
 # ---- Site extraction ----
 
@@ -110,6 +122,17 @@ class TestSiteExtraction:
         """Fuzzy matching should catch close misspellings."""
         result = classifier.classify("What is the value of cabo pulmo national park?")
         assert result["site"] == "Cabo Pulmo National Park"
+
+    def test_dynamic_site_first_word_alias(self):
+        from maris.query.classifier import register_dynamic_sites
+
+        register_dynamic_sites(["Cispata Bay Mangrove Conservation Area"])
+        classifier = QueryClassifier()
+        result = classifier.classify("What is Cispata worth?")
+        assert result["site"] == "Cispata Bay Mangrove Conservation Area"
+
+        # Clean up
+        register_dynamic_sites([])
 
 
 # ---- Multi-site detection ----
