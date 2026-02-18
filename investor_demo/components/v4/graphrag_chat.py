@@ -87,6 +87,26 @@ _GENERIC_QUERY_PATTERNS = (
     "what evidence supports",
 )
 
+_LOW_CONFIDENCE_THRESHOLD = 0.35
+_NORMALIZATION_NOTE = "Query normalized for deterministic GraphRAG execution"
+_GOVERNANCE_SIGNAL_TERMS = (
+    "governance",
+    "unesco",
+    "transboundary",
+    "surveillance",
+    "award",
+    "methodology",
+    "issuance",
+    "partnership",
+)
+_DOI_STATUS_COLORS: dict[str, str] = {
+    "verified": "#2ECC71",
+    "unverified": "#F59E0B",
+    "missing": "#64748B",
+    "invalid_format": "#EF5350",
+    "placeholder_blocked": "#8B5CF6",
+}
+
 
 # ---------------------------------------------------------------------------
 # Public entry point
@@ -140,16 +160,14 @@ def render_graphrag_chat(
         "Quick queries</div>",
         unsafe_allow_html=True,
     )
-    row1 = st.columns(3)
-    for i, q in enumerate(quick_queries[:3]):
-        with row1[i]:
-            if st.button(q, key=f"v4_quick_{i}", use_container_width=True):
-                _submit_query(client, q, mode)
-    row2 = st.columns(3)
-    for i, q in enumerate(quick_queries[3:]):
-        with row2[i]:
-            if st.button(q, key=f"v4_quick_{i + 3}", use_container_width=True):
-                _submit_query(client, q, mode)
+    grid_cols = 2
+    for row_start in range(0, len(quick_queries), grid_cols):
+        row = st.columns(grid_cols)
+        for col_idx, q in enumerate(quick_queries[row_start: row_start + grid_cols]):
+            button_idx = row_start + col_idx
+            with row[col_idx]:
+                if st.button(q, key=f"v4_quick_{button_idx}", use_container_width=True):
+                    _submit_query(client, q, mode)
 
     with st.form(key="v4_query_form", clear_on_submit=True):
         user_input = st.text_input(
@@ -313,6 +331,93 @@ def _contextualize_query(question: str, site: str | None) -> str:
     return question
 
 
+def _has_comparison_intent(question: str) -> bool:
+    q_lower = question.lower()
+    return any(kw in q_lower for kw in _COMPARISON_KEYWORDS)
+
+
+def _normalize_query(
+    effective_question: str,
+    site: str | None,
+    classification: dict,
+) -> tuple[str, str | None]:
+    """Normalize low-confidence/open-domain prompts into deterministic forms."""
+    if not site:
+        return effective_question, None
+
+    q_lower = effective_question.lower()
+    category = classification.get("category", "")
+    confidence = float(classification.get("confidence", 0.0) or 0.0)
+    sites = classification.get("sites") or []
+
+    if _has_comparison_intent(effective_question) and len(sites) < 2:
+        return (
+            f"What is the total ecosystem service value of {site}?",
+            "Comparison intent had fewer than two resolved sites.",
+        )
+
+    needs_normalization = category == "open_domain" or confidence < _LOW_CONFIDENCE_THRESHOLD
+    if not needs_normalization:
+        return effective_question, None
+
+    if any(term in q_lower for term in _GOVERNANCE_SIGNAL_TERMS):
+        return (
+            f"What are the key governance and climate risks for {site}?",
+            "Low-confidence governance prompt normalized to deterministic risk query.",
+        )
+    if any(term in q_lower for term in ("evidence", "doi", "source", "support")):
+        return (
+            f"What evidence supports the valuation of {site}?",
+            "Low-confidence provenance prompt normalized to deterministic evidence query.",
+        )
+
+    return (
+        f"What is the total ecosystem service value of {site}?",
+        "Low-confidence prompt normalized to deterministic valuation query.",
+    )
+
+
+def _resolve_doi_status(item: dict) -> str:
+    status = str(item.get("doi_verification_status") or "").strip().lower()
+    if status in _DOI_STATUS_COLORS:
+        return status
+
+    doi = str(item.get("doi") or "").strip()
+    if not doi:
+        return "missing"
+
+    doi_valid = item.get("doi_valid")
+    if doi_valid is True:
+        return "verified"
+    if doi_valid is False:
+        return "unverified"
+    return "unverified"
+
+
+def _doi_status_metrics(evidence: list[dict]) -> dict[str, int]:
+    metrics = {"verified": 0, "unverified": 0, "missing_invalid": 0}
+    for item in evidence:
+        status = _resolve_doi_status(item)
+        if status == "verified":
+            metrics["verified"] += 1
+        elif status == "unverified":
+            metrics["unverified"] += 1
+        else:
+            metrics["missing_invalid"] += 1
+    return metrics
+
+
+def _doi_status_badge(status: str, reason: str | None = None) -> str:
+    color = _DOI_STATUS_COLORS.get(status, _DOI_STATUS_COLORS["unverified"])
+    label = status.replace("_", " ")
+    title = _escape(reason or "")
+    return (
+        f'<span title="{title}" style="display:inline-block;padding:4px 8px;border-radius:999px;'
+        f"font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase;"
+        f'color:#E2E8F0;background:{color};opacity:0.95">{_escape(label)}</span>'
+    )
+
+
 def _submit_query(client: Any, question: str, mode: str) -> None:
     """Submit a query, run classification, and store results."""
     site = _detect_site(question)
@@ -323,10 +428,25 @@ def _submit_query(client: Any, question: str, mode: str) -> None:
     effective_question = _contextualize_query(question, site)
 
     classification = _run_classifier(effective_question) if mode == "live" else {}
+    normalized_question = effective_question
+    normalization_note: str | None = None
+    if mode == "live" and classification:
+        normalized_question, normalization_reason = _normalize_query(
+            effective_question,
+            site,
+            classification,
+        )
+        if normalization_reason and normalized_question != effective_question:
+            normalization_note = (
+                f"{_NORMALIZATION_NOTE}: {normalization_reason}"
+            )
+            classification = _run_classifier(normalized_question)
+            classification["normalization_note"] = normalization_note
+            classification["normalized_from"] = effective_question
 
     try:
         start = time.monotonic()
-        response = client.query(effective_question, site=site)
+        response = client.query(normalized_question, site=site)
         elapsed_ms = (time.monotonic() - start) * 1000
         response["_query_ms"] = round(elapsed_ms, 1)
     except Exception:
@@ -341,7 +461,7 @@ def _submit_query(client: Any, question: str, mode: str) -> None:
                 fallback_client = StaticBundleClient(precomputed_path=_v4_path)
             else:
                 fallback_client = StaticBundleClient()
-            response = fallback_client.query(question, site=site)
+            response = fallback_client.query(normalized_question, site=site)
             if (
                 response.get("confidence", 0) == 0.0
                 and response.get("answer", "").startswith("I don't have")
@@ -368,9 +488,15 @@ def _submit_query(client: Any, question: str, mode: str) -> None:
                 "caveats": ["API error"], "graph_path": [], "_query_ms": 0.0,
             }
 
+    if normalization_note:
+        response.setdefault("caveats", [])
+        if normalization_note not in response["caveats"]:
+            response["caveats"].append(normalization_note)
+
     st.session_state.v4_chat_history.append({
         "question": question,
         "effective_question": effective_question,
+        "normalized_question": normalized_question,
         "response": response,
         "classification": classification,
     })
@@ -516,6 +642,16 @@ def _render_pipeline_panel(resp: dict, classification: dict, mode: str) -> None:
         unsafe_allow_html=True,
     )
 
+    normalization_note = classification.get("normalization_note")
+    if normalization_note:
+        st.markdown(
+            '<div class="pipeline-step complete">'
+            '<div class="step-header"><span class="step-num">↻</span> NORMALIZE</div>'
+            f'<div class="step-detail">{_escape(normalization_note)}</div>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+
     # Step 2: QUERY GRAPH
     graph_path = resp.get("graph_path", [])
     query_ms = resp.get("_query_ms", 0.0)
@@ -544,11 +680,15 @@ def _render_pipeline_panel(resp: dict, classification: dict, mode: str) -> None:
     # Step 3: SYNTHESIZE
     evidence = resp.get("evidence", [])
     doi_count = sum(1 for e in evidence if e.get("doi"))
+    doi_metrics = _doi_status_metrics(evidence)
     st.markdown(
         '<div class="pipeline-step complete">'
         '<div class="step-header"><span class="step-num">3</span> SYNTHESIZE</div>'
         '<div class="step-detail">'
         f"DOI citations: {doi_count}<br>"
+        f"Verified DOI: {doi_metrics['verified']}<br>"
+        f"Unverified DOI: {doi_metrics['unverified']}<br>"
+        f"Missing/invalid DOI: {doi_metrics['missing_invalid']}<br>"
         f"Evidence items: {len(evidence)}<br>"
         f"Response length: {len(resp.get('answer', ''))} chars"
         "</div></div>",
@@ -603,16 +743,20 @@ def _evidence_table(evidence: list[dict]) -> str:
         doi = item.get("doi", "")
         doi_url = item.get("doi_url", "")
         year = item.get("year", "")
+        status = _resolve_doi_status(item)
+        status_reason = item.get("doi_verification_reason")
         badge = tier_badge(tier) if tier else ""
         link = (
             f'<a href="{_escape(doi_url)}" target="_blank" style="color:#5B9BD5;text-decoration:none">{_escape(doi)}</a>'
             if doi_url else _escape(doi)
         )
+        status_badge = _doi_status_badge(status, status_reason)
         rows += (
             f"<tr>"
             f'<td style="padding:12px 16px;border-bottom:1px solid #1E2D48">{badge}</td>'
             f'<td style="padding:12px 16px;color:#CBD5E1;border-bottom:1px solid #1E2D48;font-size:15px">{title}</td>'
             f'<td style="padding:12px 16px;border-bottom:1px solid #1E2D48;font-size:14px">{link}</td>'
+            f'<td style="padding:12px 16px;border-bottom:1px solid #1E2D48">{status_badge}</td>'
             f'<td style="padding:12px 16px;color:#94A3B8;border-bottom:1px solid #1E2D48;font-size:14px">{year}</td>'
             f"</tr>"
         )
@@ -621,6 +765,7 @@ def _evidence_table(evidence: list[dict]) -> str:
         '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">Tier</th>'
         '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">Title</th>'
         '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">DOI</th>'
+        '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">DOI Status</th>'
         '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">Year</th>'
         f"</tr></thead><tbody>{rows}</tbody></table>"
     )

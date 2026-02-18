@@ -345,8 +345,10 @@ V4_CSS = """
         border: 1px solid rgba(91, 155, 213, 0.3) !important;
         color: #5B9BD5 !important;
         border-radius: 20px !important; font-size: 14px !important;
-        font-weight: 500 !important; padding: 6px 16px !important;
-        white-space: nowrap !important; transition: all 0.2s ease !important;
+        font-weight: 500 !important; padding: 10px 14px !important;
+        white-space: normal !important; line-height: 1.3 !important;
+        word-break: break-word !important; text-align: left !important;
+        min-height: 64px !important; transition: all 0.2s ease !important;
     }
     .stApp [data-testid="stHorizontalBlock"] button[kind="secondary"]:hover {
         background: rgba(91, 155, 213, 0.2) !important;
