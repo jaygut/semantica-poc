@@ -18,11 +18,28 @@ from pathlib import Path
 
 from maris.config import get_config
 from maris.graph.connection import get_driver
+from maris.provenance.doi_verifier import get_doi_verifier
 
 
 def _load_json(path: Path) -> dict:
     with open(path) as f:
         return json.load(f)
+
+
+def _verified_doi(raw_doi: str | None, *, context: str) -> tuple[str | None, str, str]:
+    """Normalize and validate DOI values for graph ingestion.
+
+    Returns (normalized_doi or None, verification_status, verification_reason).
+    Invalid or placeholder DOIs are blocked from ingestion.
+    """
+    result = get_doi_verifier().verify(raw_doi)
+    if not result.doi_valid:
+        print(
+            f"  WARNING: skipping DOI for {context}: "
+            f"{result.raw_doi!r} ({result.verification_status} - {result.reason})"
+        )
+        return None, result.verification_status, result.reason
+    return result.normalized_doi, result.verification_status, result.reason
 
 
 # ---------------------------------------------------------------------------
@@ -39,7 +56,10 @@ def _populate_documents(session, cfg):
     docs = registry.get("documents", {})
     count = 0
     for doc_id, doc in docs.items():
-        doi = doc.get("doi")
+        doi, verification_status, verification_reason = _verified_doi(
+            doc.get("doi"),
+            context=f"document registry {doc_id}",
+        )
         if not doi:
             continue
         session.run(
@@ -51,7 +71,9 @@ def _populate_documents(session, cfg):
                 d.domain      = $domain,
                 d.url         = $url,
                 d.abstract    = $abstract,
-                d.doc_id      = $doc_id
+                d.doc_id      = $doc_id,
+                d.doi_verification_status = $verification_status,
+                d.doi_verification_reason = $verification_reason
             """,
             {
                 "doi": doi,
@@ -62,6 +84,8 @@ def _populate_documents(session, cfg):
                 "url": doc.get("url", ""),
                 "abstract": doc.get("abstract", ""),
                 "doc_id": doc_id,
+                "verification_status": verification_status,
+                "verification_reason": verification_reason,
             },
         )
         count += 1
@@ -557,19 +581,26 @@ def _populate_shark_bay(session, cfg):
 
     # Create provenance edges
     for src in cs.get("provenance", {}).get("data_sources", []):
-        doi = src.get("doi", "")
-        if not doi or "xxxx" in doi:
+        doi, verification_status, verification_reason = _verified_doi(
+            src.get("doi", ""),
+            context="Shark Bay provenance source",
+        )
+        if not doi:
             continue
         session.run(
             """
             MATCH (m:MPA {name: "Shark Bay World Heritage Area"})
             MERGE (d:Document {doi: $doi})
+            SET d.doi_verification_status = $verification_status,
+                d.doi_verification_reason = $verification_reason
             MERGE (m)-[r:DERIVED_FROM]->(d)
             SET r.data_type   = $data_type,
                 r.access_date = $access_date
             """,
             {
                 "doi": doi,
+                "verification_status": verification_status,
+                "verification_reason": verification_reason,
                 "data_type": src.get("data_type", ""),
                 "access_date": src.get("access_date", ""),
             },
@@ -633,13 +664,18 @@ def _populate_bridge_axioms(session, cfg):
 
         # Link axiom -> EVIDENCED_BY -> Document (by DOI)
         for src in axiom.get("sources", []):
-            doi = src.get("doi", "")
+            doi, verification_status, verification_reason = _verified_doi(
+                src.get("doi", ""),
+                context=f"bridge axiom {aid}",
+            )
             if doi:
                 session.run(
                     """
                     MATCH (a:BridgeAxiom {axiom_id: $axiom_id})
                     MERGE (d:Document {doi: $doi})
                     ON CREATE SET d.title = $title
+                    SET d.doi_verification_status = $verification_status,
+                        d.doi_verification_reason = $verification_reason
                     MERGE (a)-[e:EVIDENCED_BY]->(d)
                     SET e.finding = $finding
                     """,
@@ -647,6 +683,8 @@ def _populate_bridge_axioms(session, cfg):
                         "axiom_id": aid,
                         "doi": doi,
                         "title": src.get("citation", ""),
+                        "verification_status": verification_status,
+                        "verification_reason": verification_reason,
                         "finding": src.get("finding", ""),
                     },
                 )
@@ -1011,20 +1049,26 @@ def _populate_provenance(session, cfg):
     cs = _load_json(cfg.case_study_path)
     count = 0
     for src in cs.get("provenance", {}).get("data_sources", []):
-        doi = src.get("doi", "")
-        # Skip placeholder DOIs
-        if not doi or "xxxx" in doi:
+        doi, verification_status, verification_reason = _verified_doi(
+            src.get("doi", ""),
+            context="Cabo Pulmo provenance source",
+        )
+        if not doi:
             continue
         session.run(
             """
             MATCH (m:MPA {name: "Cabo Pulmo National Park"})
             MERGE (d:Document {doi: $doi})
+            SET d.doi_verification_status = $verification_status,
+                d.doi_verification_reason = $verification_reason
             MERGE (m)-[r:DERIVED_FROM]->(d)
             SET r.data_type   = $data_type,
                 r.access_date = $access_date
             """,
             {
                 "doi": doi,
+                "verification_status": verification_status,
+                "verification_reason": verification_reason,
                 "data_type": src.get("data_type", ""),
                 "access_date": src.get("access_date", ""),
             },
@@ -1032,29 +1076,47 @@ def _populate_provenance(session, cfg):
         count += 1
 
     # Also link to key provenance documents from case study sources
-    neoli_doi = cs.get("neoli_assessment", {}).get("source", {}).get("doi", "")
+    neoli_doi, neoli_status, neoli_reason = _verified_doi(
+        cs.get("neoli_assessment", {}).get("source", {}).get("doi", ""),
+        context="Cabo Pulmo NEOLI source",
+    )
     if neoli_doi:
         session.run(
             """
             MATCH (m:MPA {name: "Cabo Pulmo National Park"})
             MERGE (d:Document {doi: $doi})
+            SET d.doi_verification_status = $verification_status,
+                d.doi_verification_reason = $verification_reason
             MERGE (m)-[r:DERIVED_FROM]->(d)
             SET r.data_type = "NEOLI assessment"
             """,
-            {"doi": neoli_doi},
+            {
+                "doi": neoli_doi,
+                "verification_status": neoli_status,
+                "verification_reason": neoli_reason,
+            },
         )
         count += 1
 
-    recovery_doi = cs.get("ecological_recovery", {}).get("source", {}).get("doi", "")
+    recovery_doi, recovery_status, recovery_reason = _verified_doi(
+        cs.get("ecological_recovery", {}).get("source", {}).get("doi", ""),
+        context="Cabo Pulmo ecological recovery source",
+    )
     if recovery_doi:
         session.run(
             """
             MATCH (m:MPA {name: "Cabo Pulmo National Park"})
             MERGE (d:Document {doi: $doi})
+            SET d.doi_verification_status = $verification_status,
+                d.doi_verification_reason = $verification_reason
             MERGE (m)-[r:DERIVED_FROM]->(d)
             SET r.data_type = "Recovery field data"
             """,
-            {"doi": recovery_doi},
+            {
+                "doi": recovery_doi,
+                "verification_status": recovery_status,
+                "verification_reason": recovery_reason,
+            },
         )
         count += 1
 

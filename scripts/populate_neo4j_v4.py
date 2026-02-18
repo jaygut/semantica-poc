@@ -39,6 +39,12 @@ def _load_json(path: Path) -> dict:
         return json.load(f)
 
 
+def _populate_concepts(session) -> int:
+    """Populate Concept nodes and INVOLVES_AXIOM edges from concepts.json."""
+    loader = ConceptsLoader(session)
+    return loader.load_concepts()
+
+
 def _dry_run(case_paths: list[Path], sites: list[tuple[str, Path]]) -> None:
     """Print what would be populated without connecting to Neo4j."""
     print("=" * 60)
@@ -168,8 +174,7 @@ def populate_v4(validate: bool = False) -> int:
 
         # Step 4: Concepts (New Service)
         print("Step 4: Populating concept nodes (ConceptsLoader)...")
-        concepts_loader = ConceptsLoader(session)
-        total += concepts_loader.load_concepts()
+        total += _populate_concepts(session)
         print()
 
     # Step 5: Dynamic Registration

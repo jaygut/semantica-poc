@@ -59,6 +59,10 @@ def _normalise_evidence_item(item: dict) -> dict:
     return {
         "doi": doi,
         "doi_url": f"https://doi.org/{doi}" if doi else None,
+        "doi_valid": item.get("doi_valid"),
+        "doi_verification_status": item.get("doi_verification_status"),
+        "doi_verification_reason": item.get("doi_verification_reason"),
+        "doi_resolver": item.get("doi_resolver"),
         "title": item.get("title", ""),
         "year": item.get("year"),
         "tier": item.get("tier", ""),

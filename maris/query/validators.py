@@ -10,6 +10,8 @@ import json
 import logging
 import re
 
+from maris.provenance.doi_verifier import get_doi_verifier
+
 logger = logging.getLogger(__name__)
 
 # Regex for extracting numerical claims from answer text
@@ -21,9 +23,6 @@ _NUMERIC_PATTERN = re.compile(
     """,
     re.VERBOSE,
 )
-
-# DOI format pattern (relaxed): 10.NNNN/...
-_DOI_PATTERN = re.compile(r"^10\.\d{4,}/\S+$")
 
 # Required fields in a valid LLM response
 _REQUIRED_FIELDS = {
@@ -142,20 +141,29 @@ def validate_evidence_dois(evidence: list[dict]) -> tuple[list[dict], list[str]]
 
     Returns (evidence_with_flags, issues).
     """
+    verifier = get_doi_verifier()
     issues: list[str] = []
     validated = []
 
-    for item in evidence:
+    for idx, item in enumerate(evidence, start=1):
         entry = dict(item)
-        doi = entry.get("doi", "")
-        if doi and not _DOI_PATTERN.match(doi):
-            issues.append(f"Invalid DOI format: '{doi}'")
-            entry["doi_valid"] = False
-        elif doi:
-            entry["doi_valid"] = True
-        else:
-            entry["doi_valid"] = False
-            issues.append("Evidence item missing DOI")
+        doi = entry.get("doi", "") or ""
+        result = verifier.verify(doi)
+        entry["doi"] = result.normalized_doi
+        entry["doi_valid"] = result.doi_valid
+        entry["doi_verification_status"] = result.verification_status
+        entry["doi_verification_reason"] = result.reason
+        entry["doi_resolver"] = result.resolver
+
+        if result.verification_status != "verified":
+            issues.append(
+                f"Evidence item {idx}: DOI '{result.normalized_doi or doi}' "
+                f"status={result.verification_status} ({result.reason})"
+            )
+
+        if not result.normalized_doi:
+            issues.append(f"Evidence item {idx}: missing DOI")
+
         validated.append(entry)
 
     return validated, issues
@@ -285,6 +293,7 @@ def validate_llm_response(
     cleaned["evidence"] = validated_evidence
     if doi_issues:
         logger.warning("DOI issues: %s", doi_issues)
+        all_caveats.extend(doi_issues)
 
     # 3. Numerical claim verification
     answer = cleaned.get("answer", "")

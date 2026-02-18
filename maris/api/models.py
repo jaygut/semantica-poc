@@ -12,6 +12,10 @@ from pydantic import BaseModel, Field, field_validator
 class EvidenceItem(BaseModel):
     doi: str | None = None
     doi_url: str | None = None
+    doi_valid: bool | None = None
+    doi_verification_status: str | None = None
+    doi_verification_reason: str | None = None
+    doi_resolver: str | None = None
     title: str = ""
     year: int | None = None
     tier: str = ""

@@ -1,11 +1,15 @@
 """Execute Cypher queries against Neo4j."""
 
+from __future__ import annotations
+
 import logging
 
 from maris.graph.connection import run_query
 from maris.query.cypher_templates import get_template, _MAX_LIMIT
 
 logger = logging.getLogger(__name__)
+
+_OPEN_DOMAIN_TOP_K = 20
 
 
 class QueryExecutor:
@@ -14,9 +18,18 @@ class QueryExecutor:
     def execute_open_domain(self, question: str, site_name: str | None = None) -> dict:
         """Execute an open-domain query using hybrid retrieval.
 
-        Falls back to graph_neighborhood + semantic_search when the question
-        does not match any of the 5 core query categories.
+        This is the ONLY allowed non-template path, and it must still be
+        graph-grounded. Empty retrieval results are treated as insufficient
+        evidence, not as permission to hallucinate.
         """
+        if not question or not question.strip():
+            return {
+                "template": "open_domain",
+                "error_type": "validation",
+                "error": "Question is required for open-domain retrieval.",
+                "results": [],
+            }
+
         from maris.query.classifier import _KEYWORD_RULES
         from maris.reasoning.hybrid_retriever import HybridRetriever
 
@@ -24,20 +37,88 @@ class QueryExecutor:
             executor=self,
             keyword_rules=_KEYWORD_RULES,
         )
-        result = retriever.retrieve(
-            question=question,
-            site_name=site_name,
-            max_hops=3,
-            top_k=20,
-        )
+
+        try:
+            result = retriever.retrieve(
+                question=question,
+                site_name=site_name,
+                max_hops=3,
+                top_k=_OPEN_DOMAIN_TOP_K,
+            )
+        except Exception:
+            logger.exception("Open-domain retrieval failed")
+            return {
+                "template": "open_domain",
+                "error_type": "execution_failed",
+                "error": "Open-domain retrieval failed.",
+                "results": [],
+            }
+
+        if not result.ranked_nodes:
+            return {
+                "template": "open_domain",
+                "parameters": {"question": question, "site_name": site_name},
+                "error_type": "no_results",
+                "error": (
+                    "Insufficient graph-grounded context for this query. "
+                    "Please provide a specific site, axiom ID, or mechanism."
+                ),
+                "results": [],
+                "record_count": 0,
+                "has_more": False,
+                "retrieval_modes": result.retrieval_modes,
+                "strategy": "safe_open_domain_retrieval",
+            }
+
         return {
             "template": "open_domain",
             "parameters": {"question": question, "site_name": site_name},
             "results": result.ranked_nodes,
             "record_count": len(result.ranked_nodes),
-            "has_more": result.total_candidates > 20,
+            "has_more": result.total_candidates > _OPEN_DOMAIN_TOP_K,
             "retrieval_modes": result.retrieval_modes,
+            "strategy": "safe_open_domain_retrieval",
         }
+
+    def execute_with_strategy(
+        self,
+        category: str,
+        parameters: dict,
+        *,
+        question: str | None = None,
+        site_name: str | None = None,
+    ) -> dict:
+        """Execute a query category using a strictly allowed strategy.
+
+        - ``open_domain`` uses safe hybrid retrieval only.
+        - all other categories must resolve to a known deterministic template.
+        - missing evidence returns ``no_results`` so callers can fail closed.
+        """
+        if category == "open_domain":
+            return self.execute_open_domain(question or "", site_name=site_name)
+
+        result = self.execute(category, dict(parameters))
+        if result.get("error"):
+            result.setdefault("error_type", "execution_failed")
+            return result
+
+        if not result.get("results"):
+            return {
+                "template": category,
+                "parameters": dict(parameters),
+                "error_type": "no_results",
+                "error": (
+                    "No deterministic graph evidence found for this query. "
+                    "Please refine your request with a specific site, axiom, or concept."
+                ),
+                "results": [],
+                "record_count": 0,
+                "has_more": False,
+                "strategy": "deterministic_template",
+            }
+
+        result["strategy"] = "deterministic_template"
+        return result
 
     def execute(self, template_name: str, parameters: dict) -> dict:
         """Execute a named Cypher template with parameters.
@@ -47,7 +128,12 @@ class QueryExecutor:
         """
         template = get_template(template_name)
         if template is None:
-            return {"error": f"Unknown template: {template_name}", "results": []}
+            return {
+                "template": template_name,
+                "error_type": "unknown_template",
+                "error": f"Unknown template: {template_name}",
+                "results": [],
+            }
 
         cypher = template["cypher"]
 
@@ -56,7 +142,15 @@ class QueryExecutor:
         if "result_limit" not in parameters:
             parameters["result_limit"] = default_limit
         else:
-            parameters["result_limit"] = min(int(parameters["result_limit"]), _MAX_LIMIT)
+            try:
+                parameters["result_limit"] = min(int(parameters["result_limit"]), _MAX_LIMIT)
+            except (TypeError, ValueError):
+                return {
+                    "template": template_name,
+                    "error_type": "validation",
+                    "error": "result_limit must be an integer",
+                    "results": [],
+                }
 
         requested_limit = parameters["result_limit"]
 
@@ -83,7 +177,12 @@ class QueryExecutor:
             }
         except Exception:
             logger.exception("Cypher execution failed for template=%s", template_name)
-            return {"template": template_name, "error": "Query execution failed", "results": []}
+            return {
+                "template": template_name,
+                "error_type": "execution_failed",
+                "error": "Query execution failed",
+                "results": [],
+            }
 
     def execute_raw(self, cypher: str, parameters: dict | None = None) -> list[dict]:
         """Execute arbitrary Cypher and return result dicts."""

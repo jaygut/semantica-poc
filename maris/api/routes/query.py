@@ -1,8 +1,11 @@
 """Query endpoint - full NL-to-answer pipeline."""
 
+from __future__ import annotations
+
 import logging
 import re
 import time
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -10,10 +13,13 @@ from maris.api.auth import rate_limit_query
 from maris.api.models import QueryRequest, QueryResponse, QueryMetadata, EvidenceItem
 from maris.config import get_config
 from maris.llm.adapter import LLMAdapter
-from maris.query.classifier import QueryClassifier
+from maris.provenance.bridge_axiom_registry import BridgeAxiomRegistry
+from maris.query.classifier import QueryClassifier, register_dynamic_sites
 from maris.query.executor import QueryExecutor
 from maris.query.generator import ResponseGenerator
 from maris.query.formatter import format_response
+from maris.reasoning.inference_engine import InferenceEngine
+from maris.services.ingestion.discovery import discover_case_study_paths, discover_site_names
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +30,21 @@ _llm: LLMAdapter | None = None
 _classifier: QueryClassifier | None = None
 _executor: QueryExecutor | None = None
 _generator: ResponseGenerator | None = None
+_axiom_registry: BridgeAxiomRegistry | None = None
+_inference_engine: InferenceEngine | None = None
+_dynamic_sites_registered = False
+
+_AXIOM_ID_RE = re.compile(r"\bBA-\d{3}\b", re.IGNORECASE)
+_SITE_REQUIRED_CATEGORIES = {"site_valuation", "provenance_drilldown", "risk_assessment"}
+_STRICT_DETERMINISTIC_CATEGORIES = {
+    "site_valuation",
+    "provenance_drilldown",
+    "risk_assessment",
+    "comparison",
+    "axiom_explanation",
+    "axiom_by_concept",
+}
+_CLIENT_ERROR_TYPES = {"validation", "no_results", "unknown_template"}
 
 
 # Comprehensive keyword-to-axiom mapping for concept-based queries
@@ -106,30 +127,137 @@ def _extract_concept_term(question: str) -> str:
 _SITE_HABITAT_MAP: dict[str, str] = {
     "Cabo Pulmo National Park": "coral_reef",
     "Shark Bay World Heritage Area": "seagrass_meadow",
-    "Ningaloo Coast": "coral_reef",
+    "Ningaloo Coast World Heritage Area": "coral_reef",
     "Belize Barrier Reef Reserve System": "coral_reef",
     "Galapagos Marine Reserve": "mixed",
-    "Raja Ampat MPA Network": "coral_reef",
+    "Raja Ampat Marine Park": "coral_reef",
     "Sundarbans Reserve Forest": "mangrove_forest",
     "Aldabra Atoll": "coral_reef",
-    "Cispata Bay MPA": "mangrove_forest",
+    "Cispata Bay Mangrove Conservation Area": "mangrove_forest",
 }
 
 
+def _register_runtime_sites() -> None:
+    """Load discovered site names into classifier dynamic patterns."""
+    global _dynamic_sites_registered
+    if _dynamic_sites_registered:
+        return
+
+    cfg = get_config()
+    try:
+        case_paths = discover_case_study_paths(cfg.project_root)
+        discovered = discover_site_names(case_paths)
+        site_names = sorted({name for name, _ in discovered if name})
+        if not site_names:
+            logger.warning("No case-study sites discovered for dynamic registration")
+            _dynamic_sites_registered = True
+            return
+        registered = register_dynamic_sites(site_names)
+        _dynamic_sites_registered = True
+        logger.info(
+            "Registered %s dynamic site patterns from %s case studies",
+            registered,
+            len(case_paths),
+        )
+    except Exception:
+        logger.exception("Failed to register dynamic sites at API startup")
+
+
+def _extract_axiom_ids(payload: Any) -> set[str]:
+    """Recursively extract axiom IDs from nested dict/list payloads."""
+    found: set[str] = set()
+    if isinstance(payload, dict):
+        for value in payload.values():
+            found |= _extract_axiom_ids(value)
+        return found
+    if isinstance(payload, list):
+        for item in payload:
+            found |= _extract_axiom_ids(item)
+        return found
+    if isinstance(payload, str):
+        return {m.upper() for m in _AXIOM_ID_RE.findall(payload)}
+    return found
+
+
+def _build_inference_trace(
+    axiom_ids: set[str],
+    site: str | None,
+) -> tuple[list[dict[str, Any]], str, list[str]]:
+    """Build a deterministic inference trace from resolved axiom IDs."""
+    assert _axiom_registry is not None
+
+    axioms = [
+        axiom
+        for aid in sorted(axiom_ids)
+        if (axiom := _axiom_registry.get(aid)) is not None
+    ]
+    if not axioms:
+        return [], "", []
+
+    temp_engine = InferenceEngine()
+    temp_engine.register_axioms(axioms)
+
+    start_domain = next((a.input_domain for a in axioms if a.input_domain), "ecological")
+    facts = {start_domain: {"site": site or "unspecified"}}
+    steps = temp_engine.forward_chain(facts, max_steps=max(len(axioms), 1))
+
+    if not steps:
+        return [], "", []
+
+    trace: list[dict[str, Any]] = []
+    lines: list[str] = []
+    provisional_axioms: set[str] = set()
+    for idx, step in enumerate(steps, start=1):
+        axiom = _axiom_registry.get(step.axiom_id)
+        source_count = len(axiom.evidence_sources) if axiom else 0
+        provisional = source_count < 2
+        if provisional:
+            provisional_axioms.add(step.axiom_id)
+
+        trace.append({
+            "step": idx,
+            "axiom_id": step.axiom_id,
+            "rule_id": step.rule_id,
+            "input_fact": step.input_fact,
+            "output_fact": step.output_fact,
+            "coefficient": step.coefficient,
+            "confidence": step.confidence,
+            "source_doi": step.source_doi,
+            "provisional": provisional,
+        })
+        lines.append(
+            f"{idx}. {step.axiom_id}: {step.input_fact} -> {step.output_fact} "
+            f"(doi={step.source_doi or 'unavailable'})"
+        )
+
+    return trace, "\n".join(lines), sorted(provisional_axioms)
+
+
 def _init_components():
-    global _llm, _classifier, _executor, _generator
+    global _llm, _classifier, _executor, _generator, _axiom_registry, _inference_engine
     if _llm is None:
         _llm = LLMAdapter(get_config())
         _classifier = QueryClassifier(llm=_llm)
         _executor = QueryExecutor()
         _generator = ResponseGenerator(llm=_llm)
 
+    _register_runtime_sites()
+
+    if _axiom_registry is None or _inference_engine is None:
+        cfg = get_config()
+        _axiom_registry = BridgeAxiomRegistry(
+            templates_path=cfg.schemas_dir / "bridge_axiom_templates.json",
+            evidence_path=cfg.export_dir / "bridge_axioms.json",
+        )
+        _inference_engine = InferenceEngine()
+        _inference_engine.register_axioms(_axiom_registry.get_all())
+
 
 @router.post("/query", response_model=QueryResponse, dependencies=[Depends(rate_limit_query)])
 def query(request: QueryRequest):
     """Classify a natural-language question, run Cypher, and return a grounded answer."""
     _init_components()
-    assert _classifier and _executor and _generator  # narrowing for type checker
+    assert _classifier and _executor and _generator and _axiom_registry and _inference_engine  # narrowing for type checker
 
     start = time.monotonic()
 
@@ -140,10 +268,15 @@ def query(request: QueryRequest):
 
     # 2. Build parameters for the Cypher template
     params: dict = {}
-    if category in ("site_valuation", "provenance_drilldown", "risk_assessment"):
+    if category in _SITE_REQUIRED_CATEGORIES:
         if not site:
-            # Default to primary reference site for general questions
-            site = "Cabo Pulmo National Park"
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "This query requires a specific site. "
+                    "Please include a site name (e.g., Cabo Pulmo National Park)."
+                ),
+            )
         params["site_name"] = site
     elif category == "axiom_explanation":
         # Try to extract explicit axiom ID from question
@@ -170,11 +303,13 @@ def query(request: QueryRequest):
                 params["concept_term"] = concept_term
                 params["axiom_ids"] = matched_axioms
             else:
-                # No axiom match - fall back to provenance with site context
-                category = "provenance_drilldown"
-                if not site:
-                    site = "Cabo Pulmo National Park"
-                params["site_name"] = site
+                raise HTTPException(
+                    status_code=422,
+                    detail=(
+                        "Ambiguous axiom query. Please specify a BA-XXX ID or a clearer concept "
+                        "(e.g., 'Explain BA-013')."
+                    ),
+                )
     elif category == "concept_explanation":
         # Map question to concept for mechanism_chain or concept_overview template
         q_lower = request.question.lower()
@@ -185,6 +320,11 @@ def query(request: QueryRequest):
         else:
             # Use concept_overview with search term
             search_term = _extract_concept_term(q_lower)
+            if len(search_term.strip()) < 3:
+                raise HTTPException(
+                    status_code=422,
+                    detail="Concept query is ambiguous. Please specify a clearer mechanism or concept.",
+                )
             category = "concept_overview"
             params["search_term"] = search_term
             params["concept_id"] = ""  # empty, won't match by ID
@@ -193,19 +333,63 @@ def query(request: QueryRequest):
         sites = classification.get("sites", [])
         if len(sites) >= 2:
             params["site_names"] = sites
-        elif site:
-            params["site_names"] = [site]
         else:
-            # Default to all fully characterized sites
-            params["site_names"] = [
-                "Cabo Pulmo National Park",
-                "Shark Bay World Heritage Area",
-            ]
+            raise HTTPException(
+                status_code=422,
+                detail="Comparison queries must specify at least two sites.",
+            )
 
-    # 3. Execute Cypher
-    graph_result = _executor.execute(category, params)
+    # 3. Execute with strict strategy enforcement
+    graph_result = _executor.execute_with_strategy(
+        category,
+        params,
+        question=request.question,
+        site_name=site,
+    )
     if graph_result.get("error"):
-        raise HTTPException(status_code=500, detail=graph_result["error"])
+        error_type = graph_result.get("error_type", "execution_failed")
+        status_code = 422 if error_type in _CLIENT_ERROR_TYPES else 500
+        raise HTTPException(status_code=status_code, detail=graph_result["error"])
+
+    provenance_edges: list[dict[str, Any]] = []
+    if category != "open_domain":
+        provenance_edges = _executor.get_provenance_edges(category, params)
+
+    if category in _STRICT_DETERMINISTIC_CATEGORIES and not provenance_edges:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                "No deterministic graph traversal path was found for this query. "
+                "Please refine your request with explicit site/axiom context."
+            ),
+        )
+
+    explanation_chain: str | None = None
+    inference_trace: list[dict[str, Any]] = []
+    provisional_axioms: list[str] = []
+    if category in _STRICT_DETERMINISTIC_CATEGORIES:
+        axiom_ids = _extract_axiom_ids(graph_result) | _extract_axiom_ids(provenance_edges)
+        if not axiom_ids:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "No bridge axioms were resolved from the graph path. "
+                    "Please provide a query with explicit axiom or mechanism context."
+                ),
+            )
+
+        inference_trace, explanation_chain, provisional_axioms = _build_inference_trace(
+            axiom_ids,
+            site,
+        )
+        if not inference_trace:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "Deterministic inference chain could not be constructed from the resolved axioms. "
+                    "Please refine your question."
+                ),
+            )
 
     # 4. Generate response via LLM
     # Inject site context for habitat-aware responses
@@ -219,6 +403,7 @@ def query(request: QueryRequest):
             question=request.question + site_context,
             graph_context=graph_result,
             category=category,
+            explanation_chain=explanation_chain,
         )
     except Exception:
         logger.exception("Response generation failed for category=%s", category)
@@ -231,10 +416,31 @@ def query(request: QueryRequest):
         logger.exception("Response formatting failed")
         raise HTTPException(status_code=500, detail="Response formatting failed")
 
+    if not formatted.get("axioms_used") and inference_trace:
+        formatted["axioms_used"] = [s["axiom_id"] for s in inference_trace]
+
+    if provisional_axioms:
+        formatted["caveats"] = list(formatted.get("caveats", []))
+        formatted["caveats"].append(
+            "Provisional axioms (Two-Key rule requires independent corroboration): "
+            + ", ".join(provisional_axioms)
+        )
+
+    if classification.get("caveats"):
+        formatted["caveats"] = list(formatted.get("caveats", [])) + classification["caveats"]
+
     # 6. Build structured graph_path from actual Neo4j traversal (not LLM text)
     graph_path = []
     if request.include_graph_path:
-        graph_path = _executor.get_provenance_edges(category, params)
+        graph_path = list(provenance_edges)
+        if inference_trace:
+            graph_path.extend({
+                "from_node": step["axiom_id"],
+                "from_type": "BridgeAxiom",
+                "relationship": "INFERRED_AS",
+                "to_node": step["output_fact"],
+                "to_type": "DerivedFact",
+            } for step in inference_trace)
 
     elapsed_ms = int((time.monotonic() - start) * 1000)
 
@@ -253,7 +459,7 @@ def query(request: QueryRequest):
         query_metadata=QueryMetadata(
             category=category,
             classification_confidence=classification.get("confidence", 0.0),
-            template_used=category,
+            template_used=f"{category}:{graph_result.get('strategy', 'unknown')}",
             response_time_ms=elapsed_ms,
         ),
     )

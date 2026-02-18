@@ -1689,8 +1689,8 @@
           "distribution": "uniform",
           "study_sample_size": null,
           "effect_size_type": "proportion",
-          "source_doi": "10.1016/j.marpol.2025.106XXX",
-          "extraction_note": "30-50% discount on face value typical for debt-for-nature swaps. From Seychelles Blue Bond precedent (Subramaniam et al. 2025) and broader conservation finance literature.",
+          "source_doi": "10.3389/fmars.2023.899256",
+          "extraction_note": "30-50% discount on face value typical for debt-for-nature swaps. Grounded in Seychelles restructured debt case evidence (Booth and Brooks 2023) and broader conservation finance literature.",
           "uncertainty_type": "estimated_uncertainty"
         },
         "conservation_commitment_fraction": {
@@ -1700,8 +1700,8 @@
           "distribution": "triangular",
           "study_sample_size": null,
           "effect_size_type": "proportion",
-          "source_doi": "10.1016/j.marpol.2025.106XXX",
-          "extraction_note": "15-50% of swap proceeds committed to conservation activities. Seychelles committed 30% of EEZ as MPA. From Subramaniam et al. 2025.",
+          "source_doi": "10.3389/fmars.2023.899256",
+          "extraction_note": "15-50% of swap proceeds committed to conservation activities. Seychelles debt restructuring implementation reports a 30% EEZ protection commitment (Booth and Brooks 2023).",
           "uncertainty_type": "estimated_uncertainty"
         }
       },
@@ -1709,9 +1709,9 @@
       "evidence_tier": "T2",
       "sources": [
         {
-          "citation": "Subramaniam K et al. 2025. Marine Policy",
-          "doi": "10.1016/j.marpol.2025.106XXX",
-          "finding": "Seychelles blue finance blueprint: debt-for-nature swap established 30% MPA coverage of EEZ"
+          "citation": "Booth M and Brooks CM. 2023. Frontiers in Marine Science",
+          "doi": "10.3389/fmars.2023.899256",
+          "finding": "Seychelles debt restructuring case study documents governance design, funding streams, and marine conservation commitments in debt-for-nature implementation"
         },
         {
           "citation": "Sumaila UR et al. 2021. One Earth",

@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from maris.provenance.bridge_axiom import BridgeAxiom, TranslationChain
+from maris.provenance.doi_verifier import get_doi_verifier
 
 logger = logging.getLogger(__name__)
 
@@ -121,16 +122,32 @@ class BridgeAxiomRegistry:
 
             # Build evidence sources list
             evidence_sources = []
+            verifier = get_doi_verifier()
             for src in axiom_raw.get("sources", []):
+                verification = verifier.verify(src.get("doi", ""))
                 evidence_sources.append({
-                    "doi": src.get("doi", ""),
+                    "doi": verification.normalized_doi,
                     "citation": src.get("citation", ""),
                     "finding": src.get("finding", ""),
+                    "doi_valid": verification.doi_valid,
+                    "doi_verification_status": verification.verification_status,
+                    "doi_verification_reason": verification.reason,
                 })
+
+                if not verification.doi_valid and src.get("doi"):
+                    logger.warning(
+                        "Axiom %s source DOI blocked (%s): %s",
+                        aid,
+                        verification.verification_status,
+                        src.get("doi"),
+                    )
 
             primary_doi = ""
             if evidence_sources:
-                primary_doi = evidence_sources[0].get("doi", "")
+                for src in evidence_sources:
+                    if src.get("doi_valid") and src.get("doi"):
+                        primary_doi = src["doi"]
+                        break
 
             ba = BridgeAxiom(
                 axiom_id=aid,
