@@ -419,7 +419,12 @@
     "doi_backed": 4,
     "url_only": 1,
     "doi_coverage_pct": 80.0,
-    "evidence_tier_distribution": {"T1": 4, "T2": 0, "T3": 0, "T4": 1}
+    "evidence_tier_distribution": {
+      "T1": 4,
+      "T2": 0,
+      "T3": 0,
+      "T4": 1
+    }
   },
   "demo_value": {
     "why_sundarbans_for_demo": [
@@ -435,6 +440,14 @@
       "How does Sundarbans compare to other mangrove sites?",
       "What ecosystem services does the Sundarbans provide?",
       "What are the key risks to Sundarbans ecosystem values?"
+    ],
+    "quick_queries": [
+      "Calculate the total mangrove carbon stock value",
+      "How does the Sundarbans protect against cyclones?",
+      "What is the impact of salinization on the forest?",
+      "Value of tiger tourism vs fisheries",
+      "Explain the transboundary governance challenges",
+      "How does sea level rise threaten the delta?"
     ]
   }
 }

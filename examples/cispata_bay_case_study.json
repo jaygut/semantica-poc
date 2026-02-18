@@ -403,7 +403,12 @@
     "doi_backed": 1,
     "url_only": 4,
     "doi_coverage_pct": 20.0,
-    "evidence_tier_distribution": {"T1": 1, "T2": 2, "T3": 0, "T4": 2}
+    "evidence_tier_distribution": {
+      "T1": 1,
+      "T2": 2,
+      "T3": 0,
+      "T4": 2
+    }
   },
   "demo_value": {
     "why_cispata_for_demo": [
@@ -419,6 +424,14 @@
       "What is the value chain from mangrove to carbon credit?",
       "How do local communities benefit from carbon credit revenues?",
       "How does Cispata compare to other blue carbon projects?"
+    ],
+    "quick_queries": [
+      "Explain the 'full carbon accounting' methodology",
+      "How does the Apple partnership work?",
+      "What is the Verra VCS credit issuance process?",
+      "Community benefits from carbon credits",
+      "How does sediment carbon contribute to value?",
+      "Compare Cispata's rating to Sundarbans"
     ]
   }
 }

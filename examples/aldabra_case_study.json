@@ -405,7 +405,12 @@
     "doi_backed": 2,
     "url_only": 4,
     "doi_coverage_pct": 33.3,
-    "evidence_tier_distribution": {"T1": 2, "T2": 4, "T3": 0, "T4": 0}
+    "evidence_tier_distribution": {
+      "T1": 2,
+      "T2": 4,
+      "T3": 0,
+      "T4": 0
+    }
   },
   "demo_value": {
     "why_aldabra_for_demo": [
@@ -421,6 +426,14 @@
       "What makes Aldabra a NEOLI 5/5 reference site?",
       "How does the debt-for-nature swap fund marine conservation?",
       "How does Aldabra compare to other blue finance jurisdictions?"
+    ],
+    "quick_queries": [
+      "How does the Blue Bond fund Aldabra?",
+      "What is the value of giant tortoise conservation?",
+      "Explain the debt-for-nature swap mechanics",
+      "How does isolation affect the NEOLI score?",
+      "What are the threats from sea level rise?",
+      "Compare Aldabra's protection to Galapagos"
     ]
   }
 }

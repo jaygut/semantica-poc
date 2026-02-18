@@ -355,6 +355,21 @@
       "relevance": "Mangrove carbon credits and sustainable tourism model"
     }
   },
+  "financial_mechanisms": [
+    {
+      "mechanism_type": "debt_for_nature_swap",
+      "name": "Galapagos Life Fund (GLF)",
+      "year": 2023,
+      "amount_usd": 1628000000,
+      "description": "World's largest debt-for-nature swap. Ecuador converted $1.6B in commercial debt into a $656M loan + $450M for conservation over 18 years.",
+      "beneficiaries": [
+        "Galapagos National Park",
+        "Hermandad Marine Reserve"
+      ],
+      "status": "active",
+      "source_doi": "10.1038/d41586-023-01580-x"
+    }
+  ],
   "provenance": {
     "data_sources": [
       {
@@ -403,7 +418,12 @@
     "doi_backed": 2,
     "url_only": 4,
     "doi_coverage_pct": 33.3,
-    "evidence_tier_distribution": {"T1": 2, "T2": 3, "T3": 0, "T4": 1}
+    "evidence_tier_distribution": {
+      "T1": 2,
+      "T2": 3,
+      "T3": 0,
+      "T4": 1
+    }
   },
   "demo_value": {
     "why_galapagos_for_demo": [
@@ -419,6 +439,14 @@
       "How much carbon is stored in Galapagos mangroves?",
       "What is the Galapagos Marine Reserve's tourism value?",
       "How does the Galapagos demonstrate multi-habitat valuation?"
+    ],
+    "quick_queries": [
+      "Explain the Galapagos Life Fund (GLF)",
+      "How does El Niño impact the reserve?",
+      "What is the value of hammerhead shark tourism?",
+      "Describe the 'debt-for-nature' swap structure",
+      "Compare Galapagos to Cabo Pulmo",
+      "How is carbon sequestration calculated?"
     ]
   }
 }

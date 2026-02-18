@@ -171,7 +171,7 @@ def render_graphrag_chat(
 
 
 def _build_quick_queries(site_short: str, full_name: str) -> list[str]:
-    """Return 6 quick-query strings, personalized to the active site."""
+    """Return 6 quick-query strings, prioritized from case study JSON."""
     defaults = [
         f"What is {site_short} worth?",
         "What evidence supports the valuation?",
@@ -180,8 +180,17 @@ def _build_quick_queries(site_short: str, full_name: str) -> list[str]:
         f"What are the risks for {site_short}?",
         "How does blue carbon sequestration work?",
     ]
-    
-    # Specific overrides based on site content
+
+    # Try to load from case study JSON first
+    from investor_demo.components.v4.shared import get_site_data
+    site_data = get_site_data(full_name)
+    if site_data:
+        custom = site_data.get("demo_value", {}).get("quick_queries", [])
+        if custom:
+            # Pad with defaults if fewer than 6 custom queries
+            return (custom + defaults)[:6]
+
+    # Fallback to hardcoded logic (legacy safety net)
     lower_name = full_name.lower()
     
     if "galapagos" in lower_name:

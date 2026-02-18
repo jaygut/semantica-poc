@@ -1,23 +1,25 @@
 # Semantica × MARIS Handoff Bundle Checklist
 
+**Payload:** Hybrid Intelligence Upgrade (v1.1)
 **Prepared for:** Mohd Kaif (Semantica Lead Developer)
 **Prepared by:** Jay Gutierrez (MARIS Chief Architect)
-**Date:** January 22, 2026
-**Bundle Version:** 1.0
+**Date:** February 18, 2026
+
+**This checklist governs the Semantica Bridge Integration for the "Hybrid Intelligence Engine".**
 
 ---
 
 ## Quick Start Guide
 
 ### 1. Read First (5 minutes)
-- [ ] `SEMANTICA_HANDOFF_README.md` - Full vision and implementation guidance
+- [ ] `SEMANTICA_HANDOFF_README.md` - Full vision and "Hybrid" architecture documentation
 
 ### 2. Understand the Schemas (15 minutes)
 - [ ] `schemas/entity_schema.json` - 8 entity types with JSON-LD definitions
 - [ ] `schemas/relationship_schema.json` - 14 relationship types with inference rules
-- [ ] `schemas/bridge_axiom_templates.json` - 12 core translation axioms
+- [ ] `schemas/bridge_axiom_templates.json` - 35 validated translation axioms
 
-### 3. Review the Examples (20 minutes)
+### 3. Review the Payload (20 minutes)
 - [ ] `examples/cabo_pulmo_case_study.json` - AAA reference site (this is our calibration target)
 - [ ] `examples/sample_queries.md` - GraphRAG query patterns and expected outputs
 - [ ] `data/sample_extractions/edgar_2014_extraction.json` - Example entity extraction format
@@ -36,12 +38,12 @@
 semantica-poc/
 ├── SEMANTICA_HANDOFF_README.md    # Main documentation (START HERE)
 ├── BUNDLE_CHECKLIST.md            # This file
-├── SYSTEM_OVERVIEW.md             # Original system architecture
+├── SYSTEM_OVERVIEW.md             # Hybrid Intelligence Factory Overview
 │
 ├── schemas/                       # JSON-LD schemas for Semantica
 │   ├── entity_schema.json         # 8 entity types (Species, Habitat, MPA, etc.)
 │   ├── relationship_schema.json   # 14 relationship types with inference rules
-│   └── bridge_axiom_templates.json # 12 ecological→financial translation rules
+│   └── bridge_axiom_templates.json # 35 ecological→financial translation rules
 │
 ├── data/
 │   ├── document_manifest.json     # 195 papers prioritized for extraction
@@ -66,7 +68,7 @@ semantica-poc/
 | Peer-reviewed (T1) | 179 (92%) |
 | Entity types defined | 8 |
 | Relationship types | 14 |
-| Bridge axioms | 12 |
+| Bridge axioms | 35 (Fully Synchronized) |
 | Habitats covered | 4 (coral, kelp, seagrass, mangrove) |
 | Calibration site | Cabo Pulmo (AAA rating) |
 

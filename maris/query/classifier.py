@@ -24,6 +24,8 @@ _KEYWORD_RULES: list[tuple[str, list[str]]] = [
     ("site_valuation", [
         r"\b(?:value|valuation|esv|worth|asset.?rating|total.?value)\b",
         r"\bhow much\b.*\bworth\b",
+        r"\b(?:recover\w*|biomass|drive|cause|increase|change|restor\w*)\b",
+        r"\b(?:debt|swap|finance|bond|fund|invest|mechanism)\b",
     ]),
     ("provenance_drilldown", [
         r"\b(?:evidence|provenance|dois?|source|paper|citation|backed|support(?:s|ing|ed)?)\b",

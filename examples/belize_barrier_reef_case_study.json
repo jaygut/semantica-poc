@@ -424,7 +424,12 @@
     "doi_backed": 2,
     "url_only": 4,
     "doi_coverage_pct": 33.3,
-    "evidence_tier_distribution": {"T1": 2, "T2": 4, "T3": 0, "T4": 0}
+    "evidence_tier_distribution": {
+      "T1": 2,
+      "T2": 4,
+      "T3": 0,
+      "T4": 0
+    }
   },
   "demo_value": {
     "why_belize_for_demo": [
@@ -440,6 +445,14 @@
       "How does the TNC blue bond structure work for marine conservation?",
       "What ecosystem services does the Belize reserve system provide?",
       "How does Belize compare to other blue bond jurisdictions?"
+    ],
+    "quick_queries": [
+      "Explain the TNC Blue Bond structure",
+      "What is the value of storm protection?",
+      "How does coral bleaching risk affect value?",
+      "What is the impact of mangrove loss?",
+      "Compare coastal protection to tourism value",
+      "What is the status of the barrier reef?"
     ]
   }
 }

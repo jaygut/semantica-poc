@@ -294,11 +294,110 @@ class CaseStudyLoader:
             )
             count += 1
 
+        # Trophic Network & Cascades
+        self._load_trophic_network(site_name, cs.get("trophic_network", {}))
+
+        # Financial Mechanisms (Debt Swaps, Blue Bonds)
+        self._load_financial_mechanisms(site_name, cs.get("financial_mechanisms", []))
+
+        # Risks (Climate, biological, anthropogenic)
+        self._load_risks(site_name, cs.get("risk_assessment", {}))
+
         # Link Axioms
         self._link_axioms_to_site(site_name, habitats_linked)
         
         print(f"  {site_name}: {count} nodes/edges merged.")
         return count
+
+    def _load_risks(self, site_name: str, risk_data: dict[str, Any]) -> None:
+        """Create structured nodes for risk factors."""
+        if not risk_data:
+            return
+
+        risks = risk_data.get("risk_factors", [])
+        for risk in risks:
+            self.session.run(
+                """
+                MERGE (r:Risk {name: $risk_type})
+                WITH r
+                MATCH (m:MPA {name: $site_name})
+                MERGE (m)-[rel:FACES_RISK]->(r)
+                SET rel.severity   = $severity,
+                    rel.likelihood = $likelihood,
+                    rel.evidence   = $evidence
+                """,
+                {
+                    "risk_type": risk.get("risk_type", "").replace("_", " ").title(),
+                    "severity": risk.get("severity", ""),
+                    "likelihood": risk.get("likelihood", ""),
+                    "evidence": risk.get("evidence", ""),
+                    "site_name": site_name
+                }
+            )
+
+    def _load_trophic_network(self, site_name: str, network: dict[str, Any]) -> None:
+        """Create structured nodes for ecological cascades and pathways."""
+        if not network:
+            return
+
+        # 1. Trophic Cascades (High-level processes)
+        for cascade in network.get("cascade_pathways", []):
+            desc = cascade.get("description", "")
+            effect = cascade.get("effect", "")
+            chain_str = " ".join(cascade.get("chain", []))
+            
+            # Create process node
+            self.session.run(
+                """
+                MERGE (p:EcologicalProcess {name: $name})
+                SET p.description = $desc,
+                    p.effect      = $effect,
+                    p.chain       = $chain
+                WITH p
+                MATCH (m:MPA {name: $site_name})
+                MERGE (m)-[:HAS_ECOLOGICAL_PROCESS]->(p)
+                """,
+                {
+                    "name": desc,
+                    "desc": desc,
+                    "effect": effect,
+                    "chain": chain_str,
+                    "site_name": site_name
+                }
+            )
+
+        # 2. Food Web Structure (Optional detail)
+        # We can link key species to functional groups if needed later
+        pass
+
+    def _load_financial_mechanisms(self, site_name: str, mechanisms: list[dict[str, Any]]) -> None:
+        """Create structured nodes for financial instruments (swaps, bonds, credits)."""
+        if not mechanisms:
+            return
+
+        for mech in mechanisms:
+            self.session.run(
+                """
+                MERGE (f:FinancialMechanism {name: $name})
+                SET f.type        = $mech_type,
+                    f.year        = $year,
+                    f.amount_usd  = $amount,
+                    f.description = $desc,
+                    f.status      = $status
+                WITH f
+                MATCH (m:MPA {name: $site_name})
+                MERGE (m)-[:USING_MECHANISM]->(f)
+                """,
+                {
+                    "name": mech.get("name", ""),
+                    "mech_type": mech.get("mechanism_type", ""),
+                    "year": mech.get("year"),
+                    "amount": mech.get("amount_usd"),
+                    "desc": mech.get("description", ""),
+                    "status": mech.get("status", "active"),
+                    "site_name": site_name
+                }
+            )
 
     def _link_habitat(self, site_name: str, hab_id: str, raw_name: str, linked_set: set) -> None:
         """Helper to merge habitat link."""

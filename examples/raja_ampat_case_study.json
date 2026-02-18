@@ -382,7 +382,12 @@
     "doi_backed": 2,
     "url_only": 3,
     "doi_coverage_pct": 40.0,
-    "evidence_tier_distribution": {"T1": 3, "T2": 2, "T3": 0, "T4": 0}
+    "evidence_tier_distribution": {
+      "T1": 3,
+      "T2": 2,
+      "T3": 0,
+      "T4": 0
+    }
   },
   "demo_value": {
     "why_raja_ampat_for_demo": [
@@ -398,6 +403,14 @@
       "How does the entrance fee model fund conservation?",
       "What is Raja Ampat's economic value from coral reef services?",
       "How does Raja Ampat connect to Indonesia's blue bond program?"
+    ],
+    "quick_queries": [
+      "How do entrance fees fund the MPA?",
+      "What makes Raja Ampat a biodiversity epicenter?",
+      "Explain the community-based surveillance model",
+      "Value of coral reef tourism vs fisheries",
+      "How does the Blue Park Award affect rating?",
+      "What are the risks from mining?"
     ]
   }
 }

@@ -1,19 +1,22 @@
-# Semantica × MARIS POC: Conceptual Framework for Ecological-Financial Knowledge Integration
+# Semantica × MARIS POC: The Hybrid Intelligence Model
 
 **A Strategic Mapping for Building the Translation Layer Between Marine Ecology and Blue Finance**
+**Where The Logic is Physically Linked to Science**
 
-*Prepared: January 2026 | For: Jay Gutierrez & Mohd Kaif (Semantica)*
+*Updated: February 2026 | For: Jay Gutierrez & Mohd Kaif (Semantica)*
 
 ---
 
 ## Executive Summary
 
-This document provides a comprehensive conceptual mapping for developing a proof-of-concept (POC) AI-powered knowledge integration system that bridges marine ecological science with financial frameworks. The POC will demonstrate how Semantica's semantic infrastructure can power MARIS (Marine Asset Risk Intelligence System) to translate irreducible ecological complexity into investment-grade natural capital assets.
+This document describes the conceptual framework for the **Hybrid Intelligence Model**—the integration of MARIS (Marine Asset Risk Intelligence System) and Semantica. Unlike traditional RAG, this model treats **extracted axioms as executable logic**.
 
-**Core Objective:** Build a working prototype that demonstrates clear, auditable connections between:
-1. Marine ecological foundations → Ecosystem services
-2. Ecosystem services → Economic value
-3. Ecological data modalities → Decision-grade financial metrics
+**Core Objective:** Build a system where every financial claim is traces back to a **Semantica Bridge Axiom**—a graph node that physically links:
+1.  **Ecological Data** (Layer 1) → **System Logic**
+2.  **Bridge Axioms** (Layer 2) → **Physical Graph Edges**
+3.  **Financial Metrics** (Layer 3) → **Deterministically Derived Value**
+
+The application "thinks" by traversing these specific, verified pathways, ensuring zero hallucination for financial claims.
 
 ---
 

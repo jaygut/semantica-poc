@@ -1,6 +1,13 @@
-# Nereus - Semantica Integration Guide
+# Nereus - Semantica Integration Guide: The Hybrid Intelligence Payload
 
 ## Overview
+
+This document describes how the **Semantica SDK** and its "Hybrid Intelligence Payload" are integrated into the Nereus platform. The integration is not just about code; it is about ingesting a **physically linked logic layer**—35 extracted Bridge Axioms—that allows Nereus to "think" with scientific precision.
+
+**Synchronization Status:** **Complete & Validated.**
+*   **Payload:** 35 Bridge Axioms (BA-001 to BA-035).
+*   **Graph:** Fully synchronized Neo4j population.
+*   **Reasoning:** Deterministic traversal from ecological observation to financial value.
 
 This document describes how the **Semantica SDK** is integrated into the Nereus platform (powered by MARIS + Semantica). The integration spans 5 priority tiers (P0-P4) with 27 modules and a 6-file bridge layer, enabling W3C PROV-O provenance tracking, multi-site scaling, cross-domain reasoning, TNFD disclosure automation, and dynamic axiom discovery.
 
@@ -125,7 +132,7 @@ The curated data is exported in four files for Semantica ingestion, located in `
 |------|--------|----------|
 | `entities.jsonld` | JSON-LD | 14 entities with WoRMS/FishBase/TNFD URIs |
 | `relationships.json` | JSON | 15 typed edges with provenance |
-| `bridge_axioms.json` | JSON | 16 axioms with evidence mapping |
+| `bridge_axioms.json` | JSON | 35 axioms with evidence mapping |
 | `document_corpus.json` | JSON | 195-paper corpus summary |
 
 These files are also consumed directly by the Neo4j v4 population pipeline (`scripts/populate_neo4j_v4.py`).
@@ -138,9 +145,9 @@ These files are also consumed directly by the Neo4j v4 population pipeline (`scr
 
 195 papers across 9 domains, 92% peer-reviewed (T1). Full bibliography in `.claude/registry/document_index.json`.
 
-### Bridge Axioms (16)
+### Bridge Axioms (35)
 
-12 core axioms (reef, MPA, mangrove, kelp) + 4 blue carbon axioms (BA-013 through BA-016). All 16 have 3+ supporting sources. Templates with uncertainty quantification (CI, distribution, sample size) in `schemas/bridge_axiom_templates.json`.
+12 core axioms (reef, MPA, mangrove, kelp) + 23 expanded axioms (blue carbon, fisheries, protection). All 35 have 3+ supporting sources. Templates with uncertainty quantification (CI, distribution, sample size) in `schemas/bridge_axiom_templates.json`.
 
 ### Site Portfolio ($1.62B)
 

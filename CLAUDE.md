@@ -4,9 +4,14 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**Nereus** is a provenance-first blue finance platform, powered by MARIS + Semantica. It creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital.
+**Nereus** is a "Hybrid" Intelligence platform, powered by MARIS + Semantica. It creates auditable, **physically linked** pathways from peer-reviewed ecological science to investment-grade financial metrics. Unlike standard RAG, Nereus executes logic (axioms) extracted directly from literature.
 
-**Current Status:** v4 Global Scaling Platform with Intelligence Upgrade - Neo4j knowledge graph (953+ nodes with 15 Concept nodes pending population, 244+ edges), 9 MPA sites across 4 ocean basins, $1.62B aggregate ESV. FastAPI (9 endpoints, 6 query categories), four Streamlit dashboards (v1-v4), 195 papers, 35 bridge axioms (expanded from 16). 787 unit tests + integration suite.
+**Current Status:** v4 Global Scaling Platform with Intelligence Upgrade - **Fully Synchronized Payload** (35 Bridge Axioms). Neo4j knowledge graph (953+ nodes), 9 MPA sites, $1.62B ESV. The system "thinks" by traversing graph edges that represent scientific proofs.
+
+## Core Philosophy: "The Logic is Physically Linked"
+1.  **No Hallucinations:** Financial claims must be the result of a deterministic graph traversal.
+2.  **Payload-Driven:** The intelligence comes from the *extracted axioms* (the payload), not the LLM's training data.
+3.  **Semantica First:** All new intelligence starts with Extraction -> Axiom Formation -> Graph Ingestion. We do not hardcode logic; we extract it.
 
 ---
 

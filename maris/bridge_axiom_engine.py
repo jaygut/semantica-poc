@@ -3,117 +3,46 @@ Bridge axiom application engine for MARIS POC
 
 TIMELINE: Week 3-4 (Phase 2: Knowledge Extraction & Bridge Axioms via Semantica) - Registers axioms as Semantica inference rules
 IMPLEMENTATION PRIORITY: Critical - Core translation layer
-MILESTONE: Implement all 12 bridge axioms, validate against Cabo Pulmo (±20% tolerance)
+MILESTONE: Implement all 35 bridge axioms, validate against Cabo Pulmo (±20% tolerance)
 
-This module implements the 12 bridge axioms as Semantica inference rules for translating
+This module implements the 35 bridge axioms as Semantica inference rules for translating
 ecological data into financial metrics. All axioms are registered in Semantica and executed
 via Semantica's inference engine.
 
-BRIDGE AXIOMS (BA-001 through BA-012):
+BRIDGE AXIOMS (BA-001 through BA-035):
 
-• BA-001: Biomass-Tourism Elasticity
-  - Pattern: IF biomass_increase(Site, X%) THEN tourism_revenue_increase(Site, X * 0.346%)
-  - Coefficients: elasticity = 0.346, CI = [0.28, 0.41], r² = 0.67
-  - Applicable: coral_reef, rocky_reef, kelp_forest
-  - Sources: Wielgus 2010, Sala 2021
-  - Example: 100% biomass increase → 34.6% tourism increase
+The registry contains 35 logic rules organizing ecological data into financial instruments.
+See `ai_docs/bridge_axiom_registry.md` for the complete list.
 
-• BA-002: No-take MPA Biomass Multiplier
-  - Pattern: IF mpa_type(Site, 'no_take') AND enforced(Site, TRUE) AND age_years(Site, N)
-            THEN biomass_ratio(Site, f(N))
-  - Coefficients: base_ratio = 6.7, recovery_rate = 0.42/year, time_to_max = 10 years
-  - NEOLI Modifiers: no_take=2.0, enforced=1.8, old=1.5, large=1.3, isolated=1.2
-  - Applicable: all habitats
-  - Sources: Edgar 2014, Hopf 2024, Aburto 2011
-  - Example: 10-year enforced no-take → 670% of unprotected biomass
+TIER 1: ECOLOGICAL MECHANICS (Foundation)
+• BA-001: MPA Biomass -> Tourism Value (Cabral 2025)
+• BA-002: No-take Reserves -> Biomass Multiplier (Hopf 2024)
+• BA-013: Seagrass Carbon Sequestration Rate (0.84 tCO2/ha/yr)
+• BA-017: Mangrove Sequestration Rate (6.4 tCO2/ha/yr)
+• BA-023: Coral Reef Wave Attenuation (97% reduction)
+• BA-027: MPA Spillover -> Fisheries Catch (2.0x multiplier)
 
-• BA-003: Sea Otter-Kelp-Carbon Cascade
-  - Pattern: IF otter_presence(Site, TRUE) THEN carbon_storage_multiplier(Site, 12)
-  - Coefficients: NPP with otters = 313-900 g C/m²/yr, without = 25-70 g C/m²/yr,
-                  carbon_value = $205-408M
-  - Mechanism: Otters → Urchin control → Kelp release → Carbon sequestration
-  - Applicable: kelp_forest
-  - Sources: Wilmers 2012, Estes 2021
-  - Example: Otter presence → 12× kelp carbon storage
+TIER 2: FINANCIAL TRANSLATION (The Bridge)
+• BA-004: Coral Reef Flood Protection ($272B Global Value)
+• BA-008: Seagrass Carbon Credit Value ($7,768/ha over 10yr)
+• BA-009: Mangrove Restoration BCR (10.68 Benefit-Cost Ratio)
+• BA-014: Carbon Stock -> Credit Value ($30/tCO2 base)
+• BA-020: Additionality Discount (50% applied to non-verified)
+• BA-021: Permanence Buffer Deduction (17.5% risk pool)
 
-• BA-004: Coral Reef Flood Protection
-  - Pattern: IF reef_condition(Site, C) AND reef_area_km2(Site, A)
-            THEN flood_protection_value_usd(Site, f(C, A))
-  - Coefficients: global_value = $272B/yr, wave_energy_reduction = 97% (healthy), 70% (degraded)
-  - Applicable: coral_reef
-  - Sources: Beck 2018, Storlazzi 2021
-  - Example: Healthy reef → $272B/yr global flood protection
-
-• BA-005: Mangrove Flood Protection
-  - Pattern: IF mangrove_area_ha(Site, A) THEN flood_protection_value_usd_yr(Site, A * V_ha)
-  - Coefficients: global_value = $65B/yr, value_per_ha = $4,185 (mean), $239 (median),
-                  surge_decay = 18 cm/km
-  - Applicable: mangrove_forest
-  - Sources: Menendez 2020, Salem 2012
-  - Example: Mangrove → $65B/yr global flood protection
-
-• BA-006: Ecosystem Service Unit Values
-  - Pattern: IF habitat_type(Site, T) THEN ecosystem_service_value_usd_ha_yr(Site, V_T)
-  - Coefficients: coral_reef = $352,249/ha, mangrove = $193,845/ha,
-                  seagrass = $28,916/ha, kelp = $19,000/ha
-  - Applicable: all habitats
-  - Sources: Costanza 2014, Barbier 2011
-  - Example: Coral reef → $352,249/ha/yr ecosystem services
-
-• BA-007: Mangrove Carbon Stock
-  - Pattern: IF mangrove_condition(Site, C) THEN carbon_stock_mg_ha(Site, f(C))
-  - Coefficients: undisturbed = 1,023 Mg C/ha, regenerated = 890, degraded = 717,
-                  aquaculture_converted = 579
-  - Applicable: mangrove_forest
-  - Sources: Donato 2011, Murdiyarso 2023
-  - Example: Undisturbed mangrove → 1,023 Mg C/ha (4× tropical forest)
-
-• BA-008: Seagrass Carbon Credit Value
-  - Pattern: IF seagrass_project_type(Site, T) AND area_ha(Site, A)
-            THEN carbon_revenue_usd_10yr(Site, f(T, A))
-  - Coefficients: credit_range = $198-$15,337/ha, net_offset = 0.42 t CO2e/ha/yr
-  - Applicable: seagrass_meadow
-  - Sources: Duarte 2025, Oreska 2020
-  - Example: Seagrass conservation → $198-$15,337/ha carbon credits
-
-• BA-009: Mangrove Restoration BCR
-  - Pattern: IF restoration_investment_usd(Site, I) AND discount_rate(R)
-            THEN bcr(Site, f(I, R))
-  - Coefficients: BCR_range = [6.35, 15.0], global_20yr_investment = $40-52B,
-                  global_20yr_net_gain = $231-725B
-  - Applicable: mangrove_forest
-  - Sources: Zeng 2025
-  - Example: Mangrove restoration → 6.35-15.0 benefit-cost ratio
-
-• BA-010: Kelp Forest Global Value
-  - Pattern: IF kelp_forest_area_ha(Site, A) THEN ecosystem_service_value_usd_yr(Site, A * V_ha)
-  - Coefficients: global_value = $500B/yr, value_per_ha = $64,400-$147,100,
-                  fisheries = 60%, carbon = 15%, nutrient_cycling = 25%
-  - Applicable: kelp_forest
-  - Sources: Eger 2023
-  - Example: Kelp forest → $500B/yr global ecosystem services
-
-• BA-011: MPA Climate Resilience
-  - Pattern: IF mpa_type(Site, 'no_take') THEN climate_resilience_multiplier(Site, 1.2)
-  - Coefficients: kelp_recovery_premium = 8.5%, coral_stability = 21-38% increase,
-                  disturbance_impact_reduction = 30%
-  - Applicable: coral_reef, kelp_forest
-  - Sources: Ortiz-Villa 2024, Mellin 2016
-  - Example: No-take MPA → 1.2× climate resilience
-
-• BA-012: Reef Degradation Fisheries Loss
-  - Pattern: IF structural_complexity_loss(Site, X%) THEN fisheries_productivity_loss(Site, ~X%)
-  - Coefficients: productivity_loss_at_degradation = 35%, range = [25%, 50%]
-  - Applicable: coral_reef
-  - Sources: Rogers 2018
-  - Example: Reef degradation → 35% fisheries productivity loss
+TIER 3: ADVANCED INSTRUMENTS (Alpha Generation)
+• BA-026: Parametric Insurance Trigger (>130km/h wind speed)
+• BA-030: Species Richness -> Portfolio Risk Hedge (-11% risk)
+• BA-031: Debt-for-Nature Swap Ratio (40% sovereign discount)
+• BA-032: Blue Bond Yield Spread (-150bps greenium)
+• BA-034: Natural Capital Depreciation (2.5% p.a. degraded)
 
 KEY FUNCTIONS TO IMPLEMENT:
 
 Axiom Loading:
 • load_axioms(axioms_path: Path) -> list[dict]
   - Load bridge axiom templates from schemas/bridge_axiom_templates.json
-  - Parse all 12 axioms
+  - Parse all 35 axioms
   - Validate axiom structure
   - Return list of axiom dictionaries
 

@@ -22,6 +22,9 @@ TEMPLATES: dict[str, dict] = {
             MATCH (m:MPA {name: $site_name})
             OPTIONAL MATCH (m)-[:GENERATES]->(es:EcosystemService)
             OPTIONAL MATCH (es)<-[:TRANSLATES]-(ba:BridgeAxiom)-[:EVIDENCED_BY]->(d:Document)
+            OPTIONAL MATCH (m)-[:HAS_ECOLOGICAL_PROCESS]->(p:EcologicalProcess)
+            OPTIONAL MATCH (m)-[:USING_MECHANISM]->(fm:FinancialMechanism)
+            OPTIONAL MATCH (m)-[rel:FACES_RISK]->(r:Risk)
             RETURN m.name AS site, m.total_esv_usd AS total_esv,
                    m.biomass_ratio AS biomass_ratio, m.neoli_score AS neoli_score,
                    m.asset_rating AS asset_rating,
@@ -33,6 +36,24 @@ TEMPLATES: dict[str, dict] = {
                        ci_high: es.ci_high
                    }) AS services,
                    collect(DISTINCT {
+                       name: fm.name,
+                       type: fm.type,
+                       amount_usd: fm.amount_usd,
+                       description: fm.description
+                   }) AS financial_mechanisms,
+                   collect(DISTINCT {
+                       process: p.name,
+                       description: p.description,
+                       effect: p.effect,
+                       chain: p.chain
+                   }) AS ecological_processes,
+                   collect(DISTINCT {
+                       risk: r.name,
+                       severity: rel.severity,
+                       likelihood: rel.likelihood,
+                       evidence: rel.evidence
+                   }) AS risks,
+                   collect(DISTINCT {
                        axiom_id: ba.axiom_id,
                        axiom_name: ba.name,
                        doi: d.doi,
@@ -40,8 +61,7 @@ TEMPLATES: dict[str, dict] = {
                        year: d.year,
                        tier: d.source_tier
                    }) AS evidence
-            LIMIT $result_limit
-        """,
+            LIMIT $result_limit        """,
         "parameters": ["site_name"],
     },
     "provenance_drilldown": {
@@ -130,6 +150,7 @@ TEMPLATES: dict[str, dict] = {
         "cypher": """
             MATCH (m:MPA {name: $site_name})
             OPTIONAL MATCH (m)-[:GENERATES]->(es:EcosystemService)
+            OPTIONAL MATCH (m)-[:FACES_RISK]->(r:Risk)
             OPTIONAL MATCH (ba:BridgeAxiom)-[:APPLIES_TO]->(m)
             WHERE ba.category IN ['ecological_to_service', 'ecological_to_ecological']
             OPTIONAL MATCH (ba)-[:EVIDENCED_BY]->(d:Document)
@@ -141,6 +162,12 @@ TEMPLATES: dict[str, dict] = {
                        ci_low: es.ci_low,
                        ci_high: es.ci_high
                    }) AS services,
+                   collect(DISTINCT {
+                       risk: r.name,
+                       severity: r.severity,
+                       likelihood: r.likelihood,
+                       evidence: r.evidence
+                   }) AS risks,
                    collect(DISTINCT {
                        axiom_id: ba.axiom_id,
                        axiom_name: ba.name,

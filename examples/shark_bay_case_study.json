@@ -436,9 +436,13 @@
     "doi_backed": 5,
     "url_only": 1,
     "doi_coverage_pct": 83.3,
-    "evidence_tier_distribution": {"T1": 6, "T2": 0, "T3": 0, "T4": 0}
+    "evidence_tier_distribution": {
+      "T1": 6,
+      "T2": 0,
+      "T3": 0,
+      "T4": 0
+    }
   },
-
   "demo_value": {
     "why_shark_bay_for_demo": [
       "World's largest seagrass carbon stock - compelling blue carbon narrative",
@@ -453,6 +457,14 @@
       "How does Shark Bay compare to Cabo Pulmo?",
       "What are the climate risks for Shark Bay's seagrass?",
       "What evidence supports Shark Bay's blue carbon estimates?"
+    ],
+    "quick_queries": [
+      "What is the value of the seagrass carbon stock?",
+      "How did the 2011 heatwave impact carbon storage?",
+      "Explain the permanence risk for blue carbon",
+      "Dugong population status and risks",
+      "How does the UNESCO status help governance?",
+      "Compare seagrass carbon to mangrove carbon"
     ]
   }
 }

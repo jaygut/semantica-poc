@@ -249,7 +249,7 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
     st.markdown(
-        "<span style='font-size:13px;color:#64748B'>Bridge Axioms: 16</span>",
+        "<span style='font-size:13px;color:#64748B'>Bridge Axioms: 35</span>",
         unsafe_allow_html=True,
     )
 
