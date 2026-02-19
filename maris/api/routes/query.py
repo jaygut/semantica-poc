@@ -297,16 +297,8 @@ def query(request: QueryRequest):
     params: dict = {}
     if category in _SITE_REQUIRED_CATEGORIES:
         if not site:
-            if _is_portfolio_scope_question(request.question):
-                category = "open_domain"
-            else:
-                raise HTTPException(
-                    status_code=422,
-                    detail=(
-                        "This query requires a specific site. "
-                        "Please include a site name (e.g., Cabo Pulmo National Park)."
-                    ),
-                )
+            logger.info("Siteless %s query coerced to open_domain", category)
+            category = "open_domain"
         if category in _SITE_REQUIRED_CATEGORIES and site:
             params["site_name"] = site
     elif category == "axiom_explanation":
@@ -364,6 +356,9 @@ def query(request: QueryRequest):
         sites = classification.get("sites", [])
         if len(sites) >= 2:
             params["site_names"] = sites
+        elif _is_portfolio_scope_question(request.question):
+            logger.info("Portfolio-scope comparison query coerced to open_domain")
+            category = "open_domain"
         else:
             raise HTTPException(
                 status_code=422,

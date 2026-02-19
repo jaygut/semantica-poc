@@ -510,7 +510,7 @@
       "axiom_id": "BA-013",
       "name": "seagrass_carbon_sequestration_rate",
       "domain_from": "ecological",
-      "domain_to": "financial",
+      "domain_to": "service",
       "description": "Seagrass meadows sequester atmospheric CO2 through photosynthetic fixation and long-term burial of organic carbon in anoxic sediment soils",
       "formula": "IF seagrass_area_ha(Site, A) AND seagrass_condition(Site, C) THEN carbon_sequestration_tCO2_yr(Site, A * rate * C)",
       "coefficients": {

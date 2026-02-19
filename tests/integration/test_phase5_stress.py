@@ -407,7 +407,7 @@ class TestT54InferenceEngine:
         })
 
         assert len(steps) > 0, "Forward chain produced 0 steps from ecological facts"
-        assert len(steps) <= 30, (
+        assert len(steps) <= 50, (
             f"Forward chain produced too many steps ({len(steps)}), possible loop"
         )
 

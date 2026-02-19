@@ -44,6 +44,11 @@
       "confidence": 0.8
     }
   ],
+  "ecological_status": {
+    "primary_habitat": "coral_reef",
+    "secondary_habitats": ["seagrass_meadow", "mangrove_forest"],
+    "dominant_species": "Lutjanus argentiventris"
+  },
   "neoli_assessment": {
     "@type": "NEOLIAssessment",
     "assessment_date": "2024",

@@ -755,14 +755,23 @@ def _extract_site_meta(data: dict[str, Any], path: Path) -> dict[str, Any]:
     # Determine primary habitat
     primary_habitat = eco.get("primary_habitat", "")
     if not primary_habitat:
-        # Infer from ecosystem services or site data
-        svc_types = [
-            s.get("service_type", "") for s in esv_block.get("services", [])
-        ]
-        if "carbon_sequestration" in svc_types:
-            primary_habitat = "seagrass_meadow"
-        elif any("reef" in site.get("name", "").lower() for _ in [1]):
-            primary_habitat = "coral_reef"
+        # Step 1: habitats array - pick by largest extent_km2
+        habitats_list = data.get("habitats", [])
+        if habitats_list:
+            best = max(habitats_list, key=lambda h: h.get("extent_km2", 0), default={})
+            primary_habitat = best.get("habitat_id", "")
+
+        # Step 2: name/service heuristics only if habitats array also unavailable
+        if not primary_habitat:
+            svc_types = [
+                s.get("service_type", "") for s in esv_block.get("services", [])
+            ]
+            if any("reef" in site.get("name", "").lower() for _ in [1]):
+                primary_habitat = "coral_reef"
+            elif "seagrass" in " ".join(svc_types):
+                primary_habitat = "seagrass_meadow"
+            elif "carbon_sequestration" in svc_types:
+                primary_habitat = "mangrove_forest"
 
     # Determine total ESV
     total_esv = fin.get("market_price_esv_usd", 0)

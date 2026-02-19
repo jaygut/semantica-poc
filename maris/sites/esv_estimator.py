@@ -136,9 +136,11 @@ def _parse_coeff_value(val_obj: Any) -> dict[str, float]:
 
 
 def _infer_service_type(name: str, category: str) -> str:
-    """Map axiom name to service category."""
-    if "carbon" in name:
-        return "blue_carbon"
+    """Map axiom name to canonical service category."""
+    if "credit" in name:
+        return "carbon_credits"
+    if "carbon" in name or "sequestration" in name:
+        return "carbon_sequestration"
     if "flood" in name or "protection" in name or "attenuation" in name:
         return "coastal_protection"
     if "fisheries" in name or "spillover" in name:

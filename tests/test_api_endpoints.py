@@ -302,13 +302,19 @@ class TestQueryEndpoint:
         client,
         auth_headers,
     ):
-        """Strict mode should reject site-required categories without explicit site context."""
+        """Siteless site-required queries coerce to open_domain and return 200 with high provenance_risk."""
         mock_cls.classify.return_value = {
             "category": "site_valuation",
             "site": None,
             "metrics": [],
             "confidence": 0.8,
             "caveats": [],
+        }
+        mock_exec.execute_with_strategy.return_value = {
+            "error": "No site context provided.",
+            "error_type": "no_results",
+            "results": [],
+            "record_count": 0,
         }
         import maris.api.routes.query as qmod
         qmod._llm = MagicMock()
@@ -323,8 +329,9 @@ class TestQueryEndpoint:
             json={"question": "What is it worth?"},
             headers=auth_headers,
         )
-        assert response.status_code == 422
-        assert "requires a specific site" in response.json()["detail"]
+        assert response.status_code == 200
+        body = response.json()
+        assert body.get("provenance_risk") == "high"
 
     @patch("maris.api.routes.query._init_components")
     @patch("maris.api.routes.query._classifier")
