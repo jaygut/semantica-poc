@@ -32,6 +32,8 @@ _REQUIRED_FIELDS = {
     "caveats": list,
 }
 
+_VALID_EVIDENCE_TIERS = {"T1", "T2", "T3", "T4", "N/A"}
+
 
 def is_graph_context_empty(graph_context: dict | list | None) -> bool:
     """Check if graph context has no usable data.
@@ -147,6 +149,13 @@ def validate_evidence_dois(evidence: list[dict]) -> tuple[list[dict], list[str]]
 
     for idx, item in enumerate(evidence, start=1):
         entry = dict(item)
+        entry["tier"] = normalise_tier(entry.get("tier"))
+        entry["title"] = str(entry.get("title") or "").strip()
+        year = entry.get("year")
+        if isinstance(year, str) and year.strip().isdigit():
+            year = int(year.strip())
+        entry["year"] = year if isinstance(year, int) and year > 0 else None
+
         doi = entry.get("doi", "") or ""
         result = verifier.verify(doi)
         entry["doi"] = result.normalized_doi
@@ -167,6 +176,81 @@ def validate_evidence_dois(evidence: list[dict]) -> tuple[list[dict], list[str]]
         validated.append(entry)
 
     return validated, issues
+
+
+def normalise_tier(tier: object) -> str:
+    """Normalize evidence tiers to canonical values.
+
+    Unknown or missing tiers are rendered as ``N/A`` so downstream UI never
+    displays silent blanks for provenance quality.
+    """
+    if tier is None:
+        return "N/A"
+    value = str(tier).strip().upper()
+    if not value or value == "NONE":
+        return "N/A"
+    return value if value in _VALID_EVIDENCE_TIERS else "N/A"
+
+
+def _evidence_item_completeness(entry: dict) -> float:
+    """Score one evidence item for provenance completeness (0.0-1.0)."""
+    title_ok = bool(str(entry.get("title") or "").strip())
+
+    year = entry.get("year")
+    year_ok = isinstance(year, int) and year > 0
+
+    tier_ok = normalise_tier(entry.get("tier")) in {"T1", "T2", "T3", "T4"}
+    doi_ok = bool(str(entry.get("doi") or "").strip())
+
+    return (title_ok + year_ok + tier_ok + doi_ok) / 4
+
+
+def build_provenance_summary(evidence: list[dict], answer: str = "") -> dict:
+    """Build provenance quality metrics and warnings for one response."""
+    evidence_count = len(evidence)
+    doi_citation_count = sum(1 for item in evidence if item.get("doi"))
+    completeness_scores = [_evidence_item_completeness(item) for item in evidence]
+    evidence_completeness_score = (
+        sum(completeness_scores) / evidence_count if evidence_count else 0.0
+    )
+
+    provenance_warnings: list[str] = []
+    if evidence_count == 0:
+        provenance_warnings.append(
+            "No citation-grade evidence items were returned for this response."
+        )
+    if evidence_count > 0 and doi_citation_count == 0:
+        provenance_warnings.append(
+            "Evidence items are present but none include a DOI citation."
+        )
+    if any(normalise_tier(item.get("tier")) == "N/A" for item in evidence):
+        provenance_warnings.append(
+            "Some evidence items have unknown source tier (rendered as N/A)."
+        )
+    if evidence_count > 0 and evidence_completeness_score < 0.75:
+        provenance_warnings.append(
+            "Evidence metadata is incomplete (missing DOI/year/tier/title on one or more items)."
+        )
+
+    if extract_numerical_claims(answer) and doi_citation_count == 0:
+        provenance_warnings.append(
+            "Numerical claims are present without DOI citations."
+        )
+
+    if evidence_count == 0 or doi_citation_count == 0:
+        provenance_risk = "high"
+    elif evidence_completeness_score < 0.75:
+        provenance_risk = "medium"
+    else:
+        provenance_risk = "low"
+
+    return {
+        "evidence_count": evidence_count,
+        "doi_citation_count": doi_citation_count,
+        "evidence_completeness_score": round(evidence_completeness_score, 4),
+        "provenance_warnings": provenance_warnings,
+        "provenance_risk": provenance_risk,
+    }
 
 
 def extract_numerical_claims(text: str) -> list[str]:
@@ -267,7 +351,11 @@ def verify_numerical_claims(
 
 
 def validate_llm_response(
-    response: dict, graph_context: dict | list | None
+    response: dict,
+    graph_context: dict | list | None,
+    *,
+    category: str | None = None,
+    strict_deterministic: bool = False,
 ) -> dict:
     """Full validation pipeline for an LLM response.
 
@@ -304,6 +392,27 @@ def validate_llm_response(
         all_caveats.append(
             f"Unverified numerical claims: {', '.join(unverified)}"
         )
+
+    summary = build_provenance_summary(cleaned.get("evidence", []), answer)
+    cleaned.update(summary)
+    if summary["provenance_warnings"]:
+        all_caveats.extend(summary["provenance_warnings"])
+
+    if strict_deterministic and summary["evidence_count"] == 0:
+        all_caveats.append(
+            "Deterministic mode requires citation-grade provenance; returning insufficiency response."
+        )
+        cleaned["answer"] = (
+            "Insufficient citation-grade evidence in the knowledge graph to provide "
+            "a deterministic investor-grade answer for this query."
+        )
+    elif strict_deterministic and summary["doi_citation_count"] == 0 and unverified:
+        all_caveats.append(
+            "Deterministic mode detected numerical claims without DOI-backed citations."
+        )
+
+    if category:
+        cleaned["query_category"] = category
 
     cleaned["caveats"] = all_caveats
     return cleaned
