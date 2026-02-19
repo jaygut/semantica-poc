@@ -44,6 +44,11 @@
       "confidence": 0.8
     }
   ],
+  "ecological_status": {
+    "primary_habitat": "coral_reef",
+    "secondary_habitats": ["seagrass_meadow", "mangrove_forest"],
+    "dominant_species": "Lutjanus argentiventris"
+  },
   "neoli_assessment": {
     "@type": "NEOLIAssessment",
     "assessment_date": "2024",
@@ -488,12 +493,12 @@
       "Can we find other sites with similar potential?"
     ],
     "quick_queries": [
-      "What drove the 463% biomass recovery?",
-      "Explain the 'predator release cascade'",
-      "How does the NEOLI score explain success?",
-      "What is the total ecosystem service value?",
-      "Compare Cabo Pulmo to Galapagos",
-      "Which species are driving recovery?"
+      "What drove biomass recovery in Cabo Pulmo National Park?",
+      "What evidence supports the valuation of Cabo Pulmo National Park?",
+      "How does NEOLI influence Cabo Pulmo National Park asset rating?",
+      "What is the total ecosystem service value of Cabo Pulmo National Park?",
+      "What are the key risks for Cabo Pulmo National Park?",
+      "Compare Cabo Pulmo National Park and Galapagos Marine Reserve by total ecosystem service value."
     ]
   }
 }

@@ -11,6 +11,7 @@ import json
 import logging
 from typing import Any
 
+from maris.provenance.doi_verifier import get_doi_verifier
 from maris.provenance.bridge_axiom import BridgeAxiom
 from maris.reasoning.inference_engine import InferenceRule
 
@@ -96,7 +97,12 @@ def _template_entry_to_axiom(entry: dict[str, Any]) -> BridgeAxiom:
     evidence = entry.get("evidence_sources", [])
     source_doi = ""
     if evidence:
-        source_doi = evidence[0].get("doi", "")
+        verifier = get_doi_verifier()
+        for source in evidence:
+            verification = verifier.verify(source.get("doi", ""))
+            if verification.doi_valid and verification.normalized_doi:
+                source_doi = verification.normalized_doi
+                break
 
     # Map category to domain pair
     input_domain, output_domain = _category_to_domains(

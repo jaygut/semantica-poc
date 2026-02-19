@@ -63,6 +63,28 @@ class TestResponseFormatting:
         result = format_response(raw)
         assert result["confidence_breakdown"] == breakdown
 
+    def test_format_response_passes_provenance_metadata(self):
+        """format_response should preserve provenance completeness metadata."""
+        raw = {
+            "answer": "Test answer",
+            "confidence": 0.42,
+            "evidence": [{"title": "No DOI"}],
+            "axioms_used": [],
+            "graph_path": [],
+            "caveats": [],
+            "evidence_count": 1,
+            "doi_citation_count": 0,
+            "evidence_completeness_score": 0.5,
+            "provenance_warnings": ["missing DOI"],
+            "provenance_risk": "high",
+        }
+        result = format_response(raw)
+        assert result["evidence_count"] == 1
+        assert result["doi_citation_count"] == 0
+        assert result["evidence_completeness_score"] == 0.5
+        assert result["provenance_warnings"] == ["missing DOI"]
+        assert result["provenance_risk"] == "high"
+
 
 # ---- LLM response validation ----
 
@@ -104,3 +126,18 @@ class TestLLMResponseValidation:
         # $29.27M should be verified against context
         assert isinstance(result["verified_claims"], list)
         assert isinstance(result["unverified_claims"], list)
+
+    def test_validate_llm_response_populates_provenance_summary_fields(self):
+        """validate_llm_response should include provenance summary metadata."""
+        raw = {
+            "answer": "The value is $50M.",
+            "confidence": 0.7,
+            "evidence": [{"title": "Untiered source", "doi": "", "tier": None}],
+            "caveats": [],
+        }
+        result = validate_llm_response(raw, graph_context={"value": 50_000_000})
+        assert "evidence_count" in result
+        assert "doi_citation_count" in result
+        assert "evidence_completeness_score" in result
+        assert "provenance_warnings" in result
+        assert "provenance_risk" in result

@@ -345,8 +345,10 @@ V4_CSS = """
         border: 1px solid rgba(91, 155, 213, 0.3) !important;
         color: #5B9BD5 !important;
         border-radius: 20px !important; font-size: 14px !important;
-        font-weight: 500 !important; padding: 6px 16px !important;
-        white-space: nowrap !important; transition: all 0.2s ease !important;
+        font-weight: 500 !important; padding: 10px 14px !important;
+        white-space: normal !important; line-height: 1.3 !important;
+        word-break: break-word !important; text-align: left !important;
+        min-height: 64px !important; transition: all 0.2s ease !important;
     }
     .stApp [data-testid="stHorizontalBlock"] button[kind="secondary"]:hover {
         background: rgba(91, 155, 213, 0.2) !important;
@@ -753,14 +755,23 @@ def _extract_site_meta(data: dict[str, Any], path: Path) -> dict[str, Any]:
     # Determine primary habitat
     primary_habitat = eco.get("primary_habitat", "")
     if not primary_habitat:
-        # Infer from ecosystem services or site data
-        svc_types = [
-            s.get("service_type", "") for s in esv_block.get("services", [])
-        ]
-        if "carbon_sequestration" in svc_types:
-            primary_habitat = "seagrass_meadow"
-        elif any("reef" in site.get("name", "").lower() for _ in [1]):
-            primary_habitat = "coral_reef"
+        # Step 1: habitats array - pick by largest extent_km2
+        habitats_list = data.get("habitats", [])
+        if habitats_list:
+            best = max(habitats_list, key=lambda h: h.get("extent_km2", 0), default={})
+            primary_habitat = best.get("habitat_id", "")
+
+        # Step 2: name/service heuristics only if habitats array also unavailable
+        if not primary_habitat:
+            svc_types = [
+                s.get("service_type", "") for s in esv_block.get("services", [])
+            ]
+            if any("reef" in site.get("name", "").lower() for _ in [1]):
+                primary_habitat = "coral_reef"
+            elif "seagrass" in " ".join(svc_types):
+                primary_habitat = "seagrass_meadow"
+            elif "carbon_sequestration" in svc_types:
+                primary_habitat = "mangrove_forest"
 
     # Determine total ESV
     total_esv = fin.get("market_price_esv_usd", 0)

@@ -72,6 +72,10 @@ class TestTierBaseConfidence:
         nodes = [{"source_tier": "TX"}]
         assert _tier_base_confidence(nodes) == 0.50
 
+    def test_missing_tier_defaults_to_050(self):
+        nodes = [{"doi": "10.1234/test"}]
+        assert _tier_base_confidence(nodes) == 0.50
+
     def test_empty_returns_zero(self):
         assert _tier_base_confidence([]) == 0.0
 
@@ -156,6 +160,9 @@ class TestCompositeConfidence:
         assert "path_discount" in result
         assert "staleness_discount" in result
         assert "sample_factor" in result
+        assert "evidence_quality_factor" in result
+        assert "citation_coverage_factor" in result
+        assert "completeness_factor" in result
         assert "explanation" in result
 
     def test_empty_list_returns_zero_composite(self):
@@ -187,3 +194,32 @@ class TestCompositeConfidence:
         r1 = calculate_response_confidence(nodes, n_hops=1, current_year=2026)
         r3 = calculate_response_confidence(nodes, n_hops=3, current_year=2026)
         assert r3["composite"] <= r1["composite"]
+
+    def test_caps_confidence_when_no_evidence_items(self):
+        nodes = [{"source_tier": "T1", "doi": "10.1234/a", "year": 2024}]
+        result = calculate_response_confidence(
+            nodes,
+            n_hops=1,
+            current_year=2026,
+            provenance_summary={
+                "evidence_count": 0,
+                "doi_citation_count": 0,
+                "has_numeric_claims": True,
+            },
+        )
+        assert result["composite"] <= 0.25
+        assert "confidence capped" in result["explanation"]
+
+    def test_caps_confidence_when_numeric_claims_have_no_doi(self):
+        nodes = [{"source_tier": "T1", "doi": "", "year": 2024}]
+        result = calculate_response_confidence(
+            nodes,
+            n_hops=1,
+            current_year=2026,
+            provenance_summary={
+                "evidence_count": 2,
+                "doi_citation_count": 0,
+                "has_numeric_claims": True,
+            },
+        )
+        assert result["composite"] <= 0.35

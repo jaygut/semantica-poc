@@ -1,6 +1,6 @@
 """Format query responses with citations, evidence tables, and claim verification."""
 
-from maris.query.validators import validate_evidence_dois
+from maris.query.validators import normalise_tier, validate_evidence_dois
 
 
 def format_response(raw_response: dict) -> dict:
@@ -21,6 +21,17 @@ def format_response(raw_response: dict) -> dict:
         "verified_claims": raw_response.get("verified_claims", []),
         "unverified_claims": raw_response.get("unverified_claims", []),
         "confidence_breakdown": raw_response.get("confidence_breakdown"),
+        "evidence_count": raw_response.get("evidence_count", len(evidence)),
+        "doi_citation_count": raw_response.get(
+            "doi_citation_count",
+            sum(1 for item in evidence if item.get("doi")),
+        ),
+        "evidence_completeness_score": raw_response.get(
+            "evidence_completeness_score",
+            0.0 if not evidence else 1.0,
+        ),
+        "provenance_warnings": raw_response.get("provenance_warnings", []),
+        "provenance_risk": raw_response.get("provenance_risk", "high" if not evidence else "low"),
     }
 
 
@@ -59,9 +70,13 @@ def _normalise_evidence_item(item: dict) -> dict:
     return {
         "doi": doi,
         "doi_url": f"https://doi.org/{doi}" if doi else None,
+        "doi_valid": item.get("doi_valid"),
+        "doi_verification_status": item.get("doi_verification_status"),
+        "doi_verification_reason": item.get("doi_verification_reason"),
+        "doi_resolver": item.get("doi_resolver"),
         "title": item.get("title", ""),
         "year": item.get("year"),
-        "tier": item.get("tier", ""),
+        "tier": normalise_tier(item.get("tier")),
         "page_ref": item.get("page_ref"),
         "quote": item.get("quote", item.get("finding", "")),
     }

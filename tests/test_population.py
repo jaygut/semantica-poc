@@ -55,6 +55,32 @@ class TestPopulateDocuments:
         assert count == 1
         mock_session.run.assert_called()
 
+    def test_placeholder_doi_skipped(self):
+        from maris.graph.population import _populate_documents
+
+        mock_session = MagicMock()
+        mock_cfg = MagicMock()
+
+        mock_registry_path = MagicMock()
+        mock_registry_path.exists.return_value = True
+        mock_cfg.registry_path = mock_registry_path
+
+        registry_data = {
+            "documents": {
+                "doc_placeholder": {
+                    "doi": "10.1016/j.marpol.2025.106XXX",
+                    "title": "Placeholder DOI",
+                    "year": 2025,
+                },
+            }
+        }
+
+        with patch("maris.graph.population._load_json", return_value=registry_data):
+            count = _populate_documents(mock_session, mock_cfg)
+
+        assert count == 0
+        mock_session.run.assert_not_called()
+
     def test_missing_registry_returns_zero(self):
         from maris.graph.population import _populate_documents
 
@@ -150,3 +176,29 @@ class TestNumericalValidation:
         """Biomass recovery ratio must be positive."""
         ratio = 4.63
         assert ratio > 0
+
+
+class TestVerifiedDoiHelper:
+    def test_verified_doi_normalizes(self):
+        from maris.graph.population import _verified_doi
+
+        doi, status, reason = _verified_doi(
+            "https://doi.org/10.1038/s41467-025-59204-4",
+            context="unit test",
+        )
+
+        assert doi == "10.1038/s41467-025-59204-4"
+        assert status in {"verified", "unverified", "unresolvable"}
+        assert isinstance(reason, str)
+
+    def test_verified_doi_blocks_placeholder(self):
+        from maris.graph.population import _verified_doi
+
+        doi, status, reason = _verified_doi(
+            "10.1016/j.marpol.2025.106XXX",
+            context="unit test",
+        )
+
+        assert doi is None
+        assert status == "placeholder_blocked"
+        assert "placeholder" in reason.lower()

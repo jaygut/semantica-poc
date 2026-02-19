@@ -27,6 +27,8 @@ from maris.provenance.bridge_axiom import BridgeAxiom, TranslationChain
 from maris.provenance.integrity import IntegrityVerifier
 from maris.provenance.bridge_axiom_registry import BridgeAxiomRegistry
 from maris.provenance.certificate import ProvenanceCertificate
+from maris.provenance.models import DoiVerificationResult
+from maris.provenance.doi_verifier import DoiVerifier
 
 __all__ = [
     "InMemoryStorage",
@@ -39,4 +41,6 @@ __all__ = [
     "IntegrityVerifier",
     "BridgeAxiomRegistry",
     "ProvenanceCertificate",
+    "DoiVerificationResult",
+    "DoiVerifier",
 ]

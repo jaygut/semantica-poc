@@ -130,6 +130,18 @@ The v4 and v3 live modes query through the Neo4j graph (populated by `scripts/po
 
 **v4 Sidebar:** Mode toggle (Live/Demo), service health panel, site selector (all 9 sites), scenario slider, system metadata.
 
+#### Ask Nereus — confidence transparency
+
+Ask Nereus includes a **“How confidence is computed (full transparency)”** expander.
+
+- Confidence is **provenance-locked** to the visible evidence payload.
+- Confidence should be interpreted as **confidence-in-evidence-support for the returned answer**, not a probability that a site-specific valuation number exists.
+
+#### Diligence artifacts
+
+- Report: `ai_docs/audits_and_reports/graphrag_all_sites_invariant_audit_inprocess_postfix_20260219-021927.md`
+- CSV: `ai_docs/audits_and_reports/graphrag_all_sites_invariant_audit_inprocess_postfix_20260219-021927.csv`
+
 **Architecture notes:**
 - Dynamic site discovery via `get_all_sites()` in `shared.py` - scans `examples/*_case_study.json`
 - `LEAPGeneratorV4` auto-discovers all case study files for TNFD disclosure generation

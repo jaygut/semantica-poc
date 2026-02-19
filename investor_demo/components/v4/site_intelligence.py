@@ -200,6 +200,71 @@ def _render_habitat_axiom_map() -> None:
 # ---------------------------------------------------------------------------
 
 
+def _resolve_provenance_summary(data: dict[str, Any]) -> dict[str, Any]:
+    """Return normalized provenance summary for a site.
+
+    Prefers the case study's ``provenance_summary`` object and falls back to
+    deriving counts from ``provenance.data_sources`` when missing.
+    """
+    prov = data.get("provenance", {}).get("data_sources", [])
+    total_sources = len(prov)
+    doi_backed = sum(1 for p in prov if p.get("doi"))
+    url_only = sum(1 for p in prov if not p.get("doi") and p.get("url"))
+    tier_dist = {"T1": 0, "T2": 0, "T3": 0, "T4": 0}
+    for src in prov:
+        tier = src.get("source_tier")
+        if tier in tier_dist:
+            tier_dist[tier] += 1
+    doi_coverage = round((doi_backed / total_sources) * 100, 1) if total_sources else 0.0
+
+    derived = {
+        "total_sources": total_sources,
+        "doi_backed": doi_backed,
+        "url_only": url_only,
+        "doi_coverage_pct": doi_coverage,
+        "evidence_tier_distribution": tier_dist,
+    }
+
+    summary = data.get("provenance_summary")
+    if isinstance(summary, dict):
+        summary_tier_dist = summary.get("evidence_tier_distribution", {})
+        candidate = {
+            "total_sources": int(summary.get("total_sources", 0) or 0),
+            "doi_backed": int(summary.get("doi_backed", 0) or 0),
+            "url_only": int(summary.get("url_only", 0) or 0),
+            "doi_coverage_pct": float(summary.get("doi_coverage_pct", 0.0) or 0.0),
+            "evidence_tier_distribution": {
+                "T1": int(summary_tier_dist.get("T1", 0) or 0),
+                "T2": int(summary_tier_dist.get("T2", 0) or 0),
+                "T3": int(summary_tier_dist.get("T3", 0) or 0),
+                "T4": int(summary_tier_dist.get("T4", 0) or 0),
+            },
+        }
+
+        # Accept curated summaries when internally consistent; they may include
+        # sources counted outside provenance.data_sources (e.g., section-level citations).
+        tier_sum = sum(candidate["evidence_tier_distribution"].values())
+        if (
+            candidate["total_sources"] >= 0
+            and candidate["doi_backed"] >= 0
+            and candidate["url_only"] >= 0
+            and 0.0 <= candidate["doi_coverage_pct"] <= 100.0
+            and candidate["doi_backed"] <= candidate["total_sources"]
+            and candidate["url_only"] <= candidate["total_sources"]
+            and tier_sum == candidate["total_sources"]
+        ):
+            return candidate
+
+        site_name = data.get("site", {}).get("name", "unknown")
+        logger.warning(
+            "provenance_summary invalid for %s; falling back to derived values",
+            site_name,
+        )
+        return derived
+
+    return derived
+
+
 def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
     """Render per-site data quality breakdown."""
     st.markdown(
@@ -212,9 +277,11 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
     total_market_price = 0
     total_avoided_cost = 0
     total_other = 0
+    total_sources = 0
     total_doi = 0
     total_url = 0
     total_caveats = 0
+    portfolio_tiers = {"T1": 0, "T2": 0, "T3": 0, "T4": 0}
 
     site_rows: list[dict[str, Any]] = []
 
@@ -226,10 +293,13 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
         n_avoided = sum(1 for s in services if s.get("valuation_method") == "avoided_cost")
         n_other = len(services) - n_market - n_avoided
 
-        # Count DOI vs URL-only citations
-        prov = data.get("provenance", {}).get("data_sources", [])
-        n_doi = sum(1 for p in prov if p.get("doi"))
-        n_url_only = sum(1 for p in prov if not p.get("doi") and p.get("url"))
+        # Use explicit provenance summaries when present.
+        prov_summary = _resolve_provenance_summary(data)
+        n_sources = prov_summary["total_sources"]
+        n_doi = prov_summary["doi_backed"]
+        n_url_only = prov_summary["url_only"]
+        doi_coverage_pct = prov_summary["doi_coverage_pct"]
+        tier_dist = prov_summary["evidence_tier_distribution"]
 
         caveats = data.get("caveats", [])
         assessment_year = data.get("ecological_status", {}).get("assessment_year", "")
@@ -240,9 +310,12 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
         total_market_price += n_market
         total_avoided_cost += n_avoided
         total_other += n_other
+        total_sources += n_sources
         total_doi += n_doi
         total_url += n_url_only
         total_caveats += len(caveats)
+        for tier in ("T1", "T2", "T3", "T4"):
+            portfolio_tiers[tier] += tier_dist.get(tier, 0)
 
         site_rows.append({
             "name": name,
@@ -250,11 +323,16 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
             "n_market": n_market,
             "n_avoided": n_avoided,
             "n_other": n_other,
+            "n_sources": n_sources,
             "n_doi": n_doi,
             "n_url_only": n_url_only,
+            "doi_coverage_pct": doi_coverage_pct,
+            "tier_dist": tier_dist,
             "n_caveats": len(caveats),
             "assessment_year": assessment_year,
         })
+
+    portfolio_doi_coverage = round((total_doi / total_sources) * 100, 1) if total_sources else 0.0
 
     # Portfolio summary strip
     cols = st.columns(5)
@@ -262,8 +340,16 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
         ("Total Services", str(total_services), f"Across {len(sites_data)} sites"),
         ("Market-Price", str(total_market_price), f"{total_market_price}/{total_services} services"),
         ("Avoided-Cost", str(total_avoided_cost), f"{total_avoided_cost}/{total_services} services"),
-        ("DOI-Backed Sources", str(total_doi), f"vs {total_url} URL-only"),
-        ("Total Caveats", str(total_caveats), "Documented limitations"),
+        (
+            "DOI Coverage",
+            f"{portfolio_doi_coverage:.1f}%",
+            f"{total_doi}/{total_sources} DOI-backed",
+        ),
+        (
+            "Evidence Tier Mix",
+            f"T1:{portfolio_tiers['T1']} T2:{portfolio_tiers['T2']}",
+            f"T3:{portfolio_tiers['T3']} T4:{portfolio_tiers['T4']}",
+        ),
     ]
     for i, (label, value, context) in enumerate(summary_kpis):
         with cols[i]:
@@ -289,8 +375,11 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
         "<th style='text-align:center'>Market-Price</th>"
         "<th style='text-align:center'>Avoided-Cost</th>"
         "<th style='text-align:center'>Other</th>"
+        "<th style='text-align:center'>Sources</th>"
         "<th style='text-align:center'>DOI Sources</th>"
         "<th style='text-align:center'>URL-Only</th>"
+        "<th style='text-align:center'>DOI Coverage</th>"
+        "<th style='text-align:center'>Tier Mix (T1/T2/T3/T4)</th>"
         "<th style='text-align:center'>Caveats</th>"
         "<th style='text-align:center'>Assessment Year</th></tr>"
     )
@@ -308,8 +397,14 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
             f"<td style='text-align:center;color:#66BB6A;font-weight:600'>{sr['n_market']}</td>"
             f"<td style='text-align:center;color:#FFA726;font-weight:600'>{sr['n_avoided']}</td>"
             f"<td style='text-align:center;color:#94A3B8'>{sr['n_other']}</td>"
+            f"<td style='text-align:center'>{sr['n_sources']}</td>"
             f"<td style='text-align:center;color:#5B9BD5;font-weight:600'>{sr['n_doi']}</td>"
             f"<td style='text-align:center;color:#94A3B8'>{sr['n_url_only']}</td>"
+            f"<td style='text-align:center;color:#CBD5E1;font-weight:600'>{sr['doi_coverage_pct']:.1f}%</td>"
+            f"<td style='text-align:center;color:#94A3B8'>"
+            f"{sr['tier_dist'].get('T1', 0)}/{sr['tier_dist'].get('T2', 0)}/"
+            f"{sr['tier_dist'].get('T3', 0)}/{sr['tier_dist'].get('T4', 0)}"
+            f"</td>"
             f"<td style='text-align:center'>{sr['n_caveats']}</td>"
             f"<td style='text-align:center'>{sr['assessment_year']}</td>"
             f"</tr>"

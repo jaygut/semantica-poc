@@ -87,6 +87,26 @@ _GENERIC_QUERY_PATTERNS = (
     "what evidence supports",
 )
 
+_LOW_CONFIDENCE_THRESHOLD = 0.35
+_NORMALIZATION_NOTE = "Query normalized for deterministic GraphRAG execution"
+_GOVERNANCE_SIGNAL_TERMS = (
+    "governance",
+    "unesco",
+    "transboundary",
+    "surveillance",
+    "award",
+    "methodology",
+    "issuance",
+    "partnership",
+)
+_DOI_STATUS_COLORS: dict[str, str] = {
+    "verified": "#2ECC71",
+    "unverified": "#F59E0B",
+    "missing": "#64748B",
+    "invalid_format": "#EF5350",
+    "placeholder_blocked": "#8B5CF6",
+}
+
 
 # ---------------------------------------------------------------------------
 # Public entry point
@@ -132,6 +152,9 @@ def render_graphrag_chat(
         unsafe_allow_html=True,
     )
 
+    with st.expander("How confidence is computed (full transparency)", expanded=False):
+        st.markdown(_confidence_methodology_markdown())
+
     # Quick query buttons
     quick_queries = _build_quick_queries(site_short, context_name)
     st.markdown(
@@ -140,16 +163,14 @@ def render_graphrag_chat(
         "Quick queries</div>",
         unsafe_allow_html=True,
     )
-    row1 = st.columns(3)
-    for i, q in enumerate(quick_queries[:3]):
-        with row1[i]:
-            if st.button(q, key=f"v4_quick_{i}", use_container_width=True):
-                _submit_query(client, q, mode)
-    row2 = st.columns(3)
-    for i, q in enumerate(quick_queries[3:]):
-        with row2[i]:
-            if st.button(q, key=f"v4_quick_{i + 3}", use_container_width=True):
-                _submit_query(client, q, mode)
+    grid_cols = 2
+    for row_start in range(0, len(quick_queries), grid_cols):
+        row = st.columns(grid_cols)
+        for col_idx, q in enumerate(quick_queries[row_start: row_start + grid_cols]):
+            button_idx = row_start + col_idx
+            with row[col_idx]:
+                if st.button(q, key=f"v4_quick_{button_idx}", use_container_width=True):
+                    _submit_query(client, q, mode)
 
     with st.form(key="v4_query_form", clear_on_submit=True):
         user_input = st.text_input(
@@ -313,6 +334,93 @@ def _contextualize_query(question: str, site: str | None) -> str:
     return question
 
 
+def _has_comparison_intent(question: str) -> bool:
+    q_lower = question.lower()
+    return any(kw in q_lower for kw in _COMPARISON_KEYWORDS)
+
+
+def _normalize_query(
+    effective_question: str,
+    site: str | None,
+    classification: dict,
+) -> tuple[str, str | None]:
+    """Normalize low-confidence/open-domain prompts into deterministic forms."""
+    if not site:
+        return effective_question, None
+
+    q_lower = effective_question.lower()
+    category = classification.get("category", "")
+    confidence = float(classification.get("confidence", 0.0) or 0.0)
+    sites = classification.get("sites") or []
+
+    if _has_comparison_intent(effective_question) and len(sites) < 2:
+        return (
+            f"What is the total ecosystem service value of {site}?",
+            "Comparison intent had fewer than two resolved sites.",
+        )
+
+    needs_normalization = category == "open_domain" or confidence < _LOW_CONFIDENCE_THRESHOLD
+    if not needs_normalization:
+        return effective_question, None
+
+    if any(term in q_lower for term in _GOVERNANCE_SIGNAL_TERMS):
+        return (
+            f"What are the key governance and climate risks for {site}?",
+            "Low-confidence governance prompt normalized to deterministic risk query.",
+        )
+    if any(term in q_lower for term in ("evidence", "doi", "source", "support")):
+        return (
+            f"What evidence supports the valuation of {site}?",
+            "Low-confidence provenance prompt normalized to deterministic evidence query.",
+        )
+
+    return (
+        f"What is the total ecosystem service value of {site}?",
+        "Low-confidence prompt normalized to deterministic valuation query.",
+    )
+
+
+def _resolve_doi_status(item: dict) -> str:
+    status = str(item.get("doi_verification_status") or "").strip().lower()
+    if status in _DOI_STATUS_COLORS:
+        return status
+
+    doi = str(item.get("doi") or "").strip()
+    if not doi:
+        return "missing"
+
+    doi_valid = item.get("doi_valid")
+    if doi_valid is True:
+        return "verified"
+    if doi_valid is False:
+        return "unverified"
+    return "unverified"
+
+
+def _doi_status_metrics(evidence: list[dict]) -> dict[str, int]:
+    metrics = {"verified": 0, "unverified": 0, "missing_invalid": 0}
+    for item in evidence:
+        status = _resolve_doi_status(item)
+        if status == "verified":
+            metrics["verified"] += 1
+        elif status == "unverified":
+            metrics["unverified"] += 1
+        else:
+            metrics["missing_invalid"] += 1
+    return metrics
+
+
+def _doi_status_badge(status: str, reason: str | None = None) -> str:
+    color = _DOI_STATUS_COLORS.get(status, _DOI_STATUS_COLORS["unverified"])
+    label = status.replace("_", " ")
+    title = _escape(reason or "")
+    return (
+        f'<span title="{title}" style="display:inline-block;padding:4px 8px;border-radius:999px;'
+        f"font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase;"
+        f'color:#E2E8F0;background:{color};opacity:0.95">{_escape(label)}</span>'
+    )
+
+
 def _submit_query(client: Any, question: str, mode: str) -> None:
     """Submit a query, run classification, and store results."""
     site = _detect_site(question)
@@ -323,10 +431,25 @@ def _submit_query(client: Any, question: str, mode: str) -> None:
     effective_question = _contextualize_query(question, site)
 
     classification = _run_classifier(effective_question) if mode == "live" else {}
+    normalized_question = effective_question
+    normalization_note: str | None = None
+    if mode == "live" and classification:
+        normalized_question, normalization_reason = _normalize_query(
+            effective_question,
+            site,
+            classification,
+        )
+        if normalization_reason and normalized_question != effective_question:
+            normalization_note = (
+                f"{_NORMALIZATION_NOTE}: {normalization_reason}"
+            )
+            classification = _run_classifier(normalized_question)
+            classification["normalization_note"] = normalization_note
+            classification["normalized_from"] = effective_question
 
     try:
         start = time.monotonic()
-        response = client.query(effective_question, site=site)
+        response = client.query(normalized_question, site=site)
         elapsed_ms = (time.monotonic() - start) * 1000
         response["_query_ms"] = round(elapsed_ms, 1)
     except Exception:
@@ -341,7 +464,7 @@ def _submit_query(client: Any, question: str, mode: str) -> None:
                 fallback_client = StaticBundleClient(precomputed_path=_v4_path)
             else:
                 fallback_client = StaticBundleClient()
-            response = fallback_client.query(question, site=site)
+            response = fallback_client.query(normalized_question, site=site)
             if (
                 response.get("confidence", 0) == 0.0
                 and response.get("answer", "").startswith("I don't have")
@@ -368,9 +491,15 @@ def _submit_query(client: Any, question: str, mode: str) -> None:
                 "caveats": ["API error"], "graph_path": [], "_query_ms": 0.0,
             }
 
+    if normalization_note:
+        response.setdefault("caveats", [])
+        if normalization_note not in response["caveats"]:
+            response["caveats"].append(normalization_note)
+
     st.session_state.v4_chat_history.append({
         "question": question,
         "effective_question": effective_question,
+        "normalized_question": normalized_question,
         "response": response,
         "classification": classification,
     })
@@ -444,6 +573,17 @@ def _render_chat_panel(resp: dict, idx: int) -> None:
     axioms = resp.get("axioms_used", [])
     caveats = resp.get("caveats", [])
     evidence = resp.get("evidence", [])
+    evidence_count = int(resp.get("evidence_count", len(evidence)) or 0)
+    doi_citation_count = int(
+        resp.get("doi_citation_count", sum(1 for item in evidence if item.get("doi")))
+        or 0
+    )
+    completeness = float(
+        resp.get("evidence_completeness_score", 0.0 if evidence_count == 0 else 1.0)
+        or 0.0
+    )
+    provenance_warnings = list(resp.get("provenance_warnings", []))
+    provenance_risk = str(resp.get("provenance_risk", "high" if evidence_count == 0 else "low")).lower()
 
     badge_html = confidence_badge(confidence)
     tags_html = "".join(axiom_tag(ax) for ax in axioms) if axioms else ""
@@ -458,6 +598,41 @@ def _render_chat_panel(resp: dict, idx: int) -> None:
     st.markdown(
         f'<div style="font-size:17px;color:#B0BEC5;line-height:1.7;'
         f'padding:8px 0 16px 0">{answer_html}</div>',
+        unsafe_allow_html=True,
+    )
+
+    risk_styles = {
+        "low": ("#22C55E", "rgba(34,197,94,0.16)", "rgba(34,197,94,0.35)"),
+        "medium": ("#F59E0B", "rgba(245,158,11,0.16)", "rgba(245,158,11,0.35)"),
+        "high": ("#EF4444", "rgba(239,68,68,0.16)", "rgba(239,68,68,0.35)"),
+    }
+    risk_color, risk_bg, risk_border = risk_styles.get(
+        provenance_risk,
+        risk_styles["high"],
+    )
+    warnings_html = "".join(
+        f'<li style="color:#FCA5A5;font-size:13px;line-height:1.5;margin-bottom:2px">{_escape(w)}</li>'
+        for w in provenance_warnings
+    )
+    st.markdown(
+        '<div style="background:#0B1220;border:1px solid #243352;border-radius:8px;'
+        'padding:10px 12px;margin:6px 0 12px 0">'
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px">'
+        f'<span style="display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;'
+        f'text-transform:uppercase;letter-spacing:0.4px;color:{risk_color};background:{risk_bg};border:1px solid {risk_border}">'
+        f'Provenance risk: {_escape(provenance_risk)}</span>'
+        f'<span style="display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;'
+        'color:#CBD5E1;background:rgba(51,65,85,0.35);border:1px solid rgba(100,116,139,0.35)">'
+        f'Evidence items: {evidence_count}</span>'
+        f'<span style="display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;'
+        'color:#CBD5E1;background:rgba(51,65,85,0.35);border:1px solid rgba(100,116,139,0.35)">'
+        f'DOI citations: {doi_citation_count}</span>'
+        f'<span style="display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;'
+        'color:#CBD5E1;background:rgba(51,65,85,0.35);border:1px solid rgba(100,116,139,0.35)">'
+        f'Completeness: {int(completeness * 100)}%</span>'
+        '</div>'
+        + (f'<ul style="margin:0;padding-left:18px">{warnings_html}</ul>' if warnings_html else "")
+        + '</div>',
         unsafe_allow_html=True,
     )
 
@@ -516,6 +691,16 @@ def _render_pipeline_panel(resp: dict, classification: dict, mode: str) -> None:
         unsafe_allow_html=True,
     )
 
+    normalization_note = classification.get("normalization_note")
+    if normalization_note:
+        st.markdown(
+            '<div class="pipeline-step complete">'
+            '<div class="step-header"><span class="step-num">↻</span> NORMALIZE</div>'
+            f'<div class="step-detail">{_escape(normalization_note)}</div>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+
     # Step 2: QUERY GRAPH
     graph_path = resp.get("graph_path", [])
     query_ms = resp.get("_query_ms", 0.0)
@@ -543,13 +728,25 @@ def _render_pipeline_panel(resp: dict, classification: dict, mode: str) -> None:
 
     # Step 3: SYNTHESIZE
     evidence = resp.get("evidence", [])
-    doi_count = sum(1 for e in evidence if e.get("doi"))
+    evidence_count = int(resp.get("evidence_count", len(evidence)) or 0)
+    doi_count = int(resp.get("doi_citation_count", sum(1 for e in evidence if e.get("doi"))) or 0)
+    completeness = float(
+        resp.get("evidence_completeness_score", 0.0 if evidence_count == 0 else 1.0)
+        or 0.0
+    )
+    provenance_risk = _escape(str(resp.get("provenance_risk", "high" if evidence_count == 0 else "low")))
+    doi_metrics = _doi_status_metrics(evidence)
     st.markdown(
         '<div class="pipeline-step complete">'
         '<div class="step-header"><span class="step-num">3</span> SYNTHESIZE</div>'
         '<div class="step-detail">'
         f"DOI citations: {doi_count}<br>"
-        f"Evidence items: {len(evidence)}<br>"
+        f"Verified DOI: {doi_metrics['verified']}<br>"
+        f"Unverified DOI: {doi_metrics['unverified']}<br>"
+        f"Missing/invalid DOI: {doi_metrics['missing_invalid']}<br>"
+        f"Evidence items: {evidence_count}<br>"
+        f"Completeness: {int(completeness * 100)}%<br>"
+        f"Provenance risk: <code>{provenance_risk}</code><br>"
         f"Response length: {len(resp.get('answer', ''))} chars"
         "</div></div>",
         unsafe_allow_html=True,
@@ -598,22 +795,27 @@ def _evidence_table(evidence: list[dict]) -> str:
         return ""
     rows = ""
     for item in evidence:
-        tier = item.get("tier", "")
+        tier = str(item.get("tier") or "N/A").upper()
         title = _escape(item.get("title", "Unknown"))
         doi = item.get("doi", "")
         doi_url = item.get("doi_url", "")
-        year = item.get("year", "")
-        badge = tier_badge(tier) if tier else ""
+        year = item.get("year")
+        year_label = _escape(str(year)) if year else "N/A"
+        status = _resolve_doi_status(item)
+        status_reason = item.get("doi_verification_reason")
+        badge = tier_badge(tier)
         link = (
             f'<a href="{_escape(doi_url)}" target="_blank" style="color:#5B9BD5;text-decoration:none">{_escape(doi)}</a>'
-            if doi_url else _escape(doi)
+            if doi_url and doi else (_escape(doi) if doi else "N/A")
         )
+        status_badge = _doi_status_badge(status, status_reason)
         rows += (
             f"<tr>"
             f'<td style="padding:12px 16px;border-bottom:1px solid #1E2D48">{badge}</td>'
             f'<td style="padding:12px 16px;color:#CBD5E1;border-bottom:1px solid #1E2D48;font-size:15px">{title}</td>'
             f'<td style="padding:12px 16px;border-bottom:1px solid #1E2D48;font-size:14px">{link}</td>'
-            f'<td style="padding:12px 16px;color:#94A3B8;border-bottom:1px solid #1E2D48;font-size:14px">{year}</td>'
+            f'<td style="padding:12px 16px;border-bottom:1px solid #1E2D48">{status_badge}</td>'
+            f'<td style="padding:12px 16px;color:#94A3B8;border-bottom:1px solid #1E2D48;font-size:14px">{year_label}</td>'
             f"</tr>"
         )
     return (
@@ -621,6 +823,7 @@ def _evidence_table(evidence: list[dict]) -> str:
         '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">Tier</th>'
         '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">Title</th>'
         '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">DOI</th>'
+        '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">DOI Status</th>'
         '<th style="text-align:left;padding:12px 16px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#94A3B8;border-bottom:1px solid #243352;background:rgba(10,18,38,0.5)">Year</th>'
         f"</tr></thead><tbody>{rows}</tbody></table>"
     )
@@ -631,6 +834,33 @@ def _evidence_table(evidence: list[dict]) -> str:
 # ---------------------------------------------------------------------------
 
 
+def _confidence_methodology_markdown() -> str:
+    """Explain confidence scoring in investor-facing plain language."""
+    return (
+        "### Confidence transparency (investor view)\n"
+        "**What this score means**\n"
+        "- Confidence measures how strongly the returned answer is supported by the visible citation-grade evidence.\n"
+        "- It is **not** a direct probability that a site has an investable valuation number.\n\n"
+        "**Computation used by the API**\n"
+        "`composite = tier_base x path_discount x staleness_discount x sample_factor x evidence_quality_factor x citation_coverage_factor x completeness_factor`\n\n"
+        "**Factor definitions**\n"
+        "- `tier_base`: average source tier strength (T1 > T2 > T3 > T4).\n"
+        "- `path_discount`: penalty for longer inference chains.\n"
+        "- `staleness_discount`: penalty for older data.\n"
+        "- `sample_factor`: boost for multiple independent sources.\n"
+        "- `evidence_quality_factor`: share of evidence with known quality tiers.\n"
+        "- `citation_coverage_factor`: share of evidence with DOI citations.\n"
+        "- `completeness_factor`: metadata completeness (DOI + year + tier).\n\n"
+        "**Fail-closed guardrails**\n"
+        "- If no evidence items are returned, confidence is capped at **25%**.\n"
+        "- If numeric claims have no DOI citations, confidence is capped at **35%**.\n\n"
+        "**How to interpret this in investor conversations**\n"
+        "- Read confidence together with **Provenance risk**, DOI status, and caveats.\n"
+        "- A moderate/high confidence can still describe evidence support for a narrative, not a site-specific valuation figure.\n"
+        "- Use the **Show confidence breakdown** expander on each answer to inspect the exact factors behind that score.\n"
+    )
+
+
 def _confidence_breakdown_html(breakdown: dict) -> str:
     """Render confidence breakdown as a mini-table with bar gauges."""
     factors = [
@@ -638,6 +868,9 @@ def _confidence_breakdown_html(breakdown: dict) -> str:
         ("Path Length", "path_discount"),
         ("Data Freshness", "staleness_discount"),
         ("Source Coverage", "sample_factor"),
+        ("Evidence Quality", "evidence_quality_factor"),
+        ("Citation Coverage", "citation_coverage_factor"),
+        ("Completeness", "completeness_factor"),
     ]
     rows = ""
     for label, key in factors:

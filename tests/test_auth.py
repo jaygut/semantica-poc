@@ -19,6 +19,7 @@ from maris.api.auth import (
     _check_rate_limit,
     _rate_buckets,
 )
+import maris.settings as _settings_mod
 
 
 @pytest.fixture(autouse=True)
@@ -28,10 +29,20 @@ def _reset_config_and_env():
     maris.config._config = None
     os.environ["MARIS_DEMO_MODE"] = "false"
     os.environ["MARIS_API_KEY"] = "test-api-key"
+    _rate_buckets.clear()
+    # Directly mutate the Pydantic settings singleton so get_config() sees demo_mode=False
+    # even when the singleton was created with demo_mode=True by an earlier integration test.
+    _orig_demo_mode = _settings_mod.settings.demo_mode
+    _orig_api_key = _settings_mod.settings.api_key
+    _settings_mod.settings.demo_mode = False
+    _settings_mod.settings.api_key = "test-api-key"
     yield
-    # Restore demo mode for other test files
+    # Restore settings singleton for other test files
+    _settings_mod.settings.demo_mode = _orig_demo_mode
+    _settings_mod.settings.api_key = _orig_api_key
     os.environ["MARIS_DEMO_MODE"] = "true"
     maris.config._config = None
+    _rate_buckets.clear()
 
 
 @pytest.fixture
@@ -129,27 +140,21 @@ class TestAuthEnforcement:
 
         mock_cls = MagicMock()
         mock_cls.classify.return_value = {
-            "category": "site_valuation",
-            "site": "Cabo Pulmo National Park",
+            "category": "open_domain",
+            "site": None,
             "metrics": [],
-            "confidence": 0.9,
+            "confidence": 0.6,
             "caveats": [],
         }
         mock_exec = MagicMock()
-        mock_exec.execute.return_value = {
-            "results": [{"site": "Cabo Pulmo National Park", "total_esv": 29270000}],
-            "record_count": 1,
+        mock_exec.execute_with_strategy.return_value = {
+            "error": "No results for demo query.",
+            "error_type": "no_results",
+            "results": [],
+            "record_count": 0,
         }
         mock_exec.get_provenance_edges.return_value = []
         mock_gen = MagicMock()
-        mock_gen.generate.return_value = {
-            "answer": "The ESV is $29.27M.",
-            "confidence": 0.85,
-            "evidence": [],
-            "axioms_used": [],
-            "graph_path": [],
-            "caveats": [],
-        }
 
         qmod._llm = MagicMock()
         qmod._classifier = mock_cls

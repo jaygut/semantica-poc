@@ -32,6 +32,7 @@ _KEYWORD_RULES: list[tuple[str, list[str]]] = [
         r"\bwhat.+(?:evidence|research|study|studies)\b",
         r"\bhow does.+(?:translat|lead to|convert|become)",
         r"\b(?:mechanism|translat)",
+        r"\b(?:methodolog\w*|verification|verra|vcs|issuance|accounting)\b",
     ]),
     ("concept_explanation", [
         r"\bwhat\s+(?:is|are)\b.*\b(?:blue.?carbon|carbon.?credit|coastal.?protect|blue.?bond|nature.?based|tnfd|ecosystem.?service)\b",
@@ -51,10 +52,11 @@ _KEYWORD_RULES: list[tuple[str, list[str]]] = [
         r"\b(?:compar|versus|vs\.?|differ|rank|benchmark)\b",
     ]),
     ("risk_assessment", [
-        r"\b(?:risk|degrad|scenario|climate|threat|loss|lost|declin\w*|vulnerab)\b",
+        r"\b(?:risk\w*|degrad|scenario|climate|threat|loss|lost|declin\w*|vulnerab)\b",
         r"\bwhat\b.*\bif\b",
         r"\bif\b.*\bwhat\b",
         r"\bwhat\s+\w*\s*happen",
+        r"\b(?:governance|enforcement|transboundary|surveillance|unesco|award|mining|saliniz\w*)\b",
     ]),
 ]
 
@@ -97,6 +99,7 @@ def register_dynamic_sites(site_names: list[str]) -> int:
     """
     global _DYNAMIC_SITE_PATTERNS  # noqa: PLW0603
     _DYNAMIC_SITE_PATTERNS = []
+    seen_patterns: set[str] = set()
     for name in site_names:
         # Build a regex from the canonical name (case-insensitive word match)
         escaped = re.escape(name)
@@ -106,8 +109,15 @@ def register_dynamic_sites(site_names: list[str]) -> int:
         if len(parts) >= 2:
             short = re.escape(" ".join(parts[:2]))
             patterns.append(rf"\b{short}\b")
+        # Add first-word alias for common prompts like "Sundarbans" or "Cispata"
+        if parts and len(parts[0]) >= 4:
+            first = re.escape(parts[0])
+            patterns.append(rf"\b{first}\b")
         combined = "|".join(patterns)
-        _DYNAMIC_SITE_PATTERNS.append((f"(?:{combined})", name))
+        pattern = f"(?:{combined})"
+        if pattern not in seen_patterns:
+            _DYNAMIC_SITE_PATTERNS.append((pattern, name))
+            seen_patterns.add(pattern)
     return len(_DYNAMIC_SITE_PATTERNS)
 
 
@@ -202,6 +212,34 @@ class QueryClassifier:
 
         if scores:
             best = max(scores, key=scores.get)  # type: ignore[arg-type]
+
+            # Tie-break: prefer provenance/risk/concept explanation over
+            # site_valuation when explicit intent keywords are present.
+            if best == "site_valuation":
+                if (
+                    "provenance_drilldown" in scores
+                    and re.search(
+                        r"\b(?:evidence|provenance|dois?|source|paper|citation|support(?:s|ing|ed)?|translat\w*|mechanism|convert|become)\b|\blead\s+to\b",
+                        q_lower,
+                    )
+                ):
+                    best = "provenance_drilldown"
+                elif (
+                    "risk_assessment" in scores
+                    and re.search(
+                        r"\b(?:risk|climate|threat|if|happen|declin\w*|loss|vulnerab)\b",
+                        q_lower,
+                    )
+                ):
+                    best = "risk_assessment"
+                elif (
+                    "concept_explanation" in scores
+                    and re.search(
+                        r"\b(?:what\s+(?:is|are)|how\s+does|explain)\b.*\b(?:work|function|operate|mechanism)\b",
+                        q_lower,
+                    )
+                ):
+                    best = "concept_explanation"
 
             # Tie-break: prefer comparison over site_valuation when
             # comparison-specific verbs are present

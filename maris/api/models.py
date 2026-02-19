@@ -12,16 +12,30 @@ from pydantic import BaseModel, Field, field_validator
 class EvidenceItem(BaseModel):
     doi: str | None = None
     doi_url: str | None = None
+    doi_valid: bool | None = None
+    doi_verification_status: str | None = None
+    doi_verification_reason: str | None = None
+    doi_resolver: str | None = None
     title: str = ""
     year: int | None = None
-    tier: str = ""
+    tier: str = "N/A"
     page_ref: str | None = None
     quote: str = ""
 
-    @field_validator("title", "tier", "quote", mode="before")
+    @field_validator("title", "quote", mode="before")
     @classmethod
     def coerce_none_to_empty(cls, v):
         return v if v is not None else ""
+
+    @field_validator("tier", mode="before")
+    @classmethod
+    def normalise_tier(cls, v):
+        if v is None:
+            return "N/A"
+        value = str(v).strip().upper()
+        if value in {"T1", "T2", "T3", "T4"}:
+            return value
+        return "N/A"
 
 
 # ---------------------------------------------------------------------------
@@ -59,6 +73,11 @@ class QueryResponse(BaseModel):
     verified_claims: list[str] = []
     unverified_claims: list[str] = []
     confidence_breakdown: dict | None = None
+    evidence_count: int = 0
+    doi_citation_count: int = 0
+    evidence_completeness_score: float = 0.0
+    provenance_warnings: list[str] = []
+    provenance_risk: str = "high"
     query_metadata: QueryMetadata = QueryMetadata()
 
 

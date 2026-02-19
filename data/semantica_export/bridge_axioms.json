@@ -510,7 +510,7 @@
       "axiom_id": "BA-013",
       "name": "seagrass_carbon_sequestration_rate",
       "domain_from": "ecological",
-      "domain_to": "financial",
+      "domain_to": "service",
       "description": "Seagrass meadows sequester atmospheric CO2 through photosynthetic fixation and long-term burial of organic carbon in anoxic sediment soils",
       "formula": "IF seagrass_area_ha(Site, A) AND seagrass_condition(Site, C) THEN carbon_sequestration_tCO2_yr(Site, A * rate * C)",
       "coefficients": {
@@ -1140,12 +1140,12 @@
       },
       "evidence_sources": [
         {
-          "doc_id": "unknown_10_3389_fmars_2025_1620592",
+          "doc_id": "ondiviela_2025_wave_attenuation",
           "doi": "10.3389/fmars.2025.1620592",
           "support_type": "primary"
         },
         {
-          "doc_id": "unknown_10_1007_s10750-023-05244-0",
+          "doc_id": "nordlund_2023_seagrass_services_review",
           "doi": "10.1007/s10750-023-05244-0",
           "support_type": "supporting"
         }
@@ -1414,8 +1414,8 @@
           "distribution": "uniform",
           "study_sample_size": null,
           "effect_size_type": "proportion",
-          "source_doi": "10.1016/j.marpol.2025.106XXX",
-          "extraction_note": "30-50% discount on face value typical for debt-for-nature swaps. From Seychelles Blue Bond precedent (Subramaniam et al. 2025) and broader conservation finance literature.",
+          "source_doi": "10.3389/fmars.2023.899256",
+          "extraction_note": "30-50% discount on face value typical for debt-for-nature swaps. Grounded in Seychelles restructured debt case evidence (Booth and Brooks 2023) and broader conservation finance literature.",
           "uncertainty_type": "estimated_uncertainty"
         },
         "conservation_commitment_fraction": {
@@ -1425,15 +1425,15 @@
           "distribution": "triangular",
           "study_sample_size": null,
           "effect_size_type": "proportion",
-          "source_doi": "10.1016/j.marpol.2025.106XXX",
-          "extraction_note": "15-50% of swap proceeds committed to conservation activities. Seychelles committed 30% of EEZ as MPA. From Subramaniam et al. 2025.",
+          "source_doi": "10.3389/fmars.2023.899256",
+          "extraction_note": "15-50% of swap proceeds committed to conservation activities. Seychelles debt restructuring implementation reports a 30% EEZ protection commitment (Booth and Brooks 2023).",
           "uncertainty_type": "estimated_uncertainty"
         }
       },
       "evidence_sources": [
         {
-          "doc_id": "unknown_10_1016_j_marpol_2025_106XXX",
-          "doi": "10.1016/j.marpol.2025.106XXX",
+          "doc_id": "unknown_10_3389_fmars_2023_899256",
+          "doi": "10.3389/fmars.2023.899256",
           "support_type": "primary"
         },
         {

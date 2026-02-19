@@ -32,8 +32,8 @@ TEMPLATES: dict[str, dict] = {
                        service: es.service_name,
                        value_usd: es.annual_value_usd,
                        method: es.valuation_method,
-                       ci_low: es.ci_low,
-                       ci_high: es.ci_high
+                       ci_low: properties(es)['ci_low'],
+                       ci_high: properties(es)['ci_high']
                    }) AS services,
                    collect(DISTINCT {
                        name: fm.name,
@@ -74,7 +74,7 @@ TEMPLATES: dict[str, dict] = {
             WITH m, d, [r IN relationships(path) | type(r)] AS rel_types
             RETURN m.name AS site,
                    d.doi AS doi, d.title AS title, d.year AS year,
-                   d.source_tier AS tier, d.citation AS citation,
+                   d.source_tier AS tier, properties(d)['citation'] AS citation,
                    rel_types AS provenance_path
             ORDER BY d.year DESC
             LIMIT $result_limit
@@ -159,8 +159,8 @@ TEMPLATES: dict[str, dict] = {
                    collect(DISTINCT {
                        service: es.service_name,
                        value_usd: es.annual_value_usd,
-                       ci_low: es.ci_low,
-                       ci_high: es.ci_high
+                       ci_low: properties(es)['ci_low'],
+                       ci_high: properties(es)['ci_high']
                    }) AS services,
                    collect(DISTINCT {
                        risk: r.name,
@@ -173,7 +173,9 @@ TEMPLATES: dict[str, dict] = {
                        axiom_name: ba.name,
                        coefficients: ba.coefficients_json,
                        doi: d.doi,
-                       title: d.title
+                       title: d.title,
+                       year: d.year,
+                       tier: d.source_tier
                    }) AS risk_axioms
             LIMIT $result_limit
         """,
@@ -199,7 +201,7 @@ TEMPLATES: dict[str, dict] = {
             RETURN ba.axiom_id AS axiom_id, ba.name AS name,
                    ba.description AS description, ba.category AS category,
                    ba.coefficient AS coefficient,
-                   [d IN docs | {doi: d.doi, title: d.title, tier: d.source_tier}] AS evidence,
+                   [d IN docs | {doi: d.doi, title: d.title, year: d.year, tier: d.source_tier}] AS evidence,
                    [s IN services | s.service_name] AS services,
                    habitats
             LIMIT $result_limit
@@ -219,7 +221,12 @@ TEMPLATES: dict[str, dict] = {
             RETURN c.concept_id AS concept_id, c.name AS name,
                    c.description AS description, c.domain AS domain,
                    collect(DISTINCT ba.axiom_id) AS axiom_ids,
-                   collect(DISTINCT {doi: d.doi, title: d.title}) AS key_papers,
+                   collect(DISTINCT {
+                       doi: d.doi,
+                       title: d.title,
+                       year: d.year,
+                       tier: d.source_tier
+                   }) AS key_papers,
                    collect(DISTINCT h.habitat_id) AS habitats
             LIMIT $result_limit
         """,
