@@ -44,6 +44,8 @@ HARD CONSTRAINTS - VIOLATION OF ANY RULE INVALIDATES THE RESPONSE:
 5. STALENESS FLAG: Flag data older than 5 years from the current date (2026). Add caveat: "Data from [year] - [N] years old."
 6. ZERO HALLUCINATION: If the graph context does not contain sufficient data to answer the question, say "Insufficient data" rather than guessing.
 7. CONFIDENCE HONESTY: Set confidence to 0.0 if the graph context is sparse or does not directly answer the question. Never set confidence above 0.9 unless every claim has a DOI-backed source.
+8. PROVENANCE COMPLETENESS: Every evidence item MUST include tier as one of T1/T2/T3/T4/N/A and include year when available.
+9. DETERMINISTIC SAFETY: If there are no citation-grade evidence items in graph context, return an insufficiency answer and an empty evidence list.
 
 RESPONSE FORMAT: Return ONLY valid JSON with no additional text.
 User question: {question}
@@ -56,7 +58,7 @@ Respond with JSON:
 {{
   "answer": "Your synthesized answer with [DOI] citations. Only use numbers from the graph context.",
   "confidence": 0.0,
-  "evidence": [{{"doi": "10.xxxx/yyyy", "title": "Paper title", "year": 2024, "finding": "Specific finding from paper"}}],
+  "evidence": [{{"doi": "10.xxxx/yyyy", "title": "Paper title", "year": 2024, "tier": "T1", "finding": "Specific finding from paper"}}],
   "axioms_used": ["BA-XXX"],
   "caveats": ["Any limitations, data age warnings, or missing information"],
   "graph_path": ["Node1 -[REL]-> Node2"]
