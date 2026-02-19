@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from maris.api.auth import rate_limit_query
 from maris.api.models import QueryRequest, QueryResponse, QueryMetadata, EvidenceItem
+from maris.axioms.confidence import calculate_response_confidence
 from maris.config import get_config
 from maris.llm.adapter import LLMAdapter
 from maris.provenance.bridge_axiom_registry import BridgeAxiomRegistry
@@ -18,6 +19,7 @@ from maris.query.classifier import QueryClassifier, register_dynamic_sites
 from maris.query.executor import QueryExecutor
 from maris.query.generator import ResponseGenerator
 from maris.query.formatter import format_response
+from maris.query.validators import build_provenance_summary, extract_numerical_claims
 from maris.reasoning.inference_engine import InferenceEngine
 from maris.services.ingestion.discovery import discover_case_study_paths, discover_site_names
 
@@ -44,7 +46,26 @@ _STRICT_DETERMINISTIC_CATEGORIES = {
     "axiom_explanation",
     "axiom_by_concept",
 }
+_CATEGORY_HOPS = {
+    "site_valuation": 1,
+    "provenance_drilldown": 2,
+    "axiom_explanation": 2,
+    "axiom_by_concept": 2,
+    "concept_overview": 2,
+    "mechanism_chain": 2,
+    "comparison": 1,
+    "risk_assessment": 3,
+    "open_domain": 3,
+}
 _CLIENT_ERROR_TYPES = {"validation", "no_results", "unknown_template"}
+_PORTFOLIO_SCOPE_TERMS = (
+    "all characterized sites",
+    "all characterised sites",
+    "all sites",
+    "across sites",
+    "portfolio",
+    "combined",
+)
 
 
 # Comprehensive keyword-to-axiom mapping for concept-based queries
@@ -179,6 +200,12 @@ def _extract_axiom_ids(payload: Any) -> set[str]:
     return found
 
 
+def _is_portfolio_scope_question(question: str) -> bool:
+    """Return True when a prompt asks for multi-site/portfolio aggregation."""
+    q = question.lower()
+    return any(term in q for term in _PORTFOLIO_SCOPE_TERMS)
+
+
 def _build_inference_trace(
     axiom_ids: set[str],
     site: str | None,
@@ -270,14 +297,18 @@ def query(request: QueryRequest):
     params: dict = {}
     if category in _SITE_REQUIRED_CATEGORIES:
         if not site:
-            raise HTTPException(
-                status_code=422,
-                detail=(
-                    "This query requires a specific site. "
-                    "Please include a site name (e.g., Cabo Pulmo National Park)."
-                ),
-            )
-        params["site_name"] = site
+            if _is_portfolio_scope_question(request.question):
+                category = "open_domain"
+            else:
+                raise HTTPException(
+                    status_code=422,
+                    detail=(
+                        "This query requires a specific site. "
+                        "Please include a site name (e.g., Cabo Pulmo National Park)."
+                    ),
+                )
+        if category in _SITE_REQUIRED_CATEGORIES and site:
+            params["site_name"] = site
     elif category == "axiom_explanation":
         # Try to extract explicit axiom ID from question
         m = re.search(r"BA-\d{3}", request.question, re.IGNORECASE)
@@ -348,6 +379,48 @@ def query(request: QueryRequest):
     )
     if graph_result.get("error"):
         error_type = graph_result.get("error_type", "execution_failed")
+        if category == "open_domain" and error_type == "no_results":
+            elapsed_ms = int((time.monotonic() - start) * 1000)
+            formatted = format_response({
+                "answer": (
+                    "Insufficient citation-grade graph context for this open-domain query. "
+                    "Please provide a specific site, axiom ID, or mechanism."
+                ),
+                "confidence": 0.0,
+                "evidence": [],
+                "axioms_used": [],
+                "graph_path": [],
+                "caveats": [graph_result["error"]],
+                "verified_claims": [],
+                "unverified_claims": [],
+                "evidence_count": 0,
+                "doi_citation_count": 0,
+                "evidence_completeness_score": 0.0,
+                "provenance_warnings": [graph_result["error"]],
+                "provenance_risk": "high",
+            })
+            return QueryResponse(
+                answer=formatted["answer"],
+                confidence=formatted["confidence"],
+                evidence=[],
+                axioms_used=[],
+                graph_path=[],
+                caveats=formatted["caveats"],
+                verified_claims=formatted.get("verified_claims", []),
+                unverified_claims=formatted.get("unverified_claims", []),
+                confidence_breakdown=formatted.get("confidence_breakdown"),
+                evidence_count=formatted.get("evidence_count", 0),
+                doi_citation_count=formatted.get("doi_citation_count", 0),
+                evidence_completeness_score=formatted.get("evidence_completeness_score", 0.0),
+                provenance_warnings=formatted.get("provenance_warnings", []),
+                provenance_risk=formatted.get("provenance_risk", "high"),
+                query_metadata=QueryMetadata(
+                    category=category,
+                    classification_confidence=classification.get("confidence", 0.0),
+                    template_used=f"{category}:safe_open_domain_retrieval",
+                    response_time_ms=elapsed_ms,
+                ),
+            )
         status_code = 422 if error_type in _CLIENT_ERROR_TYPES else 500
         raise HTTPException(status_code=status_code, detail=graph_result["error"])
 
@@ -444,7 +517,20 @@ def query(request: QueryRequest):
 
     elapsed_ms = int((time.monotonic() - start) * 1000)
 
-    evidence = [EvidenceItem(**e) for e in formatted["evidence"][:request.max_evidence_sources]]
+    visible_evidence_payload = formatted["evidence"][:request.max_evidence_sources]
+    evidence = [EvidenceItem(**e) for e in visible_evidence_payload]
+
+    visible_evidence_dicts = [item.model_dump() for item in evidence]
+    provenance_summary = build_provenance_summary(visible_evidence_dicts, formatted.get("answer", ""))
+    provenance_summary["has_numeric_claims"] = bool(
+        extract_numerical_claims(formatted.get("answer", ""))
+    )
+    confidence_breakdown = calculate_response_confidence(
+        visible_evidence_dicts,
+        n_hops=_CATEGORY_HOPS.get(category, 1),
+        provenance_summary=provenance_summary,
+    )
+    formatted["confidence"] = confidence_breakdown["composite"]
 
     return QueryResponse(
         answer=formatted["answer"],
@@ -455,7 +541,12 @@ def query(request: QueryRequest):
         caveats=formatted["caveats"],
         verified_claims=formatted.get("verified_claims", []),
         unverified_claims=formatted.get("unverified_claims", []),
-        confidence_breakdown=formatted.get("confidence_breakdown"),
+        confidence_breakdown=confidence_breakdown,
+        evidence_count=provenance_summary["evidence_count"],
+        doi_citation_count=provenance_summary["doi_citation_count"],
+        evidence_completeness_score=provenance_summary["evidence_completeness_score"],
+        provenance_warnings=provenance_summary["provenance_warnings"],
+        provenance_risk=provenance_summary["provenance_risk"],
         query_metadata=QueryMetadata(
             category=category,
             classification_confidence=classification.get("confidence", 0.0),

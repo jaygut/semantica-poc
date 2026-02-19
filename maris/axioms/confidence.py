@@ -106,9 +106,8 @@ def _tier_base_confidence(graph_nodes: list[dict]) -> float:
     evidence quality. The separate sample_factor handles the "more sources
     = more confidence" dimension.
 
-    Tier resolution: nodes without an explicit tier default to T2 (0.80)
-    rather than T4 because their presence in the curated graph implies
-    at least institutional-level vetting.
+    Tier resolution: nodes without an explicit tier default to T4 (0.50)
+    to avoid overstating certainty when provenance metadata is incomplete.
     """
     if not graph_nodes:
         return 0.0
@@ -121,8 +120,7 @@ def _tier_base_confidence(graph_nodes: list[dict]) -> float:
         else:
             tier = node.get("source_tier") or node.get("tier")
             if tier is None:
-                # Document is in the curated graph but tier unknown - assume T2
-                confidences.append(TIER_CONFIDENCE["T2"])
+                confidences.append(TIER_CONFIDENCE["T4"])
             else:
                 confidences.append(TIER_CONFIDENCE.get(tier, 0.50))
 
@@ -198,6 +196,7 @@ def calculate_response_confidence(
     n_hops: int = 1,
     current_year: int | None = None,
     provenance_certificate: dict | None = None,
+    provenance_summary: dict | None = None,
 ) -> dict:
     """Calculate composite response confidence with full breakdown.
 
@@ -218,7 +217,8 @@ def calculate_response_confidence(
     -------
     dict with keys:
         composite, tier_base, path_discount, staleness_discount,
-        sample_factor, explanation
+        sample_factor, evidence_quality_factor, citation_coverage_factor,
+        completeness_factor, explanation
     """
     if not graph_nodes:
         return {
@@ -227,6 +227,9 @@ def calculate_response_confidence(
             "path_discount": 1.0,
             "staleness_discount": 1.0,
             "sample_factor": 0.0,
+            "evidence_quality_factor": 0.0,
+            "citation_coverage_factor": 0.0,
+            "completeness_factor": 0.0,
             "explanation": "No evidence sources available",
         }
 
@@ -246,7 +249,50 @@ def calculate_response_confidence(
     )) or len(graph_nodes)
     sample_f = _sample_size_factor(n_sources)
 
-    composite = tier_base * path_disc * stale_disc * sample_f
+    total_nodes = len(graph_nodes)
+    known_tier_nodes = sum(
+        1
+        for node in graph_nodes
+        if (node.get("source_tier") or node.get("tier")) in TIER_CONFIDENCE
+    )
+    evidence_quality_factor = known_tier_nodes / total_nodes if total_nodes else 0.0
+
+    doi_nodes = sum(1 for node in graph_nodes if node.get("doi"))
+    citation_coverage = doi_nodes / total_nodes if total_nodes else 0.0
+    citation_coverage_factor = 0.4 + 0.6 * citation_coverage if total_nodes else 0.0
+
+    completeness_scores: list[float] = []
+    for node in graph_nodes:
+        has_doi = 1.0 if node.get("doi") else 0.0
+        year = node.get("year") or node.get("measurement_year")
+        has_year = 1.0 if isinstance(year, int) and year > 0 else 0.0
+        has_tier = 1.0 if (node.get("source_tier") or node.get("tier")) in TIER_CONFIDENCE else 0.0
+        completeness_scores.append((has_doi + has_year + has_tier) / 3)
+    completeness_factor = (
+        sum(completeness_scores) / len(completeness_scores)
+        if completeness_scores
+        else 0.0
+    )
+
+    composite = (
+        tier_base
+        * path_disc
+        * stale_disc
+        * sample_f
+        * evidence_quality_factor
+        * citation_coverage_factor
+        * completeness_factor
+    )
+
+    if provenance_summary is not None:
+        evidence_count = int(provenance_summary.get("evidence_count", 0) or 0)
+        doi_citation_count = int(provenance_summary.get("doi_citation_count", 0) or 0)
+        has_numeric_claims = bool(provenance_summary.get("has_numeric_claims", False))
+        if evidence_count == 0:
+            composite = min(composite, 0.25)
+        elif doi_citation_count == 0 and has_numeric_claims:
+            composite = min(composite, 0.35)
+
     composite = max(0.0, min(1.0, composite))
 
     # Build human-readable explanation
@@ -279,12 +325,37 @@ def calculate_response_confidence(
     elif n_sources <= 3:
         explanation_parts.append(f"{n_sources} supporting sources")
 
+    if evidence_quality_factor < 1.0:
+        explanation_parts.append("incomplete tier metadata reduced confidence")
+
+    if citation_coverage < 1.0:
+        explanation_parts.append(
+            f"DOI citation coverage {int(citation_coverage * 100)}%"
+        )
+
+    if completeness_factor < 1.0:
+        explanation_parts.append(
+            f"evidence completeness {int(completeness_factor * 100)}%"
+        )
+
+    if provenance_summary is not None:
+        if int(provenance_summary.get("evidence_count", 0) or 0) == 0:
+            explanation_parts.append("confidence capped: no evidence items")
+        elif (
+            int(provenance_summary.get("doi_citation_count", 0) or 0) == 0
+            and provenance_summary.get("has_numeric_claims")
+        ):
+            explanation_parts.append("confidence capped: numeric claims without DOI citations")
+
     result = {
         "composite": round(composite, 4),
         "tier_base": round(tier_base, 4),
         "path_discount": round(path_disc, 4),
         "staleness_discount": round(stale_disc, 4),
         "sample_factor": round(sample_f, 4),
+        "evidence_quality_factor": round(evidence_quality_factor, 4),
+        "citation_coverage_factor": round(citation_coverage_factor, 4),
+        "completeness_factor": round(completeness_factor, 4),
         "explanation": "; ".join(explanation_parts) if explanation_parts else "Standard confidence",
     }
 

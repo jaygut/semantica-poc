@@ -7,7 +7,9 @@ from maris.axioms.confidence import calculate_response_confidence
 from maris.llm.adapter import LLMAdapter
 from maris.llm.prompts import RESPONSE_SYNTHESIS_PROMPT
 from maris.query.validators import (
+    build_provenance_summary,
     empty_result_response,
+    extract_numerical_claims,
     is_graph_context_empty,
     validate_llm_response,
 )
@@ -73,18 +75,30 @@ class ResponseGenerator:
             logger.exception("LLM complete_json failed for category=%s", category)
             return empty_result_response()
 
+        llm_evidence = result.get("evidence", [])
+        if not isinstance(llm_evidence, list):
+            llm_evidence = []
+        if not llm_evidence:
+            llm_evidence = _materialize_graph_evidence(graph_context)
+
         # Normalise into expected shape
         raw = {
             "answer": result.get("answer", result.get("raw", "")),
             "confidence": result.get("confidence", 0.0),
-            "evidence": result.get("evidence", []),
+            "evidence": llm_evidence,
             "axioms_used": result.get("axioms_used", []),
             "graph_path": result.get("graph_path", []),
             "caveats": result.get("caveats", []),
         }
 
         # Validate response against graph context
-        validated = validate_llm_response(raw, graph_context)
+        strict_deterministic = category != "open_domain"
+        validated = validate_llm_response(
+            raw,
+            graph_context,
+            category=category,
+            strict_deterministic=strict_deterministic,
+        )
 
         # Preserve axioms_used and graph_path through validation
         validated.setdefault("axioms_used", raw["axioms_used"])
@@ -92,13 +106,31 @@ class ResponseGenerator:
 
         # Replace LLM self-stated confidence with composite grounded score
         try:
-            evidence_nodes = _extract_evidence_nodes(graph_context)
+            evidence_nodes = validated.get("evidence", [])
+            if not isinstance(evidence_nodes, list):
+                evidence_nodes = []
+            provenance_summary = build_provenance_summary(
+                validated.get("evidence", []),
+                validated.get("answer", ""),
+            )
+            provenance_summary["has_numeric_claims"] = bool(
+                extract_numerical_claims(validated.get("answer", ""))
+            )
             n_hops = _CATEGORY_HOPS.get(category, 1)
             breakdown = calculate_response_confidence(
-                evidence_nodes, n_hops=n_hops
+                evidence_nodes,
+                n_hops=n_hops,
+                provenance_summary=provenance_summary,
             )
             validated["confidence"] = breakdown["composite"]
             validated["confidence_breakdown"] = breakdown
+            validated.update({
+                "evidence_count": provenance_summary["evidence_count"],
+                "doi_citation_count": provenance_summary["doi_citation_count"],
+                "evidence_completeness_score": provenance_summary["evidence_completeness_score"],
+                "provenance_warnings": provenance_summary["provenance_warnings"],
+                "provenance_risk": provenance_summary["provenance_risk"],
+            })
         except Exception:
             logger.warning(
                 "Composite confidence scoring failed, keeping LLM confidence",
@@ -135,3 +167,40 @@ def _extract_evidence_nodes(graph_context: dict) -> list[dict]:
                         nodes.append(sub)
 
     return nodes
+
+
+def _materialize_graph_evidence(graph_context: dict) -> list[dict]:
+    """Build fallback evidence entries from graph context records.
+
+    This is used when the LLM omits the evidence list despite graph records
+    containing citation-like fields.
+    """
+    fallback: list[dict] = []
+    for node in _extract_evidence_nodes(graph_context):
+        doi = node.get("doi")
+        title = node.get("title") or node.get("axiom_name") or ""
+        year = node.get("year") or node.get("measurement_year")
+        tier = node.get("tier") or node.get("source_tier")
+        finding = node.get("finding") or node.get("quote") or node.get("evidence") or ""
+
+        if not any((doi, title, year, tier, finding)):
+            continue
+
+        fallback.append({
+            "doi": doi,
+            "title": title,
+            "year": year,
+            "tier": tier,
+            "finding": finding,
+        })
+
+    # Deduplicate by DOI/title/year tuple while preserving order.
+    seen: set[tuple[str, str, int | None]] = set()
+    deduped: list[dict] = []
+    for item in fallback:
+        key = (str(item.get("doi") or ""), str(item.get("title") or ""), item.get("year"))
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(item)
+    return deduped
