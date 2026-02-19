@@ -138,6 +138,11 @@ class TestWarningRegression:
         assert "d.citation" not in cypher
         assert "properties(d)['citation']" in cypher
 
+    def test_risk_assessment_risk_axioms_include_year_and_tier(self):
+        cypher = get_template("risk_assessment")["cypher"]
+        assert "year: d.year" in cypher
+        assert "tier: d.source_tier" in cypher
+
 
 class TestAxiomByConceptTemplate:
     """Tests for the axiom_by_concept template (Phase I intelligence upgrade)."""
@@ -206,6 +211,8 @@ class TestMechanismChainTemplate:
         assert "AS name" in cypher
         assert "AS description" in cypher
         assert "AS evidence" in cypher
+        assert "year: d.year" in cypher
+        assert "tier: d.source_tier" in cypher
 
     def test_concept_overview_exists(self):
         t = get_template("concept_overview")
@@ -237,6 +244,8 @@ class TestMechanismChainTemplate:
         assert "AS name" in cypher
         assert "AS description" in cypher
         assert "AS domain" in cypher
+        assert "year: d.year" in cypher
+        assert "tier: d.source_tier" in cypher
 
     def test_concept_explanation_category_has_templates(self):
         results = templates_for_category("concept_explanation")

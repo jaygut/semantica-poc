@@ -1,6 +1,8 @@
 """Unit tests for v4 GraphRAG chat normalization and DOI UI helpers."""
 
 from investor_demo.components.v4.graphrag_chat import (
+    _confidence_methodology_markdown,
+    _confidence_breakdown_html,
     _doi_status_metrics,
     _evidence_table,
     _normalize_query,
@@ -97,3 +99,48 @@ def test_evidence_table_renders_doi_status_column_and_reason_tooltip():
     assert "verified" in html.lower()
     assert 'title="Crossref title and year matched"' in html
     assert "Blue carbon valuation baseline" in html
+
+
+def test_evidence_table_renders_na_for_missing_tier_and_year():
+    html = _evidence_table([
+        {
+            "title": "Untiered source",
+            "doi": "",
+            "doi_url": "",
+            "year": None,
+            "tier": None,
+            "doi_verification_status": "missing",
+        }
+    ])
+
+    assert "Untiered source" in html
+    assert ">N/A<" in html
+
+
+def test_confidence_breakdown_renders_new_provenance_factors():
+    html = _confidence_breakdown_html(
+        {
+            "composite": 0.42,
+            "tier_base": 0.8,
+            "path_discount": 0.85,
+            "staleness_discount": 0.9,
+            "sample_factor": 0.7,
+            "evidence_quality_factor": 0.6,
+            "citation_coverage_factor": 0.4,
+            "completeness_factor": 0.5,
+            "explanation": "test",
+        }
+    )
+
+    assert "Evidence Quality" in html
+    assert "Citation Coverage" in html
+    assert "Completeness" in html
+
+
+def test_confidence_methodology_markdown_includes_formula_and_caps():
+    content = _confidence_methodology_markdown()
+
+    assert "composite = tier_base x path_discount" in content
+    assert "capped at **25%**" in content
+    assert "capped at **35%**" in content
+    assert "Show confidence breakdown" in content

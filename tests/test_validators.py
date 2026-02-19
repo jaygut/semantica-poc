@@ -2,10 +2,12 @@
 
 
 from maris.query.validators import (
+    build_provenance_summary,
     validate_response_schema,
     extract_numerical_claims,
     verify_numerical_claims,
     validate_evidence_dois,
+    normalise_tier,
     extract_json_robust,
     is_graph_context_empty,
     validate_llm_response,
@@ -166,6 +168,41 @@ class TestDOIValidation:
         assert validated[0]["doi"] == "10.1038/s41467-025-59204-4"
         assert validated[0]["doi_valid"] is True
 
+    def test_tier_and_year_are_normalized(self):
+        evidence = [{"doi": "10.1038/nature12345", "tier": None, "year": "2024"}]
+        validated, _issues = validate_evidence_dois(evidence)
+        assert validated[0]["tier"] == "N/A"
+        assert validated[0]["year"] == 2024
+
+
+class TestTierNormalization:
+    def test_normalise_tier_accepts_valid_tiers(self):
+        assert normalise_tier("t1") == "T1"
+        assert normalise_tier("T4") == "T4"
+
+    def test_normalise_tier_maps_unknown_to_na(self):
+        assert normalise_tier("") == "N/A"
+        assert normalise_tier("unknown") == "N/A"
+        assert normalise_tier(None) == "N/A"
+
+
+class TestProvenanceSummary:
+    def test_summary_for_empty_evidence_is_high_risk(self):
+        summary = build_provenance_summary([], "")
+        assert summary["evidence_count"] == 0
+        assert summary["doi_citation_count"] == 0
+        assert summary["evidence_completeness_score"] == 0.0
+        assert summary["provenance_risk"] == "high"
+        assert summary["provenance_warnings"]
+
+    def test_summary_includes_numeric_claim_warning_without_doi(self):
+        summary = build_provenance_summary(
+            [{"title": "Evidence without DOI", "tier": "T2", "year": 2024}],
+            "Estimated value is $2.5M.",
+        )
+        assert summary["doi_citation_count"] == 0
+        assert any("Numerical claims" in warning for warning in summary["provenance_warnings"])
+
 
 # ---- Empty graph context ----
 
@@ -255,3 +292,21 @@ class TestFullValidation:
         }
         result = validate_llm_response(response, {})
         assert any("placeholder_blocked" in caveat for caveat in result["caveats"])
+
+    def test_strict_deterministic_mode_returns_insufficiency_without_evidence(self):
+        response = {
+            "answer": "The estimated value is $12M.",
+            "confidence": 0.9,
+            "evidence": [],
+            "caveats": [],
+        }
+        result = validate_llm_response(
+            response,
+            graph_context={"results": [{"site": "Cabo Pulmo National Park"}]},
+            category="site_valuation",
+            strict_deterministic=True,
+        )
+
+        assert "Insufficient citation-grade evidence" in result["answer"]
+        assert result["evidence_count"] == 0
+        assert result["provenance_risk"] == "high"
