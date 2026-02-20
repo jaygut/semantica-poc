@@ -366,3 +366,62 @@ def calculate_response_confidence(
         result["provenance_dois"] = provenance_certificate.get("source_dois", [])
 
     return result
+
+
+# ---------------------------------------------------------------------------
+# Scenario confidence penalties
+# ---------------------------------------------------------------------------
+
+def apply_scenario_penalties(
+    base_confidence: float,
+    scenario_req: "ScenarioRequest",  # noqa: F821 - string-quoted to avoid circular import
+    target_year: int | None = None,
+) -> tuple[float, list[dict]]:
+    """Apply scenario-specific confidence penalties and return adjusted confidence + penalty log.
+
+    Scenario confidence must always be <= base_confidence and never below 0.10.
+
+    Penalties applied:
+    - Temporal extrapolation: 0.10 per decade from 2025, max 0.40
+    - SSP uncertainty: 0.05 (SSP1-2.6), 0.10 (SSP2-4.5), 0.15 (SSP5-8.5)
+
+    Args:
+        base_confidence: Starting confidence before scenario penalties.
+        scenario_req: ScenarioRequest (or any object with ssp_scenario attribute).
+        target_year: Override target year (defaults to scenario_req.target_year).
+
+    Returns:
+        Tuple of (adjusted_confidence, penalty_log). adjusted_confidence is
+        clamped to [0.10, base_confidence].
+    """
+    from maris.scenario.constants import SCENARIO_CONFIDENCE_PENALTIES
+
+    penalties: list[dict] = []
+    adjusted = base_confidence
+
+    # Temporal extrapolation penalty
+    year = target_year or getattr(scenario_req, "target_year", None)
+    if year is not None:
+        decades_out = max(0, (year - 2025) / 10)
+        temporal_config = SCENARIO_CONFIDENCE_PENALTIES["temporal_extrapolation"]
+        penalty = min(
+            decades_out * temporal_config["penalty_per_decade"],
+            temporal_config["max_penalty"],
+        )
+        adjusted -= penalty
+        penalties.append({
+            "reason": f"temporal_extrapolation_{year}",
+            "penalty": -penalty,
+        })
+
+    # SSP uncertainty penalty
+    ssp = getattr(scenario_req, "ssp_scenario", None)
+    if ssp:
+        ssp_penalty = SCENARIO_CONFIDENCE_PENALTIES["ssp_uncertainty"].get(ssp, 0.10)
+        adjusted -= ssp_penalty
+        penalties.append({
+            "reason": f"ssp_scenario_uncertainty_{ssp}",
+            "penalty": -ssp_penalty,
+        })
+
+    return max(0.10, adjusted), penalties

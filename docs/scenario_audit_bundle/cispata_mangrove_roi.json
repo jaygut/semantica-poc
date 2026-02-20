@@ -1,0 +1,54 @@
+{
+  "transcript_id": "cispata_mangrove_roi",
+  "generated_at": "2026-02-20T04:42:53.546020+00:00",
+  "scenario_request": {
+    "scenario_type": "intervention",
+    "site_scope": [
+      "Cispata Bay Mangrove Conservation Area"
+    ],
+    "investment_cost_usd": 5000000,
+    "time_horizon_years": 20,
+    "discount_rate": 0.04
+  },
+  "scenario_response": {
+    "static_npv": 60233566.45584488,
+    "option_value": 12468446.401146278,
+    "total_value": 72702012.85699116,
+    "option_premium_pct": 20.700162940353962,
+    "esv_volatility": 0.36375,
+    "bcr": 13.336321040374576,
+    "payback_years": 2.0,
+    "p5_npv": -64428595.760087244,
+    "p50_npv": 33412472.164376196,
+    "p95_npv": 269333395.057024,
+    "investment_cost_usd": 5000000,
+    "time_horizon_years": 20,
+    "discount_rate": 0.04,
+    "n_simulations": 10000
+  },
+  "validation_anchors": {
+    "expected_range": "Cispata Bay BCR in [6.0, 16.0] (from BA-009 coefficients)",
+    "actual_value": 13.336321040374576,
+    "within_range": true
+  },
+  "confidence_breakdown": [
+    {
+      "factor": "esv_volatility",
+      "value": 0.36375,
+      "source": "CI convention by valuation method"
+    },
+    {
+      "factor": "discount_rate",
+      "value": 0.04
+    },
+    {
+      "factor": "option_premium_pct",
+      "value": 20.700162940353962
+    }
+  ],
+  "uncertainty": {
+    "p5": -64428595.760087244,
+    "p50": 33412472.164376196,
+    "p95": 269333395.057024
+  }
+}

@@ -142,7 +142,7 @@ class TestT03AxiomConversionRoundTrip:
 
         registry = BridgeAxiomRegistry()
         registry.load(TEMPLATES_PATH, EVIDENCE_PATH)
-        assert registry.count() == 35, f"Expected 35 axioms, got {registry.count()}"
+        assert registry.count() == 40, f"Expected 40 axioms, got {registry.count()}"
 
     @pytest.mark.skipif(not _HAS_SEMANTICA, reason="semantica not installed")
     def test_all_35_axioms_round_trip_losslessly(self):
@@ -448,11 +448,11 @@ class TestT07ManagerFullLifecycle:
 
             # Verify initial state
             assert mgr.semantica_available is True
-            assert mgr.registry.count() == 35
+            assert mgr.registry.count() == 40
 
             initial_summary = mgr.summary()
             assert initial_summary["semantica_available"] is True
-            assert initial_summary["axioms_loaded"] == 35
+            assert initial_summary["axioms_loaded"] == 40
 
             # Track extraction
             entity_data = mgr.track_extraction(

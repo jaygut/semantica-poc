@@ -4,7 +4,7 @@
 
 Nereus is a provenance-first blue finance platform, powered by MARIS (Marine Asset Risk Intelligence System) + Semantica. It creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. The system is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
 
-The v5 Audit-Grade Integrity release (built on the v4 Global Scaling Platform with Intelligence Upgrade) hardens the provenance and confidence pipeline for institutional-grade use. It adds a DOI verifier module, strict deterministic provenance guards, a confidence transparency expander in Ask Nereus, per-ha-yr median USD coefficients on three core axiom templates (BA-001, BA-003, BA-009), and siteless query coercion (was: 422, now: 200 + `provenance_risk: high`). The Neo4j graph contains 953+ nodes including 15 Concept nodes and 244+ edges across 9 Gold-tier MPA sites, with a FastAPI query engine covering 6 natural-language classification categories.
+The v6 Prospective Scenario Intelligence release (built on v5 Audit-Grade Integrity) transforms Nereus from retrospective ESV valuation into forward-looking scenario intelligence. It adds a `maris/scenario/` module with counterfactual analysis, SSP climate degradation curves, McClanahan tipping point engine, blue carbon revenue modeling, portfolio Nature VaR (Cholesky-correlated Monte Carlo), and real options valuation - all provenance-traced with P5/P50/P95 uncertainty envelopes. A 7th query category (`scenario_analysis`) routes "what if" and SSP questions through the new engine. Bridge axioms expanded from 35 to 40 (BA-036-040: McClanahan threshold axioms). The Neo4j graph contains 953+ nodes and 244+ edges across 9 Gold-tier MPA sites, with a FastAPI query engine covering 7 natural-language classification categories.
 
 ## Architecture Overview
 
@@ -13,7 +13,7 @@ User Question (natural language)
      |
      v
  QueryClassifier  -- keyword-first with LLM fallback
-     |              (6 categories: valuation, provenance, axiom, comparison, risk, concept_explanation)
+     |              (7 categories: valuation, provenance, axiom, comparison, risk, concept_explanation, scenario_analysis)
      v
  CypherTemplates  -- 11 templates (5 core + 3 utility + 3 concept), never raw string interpolation
      |
@@ -62,9 +62,19 @@ maris/
     prompts.py                # System prompts for classification and generation
   axioms/                     # Bridge axiom computation
     engine.py                 # Axiom application and chaining
-    confidence.py             # Multiplicative confidence interval propagation
+    confidence.py             # Multiplicative confidence interval propagation + apply_scenario_penalties() (v6)
     monte_carlo.py            # Monte Carlo ESV simulation (10,000 runs)
     sensitivity.py            # OAT sensitivity analysis for ESV simulations, tornado plot data generation
+  scenario/                   # v6 NEW: Prospective scenario intelligence
+    constants.py              # SSP_SCENARIOS, BIOMASS_THRESHOLDS, CARBON_PRICE_SCENARIOS, BLUE_CARBON_SEQUESTRATION (DOI-sourced)
+    models.py                 # Pydantic v2: ScenarioRequest, ScenarioResponse, ScenarioDelta, PropagationStep, ScenarioUncertainty
+    scenario_parser.py        # NL -> ScenarioRequest (pattern-based, no LLM required in demo mode)
+    counterfactual_engine.py  # run_counterfactual(): protection removal delta (Cabo Pulmo -$20.16M validated)
+    climate_scenarios.py      # run_climate_scenario(): SSP1-2.6/SSP2-4.5/SSP5-8.5 degradation curves per habitat/year
+    tipping_point_analyzer.py # compute_reef_function(): McClanahan 4-threshold piecewise; get_tipping_point_site_report()
+    blue_carbon_revenue.py    # compute_blue_carbon_revenue(): dynamic carbon pricing, mangrove/seagrass sequestration
+    stress_test_engine.py     # run_portfolio_stress_test(): Nature VaR with Cholesky-correlated Monte Carlo
+    real_options_valuator.py  # compute_conservation_option_value(): GBM-based option premium above static NPV
   ingestion/                  # Document ingestion pipeline
     pdf_extractor.py          # PDF text extraction
     llm_extractor.py          # LLM-based entity/relationship extraction
@@ -140,6 +150,7 @@ investor_demo/
 | `scripts/populate_neo4j_v4.py` | v4 11-stage generic populator with dynamic site discovery (recommended) |
 | `scripts/populate_neo4j.py` | Legacy 8-stage population pipeline (Cabo Pulmo + Shark Bay only) |
 | `scripts/validate_graph.py` | Verifies node counts, relationship integrity, axiom evidence chains |
+| `scripts/generate_scenario_audit_bundle.py` | v6 NEW: generates 5 canonical scenario transcripts in docs/scenario_audit_bundle/ |
 | `scripts/demo_healthcheck.py` | Pre-demo verification: Neo4j + API + dashboard connectivity |
 | `scripts/run_ingestion.py` | Full PDF-to-graph ingestion pipeline |
 | `launch.sh` | One-command launcher for any dashboard version + API (see Running the Stack) |
@@ -171,8 +182,9 @@ The graph is populated from curated data sources through the v4 generic populato
 │                                                                              │
 │  4. Bridge Axiom Templates      schemas/bridge_axiom_templates.json         │
 │     + Evidence Mapping          data/semantica_export/bridge_axioms.json     │
-│     16 axioms with coefficients -> BridgeAxiom nodes, EVIDENCED_BY edges,    │
+│     40 axioms with coefficients -> BridgeAxiom nodes, EVIDENCED_BY edges,    │
 │     and DOI-backed evidence       APPLIES_TO edges, TRANSLATES edges         │
+│     (BA-036-040: McClanahan tipping point thresholds, v6 NEW)                │
 │                                                                              │
 │  5. Curated Relationships       data/semantica_export/relationships.json    │
 │     15 cross-domain edges       -> Typed relationship edges with             │

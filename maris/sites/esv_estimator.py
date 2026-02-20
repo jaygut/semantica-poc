@@ -24,7 +24,17 @@ logger = logging.getLogger(__name__)
 # Constants
 _PROJECT_ROOT = Path(__file__).parent.parent.parent
 _REGISTRY_PATH = _PROJECT_ROOT / "schemas" / "bridge_axiom_templates.json"
-_DEFAULT_CARBON_PRICE = 30.0  # USD/tCO2 (matches BA-014)
+def _get_carbon_price(price_scenario: str = "current_market") -> float:
+    """Get dynamic carbon price from scenario constants.
+
+    Replaces the former hardcoded _DEFAULT_CARBON_PRICE = 30.0.
+    Falls back to 25.25 (S&P DBC-1 assessed average) if scenario not found.
+    """
+    from maris.scenario.constants import CARBON_PRICE_SCENARIOS
+    return CARBON_PRICE_SCENARIOS.get(price_scenario, {}).get("price_usd", 25.25)
+
+
+_DEFAULT_CARBON_PRICE = _get_carbon_price()  # backwards-compatible module-level constant
 
 # Cache for the loaded map
 _DYNAMIC_AXIOM_MAP: dict[str, list[dict[str, Any]]] | None = None

@@ -222,7 +222,7 @@ class TestT11SnapshotBeforeRePopulation:
         """Verify all 35 axioms have at least one EVIDENCED_BY edge."""
         evidence = _get_axiom_evidence_counts()
 
-        assert len(evidence) == 35, (
+        assert len(evidence) == 40, (
             f"Expected 35 BridgeAxiom nodes, got {len(evidence)}"
         )
 
@@ -762,8 +762,8 @@ class TestT16SemanticaProvenance:
 
             # Verify initial state
             assert mgr.semantica_available is True
-            assert mgr.registry.count() == 35, (
-                f"Expected 35 axioms in registry, got {mgr.registry.count()}"
+            assert mgr.registry.count() == 40, (
+                f"Expected 40 axioms in registry, got {mgr.registry.count()}"
             )
 
             # Track each axiom extraction
@@ -793,7 +793,7 @@ class TestT16SemanticaProvenance:
             print(f"\nProvenance summary: {json.dumps(summary, indent=2, default=str)}")
 
             assert summary["semantica_available"] is True
-            assert summary["axioms_loaded"] == 35
+            assert summary["axioms_loaded"] == 40
             assert summary["semantica_entries"] >= 35, (
                 f"Expected semantica_entries >= 35, got {summary['semantica_entries']}"
             )

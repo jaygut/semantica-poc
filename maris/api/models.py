@@ -79,6 +79,9 @@ class QueryResponse(BaseModel):
     provenance_warnings: list[str] = []
     provenance_risk: str = "high"
     query_metadata: QueryMetadata = QueryMetadata()
+    scenario_request: dict | None = None  # populated for scenario_analysis responses
+    annual_revenue_usd: float | None = None  # populated for market (blue carbon) scenarios
+    revenue_range: dict | None = None        # {"low": float, "high": float}
 
 
 # ---------------------------------------------------------------------------

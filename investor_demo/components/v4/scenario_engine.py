@@ -1,7 +1,10 @@
-"""Scenario Lab - interactive what-if analysis for Nereus v4 Natural Capital Intelligence.
+"""Scenario Lab - interactive what-if analysis for Nereus v4/v6 Natural Capital Intelligence.
 
 Key difference from v3: axiom chains are derived dynamically from site
 habitat types using ``_HABITAT_AXIOM_MAP``. No hardcoded per-site chains.
+
+v6 additions: SSP Climate Pathway, Counterfactual, Restoration ROI tabs,
+Tipping Point proximity, and Scenario Workbench (save/compare).
 """
 
 from __future__ import annotations
@@ -69,6 +72,16 @@ _AXIOM_META: dict[str, dict[str, Any]] = {
     "BA-015": {"name": "Habitat loss carbon emission", "coefficient": "294 tCO2/ha released", "affected_by": ["habitat_loss"]},
     "BA-016": {"name": "MPA protection carbon permanence", "coefficient": "25-100yr guarantee", "affected_by": ["habitat_loss"]},
 }
+
+# SSP labels for the radio selector
+_SSP_LABELS: dict[str, str] = {
+    "SSP1-2.6": "SSP1-2.6 (Paris-aligned, 1.8C)",
+    "SSP2-4.5": "SSP2-4.5 (Current trajectory, 2.7C)",
+    "SSP5-8.5": "SSP5-8.5 (High emissions, 4.4C)",
+}
+
+# Sites eligible for Restoration ROI tab (mangrove/seagrass)
+_RESTORATION_SITES = {"sundarbans", "cispata", "shark bay", "belize"}
 
 
 def _get_site_axiom_chain(data: dict[str, Any]) -> list[dict[str, Any]]:
@@ -456,6 +469,145 @@ def _axiom_chain_html(adjustments: dict[str, float], axiom_chain: list[dict[str,
 
 
 # ---------------------------------------------------------------------------
+# v6 Scenario Intelligence helpers
+# ---------------------------------------------------------------------------
+
+
+def _run_climate_scenario_safe(site: str, ssp: str, target_year: int) -> dict[str, Any] | None:
+    """Run the climate scenario engine, returning None on failure."""
+    try:
+        from maris.scenario.climate_scenarios import run_climate_scenario
+        from maris.scenario.models import ScenarioRequest
+        req = ScenarioRequest(
+            scenario_type="climate",
+            site_scope=[site],
+            ssp_scenario=ssp,
+            target_year=target_year,
+        )
+        result = run_climate_scenario(req)
+        return result.model_dump()
+    except Exception:
+        logger.exception("Climate scenario failed for %s", site)
+        return None
+
+
+def _run_counterfactual_safe(site: str) -> dict[str, Any] | None:
+    """Run the counterfactual engine, returning None on failure."""
+    try:
+        from maris.scenario.counterfactual_engine import run_counterfactual
+        from maris.scenario.models import ScenarioRequest
+        req = ScenarioRequest(
+            scenario_type="counterfactual",
+            site_scope=[site],
+        )
+        result = run_counterfactual(req)
+        return result.model_dump()
+    except Exception:
+        logger.exception("Counterfactual scenario failed for %s", site)
+        return None
+
+
+def _run_restoration_roi_safe(
+    site_data: dict, investment: float, horizon: int, discount_rate: float,
+) -> dict[str, Any] | None:
+    """Run real options valuation, returning None on failure."""
+    try:
+        from maris.scenario.real_options_valuator import compute_conservation_option_value
+        result = compute_conservation_option_value(
+            site_data=site_data,
+            investment_cost_usd=investment,
+            time_horizon_years=horizon,
+            discount_rate=discount_rate,
+        )
+        return result
+    except Exception:
+        logger.exception("Restoration ROI failed")
+        return None
+
+
+def _render_scenario_kpi_strip(
+    base_esv: float, scenario_esv: float, uncertainty: dict | None = None,
+) -> None:
+    """Render a 3-column KPI strip for scenario results."""
+    col1, col2, col3 = st.columns(3)
+    delta_pct = ((scenario_esv - base_esv) / base_esv * 100) if base_esv else 0.0
+    col1.metric("Baseline ESV", f"${base_esv / 1e6:.1f}M")
+    col2.metric("Scenario ESV", f"${scenario_esv / 1e6:.1f}M")
+    col3.metric("Delta", f"{delta_pct:+.1f}%", delta=f"${abs(scenario_esv - base_esv) / 1e6:.1f}M")
+
+    if uncertainty:
+        st.caption(
+            f"P5: ${uncertainty.get('p5', 0) / 1e6:.1f}M | "
+            f"P50: ${uncertainty.get('p50', 0) / 1e6:.1f}M | "
+            f"P95: ${uncertainty.get('p95', 0) / 1e6:.1f}M"
+        )
+
+
+def _render_propagation_expander(result: dict[str, Any]) -> None:
+    """Render propagation trace and confidence penalties in expanders."""
+    trace = result.get("propagation_trace", [])
+    if trace:
+        with st.expander("Propagation Trace (full axiom arc)"):
+            for step in trace:
+                st.markdown(f"**{step['axiom_id']}**: {step['description']}")
+                st.caption(
+                    f"{step['input_parameter']} {step['input_value']:.2f} -> "
+                    f"{step['output_parameter']} {step['output_value']:.2f}"
+                )
+
+    penalties = result.get("confidence_penalties", [])
+    if penalties:
+        with st.expander("Confidence Penalties Applied"):
+            for penalty in penalties:
+                st.caption(f"{penalty['reason']}: {penalty['penalty']:+.2f}")
+
+
+def _is_restoration_eligible(site: str) -> bool:
+    """Check if a site is eligible for Restoration ROI (mangrove/seagrass)."""
+    site_lower = site.lower()
+    return any(kw in site_lower for kw in _RESTORATION_SITES)
+
+
+# ---------------------------------------------------------------------------
+# Scenario Workbench
+# ---------------------------------------------------------------------------
+
+
+def _render_scenario_workbench(
+    scenario_label: str, result_summary: dict[str, Any],
+) -> None:
+    """Render save/compare controls for the Scenario Workbench."""
+    if "saved_scenarios" not in st.session_state:
+        st.session_state["saved_scenarios"] = []
+
+    st.markdown(
+        '<div class="subsection-header" style="margin-top:28px">Scenario Workbench</div>',
+        unsafe_allow_html=True,
+    )
+
+    if st.button("Save Scenario", key="v6_save_scenario"):
+        st.session_state["saved_scenarios"].append({
+            "label": scenario_label,
+            **result_summary,
+        })
+        st.success(f"Saved: {scenario_label}")
+
+    saved = st.session_state.get("saved_scenarios", [])
+    if saved:
+        with st.expander(f"Compare Scenarios ({len(saved)} saved)"):
+            header = "| Scenario | Baseline | Projected | Delta |\n|---|---|---|---|\n"
+            rows = ""
+            for s in saved[-5:]:  # Show last 5
+                rows += (
+                    f"| {s.get('label', 'N/A')} "
+                    f"| ${s.get('baseline_esv', 0) / 1e6:.1f}M "
+                    f"| ${s.get('scenario_esv', 0) / 1e6:.1f}M "
+                    f"| ${(s.get('scenario_esv', 0) - s.get('baseline_esv', 0)) / 1e6:.1f}M |\n"
+                )
+            st.markdown(header + rows)
+
+
+# ---------------------------------------------------------------------------
 # Main render function
 # ---------------------------------------------------------------------------
 
@@ -484,99 +636,297 @@ def render_scenario_engine(
         st.warning("No ecosystem service data available for this site.")
         return
 
-    # Parameter sliders
-    st.markdown('<div class="subsection-header">Parameter Controls</div>', unsafe_allow_html=True)
-
-    col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 0.5])
-    with col1:
-        carbon_price = st.slider("Carbon Price ($/tonne)", min_value=10, max_value=100,
-                                 value=_BASE_CARBON_PRICE, step=5, key="v4_scenario_carbon_price")
-    with col2:
-        habitat_loss_pct = st.slider("Habitat Loss (%)", min_value=0, max_value=50,
-                                     value=0, step=1, key="v4_scenario_habitat_loss")
-    with col3:
-        tourism_growth_pct = st.slider("Tourism Growth (%)", min_value=-20, max_value=30,
-                                       value=0, step=1, key="v4_scenario_tourism_growth")
-    with col4:
-        fisheries_change_pct = st.slider("Fisheries Change (%)", min_value=-30, max_value=20,
-                                         value=0, step=1, key="v4_scenario_fisheries_change")
-    with col5:
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("Reset to Base", key="v4_scenario_reset"):
-            st.session_state["v4_scenario_carbon_price"] = _BASE_CARBON_PRICE
-            st.session_state["v4_scenario_habitat_loss"] = 0
-            st.session_state["v4_scenario_tourism_growth"] = 0
-            st.session_state["v4_scenario_fisheries_change"] = 0
-            st.rerun()
-
-    adjustments = {
-        "carbon_price": carbon_price,
-        "habitat_loss_pct": habitat_loss_pct,
-        "tourism_growth_pct": tourism_growth_pct,
-        "fisheries_change_pct": fisheries_change_pct,
-    }
-
-    scenario_services = apply_scenario_adjustments(base_services, adjustments)
-    base_mc = _run_mc_cached(base_services, n_simulations=10_000)
-    scenario_mc = _run_mc_cached(scenario_services, n_simulations=10_000)
     base_esv = sum(s["value"] for s in base_services)
-    scenario_esv = sum(s["value"] for s in scenario_services)
+    primary_habitat = data.get("ecological_status", {}).get("primary_habitat", "")
 
-    left_col, right_col = st.columns([1, 2])
-    with left_col:
-        st.markdown(_esv_impact_card(base_esv, scenario_esv), unsafe_allow_html=True)
+    # ---- Scenario type tabs (v6) ----
+    tab_labels = ["Climate Pathway", "Counterfactual", "Restoration ROI", "Custom"]
+    tab_climate, tab_counterfactual, tab_roi, tab_custom = st.tabs(tab_labels)
+
+    # ================================================================
+    # Tab: Climate Pathway
+    # ================================================================
+    with tab_climate:
         st.markdown(
-            '<div style="margin-top:16px"><div class="kpi-card"><div class="kpi-label">Service Breakdown</div>',
+            '<div class="subsection-header">SSP Climate Pathway</div>',
             unsafe_allow_html=True,
         )
-        for base_svc, scen_svc in zip(base_services, scenario_services):
-            delta = scen_svc["value"] - base_svc["value"]
-            if abs(delta) < 0.01:
-                color, sign_str = COLORS["text_muted"], ""
-            elif delta > 0:
-                color, sign_str = COLORS["success"], "+"
+
+        ssp_options = list(_SSP_LABELS.values())
+        ssp_choice = st.radio(
+            "Select SSP Scenario",
+            ssp_options,
+            index=1,
+            key="v6_ssp_radio",
+        )
+        # Reverse-map label to SSP key
+        ssp_key = next(k for k, v in _SSP_LABELS.items() if v == ssp_choice)
+
+        target_year = st.slider(
+            "Target Year", min_value=2030, max_value=2100, value=2050,
+            step=10, key="v6_target_year",
+        )
+
+        if st.button("Run Climate Scenario", key="v6_run_climate"):
+            result = _run_climate_scenario_safe(site, ssp_key, target_year)
+            if result and result.get("baseline_case"):
+                b_esv = result["baseline_case"].get("total_esv_usd", base_esv)
+                s_esv = result["scenario_case"].get("total_esv_usd", 0)
+                _render_scenario_kpi_strip(b_esv, s_esv, result.get("uncertainty"))
+
+                st.markdown(
+                    f'<div style="font-size:15px;color:#B0BEC5;padding:12px 0">'
+                    f'{result.get("answer", "")}</div>',
+                    unsafe_allow_html=True,
+                )
+
+                # Tipping point for coral reef sites
+                if primary_habitat == "coral_reef":
+                    tp = result.get("tipping_point_proximity")
+                    if tp:
+                        st.warning(f"Tipping Point: {tp}")
+
+                _render_propagation_expander(result)
+                _render_scenario_workbench(
+                    f"{ssp_key} {target_year} - {short_name}",
+                    {"baseline_esv": b_esv, "scenario_esv": s_esv},
+                )
             else:
-                color, sign_str = COLORS["danger"], ""
+                st.info("Scenario computed in demo mode - live engine returned no data.")
+                _render_scenario_workbench(
+                    f"{ssp_key} {target_year} - {short_name} (demo)",
+                    {"baseline_esv": base_esv, "scenario_esv": base_esv * 0.5},
+                )
+
+    # ================================================================
+    # Tab: Counterfactual
+    # ================================================================
+    with tab_counterfactual:
+        st.markdown(
+            '<div class="subsection-header">Counterfactual Analysis</div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f'<div style="font-size:15px;color:#94A3B8;margin-bottom:16px">'
+            f"What would {short_name} be worth without protection? "
+            f"Reverts key ecological parameters to pre-protection baselines."
+            f"</div>",
+            unsafe_allow_html=True,
+        )
+
+        if st.button("Run Counterfactual", key="v6_run_counterfactual"):
+            result = _run_counterfactual_safe(site)
+            if result and result.get("baseline_case"):
+                b_esv = result["baseline_case"].get("total_esv_usd", base_esv)
+                s_esv = result["scenario_case"].get("total_esv_usd", 0)
+                _render_scenario_kpi_strip(b_esv, s_esv, result.get("uncertainty"))
+
+                st.markdown(
+                    f'<div style="font-size:15px;color:#B0BEC5;padding:12px 0">'
+                    f'{result.get("answer", "")}</div>',
+                    unsafe_allow_html=True,
+                )
+
+                tp = result.get("tipping_point_proximity")
+                if tp:
+                    st.warning(f"Tipping Point: {tp}")
+
+                _render_propagation_expander(result)
+                _render_scenario_workbench(
+                    f"Counterfactual - {short_name}",
+                    {"baseline_esv": b_esv, "scenario_esv": s_esv},
+                )
+            else:
+                st.info("Scenario computed in demo mode - live engine returned no data.")
+                _render_scenario_workbench(
+                    f"Counterfactual - {short_name} (demo)",
+                    {"baseline_esv": base_esv, "scenario_esv": base_esv * 0.35},
+                )
+
+    # ================================================================
+    # Tab: Restoration ROI
+    # ================================================================
+    with tab_roi:
+        st.markdown(
+            '<div class="subsection-header">Restoration ROI</div>',
+            unsafe_allow_html=True,
+        )
+
+        if _is_restoration_eligible(site):
+            investment = st.slider(
+                "Investment Cost ($M)", min_value=1, max_value=50,
+                value=5, step=1, key="v6_investment",
+            )
+            horizon = st.slider(
+                "Time Horizon (years)", min_value=5, max_value=30,
+                value=20, step=5, key="v6_horizon",
+            )
+            discount_rate = st.selectbox(
+                "Discount Rate",
+                [0.03, 0.04, 0.05],
+                index=1,
+                format_func=lambda x: f"{x:.0%}",
+                key="v6_discount",
+            )
+
+            if st.button("Compute ROI", key="v6_run_roi"):
+                result = _run_restoration_roi_safe(
+                    data, investment * 1_000_000, horizon, discount_rate,
+                )
+                if result and "error" not in result:
+                    c1, c2, c3, c4 = st.columns(4)
+                    c1.metric("BCR", f"{result.get('bcr', 0):.2f}x")
+                    c2.metric("Static NPV", f"${result.get('static_npv', 0) / 1e6:.1f}M")
+                    c3.metric("Option Value", f"${result.get('option_value', 0) / 1e6:.1f}M")
+                    c4.metric("Payback", f"{result.get('payback_years', 0):.1f} yrs")
+
+                    st.caption(
+                        f"P5: ${result.get('p5_npv', 0) / 1e6:.1f}M | "
+                        f"P50: ${result.get('p50_npv', 0) / 1e6:.1f}M | "
+                        f"P95: ${result.get('p95_npv', 0) / 1e6:.1f}M"
+                    )
+
+                    premium = result.get("option_premium_pct", 0)
+                    st.markdown(
+                        f'<div style="font-size:15px;color:#B0BEC5;padding:12px 0">'
+                        f"Option premium of {premium:.1f}% above static NPV captures "
+                        f"management flexibility value."
+                        f"</div>",
+                        unsafe_allow_html=True,
+                    )
+
+                    _render_scenario_workbench(
+                        f"ROI ${investment}M - {short_name}",
+                        {
+                            "baseline_esv": base_esv,
+                            "scenario_esv": base_esv + result.get("static_npv", 0),
+                        },
+                    )
+                else:
+                    st.info("Scenario computed in demo mode - ROI engine returned no data.")
+        else:
+            st.info(
+                f"{short_name} is a {primary_habitat.replace('_', ' ')} site. "
+                "Restoration ROI is available for mangrove and seagrass sites "
+                "(Sundarbans, Cispata Bay, Shark Bay, Belize)."
+            )
+
+    # ================================================================
+    # Tab: Custom (preserves ALL existing v4 controls)
+    # ================================================================
+    with tab_custom:
+        # Parameter sliders
+        st.markdown('<div class="subsection-header">Parameter Controls</div>', unsafe_allow_html=True)
+
+        col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 0.5])
+        with col1:
+            carbon_price = st.slider("Carbon Price ($/tonne)", min_value=10, max_value=100,
+                                     value=_BASE_CARBON_PRICE, step=5, key="v4_scenario_carbon_price")
+        with col2:
+            habitat_loss_pct = st.slider("Habitat Loss (%)", min_value=0, max_value=50,
+                                         value=0, step=1, key="v4_scenario_habitat_loss")
+        with col3:
+            tourism_growth_pct = st.slider("Tourism Growth (%)", min_value=-20, max_value=30,
+                                           value=0, step=1, key="v4_scenario_tourism_growth")
+        with col4:
+            fisheries_change_pct = st.slider("Fisheries Change (%)", min_value=-30, max_value=20,
+                                             value=0, step=1, key="v4_scenario_fisheries_change")
+        with col5:
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("Reset to Base", key="v4_scenario_reset"):
+                st.session_state["v4_scenario_carbon_price"] = _BASE_CARBON_PRICE
+                st.session_state["v4_scenario_habitat_loss"] = 0
+                st.session_state["v4_scenario_tourism_growth"] = 0
+                st.session_state["v4_scenario_fisheries_change"] = 0
+                st.rerun()
+
+        adjustments = {
+            "carbon_price": carbon_price,
+            "habitat_loss_pct": habitat_loss_pct,
+            "tourism_growth_pct": tourism_growth_pct,
+            "fisheries_change_pct": fisheries_change_pct,
+        }
+
+        scenario_services = apply_scenario_adjustments(base_services, adjustments)
+        base_mc = _run_mc_cached(base_services, n_simulations=10_000)
+        scenario_mc = _run_mc_cached(scenario_services, n_simulations=10_000)
+        scenario_esv = sum(s["value"] for s in scenario_services)
+
+        left_col, right_col = st.columns([1, 2])
+        with left_col:
+            st.markdown(_esv_impact_card(base_esv, scenario_esv), unsafe_allow_html=True)
             st.markdown(
-                f'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1E293B">'
-                f'<span style="color:{COLORS["text_body"]};font-size:15px">{scen_svc["service_name"]}</span>'
-                f'<span style="color:{color};font-size:15px;font-weight:600">'
-                f"{fmt_usd(scen_svc['value'])}"
-                f'<span style="font-size:13px;margin-left:6px">({sign_str}{fmt_usd(delta)})</span>'
-                f"</span></div>",
+                '<div style="margin-top:16px"><div class="kpi-card"><div class="kpi-label">Service Breakdown</div>',
                 unsafe_allow_html=True,
             )
-        st.markdown("</div></div>", unsafe_allow_html=True)
+            for base_svc, scen_svc in zip(base_services, scenario_services):
+                delta = scen_svc["value"] - base_svc["value"]
+                if abs(delta) < 0.01:
+                    color, sign_str = COLORS["text_muted"], ""
+                elif delta > 0:
+                    color, sign_str = COLORS["success"], "+"
+                else:
+                    color, sign_str = COLORS["danger"], ""
+                st.markdown(
+                    f'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1E293B">'
+                    f'<span style="color:{COLORS["text_body"]};font-size:15px">{scen_svc["service_name"]}</span>'
+                    f'<span style="color:{color};font-size:15px;font-weight:600">'
+                    f"{fmt_usd(scen_svc['value'])}"
+                    f'<span style="font-size:13px;margin-left:6px">({sign_str}{fmt_usd(delta)})</span>'
+                    f"</span></div>",
+                    unsafe_allow_html=True,
+                )
+            st.markdown("</div></div>", unsafe_allow_html=True)
 
-    with right_col:
-        histogram_fig = _build_histogram(base_mc, scenario_mc)
-        st.plotly_chart(histogram_fig, width="stretch", key="v4_scenario_histogram")
+        with right_col:
+            histogram_fig = _build_histogram(base_mc, scenario_mc)
+            st.plotly_chart(histogram_fig, width="stretch", key="v4_scenario_histogram")
 
-    # Sensitivity Tornado
-    st.markdown('<div class="subsection-header">Sensitivity Analysis</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div style="font-size:15px;color:#94A3B8;margin-bottom:12px">'
-        "One-at-a-time (OAT) perturbation at +/-20%. Bars show ESV change when "
-        "each service varies individually - longest bar is the dominant risk driver."
-        "</div>",
-        unsafe_allow_html=True,
-    )
-    sensitivity = run_sensitivity_analysis(base_services, n_simulations=10_000)
-    tornado_fig = _build_tornado(sensitivity)
-    st.plotly_chart(tornado_fig, width="stretch", key="v4_scenario_tornado")
+        # Tipping Point Proximity for coral reef sites in Custom tab
+        if primary_habitat == "coral_reef":
+            recovery = data.get("ecological_recovery", {})
+            biomass_ratio = recovery.get("metrics", {}).get("fish_biomass", {}).get("recovery_ratio")
+            if biomass_ratio is not None:
+                biomass_kg_ha = float(biomass_ratio) * 200.0
+                try:
+                    from maris.scenario.tipping_point_analyzer import get_threshold_proximity
+                    proximity_msg = get_threshold_proximity(biomass_kg_ha)
+                    if proximity_msg:
+                        st.warning(f"Tipping Point: {proximity_msg}")
+                except ImportError:
+                    pass
 
-    # Axiom Chain Impact - dynamically derived
-    st.markdown('<div class="subsection-header">Bridge Axiom Chain Impact</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div style="font-size:15px;color:#94A3B8;margin-bottom:12px">'
-        "Bridge axioms affected by the current scenario parameters. "
-        "Each axiom translates an ecological measurement into a financial "
-        "metric through peer-reviewed coefficients."
-        "</div>",
-        unsafe_allow_html=True,
-    )
-    axiom_chain = _get_site_axiom_chain(data)
-    st.markdown(_axiom_chain_html(adjustments, axiom_chain), unsafe_allow_html=True)
+        # Sensitivity Tornado
+        st.markdown('<div class="subsection-header">Sensitivity Analysis</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div style="font-size:15px;color:#94A3B8;margin-bottom:12px">'
+            "One-at-a-time (OAT) perturbation at +/-20%. Bars show ESV change when "
+            "each service varies individually - longest bar is the dominant risk driver."
+            "</div>",
+            unsafe_allow_html=True,
+        )
+        sensitivity = run_sensitivity_analysis(base_services, n_simulations=10_000)
+        tornado_fig = _build_tornado(sensitivity)
+        st.plotly_chart(tornado_fig, width="stretch", key="v4_scenario_tornado")
+
+        # Axiom Chain Impact - dynamically derived
+        st.markdown('<div class="subsection-header">Bridge Axiom Chain Impact</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div style="font-size:15px;color:#94A3B8;margin-bottom:12px">'
+            "Bridge axioms affected by the current scenario parameters. "
+            "Each axiom translates an ecological measurement into a financial "
+            "metric through peer-reviewed coefficients."
+            "</div>",
+            unsafe_allow_html=True,
+        )
+        axiom_chain = _get_site_axiom_chain(data)
+        st.markdown(_axiom_chain_html(adjustments, axiom_chain), unsafe_allow_html=True)
+
+        # Workbench for custom tab
+        _render_scenario_workbench(
+            f"Custom - {short_name}",
+            {"baseline_esv": base_esv, "scenario_esv": scenario_esv},
+        )
 
     if mode == "demo":
         st.markdown(

@@ -1,0 +1,175 @@
+{
+  "transcript_id": "cabo_pulmo_counterfactual",
+  "generated_at": "2026-02-20T04:42:53.489788+00:00",
+  "scenario_request": {
+    "scenario_type": "counterfactual",
+    "site_scope": [
+      "Cabo Pulmo National Park"
+    ],
+    "time_horizon_years": 10,
+    "assumptions": {},
+    "compare_against": "baseline",
+    "ssp_scenario": null,
+    "target_year": null
+  },
+  "scenario_response": {
+    "scenario_request": {
+      "scenario_type": "counterfactual",
+      "site_scope": [
+        "Cabo Pulmo National Park"
+      ],
+      "time_horizon_years": 10,
+      "assumptions": {},
+      "compare_against": "baseline",
+      "ssp_scenario": null,
+      "target_year": null
+    },
+    "baseline_case": {
+      "total_esv_usd": 29270000.0,
+      "services": {
+        "tourism": 25000000,
+        "fisheries_spillover": 3200000,
+        "carbon_sequestration": 180000,
+        "coastal_protection": 890000
+      },
+      "site_name": "Cabo Pulmo National Park"
+    },
+    "scenario_case": {
+      "total_esv_usd": 9110500.0,
+      "services": {
+        "tourism": 7500000.0,
+        "fisheries_spillover": 1280000.0,
+        "carbon_sequestration": 108000.0,
+        "coastal_protection": 222500.0
+      },
+      "biomass_multiplier": 1.0,
+      "biomass_kg_ha": 200.0
+    },
+    "deltas": [
+      {
+        "metric": "tourism",
+        "baseline_value": 25000000.0,
+        "scenario_value": 7500000.0,
+        "absolute_change": -17500000.0,
+        "percent_change": -70.0,
+        "unit": "USD"
+      },
+      {
+        "metric": "fisheries_spillover",
+        "baseline_value": 3200000.0,
+        "scenario_value": 1280000.0,
+        "absolute_change": -1920000.0,
+        "percent_change": -60.0,
+        "unit": "USD"
+      },
+      {
+        "metric": "carbon_sequestration",
+        "baseline_value": 180000.0,
+        "scenario_value": 108000.0,
+        "absolute_change": -72000.0,
+        "percent_change": -40.0,
+        "unit": "USD"
+      },
+      {
+        "metric": "coastal_protection",
+        "baseline_value": 890000.0,
+        "scenario_value": 222500.0,
+        "absolute_change": -667500.0,
+        "percent_change": -75.0,
+        "unit": "USD"
+      },
+      {
+        "metric": "total_esv",
+        "baseline_value": 29270000.0,
+        "scenario_value": 9110500.0,
+        "absolute_change": -20159500.0,
+        "percent_change": -68.87427400068329,
+        "unit": "USD"
+      }
+    ],
+    "propagation_trace": [
+      {
+        "axiom_id": "BA-002",
+        "description": "Revert biomass from 4.63x (926 kg/ha) to 1.0x (200 kg/ha) - pre-protection baseline",
+        "input_value": 4.63,
+        "input_parameter": "biomass_multiplier",
+        "output_value": 1.0,
+        "output_parameter": "biomass_multiplier_counterfactual",
+        "coefficient": 0.2159827213822894,
+        "source_doi": "10.1371/journal.pone.0023601"
+      },
+      {
+        "axiom_id": "BA-001",
+        "description": "tourism: 30% retained at mmsy_lower threshold (200 kg/ha)",
+        "input_value": 25000000.0,
+        "input_parameter": "baseline_tourism_usd",
+        "output_value": 7500000.0,
+        "output_parameter": "scenario_tourism_usd",
+        "coefficient": 0.3,
+        "source_doi": "10.1073/pnas.1106861108"
+      },
+      {
+        "axiom_id": "BA-001",
+        "description": "fisheries_spillover: 40% retained at mmsy_lower threshold (200 kg/ha)",
+        "input_value": 3200000.0,
+        "input_parameter": "baseline_fisheries_spillover_usd",
+        "output_value": 1280000.0,
+        "output_parameter": "scenario_fisheries_spillover_usd",
+        "coefficient": 0.4,
+        "source_doi": "10.1073/pnas.1106861108"
+      },
+      {
+        "axiom_id": "BA-001",
+        "description": "carbon_sequestration: 60% retained at mmsy_lower threshold (200 kg/ha)",
+        "input_value": 180000.0,
+        "input_parameter": "baseline_carbon_sequestration_usd",
+        "output_value": 108000.0,
+        "output_parameter": "scenario_carbon_sequestration_usd",
+        "coefficient": 0.6,
+        "source_doi": "10.1073/pnas.1106861108"
+      },
+      {
+        "axiom_id": "BA-001",
+        "description": "coastal_protection: 25% retained at mmsy_lower threshold (200 kg/ha)",
+        "input_value": 890000.0,
+        "input_parameter": "baseline_coastal_protection_usd",
+        "output_value": 222500.0,
+        "output_parameter": "scenario_coastal_protection_usd",
+        "coefficient": 0.25,
+        "source_doi": "10.1073/pnas.1106861108"
+      }
+    ],
+    "uncertainty": {
+      "p5": -22916444.690503184,
+      "p50": -20152645.956453603,
+      "p95": -17390721.680101164,
+      "dominant_driver": "biomass_tourism_chain",
+      "n_simulations": 10000
+    },
+    "confidence": 0.85,
+    "confidence_penalties": [],
+    "scenario_validity": "in_domain",
+    "tipping_point_proximity": "At 200 kg/ha, Cabo Pulmo would be between collapse (150 kg/ha) and mmsy_lower (300 kg/ha) thresholds - multiple ecosystem metrics degrading simultaneously",
+    "answer": "Without protection, Cabo Pulmo National Park ESV would decline from $29.3M to an estimated $9.1M - a loss of $20.2M (69%). This demonstrates that protection generates approximately $20.2M in annual ecosystem service value.",
+    "caveats": [
+      "Counterfactual assumes complete removal of protection measures",
+      "Actual degradation trajectory would depend on local pressures and management alternatives",
+      "Ecosystem service losses may not be linear with ecological degradation"
+    ],
+    "axioms_used": [
+      "BA-001",
+      "BA-002"
+    ]
+  },
+  "validation_anchors": {
+    "expected_range": "Cabo Pulmo counterfactual delta in [-$26M, -$18M]",
+    "actual_value": -20159500.0,
+    "within_range": true
+  },
+  "confidence_breakdown": [],
+  "uncertainty": {
+    "p5": -22916444.690503184,
+    "p50": -20152645.956453603,
+    "p95": -17390721.680101164
+  }
+}

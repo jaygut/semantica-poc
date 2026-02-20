@@ -1,0 +1,196 @@
+{
+  "transcript_id": "belize_ssp245_2050",
+  "generated_at": "2026-02-20T04:42:53.524793+00:00",
+  "scenario_request": {
+    "scenario_type": "climate",
+    "site_scope": [
+      "Belize Barrier Reef Reserve System"
+    ],
+    "time_horizon_years": 10,
+    "assumptions": {},
+    "compare_against": "baseline",
+    "ssp_scenario": "SSP2-4.5",
+    "target_year": 2050
+  },
+  "scenario_response": {
+    "scenario_request": {
+      "scenario_type": "climate",
+      "site_scope": [
+        "Belize Barrier Reef Reserve System"
+      ],
+      "time_horizon_years": 10,
+      "assumptions": {},
+      "compare_against": "baseline",
+      "ssp_scenario": "SSP2-4.5",
+      "target_year": 2050
+    },
+    "baseline_case": {
+      "total_esv_usd": 292500000.0,
+      "services": {
+        "tourism": 150000000,
+        "coastal_protection": 120000000,
+        "fisheries": 14000000,
+        "carbon_sequestration": 8500000
+      },
+      "site_name": "Belize Barrier Reef Reserve System"
+    },
+    "scenario_case": {
+      "total_esv_usd": 116850000.00000001,
+      "services": {
+        "tourism": 62142857.14285715,
+        "coastal_protection": 42000000.00000001,
+        "fisheries": 7000000.0,
+        "carbon_sequestration": 5707142.857142857
+      },
+      "ssp_scenario": "SSP2-4.5",
+      "target_year": 2050,
+      "habitat_degradation_mid": 0.6
+    },
+    "deltas": [
+      {
+        "metric": "tourism",
+        "baseline_value": 150000000.0,
+        "scenario_value": 62142857.14285715,
+        "absolute_change": -87857142.85714285,
+        "percent_change": -58.57142857142856,
+        "unit": "USD"
+      },
+      {
+        "metric": "coastal_protection",
+        "baseline_value": 120000000.0,
+        "scenario_value": 42000000.00000001,
+        "absolute_change": -78000000.0,
+        "percent_change": -65.0,
+        "unit": "USD"
+      },
+      {
+        "metric": "fisheries",
+        "baseline_value": 14000000.0,
+        "scenario_value": 7000000.0,
+        "absolute_change": -7000000.0,
+        "percent_change": -50.0,
+        "unit": "USD"
+      },
+      {
+        "metric": "carbon_sequestration",
+        "baseline_value": 8500000.0,
+        "scenario_value": 5707142.857142857,
+        "absolute_change": -2792857.1428571427,
+        "percent_change": -32.857142857142854,
+        "unit": "USD"
+      },
+      {
+        "metric": "total_esv",
+        "baseline_value": 292500000.0,
+        "scenario_value": 116850000.00000001,
+        "absolute_change": -175650000.0,
+        "percent_change": -60.05128205128205,
+        "unit": "USD"
+      }
+    ],
+    "propagation_trace": [
+      {
+        "axiom_id": "IPCC-AR6-WG2-Ch3",
+        "description": "Habitat degradation for coral_reef under SSP2-4.5 by 2050: 50.0%-70.0% functional capacity loss",
+        "input_value": 0.0,
+        "input_parameter": "degradation_fraction_2025",
+        "output_value": 0.6,
+        "output_parameter": "degradation_fraction_2050",
+        "coefficient": null,
+        "source_doi": "10.1007/978-3-031-59144-8"
+      },
+      {
+        "axiom_id": "BA-001-tourism",
+        "description": "tourism: 41.4% retained (60.0% habitat degradation, SSP2-4.5)",
+        "input_value": 150000000.0,
+        "input_parameter": "baseline_tourism_usd",
+        "output_value": 62142857.14285715,
+        "output_parameter": "scenario_tourism_usd",
+        "coefficient": 0.4142857142857143,
+        "source_doi": "10.1007/978-3-031-59144-8"
+      },
+      {
+        "axiom_id": "BA-001-coastal_protection",
+        "description": "coastal_protection: 35.0% retained (60.0% habitat degradation, SSP2-4.5)",
+        "input_value": 120000000.0,
+        "input_parameter": "baseline_coastal_protection_usd",
+        "output_value": 42000000.00000001,
+        "output_parameter": "scenario_coastal_protection_usd",
+        "coefficient": 0.35000000000000003,
+        "source_doi": "10.1007/978-3-031-59144-8"
+      },
+      {
+        "axiom_id": "BA-001-fisheries",
+        "description": "fisheries: 50.0% retained (60.0% habitat degradation, SSP2-4.5)",
+        "input_value": 14000000.0,
+        "input_parameter": "baseline_fisheries_usd",
+        "output_value": 7000000.0,
+        "output_parameter": "scenario_fisheries_usd",
+        "coefficient": 0.5,
+        "source_doi": "10.1007/978-3-031-59144-8"
+      },
+      {
+        "axiom_id": "BA-001-carbon_sequestration",
+        "description": "carbon_sequestration: 67.1% retained (60.0% habitat degradation, SSP2-4.5)",
+        "input_value": 8500000.0,
+        "input_parameter": "baseline_carbon_sequestration_usd",
+        "output_value": 5707142.857142857,
+        "output_parameter": "scenario_carbon_sequestration_usd",
+        "coefficient": 0.6714285714285715,
+        "source_doi": "10.1007/978-3-031-59144-8"
+      }
+    ],
+    "uncertainty": {
+      "p5": 95550159.45108408,
+      "p50": 116902953.55948071,
+      "p95": 138241265.82128742,
+      "dominant_driver": "coral_reef",
+      "n_simulations": 10000
+    },
+    "confidence": 0.5,
+    "confidence_penalties": [
+      {
+        "reason": "temporal_extrapolation_2050",
+        "penalty": -0.25
+      },
+      {
+        "reason": "ssp_scenario_uncertainty_SSP2-4.5",
+        "penalty": -0.1
+      }
+    ],
+    "scenario_validity": "in_domain",
+    "tipping_point_proximity": null,
+    "answer": "Under SSP2-4.5 by 2050, Belize Barrier Reef Reserve System ESV is projected to decline from $292.5M to $116.9M (a 60% reduction). The coral reef habitat faces 50%-70% functional capacity loss under this pathway.",
+    "caveats": [
+      "Degradation estimates interpolated from IPCC AR6 WG2 Ch.3 anchor points for coral_reef",
+      "Service-specific sensitivities based on axiom chain analysis - actual impacts may differ",
+      "Confidence penalized for temporal extrapolation (2050) and SSP uncertainty (SSP2-4.5)"
+    ],
+    "axioms_used": [
+      "BA-001-tourism",
+      "BA-001-coastal_protection",
+      "BA-001-fisheries",
+      "BA-001-carbon_sequestration"
+    ]
+  },
+  "validation_anchors": {
+    "expected_range": "Coral reef 50-70% loss under SSP2-4.5 by 2050 (IPCC AR6)",
+    "actual_value": 60.05128205128205,
+    "within_range": true
+  },
+  "confidence_breakdown": [
+    {
+      "reason": "temporal_extrapolation_2050",
+      "penalty": -0.25
+    },
+    {
+      "reason": "ssp_scenario_uncertainty_SSP2-4.5",
+      "penalty": -0.1
+    }
+  ],
+  "uncertainty": {
+    "p5": 95550159.45108408,
+    "p50": 116902953.55948071,
+    "p95": 138241265.82128742
+  }
+}
