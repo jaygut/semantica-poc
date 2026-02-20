@@ -138,6 +138,7 @@ The primary endpoint. Classifies a natural-language question, selects a Cypher t
 | `graph_path` | Structured edges for visualization (only when `include_graph_path=true`) |
 | `caveats` | Methodological limitations that apply to this answer |
 | `query_metadata` | Classification category, confidence, template used, response time |
+| `provenance_risk` | `"high"` when no site anchor was resolved and the query fell back to open_domain. Absent on normal site-anchored responses. |
 
 ---
 
@@ -281,17 +282,20 @@ Generate a TNFD LEAP (Locate, Evaluate, Assess, Prepare) disclosure for a specif
 
 ## Query Categories
 
-The `QueryClassifier` maps natural-language questions into one of five categories. Each category is backed by a parameterized Cypher template in `maris/query/cypher_templates.py`.
+The `QueryClassifier` maps natural-language questions into one of six categories. Each category is backed by a parameterized Cypher template in `maris/query/cypher_templates.py`.
 
 | Category | Keyword Triggers | What the Template Returns |
 |----------|-----------------|--------------------------|
 | `site_valuation` | value, worth, ESV, asset rating | MPA metadata, ecosystem service values, bridge axioms with evidence |
 | `provenance_drilldown` | evidence, provenance, DOI, source, research | Multi-hop path from MPA through axioms to source Documents (1-4 hops) |
-| `axiom_explanation` | bridge axiom, BA-001, coefficient | Axiom details, translation coefficients, evidence sources, applicable sites |
+| `axiom_explanation` | bridge axiom, BA-001, coefficient, sequester | Axiom details, translation coefficients, evidence sources, applicable sites |
 | `comparison` | compare, versus, rank, benchmark | Side-by-side MPA metrics (ESV, biomass ratio, NEOLI score, asset rating) |
 | `risk_assessment` | risk, degradation, climate, threat, decline | Ecological-to-service axioms, risk factors, confidence intervals |
+| `concept_explanation` | blue carbon, trophic cascade, mechanism, how does | Concept node details, involved axioms, linked documents - answers mechanism questions without a site anchor |
 
 If no keyword rules match and an LLM is configured, the classifier falls back to LLM-based classification. If neither matches, the default category is `site_valuation` with confidence 0.3.
+
+**Siteless query handling:** When a site-required category (site_valuation, provenance_drilldown, risk_assessment) is classified but no site can be resolved from the question, the query is coerced to `open_domain` rather than returning a 422 error. The response includes `"provenance_risk": "high"` to flag that no site-specific graph data was retrieved.
 
 ---
 

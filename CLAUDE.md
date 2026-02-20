@@ -6,7 +6,7 @@ This file provides guidance to Claude Code when working with this repository.
 
 **Nereus** is a "Hybrid" Intelligence platform, powered by MARIS + Semantica. It creates auditable, **physically linked** pathways from peer-reviewed ecological science to investment-grade financial metrics. Unlike standard RAG, Nereus executes logic (axioms) extracted directly from literature.
 
-**Current Status:** v4 Global Scaling Platform with Intelligence Upgrade - **Fully Synchronized Payload** (35 Bridge Axioms). Neo4j knowledge graph (953+ nodes), 9 MPA sites, $1.62B ESV. The system "thinks" by traversing graph edges that represent scientific proofs.
+**Current Status:** v5 Audit-Grade Integrity - **Fully Synchronized Payload** (35 Bridge Axioms). Built on the v4 Global Scaling Platform with Intelligence Upgrade. Neo4j knowledge graph (953+ nodes), 9 MPA sites, $1.62B ESV. Every financial claim is verified through deterministic provenance chains with DOI-backed evidence and validated confidence scoring.
 
 ## Core Philosophy: "The Logic is Physically Linked"
 1.  **No Hallucinations:** Financial claims must be the result of a deterministic graph traversal.
@@ -40,7 +40,7 @@ maris/
   llm/              # LLM adapter (DeepSeek/Claude/GPT-4), prompts
   axioms/           # engine, confidence, monte_carlo, sensitivity
   ingestion/        # pdf_extractor, llm_extractor, embedding_generator, graph_merger
-  provenance/       # W3C PROV-O: manager, bridge_axiom_registry, certificate, storage
+  provenance/       # W3C PROV-O: manager, bridge_axiom_registry, certificate, storage, doi_verifier, models
   sites/            # Multi-site: characterizer, esv_estimator, api_clients (OBIS/WoRMS)
   reasoning/        # Inference: context_builder, hybrid_retriever, rule_compiler
   disclosure/       # TNFD LEAP: leap_generator, leap_generator_v4, alignment_scorer
@@ -69,7 +69,7 @@ scripts/
   populate_neo4j_v4.py    # 11-stage populator, auto-discovers examples/*_case_study.json
   populate_neo4j.py       # Legacy 2-site populator (v2/v3)
 
-tests/                    # 787 unit + integration tests (65 new from Intelligence Upgrade)
+tests/                    # 1020 tests (790+ unit + 230+ integration)
 launch.sh                 # Unified launcher
 ```
 
@@ -145,7 +145,7 @@ Comparison sites (GBR, Papahanaumokuakea): governance metadata only, no ESV.
 ## Testing
 
 ```bash
-pytest tests/ -v                    # All 910 tests (706 unit + 204 integration)
+pytest tests/ -v                    # All 1020 tests
 ruff check maris/ tests/            # Lint
 ```
 

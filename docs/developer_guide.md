@@ -4,7 +4,7 @@
 
 Nereus is a provenance-first blue finance platform, powered by MARIS (Marine Asset Risk Intelligence System) + Semantica. It creates auditable, DOI-backed pathways from peer-reviewed ecological science to investment-grade financial metrics for blue natural capital. The system is designed for institutional investors, blue bond underwriters, TNFD working groups, and conservation finance professionals who require full scientific traceability behind every number.
 
-The v4 global scaling milestone with Intelligence Upgrade exposes the curated knowledge foundation through a Neo4j graph database (953+ nodes including 15 Concept nodes, 244+ edges across 9 Gold-tier MPA sites), a FastAPI query engine with 6-category natural-language classification (added concept_explanation for mechanism questions), and an investor-facing Streamlit dashboard with interactive provenance visualization and portfolio-level views. The system now resolves mechanism questions ("How does blue carbon work?") without requiring a site anchor.
+The v5 Audit-Grade Integrity release (built on the v4 Global Scaling Platform with Intelligence Upgrade) hardens the provenance and confidence pipeline for institutional-grade use. It adds a DOI verifier module, strict deterministic provenance guards, a confidence transparency expander in Ask Nereus, per-ha-yr median USD coefficients on three core axiom templates (BA-001, BA-003, BA-009), and siteless query coercion (was: 422, now: 200 + `provenance_risk: high`). The Neo4j graph contains 953+ nodes including 15 Concept nodes and 244+ edges across 9 Gold-tier MPA sites, with a FastAPI query engine covering 6 natural-language classification categories.
 
 ## Architecture Overview
 
@@ -72,12 +72,14 @@ maris/
     graph_merger.py           # Merge extracted triples into Neo4j
   provenance/                 # P0: W3C PROV-O provenance tracking
     manager.py                # MARISProvenanceManager (entity/activity/agent tracking)
-    bridge_axiom_registry.py  # 16 axioms as typed BridgeAxiom objects with TranslationChain
+    bridge_axiom_registry.py  # 35 axioms as typed BridgeAxiom objects with TranslationChain
     bridge_axiom.py           # BridgeAxiom dataclass
     certificate.py            # Provenance certificate generation (JSON/Markdown)
     core.py                   # PROV-O core dataclasses (ProvenanceEntity, ProvenanceActivity, ProvenanceAgent)
     integrity.py              # SHA-256 checksum verification
     storage.py                # InMemoryStorage and SQLiteStorage backends
+    doi_verifier.py           # DOI format and reachability verification (v5 NEW)
+    models.py                 # Provenance Pydantic models for strict deterministic guards (v5 NEW)
   sites/                      # P1: Multi-site scaling pipeline
     api_clients.py            # OBIS (numeric area resolution), WoRMS (204 fix), Marine Regions (404+JSON handling) API clients
     characterizer.py          # 5-step auto-characterization pipeline (Bronze/Silver/Gold) with multi-signal habitat scoring (keywords, taxonomy, functional groups)
@@ -195,7 +197,7 @@ The `scripts/populate_neo4j_v4.py` script uses `maris.config_v4` for dynamic sit
 | 4 | `_populate_site(site)` | Each case study JSON | MPA enrichment (NEOLI, ESV, habitats), EcosystemService values, Species nodes, TrophicLevel food web |
 | 5 | `_populate_site_services(site)` | Each case study JSON | GENERATES edges linking MPA to EcosystemService |
 | 6 | `_populate_site_species(site)` | Each case study JSON | Species nodes with LOCATED_IN and INHABITS edges |
-| 7 | `_populate_bridge_axioms()` | `bridge_axiom_templates.json` + `bridge_axioms.json` | 16 BridgeAxiom nodes; EVIDENCED_BY, APPLIES_TO, TRANSLATES edges |
+| 7 | `_populate_bridge_axioms()` | `bridge_axiom_templates.json` + `bridge_axioms.json` | 35 BridgeAxiom nodes; EVIDENCED_BY, APPLIES_TO, TRANSLATES edges |
 | 8 | `_populate_comparison_sites()` | Hardcoded | Great Barrier Reef, Papahanaumokuakea MPA nodes |
 | 9 | `_populate_relationships()` | `relationships.json` | Cross-domain relationship edges |
 | 10 | `_populate_cross_domain_links()` | Dynamic | Structural edges (HAS_HABITAT, PROVIDES, INHABITS, GOVERNS, etc.) |
@@ -293,7 +295,7 @@ The v4 populator executes the 11-stage pipeline described above, dynamically dis
 python scripts/validate_graph.py
 ```
 
-Checks node counts by label (938 nodes expected), relationship integrity (244 edges expected), and that all 16 bridge axioms have at least one EVIDENCED_BY edge to a Document node.
+Checks node counts by label (938+ nodes expected), relationship integrity (244+ edges expected), and that all 35 bridge axioms have at least one EVIDENCED_BY edge to a Document node.
 
 ---
 
@@ -542,7 +544,7 @@ The v4 populator discovers case study files automatically via `maris/config_v4.p
 
 ### Test Suite
 
-The project includes **910 tests** (706 unit + 204 integration) across 23 test files. Tests cover the full stack: query classification (with hardened regex patterns), Cypher template generation, LLM response validation, confidence model, sensitivity analysis, API endpoints, graph population, W3C PROV-O provenance, multi-site scaling (with OBIS area resolution and WoRMS 204 handling), cross-domain reasoning (with rule compilation), TNFD disclosure, axiom discovery (with LLM-enhanced pattern detection), Semantica SDK bridge adapters, and LLM discovery integration against live DeepSeek.
+The project includes **1020 tests** (790+ unit + 230+ integration) across 27 test files. Tests cover the full stack: query classification (with hardened regex patterns), Cypher template generation, LLM response validation, confidence model (aligned with visible evidence payload), sensitivity analysis, API endpoints, graph population, W3C PROV-O provenance, DOI verification, deterministic provenance guards, multi-site scaling (with OBIS area resolution and WoRMS 204 handling), cross-domain reasoning (with rule compilation), TNFD disclosure, axiom discovery (with LLM-enhanced pattern detection), Semantica SDK bridge adapters, and LLM discovery integration against live DeepSeek.
 
 **Setup and execution:**
 
@@ -583,7 +585,12 @@ tests/
   test_disclosure.py                # P3: TNFD LEAP disclosure tests (30 tests)
   test_axiom_discovery.py           # P4: Axiom discovery pipeline tests (70+ tests)
   test_semantica_bridge.py          # Semantica SDK bridge adapter tests (51 tests)
-  integration/                      # Integration test suite (204 tests)
+  test_confidence.py                # Confidence model invariant tests (v5)
+  test_doi_verifier.py              # DOI verifier unit tests (v5)
+  test_bridge_axiom_provenance.py   # Axiom provenance integrity tests (v5)
+  test_graphrag_chat_v4.py          # GraphRAG chat regression tests (v5)
+  test_site_intelligence_provenance.py  # Site intelligence provenance tests (v5)
+  integration/                      # Integration test suite (230+ tests)
     test_phase0_bridge.py           # SDK availability, SQLite persistence, dual-write
     test_phase1_graph.py            # Graph integrity, idempotent re-population
     test_phase2_apis.py             # OBIS, WoRMS, Marine Regions real API calls
@@ -608,7 +615,7 @@ tests/
 The project uses GitHub Actions (`.github/workflows/ci.yml`) for continuous integration on every push and pull request to `main`:
 
 1. **Lint** - Runs `ruff` for code style and import order checks
-2. **Test** - Runs the full pytest suite (910 tests: 706 unit + 204 integration)
+2. **Test** - Runs the full pytest suite (1020 tests: 790+ unit + 230+ integration)
 
 Dev dependencies are specified in `requirements-dev.txt`: pytest>=8.0, pytest-asyncio>=0.23, httpx>=0.26, ruff>=0.8, pytest-cov>=4.0.
 
@@ -637,7 +644,7 @@ Expected: JSON response with `answer`, `confidence` >= 0.5, `evidence` array wit
 python scripts/validate_graph.py
 ```
 
-Checks: node counts per label (938 nodes, 244 edges across 11 MPA nodes), all BridgeAxiom nodes have EVIDENCED_BY edges, all MPA nodes have GENERATES edges to EcosystemService nodes.
+Checks: node counts per label (938+ nodes, 244+ edges across 11 MPA nodes), all 35 BridgeAxiom nodes have EVIDENCED_BY edges, all MPA nodes have GENERATES edges to EcosystemService nodes.
 
 ---
 

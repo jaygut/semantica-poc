@@ -31,7 +31,7 @@ The system is designed for blue bond underwriters, conservation finance analysts
    python scripts/populate_neo4j_v4.py
    ```
 
-   This loads 195 peer-reviewed papers, 16 bridge axioms with DOI-backed evidence, ecosystem service valuations for 9 Gold-tier MPA sites, species data, and trophic network structure. The v4 populator dynamically discovers all case study files. See the [Developer Guide](developer_guide.md#knowledge-graph-data-lineage) for full data lineage.
+   This loads 195 peer-reviewed papers, 35 bridge axioms with DOI-backed evidence, ecosystem service valuations for 9 Gold-tier MPA sites, species data, and trophic network structure. The v4 populator dynamically discovers all case study files. See the [Developer Guide](developer_guide.md#knowledge-graph-data-lineage) for full data lineage.
 
 3. **Launch the platform (recommended - one command):**
 
@@ -98,7 +98,7 @@ Per-site deep dive with full provenance:
 
 A split-panel interface showing both the chat and the reasoning pipeline:
 
-- **Left panel (60%)** - Natural-language chat with confidence badges, axiom tags, and evidence tables
+- **Left panel (60%)** - Natural-language chat with confidence badges, axiom tags, and evidence tables. An expandable **Confidence Transparency** section shows the full breakdown of the composite confidence score (tier_base, path_discount, staleness_discount, sample_factor) for each response.
 - **Right panel (40%)** - Pipeline transparency showing 4 steps: CLASSIFY (query category detection), QUERY GRAPH (Cypher generation and execution), SYNTHESIZE (LLM grounding with graph context), VALIDATE (confidence scoring and DOI verification)
 - Includes an integrated knowledge graph subgraph explorer with semantic layering
 - Supports queries across all 9 sites
@@ -114,9 +114,14 @@ Interactive Monte Carlo simulation with site-aware axiom chains:
 - **Bridge axiom chain impact**: Shows how parameter changes flow through applicable axioms to affect the bottom line
 - Uses `maris.axioms.monte_carlo` and `maris.axioms.sensitivity` engines for real computation
 
-#### Tab 5: Site Scout
+#### Tab 5: Site Intelligence
 
-Placeholder for live MPA characterization. The auto-characterization pipeline (OBIS/WoRMS/Marine Regions) is built and tested (28 unit tests) but dashboard integration is deferred to reduce demo risk from flaky external APIs.
+Four-panel intelligence view for the selected site:
+
+- **NEOLI Heatmap** - Portfolio-wide NEOLI alignment scores across all 9 sites, with the selected site highlighted
+- **Habitat-Axiom Map** - Which bridge axioms are applicable to each habitat type in the portfolio
+- **Data Quality Dashboard** - Per-site evidence tier breakdown (T1-T4), DOI coverage, and provenance_summary badges
+- **Characterization Pipeline Diagram** - Annotated flow showing the 5-step auto-characterization process (OBIS species pull, WoRMS taxonomy, Marine Regions geometry, ecological scoring, Gold/Silver/Bronze tiering)
 
 #### Tab 6: TNFD Compliance
 
@@ -135,7 +140,7 @@ TNFD LEAP disclosure generation and alignment scoring for all 9 sites:
 - **Service health panel** - Shows API, Neo4j, and LLM connectivity status (Live mode only)
 - **Site selector** - All 9 Gold-tier sites available
 - **Scenario slider** - Conservative (P5) / Base Case (Median) / Optimistic (P95)
-- **System metadata** - Schema version, site count (9), bridge axiom count (16)
+- **System metadata** - Schema version, site count (9), bridge axiom count (35)
 
 ### v3 Intelligence Platform
 
@@ -245,7 +250,7 @@ Valuation and provenance queries for any of these sites return rich, multi-layer
 
 **Comparison sites** (Great Barrier Reef, Papahanaumokuakea) have governance metadata (NEOLI score, area, asset rating) but not full ecosystem service valuations. Queries about their financial value will note the absence of site-specific valuation data.
 
-When the API is unavailable, Ask Nereus falls back to 63 precomputed responses covering all 5 query categories (valuation, provenance, axiom, comparison, risk). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
+When the API is unavailable, Ask Nereus falls back to 73+ precomputed responses covering all 6 query categories (valuation, provenance, axiom, comparison, risk, concept_explanation). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
 
 ### Graph Explorer
 
