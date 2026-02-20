@@ -28,12 +28,12 @@ def engine():
 
 
 class TestAxiomSchemaCompleteness:
-    def test_all_35_axioms_exist(self, axiom_data):
-        """All 35 bridge axioms BA-001 through BA-035 must be present."""
+    def test_all_40_axioms_exist(self, axiom_data):
+        """All 40 bridge axioms BA-001 through BA-040 must be present."""
         axioms = axiom_data["axioms"]
-        assert len(axioms) == 35
+        assert len(axioms) == 40
         ids = {a["axiom_id"] for a in axioms}
-        for i in range(1, 36):
+        for i in range(1, 41):
             assert f"BA-{i:03d}" in ids
 
     def test_required_fields_present(self, axiom_data):
@@ -121,7 +121,7 @@ class TestBridgeAxiomEngine:
     def test_engine_list_all(self, engine):
         """list_all() returns all 35 axioms."""
         all_axioms = engine.list_all()
-        assert len(all_axioms) == 35
+        assert len(all_axioms) == 40
 
     def test_engine_list_applicable_coral_reef(self, engine):
         """Axioms applicable to coral_reef include BA-004 and BA-012."""

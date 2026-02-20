@@ -364,6 +364,75 @@ def query(request: QueryRequest):
                 status_code=422,
                 detail="Comparison queries must specify at least two sites.",
             )
+    elif category == "scenario_analysis":
+        # Scenario analysis uses its own engine pipeline, bypassing graph execution.
+        # Lazy imports to avoid circular dependencies and allow incremental build.
+        try:
+            from maris.scenario.scenario_parser import parse_scenario_request
+            from maris.scenario.counterfactual_engine import run_counterfactual
+            from maris.scenario.climate_scenarios import run_climate_scenario
+        except ImportError:
+            logger.warning("Scenario modules not yet available")
+            elapsed_ms = int((time.monotonic() - start) * 1000)
+            return QueryResponse(
+                answer="Scenario analysis module is not yet initialized. Please try again later.",
+                confidence=0.0,
+                evidence=[],
+                axioms_used=[],
+                graph_path=[],
+                caveats=["Scenario module not available"],
+                verified_claims=[],
+                unverified_claims=[],
+                evidence_count=0,
+                doi_citation_count=0,
+                evidence_completeness_score=0.0,
+                provenance_warnings=["Scenario module import failed"],
+                provenance_risk="high",
+                query_metadata=QueryMetadata(
+                    category="scenario_analysis",
+                    classification_confidence=classification.get("confidence", 0.0),
+                    template_used="scenario_analysis:unavailable",
+                    response_time_ms=elapsed_ms,
+                ),
+            )
+
+        scenario_req = parse_scenario_request(request.question, site, classification)
+
+        if scenario_req.scenario_type == "counterfactual":
+            result = run_counterfactual(scenario_req)
+        elif scenario_req.scenario_type == "climate":
+            result = run_climate_scenario(scenario_req)
+        else:
+            result = {
+                "answer": f"Scenario type '{scenario_req.scenario_type}' analysis is being computed...",
+                "scenario_type": scenario_req.scenario_type,
+                "provenance_risk": "high",
+                "category": "scenario_analysis",
+            }
+
+        elapsed_ms = int((time.monotonic() - start) * 1000)
+        # Return scenario result as QueryResponse
+        return QueryResponse(
+            answer=result.get("answer", "Scenario analysis complete."),
+            confidence=result.get("confidence", 0.0),
+            evidence=[],
+            axioms_used=result.get("axioms_used", []),
+            graph_path=[],
+            caveats=result.get("caveats", []),
+            verified_claims=[],
+            unverified_claims=[],
+            evidence_count=0,
+            doi_citation_count=0,
+            evidence_completeness_score=0.0,
+            provenance_warnings=result.get("provenance_warnings", []),
+            provenance_risk=result.get("provenance_risk", "high"),
+            query_metadata=QueryMetadata(
+                category="scenario_analysis",
+                classification_confidence=classification.get("confidence", 0.0),
+                template_used=f"scenario_analysis:{scenario_req.scenario_type}",
+                response_time_ms=elapsed_ms,
+            ),
+        )
 
     # 3. Execute with strict strategy enforcement
     graph_result = _executor.execute_with_strategy(

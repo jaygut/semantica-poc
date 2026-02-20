@@ -51,6 +51,21 @@ _KEYWORD_RULES: list[tuple[str, list[str]]] = [
     ("comparison", [
         r"\b(?:compar|versus|vs\.?|differ|rank|benchmark)\b",
     ]),
+    ("scenario_analysis", [
+        r"\bwhat\s+if\b",
+        r"\bwhat\s+happens?\s+(?:if|when|under)\b",
+        r"\b(?:scenario|counterfactual)\b",
+        r"\bssp[125][-\s]",
+        r"\bwithout\s+protection\b",
+        r"\brestore|restoration\b",
+        r"\bcarbon\s+price.{0,20}(?:at|\$|\d)",
+        r"\btipping\s+point\b",
+        r"\bstress\s+test\b",
+        r"\bnature\s+var\b",
+        r"\binvest\s+\$?\d",
+        r"\bhow\s+(?:much|close|far).{0,30}(?:threshold|regime\s+shift|tipping)",
+        r"\bif\s+(?:we|you|they).{0,20}(?:invest|restore|protect|stop)\b",
+    ]),
     ("risk_assessment", [
         r"\b(?:risk\w*|degrad|scenario|climate|threat|loss|lost|declin\w*|vulnerab)\b",
         r"\bwhat\b.*\bif\b",
@@ -250,6 +265,38 @@ class QueryClassifier:
                 and re.search(r"\b(?:rank|compar|versus|vs\.?|benchmark)\b", q_lower)
             ):
                 best = "comparison"
+
+            # Scenario vs risk tie-break: scenario_analysis requires
+            # scenario-specific keywords beyond generic "what if" + risk.
+            # If scenario_analysis won but lacks strong signal, demote to
+            # risk_assessment (if scored). If risk/site_valuation won but
+            # strong scenario signal present, promote to scenario_analysis.
+            _SCENARIO_STRONG_SIGNAL = re.compile(
+                r"\bwithout\s+protection\b"
+                r"|\bcounterfactual\b"
+                r"|\bssp[125][-\s]"
+                r"|\btipping\s+point\b"
+                r"|\bstress\s+test\b"
+                r"|\bnature\s+var\b"
+                r"|\bcarbon\s+price.{0,20}(?:at|\$|\d)"
+                r"|\binvest\s+\$?\d"
+                r"|\bif\s+(?:we|you|they).{0,20}(?:invest|restore|protect|stop)\b"
+                r"|\bhow\s+(?:close|far).{0,30}(?:threshold|regime|tipping)",
+                re.IGNORECASE,
+            )
+            has_strong_scenario = bool(_SCENARIO_STRONG_SIGNAL.search(q_lower))
+
+            if best == "scenario_analysis" and not has_strong_scenario:
+                # Demote: generic "what if" without scenario specifics
+                if "risk_assessment" in scores:
+                    best = "risk_assessment"
+            elif (
+                best in ("risk_assessment", "site_valuation")
+                and "scenario_analysis" in scores
+                and has_strong_scenario
+            ):
+                # Promote: strong scenario signal overrides risk/valuation
+                best = "scenario_analysis"
 
             confidence = min(0.6 + 0.15 * scores[best], 0.95)
             return {

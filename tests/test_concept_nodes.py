@@ -92,7 +92,7 @@ class TestExpandedAxioms:
         self.axioms = self.data.get("axioms", [])
 
     def test_has_35_axioms(self):
-        assert len(self.axioms) == 35
+        assert len(self.axioms) == 40
 
     def test_axiom_ids_sequential(self):
         ids = [a["axiom_id"] for a in self.axioms]

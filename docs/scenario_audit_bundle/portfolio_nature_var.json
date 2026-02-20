@@ -1,0 +1,51 @@
+{
+  "transcript_id": "portfolio_nature_var",
+  "generated_at": "2026-02-20T04:42:53.536908+00:00",
+  "scenario_request": {
+    "scenario_type": "portfolio",
+    "stress_scenario": "compound",
+    "ssp_scenario": "SSP2-4.5",
+    "target_year": 2050,
+    "n_simulations": 10000
+  },
+  "scenario_response": {
+    "portfolio_baseline_esv": 1618080000.0,
+    "scenario_median_esv": 1049618574.4690406,
+    "nature_var_95": 646618204.7838787,
+    "nature_var_99": 678107727.1274167,
+    "dominant_risk_habitat": "coral_reef",
+    "site_var_contributions": {
+      "Aldabra Atoll": 4099105.3255776446,
+      "Belize Barrier Reef Reserve System": 199766644.8419627,
+      "Cabo Pulmo National Park": 19991634.12095117,
+      "Cispata Bay Mangrove Conservation Area": 1129111.383678481,
+      "Galapagos Marine Reserve": 218626077.52414104,
+      "Ningaloo Coast World Heritage Area": 56596667.83217999,
+      "Raja Ampat Marine Park": 53159020.228290245,
+      "Shark Bay World Heritage Area": 6178116.989248646,
+      "Sundarbans Reserve Forest": 110247693.72809243
+    }
+  },
+  "validation_anchors": {
+    "expected_range": "Portfolio VaR_95 under compound SSP2-4.5: $400M-$900M",
+    "actual_value": 646618204.7838787,
+    "within_range": true
+  },
+  "confidence_breakdown": [
+    {
+      "factor": "correlation_structure",
+      "coral_coral": 0.7,
+      "mangrove_mangrove": 0.55,
+      "seagrass_seagrass": 0.5
+    },
+    {
+      "factor": "ssp_scenario",
+      "value": "SSP2-4.5"
+    }
+  ],
+  "uncertainty": {
+    "p5": 971461795.2161213,
+    "p50": 1049618574.4690406,
+    "p95": 939972272.8725833
+  }
+}

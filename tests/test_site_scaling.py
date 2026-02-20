@@ -292,8 +292,10 @@ class TestESVEstimator:
         assert total > 0
         # Verify the carbon sequestration estimate uses known per-ha values
         carbon_svc = [s for s in services if s.service_type == "carbon_sequestration"][0]
-        # 100 km2 = 10,000 ha, 25.2 USD/ha -> 252,000
-        assert carbon_svc.annual_value_usd == pytest.approx(252000.0, rel=0.01)
+        # 100 km2 = 10,000 ha; value depends on dynamic carbon price from constants
+        from maris.sites.esv_estimator import _DEFAULT_CARBON_PRICE
+        expected = 10_000 * 0.84 * _DEFAULT_CARBON_PRICE  # 0.84 tCO2/ha/yr * price
+        assert carbon_svc.annual_value_usd == pytest.approx(expected, rel=0.01)
 
     def test_mangrove_esv(self):
         from maris.sites.esv_estimator import estimate_esv

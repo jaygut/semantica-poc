@@ -380,11 +380,11 @@ class TestT54InferenceEngine:
             templates_path=TEMPLATES_PATH,
             evidence_path=EVIDENCE_PATH,
         )
-        assert registry.count() == 35, f"Expected 35 axioms, got {registry.count()}"
+        assert registry.count() == 40, f"Expected 40 axioms, got {registry.count()}"
 
         engine = InferenceEngine()
         registered = engine.register_axioms(registry.get_all())
-        assert registered == 35, f"Expected 35 rules registered, got {registered}"
+        assert registered == 40, f"Expected 40 rules registered, got {registered}"
 
         return engine, registry
 

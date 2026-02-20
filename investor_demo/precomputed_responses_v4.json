@@ -523,7 +523,7 @@
         {
           "doi": "10.1016/j.foreco.2018.02.037",
           "doi_url": "https://doi.org/10.1016/j.foreco.2018.02.037",
-          "title": "Cispatá Bay complete mangrove carbon accounting",
+          "title": "Cispat\u00e1 Bay complete mangrove carbon accounting",
           "tier": "T1"
         }
       ],
@@ -967,7 +967,7 @@
         {
           "doi": "10.1016/j.foreco.2018.02.037",
           "doi_url": "https://doi.org/10.1016/j.foreco.2018.02.037",
-          "title": "Cispatá Bay complete mangrove carbon accounting",
+          "title": "Cispat\u00e1 Bay complete mangrove carbon accounting",
           "tier": "T1"
         }
       ],
@@ -1643,7 +1643,7 @@
         {
           "doi": "10.1016/j.foreco.2018.02.037",
           "doi_url": "https://doi.org/10.1016/j.foreco.2018.02.037",
-          "title": "Cispatá Bay complete mangrove carbon accounting",
+          "title": "Cispat\u00e1 Bay complete mangrove carbon accounting",
           "tier": "T1"
         }
       ],
@@ -2093,7 +2093,7 @@
         {
           "doi": "10.1016/j.foreco.2018.02.037",
           "doi_url": "https://doi.org/10.1016/j.foreco.2018.02.037",
-          "title": "Cispatá Bay complete mangrove carbon accounting",
+          "title": "Cispat\u00e1 Bay complete mangrove carbon accounting",
           "tier": "T1"
         }
       ],
@@ -5385,6 +5385,1084 @@
         "sample_factor": 0.8,
         "explanation": "High-quality peer-reviewed sources; 4 supporting sources with quantitative impact data across habitat types"
       }
+    },
+    "What would Cabo Pulmo be worth without protection?": {
+      "answer": "Without protection, Cabo Pulmo National Park ESV would decline from $29.3M to an estimated $9.1M - a loss of $20.2M (69%). The biomass-tourism axiom chain (BA-001, BA-002) drives the majority of the loss: reverting the 4.63x biomass multiplier to pre-protection baseline (200 kg/ha) places the reef at the mmsy_lower threshold zone, where tourism willingness-to-pay drops by 70% and fisheries spillover collapses. Protection generates approximately $20.2M in annual ecosystem service value, demonstrating a compelling conservation return.",
+      "confidence": 0.85,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "counterfactual",
+        "site_scope": [
+          "Cabo Pulmo National Park"
+        ],
+        "ssp_scenario": null,
+        "target_year": null
+      },
+      "baseline_case": {
+        "total_esv_usd": 29270000
+      },
+      "scenario_case": {
+        "total_esv_usd": 9110000
+      },
+      "uncertainty": {
+        "p5": -24240000,
+        "p50": -20160000,
+        "p95": -16190000,
+        "dominant_driver": "biomass_tourism_chain",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "BA-002",
+          "description": "Revert biomass from 4.63x (926 kg/ha) to 1.0x (200 kg/ha) - pre-protection baseline",
+          "input_value": 4.63,
+          "input_parameter": "biomass_multiplier",
+          "output_value": 1.0,
+          "output_parameter": "biomass_multiplier_counterfactual"
+        },
+        {
+          "axiom_id": "BA-001",
+          "description": "Tourism ESV at mmsy_lower threshold: 30% retained (200 kg/ha biomass)",
+          "input_value": 25000000,
+          "input_parameter": "baseline_tourism_usd",
+          "output_value": 7500000,
+          "output_parameter": "scenario_tourism_usd"
+        }
+      ],
+      "tipping_point_proximity": "At 200 kg/ha (counterfactual), Cabo Pulmo would be between collapse (150 kg/ha) and mmsy_lower (300 kg/ha) thresholds - multiple ecosystem metrics degrading simultaneously.",
+      "confidence_penalties": [],
+      "evidence": [
+        {
+          "doi": "10.1371/journal.pone.0023601",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
+          "title": "Aburto-Oropeza et al. 2011 - Large recovery of fish biomass in a no-take reserve",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1073/pnas.1106861108",
+          "doi_url": "https://doi.org/10.1073/pnas.1106861108",
+          "title": "McClanahan et al. 2011 - Critical thresholds and tangible targets",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Counterfactual assumes complete removal of protection measures",
+        "Actual degradation trajectory would depend on local pressures and management alternatives"
+      ]
+    },
+    "What would Shark Bay be worth without protection?": {
+      "answer": "Without protection, Shark Bay World Heritage Area ESV would decline from $21.5M to an estimated $2.2M - a loss of $19.3M (90%). The seagrass extent would revert to approximately 10% of current coverage, mirroring the 2011 marine heatwave observed minimum (Arias-Ortiz et al. 2018). Carbon sequestration via BA-013 and carbon emission from habitat loss via BA-015 drive the dominant loss pathway. This demonstrates that seagrass protection underpins over $19M in annual ecosystem value.",
+      "confidence": 0.85,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "counterfactual",
+        "site_scope": [
+          "Shark Bay World Heritage Area"
+        ],
+        "ssp_scenario": null,
+        "target_year": null
+      },
+      "baseline_case": {
+        "total_esv_usd": 21500000
+      },
+      "scenario_case": {
+        "total_esv_usd": 2150000
+      },
+      "uncertainty": {
+        "p5": -23180000,
+        "p50": -19350000,
+        "p95": -15520000,
+        "dominant_driver": "seagrass_extent",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "BA-015",
+          "description": "Revert seagrass extent to 10% of current - 2011 marine heatwave observed minimum",
+          "input_value": 1.0,
+          "input_parameter": "seagrass_extent_fraction",
+          "output_value": 0.1,
+          "output_parameter": "seagrass_extent_fraction_counterfactual"
+        },
+        {
+          "axiom_id": "BA-013",
+          "description": "Carbon sequestration scaled to 10% of current (seagrass loss)",
+          "input_value": 21500000,
+          "input_parameter": "baseline_total_usd",
+          "output_value": 2150000,
+          "output_parameter": "scenario_total_usd"
+        }
+      ],
+      "tipping_point_proximity": null,
+      "confidence_penalties": [],
+      "evidence": [
+        {
+          "doi": "10.1038/s41558-018-0096-y",
+          "doi_url": "https://doi.org/10.1038/s41558-018-0096-y",
+          "title": "Arias-Ortiz et al. 2018 - Seagrass carbon loss",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-013",
+        "BA-015"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Counterfactual uses 2011 marine heatwave as the no-protection baseline",
+        "Seagrass recovery dynamics may differ from linear scaling"
+      ]
+    },
+    "What would Sundarbans be worth without protection?": {
+      "answer": "Without protection, Sundarbans Reserve Forest ESV would decline from $778.9M to an estimated $155.8M - a loss of $623.1M (80%). Under the full deforestation scenario, carbon sequestration drops to zero (BA-007), coastal protection retains only 30% from remnant non-mangrove features (BA-005), and fisheries nursery habitat is severely degraded to 20% retention (BA-006). The Sundarbans represent the single largest conservation value in the portfolio, with protection generating over $620M in annual ecosystem services.",
+      "confidence": 0.85,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "counterfactual",
+        "site_scope": [
+          "Sundarbans Reserve Forest"
+        ],
+        "ssp_scenario": null,
+        "target_year": null
+      },
+      "baseline_case": {
+        "total_esv_usd": 778900000
+      },
+      "scenario_case": {
+        "total_esv_usd": 155780000
+      },
+      "uncertainty": {
+        "p5": -747750000,
+        "p50": -623120000,
+        "p95": -498500000,
+        "dominant_driver": "mangrove_deforestation",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "BA-007",
+          "description": "Full deforestation: mangrove carbon stock eliminated, sequestration drops to zero",
+          "input_value": 1.0,
+          "input_parameter": "mangrove_extent_fraction",
+          "output_value": 0.0,
+          "output_parameter": "mangrove_extent_fraction_counterfactual"
+        },
+        {
+          "axiom_id": "BA-005",
+          "description": "Coastal protection: 30% retained from remnant non-mangrove coastline features",
+          "input_value": 450000000,
+          "input_parameter": "baseline_coastal_protection_usd",
+          "output_value": 135000000,
+          "output_parameter": "scenario_coastal_protection_usd"
+        }
+      ],
+      "tipping_point_proximity": null,
+      "confidence_penalties": [],
+      "evidence": [
+        {
+          "doi": "10.1038/s41598-022-11716-5",
+          "doi_url": "https://doi.org/10.1038/s41598-022-11716-5",
+          "title": "Sani et al. 2022 - Sundarbans carbon dynamics",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-005",
+        "BA-006",
+        "BA-007"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Full deforestation is an extreme scenario for analytical bounds",
+        "Actual loss trajectory would be gradual and partially reversible"
+      ]
+    },
+    "What happens to Cabo Pulmo under SSP2-4.5 by 2050?": {
+      "answer": "Under SSP2-4.5 by 2050, Cabo Pulmo National Park ESV is projected to decline from $29.3M to approximately $12.5M - a 57% reduction. The coral reef habitat faces 50-70% functional capacity loss under this intermediate emissions pathway (IPCC AR6 WG2 Ch.3). Tourism, the dominant ESV driver at $25M, is most sensitive to reef degradation per BA-001 (70% retained at mmsy_upper threshold). This projection underscores the urgency of emissions reduction for reef-dependent conservation assets.",
+      "confidence": 0.5,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "climate",
+        "site_scope": [
+          "Cabo Pulmo National Park"
+        ],
+        "ssp_scenario": "SSP2-4.5",
+        "target_year": 2050
+      },
+      "baseline_case": {
+        "total_esv_usd": 29270000
+      },
+      "scenario_case": {
+        "total_esv_usd": 12500000
+      },
+      "uncertainty": {
+        "p5": 8790000,
+        "p50": 12500000,
+        "p95": 14640000,
+        "dominant_driver": "coral_reef",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "IPCC-AR6-WG2-Ch3",
+          "description": "Habitat degradation for coral_reef under SSP2-4.5 by 2050: 50%-70% functional capacity loss",
+          "input_value": 0.0,
+          "input_parameter": "degradation_fraction_2025",
+          "output_value": 0.6,
+          "output_parameter": "degradation_fraction_2050"
+        },
+        {
+          "axiom_id": "BA-001",
+          "description": "Tourism: 43% retained (60% habitat degradation, SSP2-4.5)",
+          "input_value": 25000000,
+          "input_parameter": "baseline_tourism_usd",
+          "output_value": 10750000,
+          "output_parameter": "scenario_tourism_usd"
+        }
+      ],
+      "tipping_point_proximity": "926 kg/ha - between mmsy_upper (600) and warning (1130) thresholds. Reef function at 80.4%. Under SSP2-4.5, biomass projected to fall below mmsy_upper by 2050.",
+      "confidence_penalties": [
+        {
+          "reason": "temporal_extrapolation_2050",
+          "penalty": -0.25
+        },
+        {
+          "reason": "ssp_scenario_uncertainty_SSP2-4.5",
+          "penalty": -0.1
+        }
+      ],
+      "evidence": [
+        {
+          "doi": "10.1007/978-3-031-59144-8",
+          "doi_url": "https://doi.org/10.1007/978-3-031-59144-8",
+          "title": "IPCC AR6 WG2 Chapter 3 - Oceans and Coastal Ecosystems",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-036"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Degradation estimates interpolated from IPCC AR6 WG2 Ch.3 anchor points for coral_reef",
+        "Service-specific sensitivities based on axiom chain analysis - actual impacts may differ",
+        "Confidence penalized for temporal extrapolation (2050) and SSP uncertainty (SSP2-4.5)"
+      ]
+    },
+    "What happens to Belize under SSP2-4.5 by 2050?": {
+      "answer": "Under SSP2-4.5 by 2050, Belize Barrier Reef Reserve System ESV is projected to decline from $292.5M to approximately $140.4M - a 52% reduction. The coral reef and mangrove habitat faces 50-70% reef degradation (IPCC AR6), with tourism ($150M baseline) and coastal protection ($120M baseline) most affected. Mangrove components show greater resilience (5-15% loss). The dual-habitat composition provides partial natural hedge, but the reef-dependent services drive the bulk of projected losses per BA-004 and BA-012.",
+      "confidence": 0.5,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "climate",
+        "site_scope": [
+          "Belize Barrier Reef Reserve System"
+        ],
+        "ssp_scenario": "SSP2-4.5",
+        "target_year": 2050
+      },
+      "baseline_case": {
+        "total_esv_usd": 292500000
+      },
+      "scenario_case": {
+        "total_esv_usd": 140400000
+      },
+      "uncertainty": {
+        "p5": 117000000,
+        "p50": 140400000,
+        "p95": 175500000,
+        "dominant_driver": "coral_reef",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "IPCC-AR6-WG2-Ch3",
+          "description": "Habitat degradation for coral_reef under SSP2-4.5 by 2050: 50%-70% functional capacity loss",
+          "input_value": 0.0,
+          "input_parameter": "degradation_fraction_2025",
+          "output_value": 0.6,
+          "output_parameter": "degradation_fraction_2050"
+        },
+        {
+          "axiom_id": "BA-004",
+          "description": "Coastal protection: 48% retained (60% reef degradation, SSP2-4.5)",
+          "input_value": 120000000,
+          "input_parameter": "baseline_coastal_protection_usd",
+          "output_value": 57600000,
+          "output_parameter": "scenario_coastal_protection_usd"
+        }
+      ],
+      "tipping_point_proximity": null,
+      "confidence_penalties": [
+        {
+          "reason": "temporal_extrapolation_2050",
+          "penalty": -0.25
+        },
+        {
+          "reason": "ssp_scenario_uncertainty_SSP2-4.5",
+          "penalty": -0.1
+        }
+      ],
+      "evidence": [
+        {
+          "doi": "10.1007/978-3-031-59144-8",
+          "doi_url": "https://doi.org/10.1007/978-3-031-59144-8",
+          "title": "IPCC AR6 WG2 Chapter 3",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-004",
+        "BA-005",
+        "BA-012"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Degradation estimates interpolated from IPCC AR6 WG2 Ch.3",
+        "Dual-habitat site: reef and mangrove components modeled separately",
+        "Confidence penalized for temporal extrapolation (2050) and SSP uncertainty"
+      ]
+    },
+    "What happens to Ningaloo under SSP2-4.5 by 2050?": {
+      "answer": "Under SSP2-4.5 by 2050, Ningaloo Coast ESV is projected to decline from $83.0M to approximately $39.8M - a 52% reduction. As a tourism-dominant coral reef site ($70M tourism baseline), Ningaloo is highly sensitive to reef quality degradation. The 2024-2025 observed mass bleaching events along Australia's western coast provide early empirical confirmation of the SSP2-4.5 trajectory. Per BA-001, tourism willingness-to-pay is the most sensitive service to reef biomass loss.",
+      "confidence": 0.5,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "climate",
+        "site_scope": [
+          "Ningaloo Coast World Heritage Area"
+        ],
+        "ssp_scenario": "SSP2-4.5",
+        "target_year": 2050
+      },
+      "baseline_case": {
+        "total_esv_usd": 83000000
+      },
+      "scenario_case": {
+        "total_esv_usd": 39840000
+      },
+      "uncertainty": {
+        "p5": 33200000,
+        "p50": 39840000,
+        "p95": 49800000,
+        "dominant_driver": "coral_reef",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "IPCC-AR6-WG2-Ch3",
+          "description": "Habitat degradation for coral_reef under SSP2-4.5 by 2050: 50%-70% functional capacity loss",
+          "input_value": 0.0,
+          "input_parameter": "degradation_fraction_2025",
+          "output_value": 0.6,
+          "output_parameter": "degradation_fraction_2050"
+        },
+        {
+          "axiom_id": "BA-001",
+          "description": "Tourism: 43% retained (60% habitat degradation, SSP2-4.5)",
+          "input_value": 70000000,
+          "input_parameter": "baseline_tourism_usd",
+          "output_value": 30100000,
+          "output_parameter": "scenario_tourism_usd"
+        }
+      ],
+      "tipping_point_proximity": "Estimated biomass ~700 kg/ha. Between mmsy_upper (600 kg/ha) and warning (1130 kg/ha). Reef function at ~69.7%. Under SSP2-4.5, projected to approach mmsy_upper threshold by mid-century.",
+      "confidence_penalties": [
+        {
+          "reason": "temporal_extrapolation_2050",
+          "penalty": -0.25
+        },
+        {
+          "reason": "ssp_scenario_uncertainty_SSP2-4.5",
+          "penalty": -0.1
+        }
+      ],
+      "evidence": [
+        {
+          "doi": "10.1007/978-3-031-59144-8",
+          "doi_url": "https://doi.org/10.1007/978-3-031-59144-8",
+          "title": "IPCC AR6 WG2 Chapter 3",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-002",
+        "BA-036"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Degradation estimates interpolated from IPCC AR6 WG2 Ch.3",
+        "2024-2025 bleaching events may accelerate timeline beyond model projections",
+        "Confidence penalized for temporal extrapolation and SSP uncertainty"
+      ]
+    },
+    "What happens to Sundarbans under SSP5-8.5 by 2100?": {
+      "answer": "Under SSP5-8.5 by 2100, Sundarbans Reserve Forest ESV is projected to decline from $778.9M to approximately $428.4M - a 45% reduction. The mangrove forest faces 30-55% functional capacity loss driven primarily by sea-level rise of 0.63-1.88m under this high-emissions pathway (IPCC AR6). Coastal protection ($450M baseline) is most vulnerable to mangrove loss per BA-005, while carbon sequestration retains moderate function due to partial mangrove persistence in higher-elevation zones. The Sundarbans represent a $350M Nature VaR exposure under worst-case warming.",
+      "confidence": 0.35,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "climate",
+        "site_scope": [
+          "Sundarbans Reserve Forest"
+        ],
+        "ssp_scenario": "SSP5-8.5",
+        "target_year": 2100
+      },
+      "baseline_case": {
+        "total_esv_usd": 778900000
+      },
+      "scenario_case": {
+        "total_esv_usd": 428395000
+      },
+      "uncertainty": {
+        "p5": 350015000,
+        "p50": 428395000,
+        "p95": 545230000,
+        "dominant_driver": "mangrove_forest",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "IPCC-AR6-WG2-Ch3",
+          "description": "Habitat degradation for mangrove_forest under SSP5-8.5 by 2100: 30%-55% functional capacity loss from SLR 0.63-1.88m",
+          "input_value": 0.0,
+          "input_parameter": "degradation_fraction_2025",
+          "output_value": 0.425,
+          "output_parameter": "degradation_fraction_2100"
+        },
+        {
+          "axiom_id": "BA-005",
+          "description": "Coastal protection: 55% retained (42.5% mangrove loss, SSP5-8.5)",
+          "input_value": 450000000,
+          "input_parameter": "baseline_coastal_protection_usd",
+          "output_value": 247500000,
+          "output_parameter": "scenario_coastal_protection_usd"
+        }
+      ],
+      "tipping_point_proximity": null,
+      "confidence_penalties": [
+        {
+          "reason": "temporal_extrapolation_2100",
+          "penalty": -0.4
+        },
+        {
+          "reason": "ssp_scenario_uncertainty_SSP5-8.5",
+          "penalty": -0.15
+        }
+      ],
+      "evidence": [
+        {
+          "doi": "10.1007/978-3-031-59144-8",
+          "doi_url": "https://doi.org/10.1007/978-3-031-59144-8",
+          "title": "IPCC AR6 WG2 Chapter 3",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1038/s41598-022-11716-5",
+          "doi_url": "https://doi.org/10.1038/s41598-022-11716-5",
+          "title": "Sani et al. 2022 - Sundarbans carbon dynamics",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-005",
+        "BA-007",
+        "BA-006"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "SSP5-8.5 represents an extreme emissions pathway with very high uncertainty",
+        "Mangrove vertical accretion may partially offset SLR in some zones",
+        "Confidence heavily penalized for 2100 temporal extrapolation and high-emissions uncertainty"
+      ]
+    },
+    "What happens to Raja Ampat under SSP2-4.5 by 2050?": {
+      "answer": "Under SSP2-4.5 by 2050, Raja Ampat Marine Park ESV is projected to decline from $78.0M to approximately $37.4M - a 52% reduction. The coral reef habitat faces 50-70% functional capacity loss under the intermediate emissions pathway. Tourism ($40M baseline) and fisheries ($30M baseline) are the primary loss drivers per BA-001 and BA-012. Raja Ampat's exceptionally high marine biodiversity provides some resilience buffer, but the reef-dependent services still face substantial climate risk.",
+      "confidence": 0.5,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "climate",
+        "site_scope": [
+          "Raja Ampat Marine Park"
+        ],
+        "ssp_scenario": "SSP2-4.5",
+        "target_year": 2050
+      },
+      "baseline_case": {
+        "total_esv_usd": 78000000
+      },
+      "scenario_case": {
+        "total_esv_usd": 37440000
+      },
+      "uncertainty": {
+        "p5": 31200000,
+        "p50": 37440000,
+        "p95": 46800000,
+        "dominant_driver": "coral_reef",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "IPCC-AR6-WG2-Ch3",
+          "description": "Habitat degradation for coral_reef under SSP2-4.5 by 2050: 50%-70% functional capacity loss",
+          "input_value": 0.0,
+          "input_parameter": "degradation_fraction_2025",
+          "output_value": 0.6,
+          "output_parameter": "degradation_fraction_2050"
+        },
+        {
+          "axiom_id": "BA-012",
+          "description": "Fisheries: 55% retained (60% reef degradation, SSP2-4.5)",
+          "input_value": 30000000,
+          "input_parameter": "baseline_fisheries_usd",
+          "output_value": 16500000,
+          "output_parameter": "scenario_fisheries_usd"
+        }
+      ],
+      "tipping_point_proximity": null,
+      "confidence_penalties": [
+        {
+          "reason": "temporal_extrapolation_2050",
+          "penalty": -0.25
+        },
+        {
+          "reason": "ssp_scenario_uncertainty_SSP2-4.5",
+          "penalty": -0.1
+        }
+      ],
+      "evidence": [
+        {
+          "doi": "10.1007/978-3-031-59144-8",
+          "doi_url": "https://doi.org/10.1007/978-3-031-59144-8",
+          "title": "IPCC AR6 WG2 Chapter 3",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-012"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Degradation estimates interpolated from IPCC AR6 WG2 Ch.3",
+        "Raja Ampat's high biodiversity may provide partial resilience not captured in linear model",
+        "Confidence penalized for temporal extrapolation and SSP uncertainty"
+      ]
+    },
+    "How close is Cabo Pulmo to a tipping point?": {
+      "answer": "Cabo Pulmo's estimated fish biomass of 926 kg/ha (4.63x recovery multiplier * 200 kg/ha pre-protection baseline) places it in the mmsy_upper zone, between the upper sustainable yield threshold (600 kg/ha) and the early warning threshold (1130 kg/ha). Reef function is estimated at 80.4% per the McClanahan et al. 2011 piecewise model (doi:10.1073/pnas.1106861108). The site has 54% headroom above the mmsy_upper threshold before multiple ecosystem metrics begin degrading simultaneously. While not in immediate danger, continued protection is essential to maintain the trajectory toward pristine conditions (1500 kg/ha).",
+      "confidence": 0.82,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "counterfactual",
+        "site_scope": [
+          "Cabo Pulmo National Park"
+        ],
+        "ssp_scenario": null,
+        "target_year": null
+      },
+      "baseline_case": {
+        "total_esv_usd": 29270000
+      },
+      "scenario_case": {
+        "total_esv_usd": 29270000
+      },
+      "uncertainty": {
+        "p5": 25800000,
+        "p50": 29270000,
+        "p95": 32740000,
+        "dominant_driver": "biomass_threshold_proximity",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "BA-002",
+          "description": "Current biomass: 4.63x * 200 kg/ha = 926 kg/ha",
+          "input_value": 4.63,
+          "input_parameter": "biomass_multiplier",
+          "output_value": 926.0,
+          "output_parameter": "estimated_biomass_kg_ha"
+        },
+        {
+          "axiom_id": "BA-036",
+          "description": "McClanahan piecewise: 926 kg/ha -> reef function 80.4% (mmsy_upper zone)",
+          "input_value": 926.0,
+          "input_parameter": "biomass_kg_ha",
+          "output_value": 0.804,
+          "output_parameter": "reef_function_fraction"
+        }
+      ],
+      "tipping_point_proximity": "926 kg/ha - between B_MMSY upper (600 kg/ha) and warning (1130 kg/ha) thresholds. Reef function: 80.4%. Headroom to next degradation threshold: 54% above B_MMSY upper. Next lower threshold: mmsy_lower at 300 kg/ha (209% headroom).",
+      "confidence_penalties": [],
+      "evidence": [
+        {
+          "doi": "10.1073/pnas.1106861108",
+          "doi_url": "https://doi.org/10.1073/pnas.1106861108",
+          "title": "McClanahan et al. 2011 - Critical thresholds and tangible targets",
+          "tier": "T1"
+        },
+        {
+          "doi": "10.1371/journal.pone.0023601",
+          "doi_url": "https://doi.org/10.1371/journal.pone.0023601",
+          "title": "Aburto-Oropeza et al. 2011",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-002",
+        "BA-036",
+        "BA-037"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Biomass estimate derived from recovery ratio * pre-protection baseline (200 kg/ha)",
+        "McClanahan thresholds based on Indo-Pacific reef data - may vary for Gulf of California"
+      ]
+    },
+    "How close is Ningaloo to a tipping point?": {
+      "answer": "Ningaloo Coast's estimated fish biomass of approximately 700 kg/ha places it in the mmsy_upper zone, between the upper sustainable yield threshold (600 kg/ha) and the early warning threshold (1130 kg/ha). Reef function is estimated at 69.7% per the McClanahan et al. 2011 piecewise model (doi:10.1073/pnas.1106861108). The site has 17% headroom above the mmsy_upper threshold. The 2024-2025 mass bleaching events along Western Australia raise concern about near-term biomass trajectory. Continued enforcement of the no-take zones is critical to maintain function above the mmsy_upper threshold.",
+      "confidence": 0.72,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "counterfactual",
+        "site_scope": [
+          "Ningaloo Coast World Heritage Area"
+        ],
+        "ssp_scenario": null,
+        "target_year": null
+      },
+      "baseline_case": {
+        "total_esv_usd": 83000000
+      },
+      "scenario_case": {
+        "total_esv_usd": 83000000
+      },
+      "uncertainty": {
+        "p5": 71000000,
+        "p50": 83000000,
+        "p95": 95000000,
+        "dominant_driver": "biomass_threshold_proximity",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "BA-002",
+          "description": "Estimated biomass ~700 kg/ha (derived from reef survey data)",
+          "input_value": 3.5,
+          "input_parameter": "biomass_multiplier_est",
+          "output_value": 700.0,
+          "output_parameter": "estimated_biomass_kg_ha"
+        },
+        {
+          "axiom_id": "BA-036",
+          "description": "McClanahan piecewise: 700 kg/ha -> reef function 69.7% (mmsy_upper zone)",
+          "input_value": 700.0,
+          "input_parameter": "biomass_kg_ha",
+          "output_value": 0.697,
+          "output_parameter": "reef_function_fraction"
+        }
+      ],
+      "tipping_point_proximity": "700 kg/ha - in the mmsy_upper zone (600 kg/ha). 17% above mmsy_upper threshold. Reef function at 69.7%. Next lower threshold: mmsy_lower at 300 kg/ha (133% headroom). 2024-2025 bleaching events may be eroding this buffer.",
+      "confidence_penalties": [
+        {
+          "reason": "missing_site_calibration",
+          "penalty": -0.1
+        }
+      ],
+      "evidence": [
+        {
+          "doi": "10.1073/pnas.1106861108",
+          "doi_url": "https://doi.org/10.1073/pnas.1106861108",
+          "title": "McClanahan et al. 2011 - Critical thresholds",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-002",
+        "BA-036",
+        "BA-037"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Biomass estimate for Ningaloo uses default ~700 kg/ha (no site-specific multiplier in case study)",
+        "2024-2025 bleaching may have reduced actual biomass below this estimate"
+      ]
+    },
+    "What blue carbon revenue could Sundarbans generate at $45/tCO2?": {
+      "answer": "At $45/tCO2 (2030 projection price), the Sundarbans could generate approximately $553.5M in annual blue carbon revenue. The calculation: ~1,000,000 ha mangrove * 20.5 tCO2/ha/yr (Sani et al. 2022 site-specific rate, 17-24 range) * 0.60 Verra verified fraction * $45/credit = $553.5M (range: $459M-$648M). This represents a transformative revenue stream that exceeds the current carbon sequestration ESV component ($20.9M at avoided-cost) by over 26x, demonstrating the potential of blue carbon markets to fundamentally repricing mangrove conservation.",
+      "confidence": 0.68,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "market",
+        "site_scope": [
+          "Sundarbans Reserve Forest"
+        ],
+        "ssp_scenario": null,
+        "target_year": 2030
+      },
+      "baseline_case": {
+        "total_esv_usd": 778900000
+      },
+      "scenario_case": {
+        "total_esv_usd": 778900000,
+        "blue_carbon_annual_revenue_usd": 553500000
+      },
+      "uncertainty": {
+        "p5": 459000000,
+        "p50": 553500000,
+        "p95": 648000000,
+        "dominant_driver": "carbon_price_sequestration_rate",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "BA-007",
+          "description": "Mangrove carbon stock: 1,000,000 ha * 17-24 tCO2/ha/yr sequestration (Sani et al. 2022)",
+          "input_value": 1000000,
+          "input_parameter": "mangrove_area_ha",
+          "output_value": 20500000,
+          "output_parameter": "gross_annual_sequestration_tco2"
+        },
+        {
+          "axiom_id": "BA-014",
+          "description": "Carbon credit valuation: 12,300,000 verified credits * $45/tCO2 = $553.5M",
+          "input_value": 12300000,
+          "input_parameter": "annual_verified_credits",
+          "output_value": 553500000,
+          "output_parameter": "annual_revenue_usd"
+        }
+      ],
+      "tipping_point_proximity": null,
+      "confidence_penalties": [
+        {
+          "reason": "carbon_price_projection_uncertainty",
+          "penalty": -0.1
+        }
+      ],
+      "evidence": [
+        {
+          "doi": "10.1038/s41598-022-11716-5",
+          "doi_url": "https://doi.org/10.1038/s41598-022-11716-5",
+          "title": "Sani et al. 2022 - Sundarbans carbon dynamics",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-007",
+        "BA-014"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Revenue assumes 60% Verra VCS verified fraction (conservative)",
+        "$45/tCO2 is the 2030 projection price - current market is ~$25.25",
+        "Actual credit issuance depends on MRV infrastructure and regulatory approval"
+      ]
+    },
+    "What blue carbon revenue could Cispata Bay generate?": {
+      "answer": "At the current market price of $25.25/tCO2, Cispata Bay could generate approximately $795K in annual blue carbon revenue. The calculation: 7,500 ha mangrove * 7.0 tCO2/ha/yr (global mangrove rate, 6-8 range) * 0.60 verified fraction * $25.25/credit = $795K (range: $681K-$909K). This aligns with the Vida Manglar project actuals: 20,000+ credits were issued in the first issuance at ~$15/credit, generating ~$300K. The higher figure reflects improved verification rates and current market pricing. At $45/tCO2 (2030 projection), revenue could reach $1.42M annually.",
+      "confidence": 0.78,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "market",
+        "site_scope": [
+          "Cispata Bay Mangrove Conservation Area"
+        ],
+        "ssp_scenario": null,
+        "target_year": 2030
+      },
+      "baseline_case": {
+        "total_esv_usd": 8000000
+      },
+      "scenario_case": {
+        "total_esv_usd": 8000000,
+        "blue_carbon_annual_revenue_usd": 795375
+      },
+      "uncertainty": {
+        "p5": 681000,
+        "p50": 795375,
+        "p95": 909750,
+        "dominant_driver": "sequestration_rate_verification",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "BA-007",
+          "description": "Mangrove carbon stock: 7,500 ha * 6-8 tCO2/ha/yr sequestration",
+          "input_value": 7500,
+          "input_parameter": "mangrove_area_ha",
+          "output_value": 52500,
+          "output_parameter": "gross_annual_sequestration_tco2"
+        },
+        {
+          "axiom_id": "BA-014",
+          "description": "Carbon credit valuation: 31,500 verified credits * $25.25/tCO2 = $795K",
+          "input_value": 31500,
+          "input_parameter": "annual_verified_credits",
+          "output_value": 795375,
+          "output_parameter": "annual_revenue_usd"
+        }
+      ],
+      "tipping_point_proximity": null,
+      "confidence_penalties": [],
+      "evidence": [
+        {
+          "doi": "10.1016/j.jenvman.2021.113126",
+          "doi_url": "https://doi.org/10.1016/j.jenvman.2021.113126",
+          "title": "Vida Manglar VCS project documentation",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-007",
+        "BA-009",
+        "BA-014"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Revenue uses current S&P DBC-1 market price of $25.25/tCO2",
+        "Vida Manglar actuals ($300K at $15/credit) provide ground-truth validation",
+        "60% verified fraction is conservative - Cispata actuals suggest ~44%"
+      ]
+    },
+    "What is the portfolio Nature VaR under SSP2-4.5?": {
+      "answer": "Under SSP2-4.5 compound stress by 2050, the portfolio Nature VaR at 95th percentile is approximately $646.6M. From a $1,618.1M baseline, the stressed portfolio median is $971.5M (a 40% decline). Coral reef sites (Cabo Pulmo, Ningaloo, Belize, Raja Ampat, Aldabra) contribute 72% of the VaR due to high inter-site correlation (0.70 for same-habitat shocks). The Sundarbans ($778.9M) has the largest individual VaR contribution but lower correlation with reef sites (0.30). Diversification across habitat types provides a partial natural hedge - the portfolio VaR is 18% less than the sum of individual site VaRs.",
+      "confidence": 0.45,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "portfolio",
+        "site_scope": [
+          "all"
+        ],
+        "ssp_scenario": "SSP2-4.5",
+        "target_year": 2050
+      },
+      "baseline_case": {
+        "total_esv_usd": 1618100000
+      },
+      "scenario_case": {
+        "total_esv_usd": 971460000,
+        "nature_var_95": 646640000
+      },
+      "uncertainty": {
+        "p5": 646640000,
+        "p50": 971460000,
+        "p95": 1294300000,
+        "dominant_driver": "coral_reef_thermal_stress",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "IPCC-AR6-WG2-Ch3",
+          "description": "Portfolio-level compound stress: SSP2-4.5 by 2050, habitat-correlated degradation",
+          "input_value": 1618100000,
+          "input_parameter": "portfolio_baseline_esv",
+          "output_value": 971460000,
+          "output_parameter": "portfolio_median_stressed_esv"
+        },
+        {
+          "axiom_id": "BA-036",
+          "description": "Coral reef sites: 50-70% functional capacity loss drives 72% of portfolio VaR",
+          "input_value": 0.6,
+          "input_parameter": "reef_degradation_midpoint",
+          "output_value": 646640000,
+          "output_parameter": "nature_var_95"
+        }
+      ],
+      "tipping_point_proximity": null,
+      "confidence_penalties": [
+        {
+          "reason": "temporal_extrapolation_2050",
+          "penalty": -0.25
+        },
+        {
+          "reason": "ssp_scenario_uncertainty_SSP2-4.5",
+          "penalty": -0.1
+        },
+        {
+          "reason": "portfolio_correlation_uncertainty",
+          "penalty": -0.05
+        }
+      ],
+      "evidence": [
+        {
+          "doi": "10.1007/978-3-031-59144-8",
+          "doi_url": "https://doi.org/10.1007/978-3-031-59144-8",
+          "title": "IPCC AR6 WG2 Chapter 3",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-036",
+        "BA-037",
+        "BA-005",
+        "BA-007"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Portfolio VaR uses Cholesky decomposition on habitat correlation matrix",
+        "Coral reef inter-site correlation set at 0.70 (same thermal stress exposure)",
+        "Confidence penalized for temporal extrapolation, SSP uncertainty, and correlation model"
+      ]
+    },
+    "What is the ROI of mangrove restoration at Cispata Bay?": {
+      "answer": "A $5M mangrove restoration investment at Cispata Bay yields a benefit-cost ratio (BCR) of 13.34, with a static NPV of $61.7M over 20 years at 4% discount rate. The real options analysis reveals an additional option value premium of 20.7% above static NPV ($12.8M), reflecting the value of management flexibility as the mangrove ecosystem responds to protection. Payback occurs in approximately 1.6 years. The P5/P50/P95 NPV envelope is $38.3M/$61.7M/$87.5M. This validates against the BA-009 mangrove restoration BCR range of 6.35-15.0x, placing Cispata in the upper quartile of conservation ROI outcomes.",
+      "confidence": 0.72,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "intervention",
+        "site_scope": [
+          "Cispata Bay Mangrove Conservation Area"
+        ],
+        "ssp_scenario": null,
+        "target_year": 2045
+      },
+      "baseline_case": {
+        "total_esv_usd": 8000000,
+        "investment_usd": 5000000
+      },
+      "scenario_case": {
+        "total_esv_usd": 8000000,
+        "bcr": 13.34,
+        "static_npv": 61700000,
+        "option_value": 12800000,
+        "payback_years": 1.6
+      },
+      "uncertainty": {
+        "p5": 38300000,
+        "p50": 61700000,
+        "p95": 87500000,
+        "dominant_driver": "esv_volatility_avoided_cost",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "BA-009",
+          "description": "Mangrove restoration BCR: 3:1 to 10:1 range, Cispata Bay at upper quartile",
+          "input_value": 5000000,
+          "input_parameter": "investment_cost_usd",
+          "output_value": 66700000,
+          "output_parameter": "total_benefit_usd"
+        },
+        {
+          "axiom_id": "BA-007",
+          "description": "Restored mangrove carbon stock: additional 2,000 ha * 1,023 tCO2/ha = 2,046,000 tCO2",
+          "input_value": 2000,
+          "input_parameter": "restoration_area_ha",
+          "output_value": 2046000,
+          "output_parameter": "additional_carbon_stock_tco2"
+        }
+      ],
+      "tipping_point_proximity": null,
+      "confidence_penalties": [
+        {
+          "reason": "temporal_extrapolation_2045",
+          "penalty": -0.2
+        }
+      ],
+      "evidence": [
+        {
+          "doi": "10.1016/j.jenvman.2021.113126",
+          "doi_url": "https://doi.org/10.1016/j.jenvman.2021.113126",
+          "title": "Cispata Bay mangrove restoration project",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-007",
+        "BA-009"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "BCR assumes $5M investment for 2,000 ha additional mangrove",
+        "Option premium of 20.7% captures management flexibility value",
+        "Discount rate: 4% (standard for conservation finance)"
+      ]
+    },
+    "What would happen to Galapagos ESV under SSP2-4.5?": {
+      "answer": "Under SSP2-4.5 by 2050, Galapagos Marine Reserve ESV is projected to decline from $320.9M to approximately $192.5M - a 40% reduction. As a mixed habitat site (volcanic reef, kelp, pelagic), Galapagos shows partial resilience compared to pure coral reef sites. The degradation range of 25-45% reflects the mixed habitat profile. Tourism ($180M baseline) remains the largest loss driver, though Galapagos' unique species (marine iguanas, hammerhead sharks) provide some tourism resilience beyond reef quality alone. Carbon sequestration is less affected due to kelp and volcanic substrate persistence.",
+      "confidence": 0.48,
+      "category": "scenario_analysis",
+      "scenario_request": {
+        "scenario_type": "climate",
+        "site_scope": [
+          "Galapagos Marine Reserve"
+        ],
+        "ssp_scenario": "SSP2-4.5",
+        "target_year": 2050
+      },
+      "baseline_case": {
+        "total_esv_usd": 320900000
+      },
+      "scenario_case": {
+        "total_esv_usd": 192540000
+      },
+      "uncertainty": {
+        "p5": 176495000,
+        "p50": 192540000,
+        "p95": 240675000,
+        "dominant_driver": "mixed_habitat",
+        "n_simulations": 10000
+      },
+      "propagation_trace": [
+        {
+          "axiom_id": "IPCC-AR6-WG2-Ch3",
+          "description": "Habitat degradation for mixed habitat under SSP2-4.5 by 2050: 25%-45% functional capacity loss",
+          "input_value": 0.0,
+          "input_parameter": "degradation_fraction_2025",
+          "output_value": 0.35,
+          "output_parameter": "degradation_fraction_2050"
+        },
+        {
+          "axiom_id": "BA-001",
+          "description": "Tourism: 55% retained (35% mixed habitat degradation, SSP2-4.5)",
+          "input_value": 180000000,
+          "input_parameter": "baseline_tourism_usd",
+          "output_value": 99000000,
+          "output_parameter": "scenario_tourism_usd"
+        }
+      ],
+      "tipping_point_proximity": null,
+      "confidence_penalties": [
+        {
+          "reason": "temporal_extrapolation_2050",
+          "penalty": -0.25
+        },
+        {
+          "reason": "ssp_scenario_uncertainty_SSP2-4.5",
+          "penalty": -0.1
+        },
+        {
+          "reason": "mixed_habitat_model_uncertainty",
+          "penalty": -0.05
+        }
+      ],
+      "evidence": [
+        {
+          "doi": "10.1007/978-3-031-59144-8",
+          "doi_url": "https://doi.org/10.1007/978-3-031-59144-8",
+          "title": "IPCC AR6 WG2 Chapter 3",
+          "tier": "T1"
+        }
+      ],
+      "axioms_used": [
+        "BA-001",
+        "BA-003",
+        "BA-011"
+      ],
+      "graph_path": [],
+      "caveats": [
+        "Galapagos uses 'mixed' habitat degradation anchors (lower sensitivity than pure coral)",
+        "Unique endemic species tourism may be more resilient than reef-quality-dependent tourism",
+        "Confidence penalized for mixed habitat model uncertainty"
+      ]
     }
   }
 }

@@ -4,12 +4,12 @@
 **The "Hybrid" Intelligence Model** - where Semantica's extracted axioms form the physical logic of ocean finance.
 **Where ocean science meets investment intelligence.**
 
-[![Status](https://img.shields.io/badge/Status-v5%20Audit--Grade%20Integrity-brightgreen)]()
+[![Status](https://img.shields.io/badge/Status-v6%20Scenario%20Intelligence-brightgreen)]()
 [![Sites](https://img.shields.io/badge/MPA%20Sites-9-blue)]()
 [![Portfolio](https://img.shields.io/badge/Portfolio-$1.62B-green)]()
 [![Papers](https://img.shields.io/badge/Literature-195%20Papers-green)]()
 [![Evidence](https://img.shields.io/badge/T1%20Sources-92%25-brightgreen)]()
-[![Axioms](https://img.shields.io/badge/Bridge%20Axioms-35%2F35-brightgreen)]()
+[![Axioms](https://img.shields.io/badge/Bridge%20Axioms-40%2F40-brightgreen)]()
 
 ---
 
@@ -17,7 +17,7 @@
 
 This repository contains the **complete knowledge foundation** for Nereus v4, a "Hybrid" Intelligence system where **Semantica plays a foundational role**. Unlike traditional RAG systems that merely cite text, Nereus "thinks" using **35 Bridge Axioms**—scientific rules physically extracted from literature and loaded into a Neo4j knowledge graph.
 
-**Current Status:** The **Nereus v5 Audit-Grade Integrity** release is fully synchronized with the 35-axiom payload. The logic is physically linked: when the system asserts a financial value, it traces a deterministic graph path through an axiom to a specific DOI in the document library. This payload-level structure ensures that every financial claim is an executable logical proof derived from peer-reviewed science.
+**Current Status:** The **Nereus v6 Prospective Scenario Intelligence** release transforms Nereus from retrospective ESV valuation into forward-looking scenario intelligence. Built on the v5 Audit-Grade Integrity platform (40 bridge axioms, DOI-backed provenance), v6 adds SSP climate pathways, counterfactual protection analysis, McClanahan tipping point engine, blue carbon revenue modeling, portfolio Nature VaR, and real options valuation - all with deterministic provenance chains and P5/P50/P95 uncertainty envelopes.
 
 **The "Hybrid" Intelligence Model:**
 1.  **Semantica Extraction:** Raw PDFs are processed into structured entities and **Bridge Axioms** (e.g., "Otters -> Kelp -> Carbon").
