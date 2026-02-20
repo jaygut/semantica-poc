@@ -222,11 +222,11 @@ class TestParserScenarioType:
         )
         assert req.scenario_type == "portfolio"
 
-    def test_parser_infers_shock_type(self):
+    def test_parser_infers_tipping_point_type(self):
         req = parse_scenario_request(
             "How close is Cabo Pulmo to a tipping point?"
         )
-        assert req.scenario_type == "shock"
+        assert req.scenario_type == "tipping_point"
 
 
 # ---------------------------------------------------------------------------

@@ -8,7 +8,7 @@ from typing import Any, Literal
 
 
 class ScenarioRequest(BaseModel):
-    scenario_type: Literal["counterfactual", "climate", "intervention", "shock", "market", "portfolio"]
+    scenario_type: Literal["counterfactual", "climate", "intervention", "shock", "tipping_point", "market", "portfolio"]
     site_scope: list[str]
     time_horizon_years: int = 10
     assumptions: dict[str, Any] = {}

@@ -92,7 +92,7 @@ _SCENARIO_TYPE_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
         r"|stress\s+test",
         re.IGNORECASE,
     )),
-    ("shock", re.compile(
+    ("tipping_point", re.compile(
         r"tipping\s+point|regime\s+shift|collapse|threshold|how\s+close"
         r"|how\s+far",
         re.IGNORECASE,

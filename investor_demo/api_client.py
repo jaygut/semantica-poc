@@ -149,11 +149,23 @@ class StaticBundleClient:
         """Attempt to answer dynamically using local JSON + Axiom Logic."""
         if not _HAS_LOGIC_ENGINE:
             return None
-            
+
+        # Scenario queries require the scenario engine or precomputed responses,
+        # not the ESV estimator. Bypass holographic RAG for these patterns.
+        _q = question.lower()
+        _SCENARIO_BYPASS = (
+            "without protection",
+            "tipping point",
+            "carbon revenue",
+            "under ssp",
+        )
+        if any(phrase in _q for phrase in _SCENARIO_BYPASS):
+            return None
+
         site_data = self._load_site_json(site_name)
         if not site_data:
             return None
-            
+
         q_lower = question.lower()
         
         # INTENT: Valuation / Worth

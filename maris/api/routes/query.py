@@ -371,6 +371,9 @@ def query(request: QueryRequest):
             from maris.scenario.scenario_parser import parse_scenario_request
             from maris.scenario.counterfactual_engine import run_counterfactual
             from maris.scenario.climate_scenarios import run_climate_scenario
+            from maris.scenario.tipping_point_analyzer import get_tipping_point_site_report
+            from maris.scenario.blue_carbon_revenue import compute_blue_carbon_revenue
+            from maris.scenario.counterfactual_engine import _load_site_data as _load_cf_data
         except ImportError:
             logger.warning("Scenario modules not yet available")
             elapsed_ms = int((time.monotonic() - start) * 1000)
@@ -402,13 +405,120 @@ def query(request: QueryRequest):
             result = run_counterfactual(scenario_req)
         elif scenario_req.scenario_type == "climate":
             result = run_climate_scenario(scenario_req)
+        elif scenario_req.scenario_type == "tipping_point":
+            site_name = scenario_req.site_scope[0] if scenario_req.site_scope else ""
+            site_data = _load_cf_data(site_name) if site_name else None
+            if site_data is None:
+                result = {
+                    "answer": "No site data available for tipping point analysis. Please specify a site.",
+                    "confidence": 0.0, "caveats": ["Site not found"],
+                    "axioms_used": [], "provenance_risk": "high",
+                }
+            else:
+                report = get_tipping_point_site_report(site_data)
+                if report.get("applicable"):
+                    answer = (
+                        f"{report['site_name']} current fish biomass: {report['current_biomass_kg_ha']:.0f} kg/ha "
+                        f"(reef function: {report['reef_function_current']:.1%}, {report['nearest_threshold']['name']} zone). "
+                        f"{report['proximity_description']} "
+                        f"ESV at collapse threshold (150 kg/ha): ${report['esv_at_collapse']:,.0f}/yr "
+                        f"vs current ${report['esv_current']:,.0f}/yr. "
+                        f"Source: McClanahan et al. 2011 (doi:{report['source_doi']})"
+                    )
+                    result = {
+                        "answer": answer, "confidence": 0.80,
+                        "caveats": ["McClanahan piecewise function calibrated on Indo-Pacific reefs",
+                                    "Biomass derived from recovery_ratio * 200 kg/ha pre-protection baseline (Aburto-Oropeza et al. 2011)"],
+                        "axioms_used": ["BA-036", "BA-037", "BA-038", "BA-039"],
+                        "provenance_risk": "medium",
+                        "scenario_request": scenario_req.model_dump(),
+                    }
+                else:
+                    answer = (
+                        f"Tipping point analysis for {report['site_name']}: {report.get('reason', 'Not applicable')}. "
+                        f"Habitat type: {report.get('habitat_type', 'unknown')}. "
+                        f"The McClanahan et al. 2011 piecewise function (doi:10.1073/pnas.1106861108) applies to coral reef "
+                        f"fish biomass. For mangrove habitats, deforestation thresholds apply; for seagrass, heatwave-driven "
+                        f"dieback thresholds per Arias-Ortiz et al. 2018 (doi:10.1038/s41558-018-0096-y)."
+                    )
+                    result = {
+                        "answer": answer, "confidence": 0.60,
+                        "caveats": ["Tipping point analysis requires site-specific biomass survey data"],
+                        "axioms_used": ["BA-036", "BA-040"], "provenance_risk": "medium",
+                        "scenario_request": scenario_req.model_dump(),
+                    }
+        elif scenario_req.scenario_type == "market":
+            site_name = scenario_req.site_scope[0] if scenario_req.site_scope else ""
+            site_data = _load_cf_data(site_name) if site_name else None
+            if site_data is None:
+                result = {
+                    "answer": "No site data available for blue carbon revenue analysis.",
+                    "confidence": 0.0, "caveats": ["Site not found"],
+                    "axioms_used": [], "provenance_risk": "high",
+                }
+            else:
+                # Map requested carbon price to nearest price scenario key
+                carbon_price = scenario_req.assumptions.get("carbon_price_usd", 25.25)
+                from maris.scenario.constants import CARBON_PRICE_SCENARIOS
+                price_scenario = min(
+                    CARBON_PRICE_SCENARIOS,
+                    key=lambda k: abs(CARBON_PRICE_SCENARIOS[k]["price_usd"] - carbon_price),
+                )
+                rev = compute_blue_carbon_revenue(
+                    site_name, site_data,
+                    price_scenario=price_scenario,
+                    target_year=scenario_req.target_year or 2030,
+                )
+                if "error" in rev:
+                    answer = (
+                        f"{site_name} does not have blue carbon habitat eligible for voluntary carbon market credits "
+                        f"in the current knowledge base ({rev['error']}). "
+                        f"Blue carbon credits require mangrove forest or seagrass meadow habitat with verified area data. "
+                        f"Reference: Blue Carbon Initiative (bluecarboninitiative.org)."
+                    )
+                    result = {
+                        "answer": answer, "confidence": 0.70,
+                        "caveats": ["No eligible blue carbon habitat detected for this site"],
+                        "axioms_used": [], "provenance_risk": "medium",
+                    }
+                else:
+                    answer = (
+                        f"{site_name} could generate approximately ${rev['annual_revenue_usd']:,.0f}/yr in blue carbon credits "
+                        f"at ${rev['price_usd']}/tCO2e ({price_scenario} price scenario). "
+                        f"Based on {rev['habitat_area_ha']:,.0f} ha of {rev['habitat_type'].replace('_', ' ')} "
+                        f"at {rev['seq_rate_tco2_ha_yr']:.1f} tCO2/ha/yr (mid estimate, 60% Verra-verified). "
+                        f"Range: ${rev['annual_revenue_range']['low']:,.0f} to ${rev['annual_revenue_range']['high']:,.0f}/yr. "
+                        f"Source: {rev.get('source', 'Blue Carbon Initiative')}."
+                    )
+                    result = {
+                        "answer": answer,
+                        "confidence": 0.75,
+                        "caveats": [
+                            "Revenue based on global average sequestration rates - site-specific measurement recommended",
+                            "Verra VCS verification adds 12-18 months and certification costs before credit issuance",
+                            "Carbon price reflects voluntary market; CORSIA compliance market prices may differ",
+                        ],
+                        "axioms_used": ["BA-007", "BA-017"],
+                        "provenance_risk": "medium",
+                        "scenario_request": scenario_req.model_dump(),
+                    }
         else:
             result = {
-                "answer": f"Scenario type '{scenario_req.scenario_type}' analysis is being computed...",
-                "scenario_type": scenario_req.scenario_type,
+                "answer": (
+                    f"Scenario type '{scenario_req.scenario_type}' is not yet supported. "
+                    f"Supported types: counterfactual, climate (SSP), tipping_point, market (blue carbon revenue). "
+                    f"Please rephrase your question using one of these scenario types."
+                ),
+                "confidence": 0.0,
                 "provenance_risk": "high",
                 "category": "scenario_analysis",
+                "caveats": [f"Scenario type '{scenario_req.scenario_type}' not implemented"],
+                "axioms_used": [],
             }
+
+        # Convert Pydantic ScenarioResponse to dict for uniform .get() access
+        if hasattr(result, "model_dump"):
+            result = result.model_dump()
 
         elapsed_ms = int((time.monotonic() - start) * 1000)
         # Return scenario result as QueryResponse
