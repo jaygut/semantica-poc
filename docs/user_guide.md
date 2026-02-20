@@ -140,7 +140,7 @@ TNFD LEAP disclosure generation and alignment scoring for all 9 sites:
 - **Service health panel** - Shows API, Neo4j, and LLM connectivity status (Live mode only)
 - **Site selector** - All 9 Gold-tier sites available
 - **Scenario slider** - Conservative (P5) / Base Case (Median) / Optimistic (P95)
-- **System metadata** - Schema version, site count (9), bridge axiom count (35)
+- **System metadata** - Schema version, site count (9), bridge axiom count (40)
 
 ### v3 Intelligence Platform
 
@@ -250,7 +250,7 @@ Valuation and provenance queries for any of these sites return rich, multi-layer
 
 **Comparison sites** (Great Barrier Reef, Papahanaumokuakea) have governance metadata (NEOLI score, area, asset rating) but not full ecosystem service valuations. Queries about their financial value will note the absence of site-specific valuation data.
 
-When the API is unavailable, Ask Nereus falls back to 73+ precomputed responses covering all 6 query categories (valuation, provenance, axiom, comparison, risk, concept_explanation). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
+When the API is unavailable, Ask Nereus falls back to 139 precomputed responses covering all 7 query categories (valuation, provenance, axiom, comparison, risk, concept_explanation, scenario_analysis). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
 
 ### Graph Explorer
 
@@ -263,6 +263,78 @@ The interactive network visualization shows the provenance chain as a layered gr
 - **Gray nodes** (bottom layer) - Source Documents (peer-reviewed papers by DOI)
 
 Edges show provenance relationships: GENERATES (MPA -> service), TRANSLATES (axiom -> service), EVIDENCED_BY (axiom -> paper), APPLIES_TO (axiom -> MPA).
+
+---
+
+## v6 Scenario Intelligence - Ask Nereus Forward-Looking Queries
+
+v6 adds a seventh query category - `scenario_analysis` - to the Ask Nereus engine. Scenario queries are automatically detected, parsed into structured `ScenarioRequest` objects, routed to the appropriate computation engine, and returned with P5/P50/P95 uncertainty envelopes and full provenance.
+
+### Scenario Query Types
+
+| Type | Description | Example Question |
+|------|-------------|-----------------|
+| **Counterfactual** | ESV delta if protection were removed | "What would Cabo Pulmo be worth without protection?" |
+| **Climate / SSP** | Habitat degradation under SSP1-2.6, SSP2-4.5, or SSP5-8.5 | "What happens to Belize under SSP2-4.5 by 2050?" |
+| **Blue Carbon Market** | Revenue at a given carbon price ($/tCO2e) | "What blue carbon revenue could Sundarbans generate at $45/tCO2?" |
+| **Tipping Point** | McClanahan piecewise proximity to regime shift | "How close is Cabo Pulmo to a tipping point?" |
+| **Portfolio Nature VaR** | Correlated portfolio loss at P95 | "What is the portfolio nature VaR at 95th percentile?" |
+| **Intervention / ROI** | Benefit-cost ratio for a restoration investment | "What if we invest $5M to restore mangroves at Cispata?" |
+
+### Quick-Query Buttons
+
+Each site in the Scenario Lab (Tab 4) has four pre-wired quick-query buttons that fire the most common scenario question for that site. In demo mode all 36 combinations (9 sites x 4 types) are answered from precomputed responses grounded in actual Python engine output.
+
+### Example Scenario Responses
+
+**Counterfactual (Cabo Pulmo):**
+```
+Without protection, Cabo Pulmo National Park ESV would decline from $29.27M
+to an estimated $9.11M/yr - a loss of $20.16M (68.9%). The 4.63x biomass
+multiplier (Edgar et al. 2014, doi:10.1038/nature13022) collapses without
+the no-take zone, eliminating the tourism premium that accounts for $25M of
+the total. P5/P50/P95: $7.3M / $9.1M / $11.0M.
+```
+
+**Blue Carbon Market (Sundarbans at $45/tCO2e):**
+```
+Sundarbans Reserve Forest could generate ~$19.4M/yr in blue carbon revenue
+at $45/tCO2e. Calculation: 460,000 ha mangrove x 7.0 tCO2/ha/yr (Blue
+Carbon Initiative) x 0.60 Verra-verified fraction x $45 = $19,404,000/yr.
+Source: Friess et al. 2020 (doi:10.1146/annurev-environ-012220-012511).
+```
+
+**Climate / SSP (Belize under SSP2-4.5 by 2050):**
+```
+Under SSP2-4.5 by 2050, Belize Barrier Reef Reserve System ESV is projected
+to decline from $292.5M to ~$224.2M (-23.4%). Coral reef bleaching
+frequency rises from 1-in-5 years to annual under +2.0C (IPCC AR6 WG1).
+P5/P50/P95: -32% / -23% / -14%.
+```
+
+**Tipping Point (Cabo Pulmo - data available):**
+```
+Cabo Pulmo fish biomass is approximately 1,039 kg/ha - within the upper
+"Near-pristine" band of the McClanahan et al. 2011 piecewise reef function
+(threshold: 1,130 kg/ha). Tipping point proximity: 8.1% below the Near-
+pristine ceiling. Source: McClanahan et al. 2011
+(doi:10.1073/pnas.1106861108).
+```
+
+### Scientific Grounding
+
+All scenario computations are deterministically derived from the knowledge graph and case study data. The engines that power live mode are:
+
+| Engine | File | Sources |
+|--------|------|---------|
+| Counterfactual | `maris/scenario/counterfactual_engine.py` | Edgar et al. 2014 (biomass multiplier) |
+| Climate/SSP | `maris/scenario/climate_scenarios.py` | IPCC AR6, coral bleaching literature |
+| Blue Carbon | `maris/scenario/blue_carbon_revenue.py` | Blue Carbon Initiative, Friess et al. 2020 |
+| Tipping Point | `maris/scenario/tipping_point_analyzer.py` | McClanahan et al. 2011 (piecewise reef function) |
+| Stress Test | `maris/scenario/stress_test_engine.py` | Cholesky-correlated Monte Carlo (N=10,000) |
+| Real Options | `maris/scenario/real_options_valuator.py` | Black-Scholes conservation option value |
+
+Scenario responses include `axioms_used`, `propagation_trace` (step-by-step axiom chain with coefficients), `uncertainty` (P5/P50/P95), `confidence` score, and `caveats` - all surfaced in the UI. Parser validation anchors: Cabo Pulmo counterfactual delta -$20.16M, Cispata Bay BCR 13.34, Portfolio VaR_95 $646.6M (all verified against 13 invariant tests in `tests/scenario/test_scenario_invariants.py`).
 
 ---
 
