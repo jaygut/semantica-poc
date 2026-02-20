@@ -562,15 +562,31 @@ def render_scenario_response(response: dict, container: Any = None) -> None:
     if response.get("scenario_request") is None:
         return  # Not a scenario response; use existing render path
 
-    # KPI strip: Baseline | Scenario | Delta
-    col1, col2, col3 = target.columns(3)
-    baseline_esv = response.get("baseline_case", {}).get("total_esv_usd", 0)
-    scenario_esv = response.get("scenario_case", {}).get("total_esv_usd", 0)
-    delta_pct = (scenario_esv - baseline_esv) / baseline_esv * 100 if baseline_esv else 0
+    # KPI strip: type-dependent metrics
+    scenario_req = response.get("scenario_request") or {}
+    scenario_type = scenario_req.get("scenario_type", "counterfactual")
 
-    col1.metric("Baseline ESV", f"${baseline_esv / 1e6:.1f}M")
-    col2.metric("Scenario ESV", f"${scenario_esv / 1e6:.1f}M")
-    col3.metric("Delta", f"{delta_pct:+.1f}%", delta=f"${abs(scenario_esv - baseline_esv) / 1e6:.1f}M")
+    if scenario_type == "market":
+        # Blue carbon revenue: show annual revenue and range
+        annual_rev = response.get("annual_revenue_usd", 0)
+        rev_range = response.get("revenue_range", {})
+        col1, col2, col3 = target.columns(3)
+        col1.metric("Annual Revenue", f"${annual_rev / 1e6:.2f}M/yr" if annual_rev else "See answer")
+        col2.metric("Range Low", f"${rev_range.get('low', 0) / 1e6:.2f}M" if rev_range else "-")
+        col3.metric("Range High", f"${rev_range.get('high', 0) / 1e6:.2f}M" if rev_range else "-")
+    elif scenario_type == "tipping_point":
+        # Tipping point: no ESV delta — skip KPI strip, info is in the answer text
+        pass
+    else:
+        # Counterfactual / climate / intervention: show ESV delta
+        baseline_esv = response.get("baseline_case", {}).get("total_esv_usd", 0)
+        scenario_esv = response.get("scenario_case", {}).get("total_esv_usd", 0)
+        if baseline_esv or scenario_esv:
+            delta_pct = (scenario_esv - baseline_esv) / baseline_esv * 100 if baseline_esv else 0
+            col1, col2, col3 = target.columns(3)
+            col1.metric("Baseline ESV", f"${baseline_esv / 1e6:.1f}M")
+            col2.metric("Scenario ESV", f"${scenario_esv / 1e6:.1f}M")
+            col3.metric("Delta", f"{delta_pct:+.1f}%", delta=f"${abs(scenario_esv - baseline_esv) / 1e6:.1f}M")
 
     # Tipping point badge (if present)
     if response.get("tipping_point_proximity"):

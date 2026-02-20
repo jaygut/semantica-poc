@@ -501,6 +501,8 @@ def query(request: QueryRequest):
                         "axioms_used": ["BA-007", "BA-017"],
                         "provenance_risk": "medium",
                         "scenario_request": scenario_req.model_dump(),
+                        "annual_revenue_usd": rev["annual_revenue_usd"],
+                        "revenue_range": rev["annual_revenue_range"],
                     }
         else:
             result = {
@@ -536,6 +538,9 @@ def query(request: QueryRequest):
             evidence_completeness_score=0.0,
             provenance_warnings=result.get("provenance_warnings", []),
             provenance_risk=result.get("provenance_risk", "high"),
+            scenario_request=result.get("scenario_request"),
+            annual_revenue_usd=result.get("annual_revenue_usd"),
+            revenue_range=result.get("revenue_range"),
             query_metadata=QueryMetadata(
                 category="scenario_analysis",
                 classification_confidence=classification.get("confidence", 0.0),

@@ -59,6 +59,8 @@ _KEYWORD_RULES: list[tuple[str, list[str]]] = [
         r"\bwithout\s+protection\b",
         r"\brestore|restoration\b",
         r"\bcarbon\s+price.{0,20}(?:at|\$|\d)",
+        r"\bblue\s+carbon\s+revenue\b",
+        r"\bcarbon\s+revenue.{0,30}(?:\$|\d)",
         r"\btipping\s+point\b",
         r"\bstress\s+test\b",
         r"\bnature\s+var\b",
@@ -279,6 +281,8 @@ class QueryClassifier:
                 r"|\bstress\s+test\b"
                 r"|\bnature\s+var\b"
                 r"|\bcarbon\s+price.{0,20}(?:at|\$|\d)"
+                r"|\bblue\s+carbon\s+revenue\b"
+                r"|\bcarbon\s+revenue.{0,30}(?:\$|\d)"
                 r"|\binvest\s+\$?\d"
                 r"|\bif\s+(?:we|you|they).{0,20}(?:invest|restore|protect|stop)\b"
                 r"|\bhow\s+(?:close|far).{0,30}(?:threshold|regime|tipping)",

@@ -53,6 +53,13 @@ class TestScenarioClassifier:
         )
         assert result["category"] == "scenario_analysis"
 
+    def test_scenario_classifier_blue_carbon_revenue_button(self, classifier):
+        """Quick-query button for blue carbon uses 'revenue' not 'price' - must still classify."""
+        result = classifier.classify(
+            "What blue carbon revenue could Sundarbans Reserve generate at $45/tCO2?"
+        )
+        assert result["category"] == "scenario_analysis"
+
     def test_scenario_classifier_ssp_question(self, classifier):
         result = classifier.classify(
             "What happens to Belize under SSP2-4.5 by 2050?"
