@@ -155,21 +155,45 @@ def render_graphrag_chat(
     with st.expander("How confidence is computed (full transparency)", expanded=False):
         st.markdown(_confidence_methodology_markdown())
 
-    # Quick query buttons
-    quick_queries = _build_quick_queries(site_short, context_name)
+    # Quick query buttons — two labelled sections
+    historical_queries, scenario_queries = _build_quick_queries(site_short, context_name)
+
+    _SECTION_HEADER = (
+        "display:flex;align-items:center;gap:10px;"
+        "font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;"
+        "margin:16px 0 10px 0;padding-bottom:6px;"
+        "border-bottom:1px solid"
+    )
+    # Site intelligence header (slate-blue accent)
     st.markdown(
-        '<div style="font-size:15px;font-weight:600;color:#94A3B8;'
-        'margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">'
-        "Quick queries</div>",
+        f'<div style="{_SECTION_HEADER} #1E3A5F;">'
+        '<span style="color:#60A5FA">&#9670;</span>'
+        '<span style="color:#94A3B8">Site Intelligence</span>'
+        "</div>",
         unsafe_allow_html=True,
     )
-    grid_cols = 2
-    for row_start in range(0, len(quick_queries), grid_cols):
-        row = st.columns(grid_cols)
-        for col_idx, q in enumerate(quick_queries[row_start: row_start + grid_cols]):
-            button_idx = row_start + col_idx
+    for row_start in range(0, len(historical_queries), 2):
+        row = st.columns(2)
+        for col_idx, q in enumerate(historical_queries[row_start: row_start + 2]):
             with row[col_idx]:
-                if st.button(q, key=f"v4_quick_{button_idx}", use_container_width=True):
+                if st.button(q, key=f"v4_hist_{row_start + col_idx}", use_container_width=True):
+                    _submit_query(client, q, mode)
+
+    # Prospective scenarios header (teal accent)
+    st.markdown(
+        f'<div style="{_SECTION_HEADER} #0D3D3D;margin-top:20px;">'
+        '<span style="color:#2DD4BF">&#9654;</span>'
+        '<span style="color:#5EEAD4">Prospective Scenarios</span>'
+        '<span style="color:#475569;font-size:11px;font-weight:400;'
+        'text-transform:none;letter-spacing:0">- powered by v6 Scenario Intelligence</span>'
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    for row_start in range(0, len(scenario_queries), 2):
+        row = st.columns(2)
+        for col_idx, q in enumerate(scenario_queries[row_start: row_start + 2]):
+            with row[col_idx]:
+                if st.button(q, key=f"v4_scen_{row_start + col_idx}", use_container_width=True):
                     _submit_query(client, q, mode)
 
     with st.form(key="v4_query_form", clear_on_submit=True):
@@ -191,23 +215,14 @@ def render_graphrag_chat(
 # ---------------------------------------------------------------------------
 
 
-def _build_quick_queries(site_short: str, full_name: str) -> list[str]:
-    """Return 10 quick-query strings: 6 existing + 4 scenario queries."""
-    defaults = [
-        f"What is {site_short} worth?",
-        "What evidence supports the valuation?",
-        "How is NEOLI calculated?",
-        "Compare sites in the portfolio",
-        f"What are the risks for {site_short}?",
-        "How does blue carbon sequestration work?",
-        # v6 scenario quick-queries
-        f"What would {site_short} be worth without protection?",
-        f"What happens to {site_short} under SSP2-4.5 by 2050?",
-        f"What blue carbon revenue could {site_short} generate at $45/tCO2?",
-        f"How close is {site_short} to a tipping point?",
-    ]
+def _build_quick_queries(
+    site_short: str, full_name: str
+) -> tuple[list[str], list[str]]:
+    """Return (historical_queries, scenario_queries) as two separate lists.
 
-    # v6 scenario quick-queries (always appended)
+    historical_queries: 6 site-intelligence questions (knowledge graph)
+    scenario_queries:   4 prospective scenario questions (v6 engine)
+    """
     scenario_queries = [
         f"What would {site_short} be worth without protection?",
         f"What happens to {site_short} under SSP2-4.5 by 2050?",
@@ -215,55 +230,67 @@ def _build_quick_queries(site_short: str, full_name: str) -> list[str]:
         f"How close is {site_short} to a tipping point?",
     ]
 
-    # Try to load from case study JSON first
+    default_historical = [
+        f"What is {site_short} worth?",
+        "What evidence supports the valuation?",
+        "How is NEOLI calculated?",
+        "Compare sites in the portfolio",
+        f"What are the risks for {site_short}?",
+        "How does blue carbon sequestration work?",
+    ]
+
+    # Try to load custom historical queries from case study JSON
     from investor_demo.components.v4.shared import get_site_data
     site_data = get_site_data(full_name)
     if site_data:
         custom = site_data.get("demo_value", {}).get("quick_queries", [])
         if custom:
-            return (custom + scenario_queries)[:10]
+            return custom[:6], scenario_queries
 
-    # Fallback to hardcoded logic (legacy safety net)
+    # Fallback to site-specific hardcoded historical queries
     lower_name = full_name.lower()
+    bc_concept = "How does blue carbon sequestration work?"
 
     if "galapagos" in lower_name:
-        return [
+        historical = [
             "How does El Nino impact Galapagos?",
             "What is the value of hammerhead shark tourism?",
             "How does the NEOLI score explain recovery?",
             "Compare Galapagos to Cabo Pulmo",
             "What conflict exists with industrial fishing?",
-            defaults[5],
-        ] + scenario_queries
+            bc_concept,
+        ]
     elif "cabo pulmo" in lower_name:
-        return [
+        historical = [
             "What drove the 463% biomass recovery?",
             "What is the total ecosystem service value?",
             "How did community enforcement help?",
             "Compare to other Gulf of California sites",
             "What are the top 3 species recovering?",
-            defaults[5],
-        ] + scenario_queries
+            bc_concept,
+        ]
     elif "ningaloo" in lower_name:
-        return [
+        historical = [
             "What is the value of whale shark tourism?",
             "How does the Leeuwin Current affect biodiversity?",
             "What evidence supports the resilience rating?",
             "Compare tourism revenue to fisheries",
             "What are the threats from oil and gas?",
-            defaults[5],
-        ] + scenario_queries
+            bc_concept,
+        ]
     elif "belize" in lower_name:
-        return [
+        historical = [
             "What is the value of storm protection?",
             "How does coral bleaching risk affect value?",
             "What is the impact of mangrove loss?",
             "Compare coastal protection to tourism value",
             "What is the status of the barrier reef?",
-            defaults[5],
-        ] + scenario_queries
+            bc_concept,
+        ]
+    else:
+        historical = default_historical
 
-    return defaults
+    return historical, scenario_queries
 
 
 # ---------------------------------------------------------------------------
