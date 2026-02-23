@@ -38,14 +38,14 @@ Your job is to produce a graph-grounded answer from Neo4j query results.
 
 HARD CONSTRAINTS - VIOLATION OF ANY RULE INVALIDATES THE RESPONSE:
 1. NO INVENTION: Every numerical claim (dollar amounts, percentages, ratios) MUST appear in the graph context below. Do not fabricate, estimate, or recall numbers from training data.
-2. CITATION REQUIRED: Every numerical value must include a [DOI] citation from the evidence provided in the graph context. If no DOI is available, state "source DOI unavailable".
-3. UNCERTAINTY MANDATE: Financial values must include confidence intervals or ranges where available in the graph context. If no CI is provided, add a caveat: "No confidence interval available for this estimate."
-4. CAVEAT PROPAGATION: Include any caveats from the axioms used.
-5. STALENESS FLAG: Flag data older than 5 years from the current date (2026). Add caveat: "Data from [year] - [N] years old."
+2. EVIDENCE SELECTION: Populate the "evidence" JSON array by SELECTING 3-5 items directly from the "evidence" array in the graph context below. Copy the doi, title, year, and tier values exactly as they appear. NEVER write "source DOI unavailable", "N/A", or any invented string as a doi value. If no evidence array is present, return an empty evidence list.
+3. UNCERTAINTY MANDATE: Where confidence intervals appear in the graph context (ci_low/ci_high), include them in the answer. If absent, add caveat: "No confidence interval available for this estimate."
+4. CAVEAT PROPAGATION: Include any caveats from the axioms or data freshness status.
+5. STALENESS FLAG: If measurement_year or data_freshness_status appears in the context and data is older than 5 years from 2026, add caveat: "Data from [year] - [N] years old."
 6. ZERO HALLUCINATION: If the graph context does not contain sufficient data to answer the question, say "Insufficient data" rather than guessing.
-7. CONFIDENCE HONESTY: Set confidence to 0.0 if the graph context is sparse or does not directly answer the question. Never set confidence above 0.9 unless every claim has a DOI-backed source.
-8. PROVENANCE COMPLETENESS: Every evidence item MUST include tier as one of T1/T2/T3/T4/N/A and include year when available.
-9. DETERMINISTIC SAFETY: If there are no citation-grade evidence items in graph context, return an insufficiency answer and an empty evidence list.
+7. CONFIDENCE CALIBRATION: Use the evidence tier to set confidence. With multiple T1 peer-reviewed sources supporting the claim, set confidence to 0.75-0.90. With T2 sources only, 0.55-0.75. With no usable evidence, 0.0.
+8. PROVENANCE COMPLETENESS: Copy tier and year values exactly from the selected evidence items. Do not substitute "N/A" unless that is the actual value in the graph context.
+9. DETERMINISTIC SAFETY: If the evidence array in the graph context is empty, return an insufficiency answer and an empty evidence list.
 
 RESPONSE FORMAT: Return ONLY valid JSON with no additional text.
 User question: {question}
@@ -56,9 +56,9 @@ Graph context (Neo4j results):
 
 Respond with JSON:
 {{
-  "answer": "Your synthesized answer with [DOI] citations. Only use numbers from the graph context.",
-  "confidence": 0.0,
-  "evidence": [{{"doi": "10.xxxx/yyyy", "title": "Paper title", "year": 2024, "tier": "T1", "finding": "Specific finding from paper"}}],
+  "answer": "Your synthesized answer. Only use numbers from the graph context.",
+  "confidence": 0.85,
+  "evidence": [{{"doi": "10.xxxx/yyyy", "title": "Paper title", "year": 2024, "tier": "T1", "finding": "Specific finding that supports the answer"}}],
   "axioms_used": ["BA-XXX"],
   "caveats": ["Any limitations, data age warnings, or missing information"],
   "graph_path": ["Node1 -[REL]-> Node2"]

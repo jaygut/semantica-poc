@@ -2,6 +2,7 @@
 
 import json
 import logging
+import re
 
 from maris.axioms.confidence import calculate_response_confidence
 from maris.llm.adapter import LLMAdapter
@@ -13,6 +14,15 @@ from maris.query.validators import (
     is_graph_context_empty,
     validate_llm_response,
 )
+
+# Matches real DOIs: 10.NNNN/anything  (NNNN = 4+ digits)
+_REAL_DOI_RE = re.compile(r"^10\.\d{4,}/\S+")
+
+
+def _has_real_doi(item: dict) -> bool:
+    """Return True only if the evidence item contains a properly formatted DOI."""
+    doi = str(item.get("doi") or "").strip()
+    return bool(_REAL_DOI_RE.match(doi))
 
 logger = logging.getLogger(__name__)
 
@@ -78,8 +88,23 @@ class ResponseGenerator:
         llm_evidence = result.get("evidence", [])
         if not isinstance(llm_evidence, list):
             llm_evidence = []
-        if not llm_evidence:
-            llm_evidence = _materialize_graph_evidence(graph_context)
+
+        # Filter out fabricated/placeholder DOI strings (e.g. "source DOI unavailable").
+        # Only keep items whose doi matches the standard 10.NNNN/... format.
+        llm_evidence = [e for e in llm_evidence if _has_real_doi(e)]
+
+        # When the LLM returned insufficient real evidence, supplement from the
+        # graph context (which always carries T1-backed DOIs after the recent
+        # population fix).  We merge: LLM evidence first, then graph items whose
+        # DOI is not already present, capped at 10 total to keep responses concise.
+        if len(llm_evidence) < 3:
+            graph_evidence = _materialize_graph_evidence(graph_context)
+            if graph_evidence:
+                existing_dois = {e.get("doi") for e in llm_evidence if e.get("doi")}
+                supplemental = [
+                    e for e in graph_evidence if e.get("doi") not in existing_dois
+                ]
+                llm_evidence = (llm_evidence + supplemental)[:10]
 
         # Normalise into expected shape
         raw = {
