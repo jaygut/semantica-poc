@@ -233,8 +233,20 @@ def _normalize_site_data(data: dict[str, Any], site: str) -> dict[str, Any]:
     # --- Carbon / seagrass metrics ---
     seq = eco_status.get("metrics", {}).get("sequestration", {})
     if seq:
+        rate_tco2 = seq.get("rate_tCO2_per_ha_yr")
+        if rate_tco2 is None:
+            # Fallback: convert Mg C/ha/yr -> tCO2/ha/yr via IPCC factor 3.67.
+            # Handles both scalar and range strings (e.g. "4.71-6.54" -> lower bound).
+            rate_mg_c = seq.get("rate_Mg_C_per_ha_yr")
+            if rate_mg_c is not None:
+                try:
+                    rate_tco2 = round(float(str(rate_mg_c).split("-")[0]) * 3.67, 1)
+                except (ValueError, IndexError):
+                    rate_tco2 = 0
+            else:
+                rate_tco2 = 0
         out["carbon_sequestration"] = {
-            "rate_tCO2_per_ha_yr": seq.get("rate_tCO2_per_ha_yr", 0),
+            "rate_tCO2_per_ha_yr": rate_tco2,
         }
     sg_extent = data.get("site", {}).get("seagrass_extent_km2")
     if sg_extent:
@@ -914,8 +926,17 @@ def render_intelligence_brief(
 
     _render_masthead(nd, mode)
 
-    source = "Investment-grade bundle" if "financial_output" in data else "Case study JSON"
-    st.caption(f"Data source: {source}")
+    prov_sum = data.get("provenance_summary", {})
+    if "financial_output" in data:
+        src_label = "Investment-grade field data bundle"
+    elif prov_sum:
+        doi_backed = prov_sum.get("doi_backed", 0)
+        total = prov_sum.get("total_sources", 0)
+        t1 = prov_sum.get("evidence_tier_distribution", {}).get("T1", 0)
+        src_label = f"{doi_backed}/{total} DOI-backed sources · {t1} T1 peer-reviewed"
+    else:
+        src_label = "Field study data compilation"
+    st.caption(f"Provenance: {src_label}")
 
     meta = nd.get("metadata", {})
     disclaimer = meta.get("disclaimer", "")
