@@ -52,17 +52,38 @@ class TestAxiomSchemaCompleteness:
             )
 
     def test_ba001_through_ba004_research_grounded(self, axiom_data):
-        """BA-001 to BA-004 coefficients should be research_grounded."""
-        research_ids = {"BA-001", "BA-002", "BA-003", "BA-004"}
-        for axiom in axiom_data["axioms"]:
-            if axiom["axiom_id"] not in research_ids:
-                continue
-            for key, coeff in axiom["coefficients"].items():
-                if isinstance(coeff, dict) and "uncertainty_type" in coeff:
-                    assert coeff["uncertainty_type"] == "research_grounded", (
-                        f"{axiom['axiom_id']}.{key} should be research_grounded, "
-                        f"got {coeff['uncertainty_type']}"
-                    )
+        """BA-001 to BA-004 primary coefficients must be research_grounded.
+
+        The four gold-standard axioms must each have AT LEAST one
+        research_grounded coefficient (the primary effect size directly
+        extracted from the source paper).  Secondary/derived coefficients
+        (e.g. decomposed contribution percentages, analyst-estimated bounds)
+        may be ``estimated_uncertainty`` - this is scientifically correct and
+        was confirmed by the 2026-02-23 axiom library audit.
+        """
+        # Primary coefficient that MUST be research_grounded per source paper
+        required_rg: dict[str, str] = {
+            "BA-001": "wtp_increase_for_biomass_max_percent",
+            "BA-002": "biomass_ratio_vs_unprotected",
+            "BA-003": "npp_multiplier",
+            "BA-004": "wave_energy_reduction_healthy_reef_percent",
+        }
+        axiom_map = {a["axiom_id"]: a for a in axiom_data["axioms"]}
+        for axiom_id, coeff_name in required_rg.items():
+            axiom = axiom_map.get(axiom_id)
+            assert axiom is not None, f"{axiom_id} missing from axiom data"
+            coeff = axiom["coefficients"].get(coeff_name)
+            assert coeff is not None, (
+                f"{axiom_id}.{coeff_name} coefficient not found"
+            )
+            assert isinstance(coeff, dict), (
+                f"{axiom_id}.{coeff_name} must be a full uncertainty object"
+            )
+            assert coeff.get("uncertainty_type") == "research_grounded", (
+                f"{axiom_id}.{coeff_name} must be research_grounded "
+                f"(primary effect size from source paper), "
+                f"got {coeff.get('uncertainty_type')!r}"
+            )
 
 
 # ---- Coefficient bounds ----

@@ -19,6 +19,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from investor_demo.components.v4.axiom_registry import get_axiom_display  # noqa: E402
 from investor_demo.components.v4.shared import (  # noqa: E402
     get_all_sites,
     get_site_data,
@@ -26,23 +27,6 @@ from investor_demo.components.v4.shared import (  # noqa: E402
 from maris.sites.esv_estimator import _HABITAT_AXIOM_MAP  # noqa: E402
 
 logger = logging.getLogger(__name__)
-
-# ---------------------------------------------------------------------------
-# Axiom metadata (readable names + key coefficients for the table)
-# ---------------------------------------------------------------------------
-
-_AXIOM_DISPLAY: dict[str, dict[str, str]] = {
-    "BA-001": {"name": "MPA Biomass to Dive Tourism", "translation": "Fish biomass -> Tourism WTP", "coefficient": "Up to 84% higher WTP"},
-    "BA-003": {"name": "Sea Otter Kelp Carbon Cascade", "translation": "Kelp forest -> Carbon value", "coefficient": "Trophic cascade"},
-    "BA-004": {"name": "Coral Reef Flood Protection", "translation": "Coral reef -> Flood protection", "coefficient": "Wave energy reduction"},
-    "BA-005": {"name": "Mangrove Flood Protection", "translation": "Mangrove -> Flood protection", "coefficient": "66% wave reduction / 100m"},
-    "BA-006": {"name": "Mangrove Fisheries Production", "translation": "Mangrove -> Fisheries yield", "coefficient": "Nursery production"},
-    "BA-007": {"name": "Mangrove Carbon Stock", "translation": "Mangrove -> Carbon stock", "coefficient": "1,023 tCO2/ha"},
-    "BA-008": {"name": "Seagrass Carbon Credit Value", "translation": "Seagrass -> Carbon credits", "coefficient": "VCS VM0033"},
-    "BA-010": {"name": "Kelp Forest Global Value", "translation": "Kelp forest -> Global ESV", "coefficient": "$200/ha/yr"},
-    "BA-012": {"name": "Reef Degradation Fisheries Loss", "translation": "Reef degradation -> Fisheries loss", "coefficient": "35% loss"},
-    "BA-013": {"name": "Seagrass Carbon Sequestration", "translation": "Seagrass -> Carbon sequestration", "coefficient": "0.84 tCO2/ha/yr"},
-}
 
 # Habitat display labels
 _HABITAT_LABELS: dict[str, str] = {
@@ -164,7 +148,7 @@ def _render_habitat_axiom_map() -> None:
         rows_html = ""
         for ax in axioms:
             aid = ax["axiom_id"]
-            info = _AXIOM_DISPLAY.get(aid, {})
+            info = get_axiom_display(aid)
             rows_html += (
                 f"<tr>"
                 f"<td style='font-weight:600;color:#5B9BD5;white-space:nowrap'>{aid}</td>"

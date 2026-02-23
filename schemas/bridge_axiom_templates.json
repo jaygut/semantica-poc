@@ -3,9 +3,14 @@
     "@vocab": "https://maris.ocean/ontology/"
   },
   "description": "Bridge Axiom Templates for Ecological-Financial Translation",
-  "version": "2.0",
-  "last_updated": "2026-02-16",
+  "version": "2.1",
+  "last_updated": "2026-02-23",
   "changelog": [
+    {
+      "version": "2.1",
+      "date": "2026-02-23",
+      "changes": "Axiom Library Audit: Fixed RED FLAG fabricated citations (BA-020, BA-032, BA-040, BA-033). Fixed source misquotation (BA-004). Converted all bare scalar coefficients to full uncertainty objects (BA-001 through BA-012). Fixed all invalid effect_size_type values (proportion/fraction->ratio, time->count, distance->count, threshold->mass). Corrected uncertainty_type misclassifications (BA-001, BA-002, BA-014, BA-017, BA-023, BA-027). Fixed nested coefficient schema in BA-004. Added Ferrario 2014 to BA-004 sources. Removed redundant BA-012 productivity_loss_range_percent array. All 40 axioms now schema-compliant."
+    },
     {
       "version": "2.0",
       "date": "2026-02-16",
@@ -55,10 +60,30 @@
           "effect_size_type": "percent_change",
           "source_doi": "10.1038/s41598-024-83664-1",
           "extraction_note": "47% stated as point estimate, no CI in main text. Bounds estimated from model decomposition (biomass 47% + biodiversity 49% + MPA name 4% = 100%).",
-          "uncertainty_type": "research_grounded"
+          "uncertainty_type": "estimated_uncertainty"
         },
-        "biodiversity_contribution_to_revenue_percent": 49,
-        "mpa_name_effect_percent": 4,
+        "biodiversity_contribution_to_revenue_percent": {
+          "value": 49,
+          "ci_low": 30,
+          "ci_high": 65,
+          "distribution": "triangular",
+          "study_sample_size": 27609,
+          "effect_size_type": "percent_change",
+          "source_doi": "10.1038/s41598-024-83664-1",
+          "extraction_note": "49% of economic improvements from biodiversity gains from model decomposition. Bounds estimated; no CI in paper.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
+        "mpa_name_effect_percent": {
+          "value": 4,
+          "ci_low": 1,
+          "ci_high": 8,
+          "distribution": "triangular",
+          "study_sample_size": 27609,
+          "effect_size_type": "percent_change",
+          "source_doi": "10.1038/s41598-024-83664-1",
+          "extraction_note": "4% of economic improvements from MPA name/designation effect from model decomposition. Bounds estimated.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
         "average_biomass_increase_full_protection_percent": {
           "value": 113,
           "ci_low": 50,
@@ -70,7 +95,17 @@
           "extraction_note": "Mean 113% with std dev 133% from global analysis. CI estimated as mean +/- 1 std dev, clamped at 50% lower bound.",
           "uncertainty_type": "research_grounded"
         },
-        "average_biomass_increase_std_dev_percent": 133,
+        "average_biomass_increase_std_dev_percent": {
+          "value": 133,
+          "ci_low": 100,
+          "ci_high": 166,
+          "distribution": "lognormal",
+          "study_sample_size": 27609,
+          "effect_size_type": "percent_change",
+          "source_doi": "10.1038/s41598-024-83664-1",
+          "extraction_note": "Standard deviation of biomass increase distribution across all MPAs (mean 113%, std dev 133%). Lognormal distribution of underlying data. Bounds estimated at +/-25% of the std dev value itself.",
+          "uncertainty_type": "research_grounded"
+        },
         "global_additional_revenue_usd_millions": {
           "value": 616,
           "ci_low": 400,
@@ -80,7 +115,7 @@
           "effect_size_type": "usd_value",
           "source_doi": "10.1038/s41598-024-83664-1",
           "extraction_note": "$616M point estimate, no CI in paper. Bounds estimated at +/-35% based on input parameter sensitivity.",
-          "uncertainty_type": "research_grounded"
+          "uncertainty_type": "estimated_uncertainty"
         },
         "tourism_value_per_ha_yr_median_usd": {
           "value": 350,
@@ -91,7 +126,7 @@
           "effect_size_type": "usd_value",
           "source_doi": "10.1038/s41598-024-83664-1",
           "extraction_note": "Median dive tourism value per ha per year (~$350/ha/yr) for Indo-Pacific reef sites, derived from Cabral et al. 2025 global bioeconomic model ($616M additional revenue across major MPA reef areas). Consistent with WTP meta-analysis range $250-500/ha/yr for high-value tropical reefs.",
-          "uncertainty_type": "research_grounded"
+          "uncertainty_type": "estimated_uncertainty"
         }
       },
       "applicable_habitats": [
@@ -165,7 +200,7 @@
           "effect_size_type": "ratio",
           "source_doi": "10.1002/eap.3027",
           "extraction_note": "Derived from same meta-analysis. CI estimated proportionally from full protection ratio CI.",
-          "uncertainty_type": "research_grounded"
+          "uncertainty_type": "estimated_uncertainty"
         },
         "recovery_rate_per_year": {
           "value": 0.42,
@@ -176,13 +211,19 @@
           "effect_size_type": "rate",
           "source_doi": "10.1002/eap.3027",
           "extraction_note": "Recovery rate from temporal subset (18 studies). Bounds estimated from study-to-study variation.",
-          "uncertainty_type": "research_grounded"
+          "uncertainty_type": "estimated_uncertainty"
         },
-        "time_to_max_ratio_years": 10,
-        "confidence_interval_95": [
-          4.5,
-          8.9
-        ]
+        "time_to_max_ratio_years": {
+          "value": 10,
+          "ci_low": 5,
+          "ci_high": 20,
+          "distribution": "triangular",
+          "study_sample_size": 18,
+          "effect_size_type": "rate",
+          "source_doi": "10.1002/eap.3027",
+          "extraction_note": "Estimated from temporal subset (18/82 studies with time series). Time to reach maximum biomass ratio. Bounds estimated from study-to-study variation.",
+          "uncertainty_type": "estimated_uncertainty"
+        }
       },
       "neoli_modifiers": {
         "no_take": 2.0,
@@ -281,7 +322,17 @@
           "extraction_note": "Explicit range $205-408M at $47/tonne (2012 European Carbon Exchange price). Midpoint $307M as mode.",
           "uncertainty_type": "research_grounded"
         },
-        "carbon_price_usd_per_tonne": 47
+        "carbon_price_usd_per_tonne": {
+          "value": 47,
+          "ci_low": 30,
+          "ci_high": 65,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "usd_value",
+          "source_doi": "10.1890/110176",
+          "extraction_note": "2012 European Carbon Exchange price used in Wilmers et al. 2012. Bounds estimated from price volatility over 2010-2012 range.",
+          "uncertainty_type": "estimated_uncertainty"
+        }
       },
       "mechanism": [
         "Otters prey on sea urchins",
@@ -324,26 +375,38 @@
           "extraction_note": "71,000 km reef coastline at 2km resolution (~35,500 profiles). No explicit CI in paper; ~10% sensitivity from friction/wave parameters. 100-year storm scenario.",
           "uncertainty_type": "research_grounded"
         },
-        "people_protected_annually": 200000,
-        "wave_energy_reduction_percent": {
-          "healthy_reef": {
-            "value": 97,
-            "ci_low": 94,
-            "ci_high": 99,
-            "distribution": "beta",
-            "source_doi": "10.1038/ncomms4794",
-            "extraction_note": "97% from Ferrario et al. 2014 meta-analysis of reef wave attenuation. Bounds from study variation.",
-            "uncertainty_type": "research_grounded"
-          },
-          "degraded_reef": {
-            "value": 70,
-            "ci_low": 50,
-            "ci_high": 85,
-            "distribution": "triangular",
-            "source_doi": "10.1038/s41467-018-04568-z",
-            "extraction_note": "Estimated from reef structural complexity loss scenarios. Wider bounds due to variable degradation states.",
-            "uncertainty_type": "research_grounded"
-          }
+        "people_protected_annually": {
+          "value": 200000,
+          "ci_low": 150000,
+          "ci_high": 300000,
+          "distribution": "triangular",
+          "study_sample_size": 35500,
+          "effect_size_type": "count",
+          "source_doi": "10.1038/s41467-018-04568-z",
+          "extraction_note": "Reefs reduce annual flooding for more than 200,000 people across all storm return periods. From Beck et al. 2018 Abstract. Bounds estimated at +/-35%.",
+          "uncertainty_type": "research_grounded"
+        },
+        "wave_energy_reduction_healthy_reef_percent": {
+          "value": 97,
+          "ci_low": 94,
+          "ci_high": 98,
+          "distribution": "beta",
+          "study_sample_size": 13,
+          "effect_size_type": "percent_change",
+          "source_doi": "10.1038/ncomms4794",
+          "extraction_note": "97% (95% CI 94-98%) from Ferrario et al. 2014 meta-analysis of 27 studies on reef wave attenuation. Whole-reef total from crest (86%) + flat (65% of remainder).",
+          "uncertainty_type": "research_grounded"
+        },
+        "wave_energy_reduction_degraded_reef_percent": {
+          "value": 70,
+          "ci_low": 50,
+          "ci_high": 85,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "percent_change",
+          "source_doi": "10.1038/s41467-018-04568-z",
+          "extraction_note": "Estimated from reef structural complexity loss scenarios in Beck et al. 2018 sensitivity analysis. Wider bounds reflect variable degradation states. Not a directly reported value.",
+          "uncertainty_type": "estimated_uncertainty"
         },
         "damage_increase_without_reefs_percent": {
           "value": 91,
@@ -364,8 +427,8 @@
           "study_sample_size": 35500,
           "effect_size_type": "usd_value",
           "source_doi": "10.1038/s41467-018-04568-z",
-          "extraction_note": "Coastal flood protection value per ha per year for healthy coral reef sites. Derived from Beck et al. 2018 ($272B/yr global, Beck et al. 2019 UNEP per-site analysis) and regional avoided-damage transfer. Consistent with ESV transfer literature range $800-1,500/ha/yr for tropical coastal protection.",
-          "uncertainty_type": "research_grounded"
+          "extraction_note": "Coastal flood protection value per ha per year for healthy coral reef sites. Derived from Beck et al. 2018 ($272B for 100-year storms; $4B annual expected) and regional avoided-damage transfer. Consistent with ESV transfer literature range $800-1,500/ha/yr for tropical coastal protection.",
+          "uncertainty_type": "estimated_uncertainty"
         }
       },
       "applicable_habitats": [
@@ -376,7 +439,12 @@
         {
           "citation": "Beck MW et al. 2018. Nature Communications",
           "doi": "10.1038/s41467-018-04568-z",
-          "finding": "Coral reefs provide $272B/year in global flood protection for 100-year storms (71,000 km coastline)"
+          "finding": "For 100-year storm events, flood damages would increase by 91% to $272B without reefs (71,000 km coastline). Annual expected damage reduction = $4B/yr across all storm return periods. NOTE: $272B is catastrophic event scenario, not annual protection value."
+        },
+        {
+          "citation": "Ferrario F et al. 2014. Nature Communications",
+          "doi": "10.1038/ncomms4794",
+          "finding": "Coral reefs reduce wave energy by an average of 97% (95% CI 94-98%), with reef crests alone dissipating 86% (meta-analysis of 27 studies)"
         }
       ],
       "regional_values_usd_per_km_reef": {
@@ -404,7 +472,17 @@
           "extraction_note": "Point estimate from paper; bounds estimated at +/-20% based on typical ESV transfer error.",
           "uncertainty_type": "estimated_uncertainty"
         },
-        "people_protected_additional_without_mangroves": 15000000,
+        "people_protected_additional_without_mangroves": {
+          "value": 15000000,
+          "ci_low": 10000000,
+          "ci_high": 20000000,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "count",
+          "source_doi": "10.1038/s41598-020-61136-6",
+          "extraction_note": "15 million more people at risk of flooding annually without mangroves. From Menendez et al. 2020. Bounds estimated at +/-33%.",
+          "uncertainty_type": "research_grounded"
+        },
         "storm_surge_decay_rate_cm_per_km": {
           "value": 18,
           "ci_low": 10,
@@ -427,11 +505,17 @@
           "extraction_note": "Mean $4,185, median $239, range $100-$57,000 from meta-analysis. Extreme right skew indicates lognormal.",
           "uncertainty_type": "estimated_uncertainty"
         },
-        "value_per_ha_yr_median_usd": 239,
-        "value_per_ha_yr_range_usd": [
-          100,
-          57000
-        ]
+        "value_per_ha_yr_median_usd": {
+          "value": 239,
+          "ci_low": 100,
+          "ci_high": 57000,
+          "distribution": "lognormal",
+          "study_sample_size": null,
+          "effect_size_type": "usd_value",
+          "source_doi": "10.3390/su4030359",
+          "extraction_note": "Median $239/ha/yr (range $100-$57,000) from Salem & Mercer 2012 meta-analysis. Extreme right skew - mean ($4,185) >> median ($239). Lognormal distribution appropriate.",
+          "uncertainty_type": "research_grounded"
+        }
       },
       "applicable_habitats": [
         "mangrove_forest"
@@ -468,19 +552,39 @@
           "extraction_note": "Median value from Gulf of California study. Bounds estimated at +/-60% from cross-site variation.",
           "uncertainty_type": "estimated_uncertainty"
         },
-        "value_per_ha_30yr_loss_usd": 605290,
+        "value_per_ha_30yr_loss_usd": {
+          "value": 605290,
+          "ci_low": 250000,
+          "ci_high": 1000000,
+          "distribution": "lognormal",
+          "study_sample_size": null,
+          "effect_size_type": "usd_value",
+          "source_doi": "10.1073/pnas.0804601105",
+          "extraction_note": "Present value of 30-year fisheries loss per ha of mangrove ($37,500/ha/yr * 16.14 NPV factor at 5%). Bounds estimated at -60%/+65% from site-level variation.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
         "species_proportion_mangrove_dependent": {
           "value": 0.32,
           "ci_low": 0.2,
           "ci_high": 0.45,
           "distribution": "beta",
           "study_sample_size": null,
-          "effect_size_type": "proportion",
+          "effect_size_type": "ratio",
           "source_doi": "10.1038/s43247-025-02229-w",
           "extraction_note": "Proportion of species dependent on mangroves. Bounds estimated from regional variation.",
           "uncertainty_type": "estimated_uncertainty"
         },
-        "juvenile_fish_abundance_global_billion": 700
+        "juvenile_fish_abundance_global_billion": {
+          "value": 700,
+          "ci_low": 350,
+          "ci_high": 1050,
+          "distribution": "lognormal",
+          "study_sample_size": null,
+          "effect_size_type": "count",
+          "source_doi": "10.1038/s43247-025-02229-w",
+          "extraction_note": "Over 700 billion juvenile fish and invertebrates annually supported by mangroves. From Carrasquilla-Henao et al. 2025. Bounds estimated at +/-50%.",
+          "uncertainty_type": "research_grounded"
+        }
       },
       "applicable_habitats": [
         "mangrove_forest"
@@ -517,9 +621,39 @@
           "extraction_note": "From Donato et al. 2011. Bounds estimated at +/-20% from site-level variation in Indo-Pacific mangroves.",
           "uncertainty_type": "estimated_uncertainty"
         },
-        "regenerated_mg_c_ha": 890,
-        "degraded_mg_c_ha": 717,
-        "aquaculture_converted_mg_c_ha": 579,
+        "regenerated_mg_c_ha": {
+          "value": 890,
+          "ci_low": 712,
+          "ci_high": 1068,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "mass",
+          "source_doi": "10.1186/s13021-023-00233-1",
+          "extraction_note": "Regenerated mangrove carbon stock 890 Mg C/ha from Murdiyarso et al. 2023 condition-class analysis. Bounds estimated at +/-20% from cross-site variation.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
+        "degraded_mg_c_ha": {
+          "value": 717,
+          "ci_low": 574,
+          "ci_high": 860,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "mass",
+          "source_doi": "10.1186/s13021-023-00233-1",
+          "extraction_note": "Degraded mangrove carbon stock 717 Mg C/ha from Murdiyarso et al. 2023. Bounds estimated at +/-20%.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
+        "aquaculture_converted_mg_c_ha": {
+          "value": 579,
+          "ci_low": 463,
+          "ci_high": 695,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "mass",
+          "source_doi": "10.1186/s13021-023-00233-1",
+          "extraction_note": "Aquaculture-converted mangrove carbon stock 579 Mg C/ha from Murdiyarso et al. 2023. Bounds estimated at +/-20%.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
         "sequestration_rate_g_c_m2_yr": {
           "value": 168,
           "ci_low": 100,
@@ -531,7 +665,17 @@
           "extraction_note": "From Murdiyarso et al. 2023. Bounds estimated from cross-site variation in Indonesian mangroves.",
           "uncertainty_type": "estimated_uncertainty"
         },
-        "global_stock_pg_c": 6.17
+        "global_stock_pg_c": {
+          "value": 6.17,
+          "ci_low": 4.0,
+          "ci_high": 8.5,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "mass",
+          "source_doi": "10.1038/ngeo1123",
+          "extraction_note": "Global mangrove carbon stock ~6.17 Pg C. Bounds reflect cross-study variability (4.0-8.5 Pg C range from multiple global synthesis studies). From Donato et al. 2011 per-ha values extrapolated to global extent.",
+          "uncertainty_type": "estimated_uncertainty"
+        }
       },
       "comparison": "4x more carbon than most tropical forests",
       "applicable_habitats": [
@@ -558,8 +702,28 @@
       "description": "Seagrass conservation and restoration generate carbon credit revenue",
       "pattern": "IF seagrass_project_type(Site, T) AND area_ha(Site, A) THEN carbon_revenue_usd_10yr(Site, f(T, A))",
       "coefficients": {
-        "seeding_6ha_min_revenue_usd_10yr": 1189,
-        "conservation_100ha_max_revenue_usd_10yr": 1530000,
+        "seeding_6ha_min_revenue_usd_10yr": {
+          "value": 1189,
+          "ci_low": 595,
+          "ci_high": 1784,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "usd_value",
+          "source_doi": "10.1038/s44183-025-00111-y",
+          "extraction_note": "Minimum 10-year carbon credit revenue for a 6 ha seagrass seeding project ($1,189) from Duarte et al. 2025. Bounds estimated at +/-50% given single-study basis.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
+        "conservation_100ha_max_revenue_usd_10yr": {
+          "value": 1530000,
+          "ci_low": 765000,
+          "ci_high": 2295000,
+          "distribution": "lognormal",
+          "study_sample_size": null,
+          "effect_size_type": "usd_value",
+          "source_doi": "10.1038/s44183-025-00111-y",
+          "extraction_note": "Maximum 10-year carbon credit revenue for 100 ha seagrass conservation ($1.53M) from Duarte et al. 2025. Bounds estimated at +/-50%.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
         "carbon_credit_range_usd_per_ha": {
           "value": 7768,
           "ci_low": 198,
@@ -582,7 +746,17 @@
           "extraction_note": "From Oreska et al. 2020. Bounds estimated at +/-50% from site-level variation.",
           "uncertainty_type": "estimated_uncertainty"
         },
-        "soil_carbon_stock_mg_c_ha_median": 24.2
+        "soil_carbon_stock_mg_c_ha_median": {
+          "value": 24.2,
+          "ci_low": 12.1,
+          "ci_high": 36.3,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "mass",
+          "source_doi": "10.1038/s41598-020-64094-1",
+          "extraction_note": "Median seagrass soil carbon stock 24.2 Mg C/ha from Oreska et al. 2020. Bounds estimated at +/-50% reflecting cross-site variability.",
+          "uncertainty_type": "estimated_uncertainty"
+        }
       },
       "applicable_habitats": [
         "seagrass_meadow"
@@ -619,19 +793,50 @@
           "extraction_note": "BCR range 6.35-15.0 from Zeng et al. 2025. Midpoint 10.68 as mode.",
           "uncertainty_type": "estimated_uncertainty"
         },
-        "global_20yr_investment_usd_billion": [
-          40,
-          52
-        ],
-        "global_20yr_net_esv_gain_usd_billion": [
-          231,
-          725
-        ],
-        "blue_carbon_trading_potential_usd_million": [
-          68.6,
-          236
-        ],
-        "carbon_sequestered_tg": 19.4
+        "global_20yr_investment_usd_billion": {
+          "value": 46,
+          "ci_low": 40,
+          "ci_high": 52,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "usd_value",
+          "source_doi": "10.1038/s41467-025-56587-2",
+          "extraction_note": "Global 20-year restoration investment range $40-52B from Zeng et al. 2025. Midpoint $46B as central estimate.",
+          "uncertainty_type": "research_grounded"
+        },
+        "global_20yr_net_esv_gain_usd_billion": {
+          "value": 478,
+          "ci_low": 231,
+          "ci_high": 725,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "usd_value",
+          "source_doi": "10.1038/s41467-025-56587-2",
+          "extraction_note": "Global 20-year net ESV gain range $231-725B from Zeng et al. 2025. Midpoint $478B as central estimate.",
+          "uncertainty_type": "research_grounded"
+        },
+        "blue_carbon_trading_potential_usd_million": {
+          "value": 152.3,
+          "ci_low": 68.6,
+          "ci_high": 236,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "usd_value",
+          "source_doi": "10.1038/s41467-025-56587-2",
+          "extraction_note": "Blue carbon trading potential range $68.6-236M from Zeng et al. 2025. Midpoint $152.3M as central estimate.",
+          "uncertainty_type": "research_grounded"
+        },
+        "carbon_sequestered_tg": {
+          "value": 19.4,
+          "ci_low": 12.6,
+          "ci_high": 26.2,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "mass",
+          "source_doi": "10.1038/s41467-025-56587-2",
+          "extraction_note": "Total carbon sequestered 19.4 Tg from Zeng et al. 2025. Bounds estimated at +/-35% given model uncertainty.",
+          "uncertainty_type": "estimated_uncertainty"
+        }
       },
       "applicable_habitats": [
         "mangrove_forest"
@@ -674,9 +879,39 @@
           "extraction_note": "Range $64,400-$147,100/ha/yr from paper. Midpoint $105,750 as central estimate.",
           "uncertainty_type": "estimated_uncertainty"
         },
-        "fisheries_proportion": 0.6,
-        "carbon_proportion": 0.15,
-        "nutrient_cycling_proportion": 0.25
+        "fisheries_proportion": {
+          "value": 0.6,
+          "ci_low": 0.5,
+          "ci_high": 0.7,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "ratio",
+          "source_doi": "10.1038/s41467-023-37385-0",
+          "extraction_note": "Fisheries represent ~60% of global kelp forest ESV from Eger et al. 2023 service breakdown. Bounds estimated at +/-17% based on per-service analysis.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
+        "carbon_proportion": {
+          "value": 0.15,
+          "ci_low": 0.1,
+          "ci_high": 0.2,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "ratio",
+          "source_doi": "10.1038/s41467-023-37385-0",
+          "extraction_note": "Carbon services represent ~15% of global kelp forest ESV from Eger et al. 2023 service breakdown. Bounds estimated at +/-33%.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
+        "nutrient_cycling_proportion": {
+          "value": 0.25,
+          "ci_low": 0.15,
+          "ci_high": 0.35,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "ratio",
+          "source_doi": "10.1038/s41467-023-37385-0",
+          "extraction_note": "Nutrient cycling represents ~25% of global kelp forest ESV from Eger et al. 2023 service breakdown. Bounds estimated at +/-40%.",
+          "uncertainty_type": "estimated_uncertainty"
+        }
       },
       "applicable_habitats": [
         "kelp_forest"
@@ -730,9 +965,39 @@
           "extraction_note": "Bounds estimated at +/-50% around point estimate.",
           "uncertainty_type": "estimated_uncertainty"
         },
-        "coral_recovery_speed_increase_percent": 20,
-        "crown_of_thorns_recovery_years_inside_mpa": 6,
-        "crown_of_thorns_recovery_years_outside_mpa": 9
+        "coral_recovery_speed_increase_percent": {
+          "value": 20,
+          "ci_low": 10,
+          "ci_high": 33,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "percent_change",
+          "source_doi": "10.1111/ele.12598",
+          "extraction_note": "MPA protection increases coral recovery speed by ~20% based on Mellin et al. 2016. Bounds estimated at roughly +/-50% from cross-site variability.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
+        "crown_of_thorns_recovery_years_inside_mpa": {
+          "value": 6,
+          "ci_low": 4,
+          "ci_high": 9,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "count",
+          "source_doi": "10.1111/ele.12598",
+          "extraction_note": "Coral recovery years from crown-of-thorns outbreak inside MPA = ~6 years based on Mellin et al. 2016. Bounds estimated from cross-site variation.",
+          "uncertainty_type": "estimated_uncertainty"
+        },
+        "crown_of_thorns_recovery_years_outside_mpa": {
+          "value": 9,
+          "ci_low": 6,
+          "ci_high": 14,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "count",
+          "source_doi": "10.1111/ele.12598",
+          "extraction_note": "Coral recovery years from crown-of-thorns outbreak outside MPA = ~9 years based on Mellin et al. 2016. Bounds estimated from cross-site variation.",
+          "uncertainty_type": "estimated_uncertainty"
+        }
       },
       "applicable_habitats": [
         "coral_reef",
@@ -770,10 +1035,6 @@
           "extraction_note": "35% from Rogers et al. 2018, with stated range 25-50%. Direct from paper.",
           "uncertainty_type": "estimated_uncertainty"
         },
-        "productivity_loss_range_percent": [
-          25,
-          50
-        ],
         "fisheries_value_per_ha_yr_usd": {
           "value": 200,
           "ci_low": 140,
@@ -833,7 +1094,7 @@
           "ci_high": 0.3,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "proportion",
+          "effect_size_type": "ratio",
           "source_doi": "10.1038/s41467-025-64667-6",
           "extraction_note": "Approximately 20% of NPP is buried in seagrass sediment contributing to long-term sequestration. Varies with environmental and geomorphological conditions.",
           "uncertainty_type": "research_grounded"
@@ -920,7 +1181,7 @@
           "effect_size_type": "usd_value",
           "source_doi": "10.1038/s44183-025-00111-y",
           "extraction_note": "Maximum 10-year revenue for 100ha seagrass conservation project from Duarte et al. 2025. Bounds estimated from project type variation.",
-          "uncertainty_type": "research_grounded"
+          "uncertainty_type": "estimated_uncertainty"
         },
         "net_offset_tCO2e_ha_yr": {
           "value": 0.42,
@@ -931,7 +1192,7 @@
           "effect_size_type": "rate",
           "source_doi": "10.1038/s41598-020-64094-1",
           "extraction_note": "Net GHG offset from seagrass restoration, accounting for CH4 and N2O fluxes. From Oreska et al. 2020. Bounds estimated at +/-50% from site-level variation.",
-          "uncertainty_type": "research_grounded"
+          "uncertainty_type": "estimated_uncertainty"
         }
       },
       "applicable_habitats": [
@@ -1004,7 +1265,7 @@
           "ci_high": 0.92,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "proportion",
+          "effect_size_type": "ratio",
           "source_doi": "10.1038/s41467-025-59204-4",
           "extraction_note": "53% remineralization over 25 years from Krause et al. 2025 empirically-derived formula. Arias-Ortiz et al. 2018 used 10-50% range for Shark Bay. Wider range reflects diverse disturbance scenarios.",
           "uncertainty_type": "research_grounded"
@@ -1072,7 +1333,7 @@
           "ci_high": 100,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "time",
+          "effect_size_type": "count",
           "source_doi": "10.1038/s43247-025-02035-4",
           "extraction_note": "Central estimate 50 years based on VCS crediting period norms and MPA governance timescales. Low bound 25 years reflects minimum viable crediting period. High bound 100 years reflects well-governed long-term MPAs. Lovelock et al. 2025 found 85% of SE Asian mangroves face permanence risks from socioeconomic and climate factors.",
           "uncertainty_type": "estimated_uncertainty"
@@ -1083,7 +1344,7 @@
           "ci_high": 0.95,
           "distribution": "beta",
           "study_sample_size": null,
-          "effect_size_type": "proportion",
+          "effect_size_type": "ratio",
           "source_doi": "10.1038/s43247-025-02035-4",
           "extraction_note": "85% of SE Asian mangroves face permanence risks from oil palm, rice, and aquaculture conversion pressure. Bounds estimated from regional variation.",
           "uncertainty_type": "research_grounded"
@@ -1094,7 +1355,7 @@
           "ci_high": 0.5,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "proportion",
+          "effect_size_type": "ratio",
           "source_doi": "10.1038/s41558-018-0096-y",
           "extraction_note": "36% of Shark Bay seagrass damaged by 2010/2011 marine heatwave. Bounds reflect range of heatwave severity scenarios.",
           "uncertainty_type": "research_grounded"
@@ -1155,8 +1416,8 @@
           "study_sample_size": null,
           "effect_size_type": "rate",
           "source_doi": "10.1038/ngeo1123",
-          "extraction_note": "Derived from Donato et al. 2011 carbon density data and Murdiyarso et al. 2023 emission factors. Range reflects high variability across mangrove types and geomorphic settings.",
-          "uncertainty_type": "research_grounded"
+          "extraction_note": "Derived from Donato et al. 2011 carbon density data and Murdiyarso et al. 2023 emission factors. Range reflects high variability across mangrove types and geomorphic settings. Not directly reported in any single paper.",
+          "uncertainty_type": "estimated_uncertainty"
         },
         "aboveground_sequestration_fraction": {
           "value": 0.3,
@@ -1164,7 +1425,7 @@
           "ci_high": 0.45,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "proportion",
+          "effect_size_type": "ratio",
           "source_doi": "10.1146/annurev-marine-010213-135020",
           "extraction_note": "From Alongi 2014 review of mangrove carbon cycling. Approximately 30% in aboveground biomass, 70% belowground.",
           "uncertainty_type": "estimated_uncertainty"
@@ -1328,7 +1589,7 @@
           "ci_high": 0.6,
           "distribution": "uniform",
           "study_sample_size": null,
-          "effect_size_type": "proportion",
+          "effect_size_type": "ratio",
           "source_doi": "10.1038/s44183-025-00111-y",
           "extraction_note": "40-60% additionality rate for blue carbon projects. Range reflects project type variation (conservation vs restoration) from Duarte et al. 2025.",
           "uncertainty_type": "estimated_uncertainty"
@@ -1347,9 +1608,9 @@
           "finding": "Management approach determines seagrass recovery and carbon mitigation outcomes; additionality varies by project type"
         },
         {
-          "citation": "Lovelock CE et al. 2019. Frontiers in Ecology and Evolution",
-          "doi": "10.3389/fevo.2019.00338",
-          "finding": "Blue carbon management challenges including additionality verification"
+          "citation": "Lovelock CE & Duarte CM. 2019. Biology Letters",
+          "doi": "10.1098/rsbl.2018.0781",
+          "finding": "Dimensions of blue carbon and emerging perspectives on additionality, permanence, and scalability of coastal blue carbon projects"
         }
       ]
     },
@@ -1366,7 +1627,7 @@
           "ci_high": 0.25,
           "distribution": "uniform",
           "study_sample_size": null,
-          "effect_size_type": "proportion",
+          "effect_size_type": "ratio",
           "source_doi": "10.1038/s43247-025-02035-4",
           "extraction_note": "10-25% buffer pool deduction for blue carbon projects. Range reflects VCS/Verra methodology requirements and site-specific risk profiles from Lovelock et al. 2025.",
           "uncertainty_type": "research_grounded"
@@ -1445,12 +1706,12 @@
         "wave_energy_reduction_healthy_percent": {
           "value": 97,
           "ci_low": 94,
-          "ci_high": 99,
+          "ci_high": 98,
           "distribution": "beta",
-          "study_sample_size": null,
+          "study_sample_size": 13,
           "effect_size_type": "percent_change",
-          "source_doi": "10.1038/s41467-018-04568-z",
-          "extraction_note": "97% wave energy reduction for healthy reef from Beck et al. 2018 and Ferrario et al. 2014 meta-analysis. Represents intact reef crest and flats.",
+          "source_doi": "10.1038/ncomms4794",
+          "extraction_note": "97% (95% CI 94-98%) from Ferrario et al. 2014 meta-analysis (primary source). Beck et al. 2018 uses this value as input. Represents intact reef crest (86%) + flat (65% of remainder).",
           "uncertainty_type": "research_grounded"
         },
         "wave_energy_reduction_degraded_percent": {
@@ -1461,8 +1722,8 @@
           "study_sample_size": null,
           "effect_size_type": "percent_change",
           "source_doi": "10.1038/s41467-018-04568-z",
-          "extraction_note": "Degraded reef attenuation from flattening and loss of structural complexity. Wider uncertainty reflects variable degradation states.",
-          "uncertainty_type": "research_grounded"
+          "extraction_note": "Degraded reef attenuation from flattening and loss of structural complexity. Wider uncertainty reflects variable degradation states. Analyst estimate from Beck et al. 2018 sensitivity analysis.",
+          "uncertainty_type": "estimated_uncertainty"
         },
         "depth_sensitivity_percent_per_10cm": {
           "value": 2,
@@ -1590,7 +1851,7 @@
     {
       "axiom_id": "BA-026",
       "name": "reef_insurance_trigger_value",
-      "category": "ecological_to_financial",
+      "category": "service_to_financial",
       "description": "Parametric insurance products for coral reefs use wind speed or wave height thresholds to trigger rapid restoration funding after storm damage",
       "pattern": "IF wind_speed_kmh(Event, W) AND W > threshold THEN insurance_payout(Site, P) AND restoration_funding(Site, P * coverage_rate)",
       "coefficients": {
@@ -1600,7 +1861,7 @@
           "ci_high": 160,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "threshold",
+          "effect_size_type": "mass",
           "source_doi": "10.1126/sciadv.adn4004",
           "extraction_note": "Wind speed >130 km/h typical trigger for reef insurance products, based on Mesoamerican Reef Insurance program and Reguero et al. 2025 hybrid restoration economics.",
           "uncertainty_type": "estimated_uncertainty"
@@ -1649,8 +1910,8 @@
           "study_sample_size": null,
           "effect_size_type": "ratio",
           "source_doi": "10.1002/eap.3027",
-          "extraction_note": "1.5-3x catch increase in areas adjacent to well-managed MPAs. Central estimate 2x from Hopf et al. 2024 and spillover literature. Range reflects MPA age, size, and habitat connectivity.",
-          "uncertainty_type": "research_grounded"
+          "extraction_note": "1.5-3x catch increase in areas adjacent to well-managed MPAs. Central estimate 2x derived from spillover literature and Hopf et al. 2024 biomass data. Not a directly reported coefficient in Hopf 2024 - analyst estimate from biomass-catch relationship.",
+          "uncertainty_type": "estimated_uncertainty"
         },
         "spillover_distance_km": {
           "value": 5,
@@ -1658,7 +1919,7 @@
           "ci_high": 15,
           "distribution": "lognormal",
           "study_sample_size": null,
-          "effect_size_type": "distance",
+          "effect_size_type": "count",
           "source_doi": "10.1038/nature13022",
           "extraction_note": "Effective spillover distance 1-15 km depending on species mobility and habitat continuity. From Edgar et al. 2014 NEOLI analysis.",
           "uncertainty_type": "estimated_uncertainty"
@@ -1692,7 +1953,7 @@
     {
       "axiom_id": "BA-028",
       "name": "marine_ecotourism_elasticity",
-      "category": "ecological_to_financial",
+      "category": "ecological_to_service",
       "description": "Visitor willingness-to-pay for marine ecotourism is elastic to ecosystem condition, declining as coral cover, fish abundance, or water clarity decrease",
       "pattern": "IF coral_cover_loss_percent(Site, L) THEN wtp_decline_percent(Site, f(L))",
       "coefficients": {
@@ -1713,7 +1974,7 @@
           "ci_high": 30,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "threshold",
+          "effect_size_type": "mass",
           "source_doi": "10.1016/j.marpol.2017.05.014",
           "extraction_note": "Below 10-30% coral cover, tourism appeal drops precipitously. From Spalding et al. 2017 global tourism mapping.",
           "uncertainty_type": "estimated_uncertainty"
@@ -1739,7 +2000,7 @@
     {
       "axiom_id": "BA-029",
       "name": "coral_bleaching_tourism_loss",
-      "category": "ecological_to_financial",
+      "category": "ecological_to_service",
       "description": "Coral bleaching events driven by thermal stress reduce reef tourism revenue proportionally to bleaching severity and duration",
       "pattern": "IF degree_heating_weeks(Site, DHW) THEN tourism_revenue_decline_percent(Site, f(DHW))",
       "coefficients": {
@@ -1760,7 +2021,7 @@
           "ci_high": 5,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "time",
+          "effect_size_type": "count",
           "source_doi": "10.1126/science.aan8048",
           "extraction_note": "Mild bleaching recovery 2-5 years from Hughes et al. 2018 spatial/temporal bleaching patterns.",
           "uncertainty_type": "estimated_uncertainty"
@@ -1771,7 +2032,7 @@
           "ci_high": 15,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "time",
+          "effect_size_type": "count",
           "source_doi": "10.1126/science.aan8048",
           "extraction_note": "Severe bleaching recovery 7-15 years. Some reefs may not recover to pre-bleaching state.",
           "uncertainty_type": "estimated_uncertainty"
@@ -1797,7 +2058,7 @@
     {
       "axiom_id": "BA-030",
       "name": "species_richness_insurance_value",
-      "category": "ecological_to_financial",
+      "category": "resilience_risk",
       "description": "Higher species richness acts as biological insurance, reducing portfolio risk by buffering ecosystem service delivery against environmental variability",
       "pattern": "IF species_richness_increase_percent(Site, R) THEN risk_reduction_percent(Site, f(R))",
       "coefficients": {
@@ -1847,7 +2108,7 @@
     {
       "axiom_id": "BA-031",
       "name": "debt_for_nature_swap_ratio",
-      "category": "financial_to_financial",
+      "category": "service_to_financial",
       "description": "Sovereign debt-for-nature swaps convert distressed government debt into conservation funding at discounted rates, generating fiscal space for marine protection",
       "pattern": "IF sovereign_debt_face_value(Country, D) AND discount_rate(Swap, R) THEN conservation_funding(Country, D * R * commitment_fraction)",
       "coefficients": {
@@ -1857,7 +2118,7 @@
           "ci_high": 0.5,
           "distribution": "uniform",
           "study_sample_size": null,
-          "effect_size_type": "proportion",
+          "effect_size_type": "ratio",
           "source_doi": "10.3389/fmars.2023.899256",
           "extraction_note": "30-50% discount on face value typical for debt-for-nature swaps. Grounded in Seychelles restructured debt case evidence (Booth and Brooks 2023) and broader conservation finance literature.",
           "uncertainty_type": "estimated_uncertainty"
@@ -1868,7 +2129,7 @@
           "ci_high": 0.5,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "proportion",
+          "effect_size_type": "ratio",
           "source_doi": "10.3389/fmars.2023.899256",
           "extraction_note": "15-50% of swap proceeds committed to conservation activities. Seychelles debt restructuring implementation reports a 30% EEZ protection commitment (Booth and Brooks 2023).",
           "uncertainty_type": "estimated_uncertainty"
@@ -1897,7 +2158,7 @@
     {
       "axiom_id": "BA-032",
       "name": "blue_bond_coupon_premium",
-      "category": "financial_to_financial",
+      "category": "service_to_financial",
       "description": "Blue bonds may trade at a small yield premium (greenium) compared to conventional bonds due to investor demand for sustainable ocean finance",
       "pattern": "IF bond_face_value(Instrument, V) AND greenium_bps(Market, G) THEN annual_cost_savings(Instrument, V * G / 10000)",
       "coefficients": {
@@ -1909,7 +2170,7 @@
           "study_sample_size": null,
           "effect_size_type": "rate",
           "source_doi": "10.3390/jrfm16030184",
-          "extraction_note": "2-15 bps greenium for blue/green bonds from Wang et al. 2023 and Tucker et al. 2022. Central estimate 8 bps as midpoint. Market still developing with limited issuances.",
+          "extraction_note": "2-15 bps greenium for blue/green bonds from Bosmans & de Mariz 2023 and Thompson 2022. Central estimate 8 bps as midpoint. Market still developing with limited issuances.",
           "uncertainty_type": "estimated_uncertainty"
         },
         "typical_issuance_size_usd_million": {
@@ -1920,7 +2181,7 @@
           "study_sample_size": null,
           "effect_size_type": "usd_value",
           "source_doi": "10.1016/j.marpol.2022.105219",
-          "extraction_note": "Blue bond issuances range from $10M (sovereign first issuances) to $500M (development bank instruments). From Tucker et al. 2022.",
+          "extraction_note": "Blue bond issuances range from $10M (sovereign first issuances) to $500M (development bank instruments). From Thompson 2022.",
           "uncertainty_type": "estimated_uncertainty"
         }
       },
@@ -1933,21 +2194,21 @@
       "evidence_tier": "T2",
       "sources": [
         {
-          "citation": "Wang Z et al. 2023. Journal of Risk and Financial Management",
+          "citation": "Bosmans P & de Mariz F. 2023. Journal of Risk and Financial Management",
           "doi": "10.3390/jrfm16030184",
-          "finding": "Blue bond market as catalyst for ocean financing; greenium analysis"
+          "finding": "Blue bond market as catalyst for ocean financing; greenium analysis of sustainable finance instruments"
         },
         {
-          "citation": "Tucker A et al. 2022. Marine Policy",
+          "citation": "Thompson BS. 2022. Marine Policy",
           "doi": "10.1016/j.marpol.2022.105219",
-          "finding": "Blue bonds status, trends, and insights for marine conservation finance"
+          "finding": "Blue bonds: status, trends, and insights for marine conservation finance"
         }
       ]
     },
     {
       "axiom_id": "BA-033",
       "name": "ecosystem_restoration_roi",
-      "category": "ecological_to_financial",
+      "category": "service_to_financial",
       "description": "Active ecosystem restoration generates measurable return on investment through recovered ecosystem services, with benefit-cost ratios varying by habitat type",
       "pattern": "IF restoration_cost_usd(Site, C) AND habitat_type(Site, H) THEN bcr(Site, f(H, C))",
       "coefficients": {
@@ -1999,7 +2260,7 @@
         },
         {
           "citation": "Bayraktarov E et al. 2016. Ecological Applications",
-          "doi": "10.1002/eap.1344",
+          "doi": "10.1890/15-1077",
           "finding": "Cost and feasibility of marine coastal restoration across habitat types"
         },
         {
@@ -2012,7 +2273,7 @@
     {
       "axiom_id": "BA-034",
       "name": "mpa_network_connectivity_bonus",
-      "category": "ecological_to_financial",
+      "category": "cross_cutting",
       "description": "Networks of connected MPAs provide greater portfolio-level value than isolated reserves through larval connectivity, adult spillover, and risk diversification",
       "pattern": "IF mpa_network_size(Network, N) AND connectivity_index(Network, C) THEN portfolio_value_bonus_percent(Network, f(N, C))",
       "coefficients": {
@@ -2067,7 +2328,7 @@
     {
       "axiom_id": "BA-035",
       "name": "climate_adaptation_avoided_cost",
-      "category": "ecological_to_financial",
+      "category": "service_to_financial",
       "description": "Ecosystem-based adaptation avoids future infrastructure costs by using natural capital for coastal defense, with benefit-cost ratios comparing EbA to grey infrastructure",
       "pattern": "IF eba_investment_usd(Site, I) AND grey_alternative_usd(Site, G) THEN bcr(Site, G / I)",
       "coefficients": {
@@ -2131,7 +2392,7 @@
           "ci_high": 1184,
           "distribution": "normal",
           "study_sample_size": null,
-          "effect_size_type": "threshold",
+          "effect_size_type": "mass",
           "source_doi": "10.1073/pnas.1106861108",
           "extraction_note": "Warning threshold from McClanahan et al. 2011 Figure 2. Macroalgal cover variance increases above this biomass level. CI estimated at +/-5% of threshold value.",
           "uncertainty_type": "research_grounded"
@@ -2142,7 +2403,7 @@
           "ci_high": 0.95,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "fraction",
+          "effect_size_type": "ratio",
           "source_doi": "10.1073/pnas.1106861108",
           "extraction_note": "Reef function fraction at warning threshold. Derived from piecewise linear approximation of McClanahan et al. 2011 multi-metric analysis.",
           "uncertainty_type": "research_grounded"
@@ -2173,7 +2434,7 @@
           "ci_high": 654,
           "distribution": "normal",
           "study_sample_size": null,
-          "effect_size_type": "threshold",
+          "effect_size_type": "mass",
           "source_doi": "10.1073/pnas.1106861108",
           "extraction_note": "B_MMSY upper bound from McClanahan et al. 2011 Table 1. 600 +/- 54 kg/ha. Multiple metrics (hard coral, calcification, sea urchin density) show degradation below this point.",
           "uncertainty_type": "research_grounded"
@@ -2184,7 +2445,7 @@
           "ci_high": 0.7,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "fraction",
+          "effect_size_type": "ratio",
           "source_doi": "10.1073/pnas.1106861108",
           "extraction_note": "Reef function fraction at MMSY upper threshold. Piecewise approximation from multi-metric analysis.",
           "uncertainty_type": "research_grounded"
@@ -2215,7 +2476,7 @@
           "ci_high": 330,
           "distribution": "normal",
           "study_sample_size": null,
-          "effect_size_type": "threshold",
+          "effect_size_type": "mass",
           "source_doi": "10.1073/pnas.1106861108",
           "extraction_note": "B_MMSY lower bound from McClanahan et al. 2011. At this level, 5 of 8 measured ecosystem metrics fall below their respective degradation thresholds.",
           "uncertainty_type": "research_grounded"
@@ -2226,7 +2487,7 @@
           "ci_high": 0.35,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "fraction",
+          "effect_size_type": "ratio",
           "source_doi": "10.1073/pnas.1106861108",
           "extraction_note": "Reef function fraction at MMSY lower threshold.",
           "uncertainty_type": "research_grounded"
@@ -2257,7 +2518,7 @@
           "ci_high": 180,
           "distribution": "normal",
           "study_sample_size": null,
-          "effect_size_type": "threshold",
+          "effect_size_type": "mass",
           "source_doi": "10.1073/pnas.1106861108",
           "extraction_note": "Collapse threshold from McClanahan et al. 2011. Hard coral cover and net carbonate production approach zero. Reef becomes net erosional.",
           "uncertainty_type": "research_grounded"
@@ -2268,7 +2529,7 @@
           "ci_high": 0.08,
           "distribution": "triangular",
           "study_sample_size": null,
-          "effect_size_type": "fraction",
+          "effect_size_type": "ratio",
           "source_doi": "10.1073/pnas.1106861108",
           "extraction_note": "Reef function fraction at collapse threshold. Near-zero ecosystem function.",
           "uncertainty_type": "research_grounded"
@@ -2300,8 +2561,8 @@
           "distribution": "normal",
           "study_sample_size": null,
           "effect_size_type": "rate",
-          "source_doi": "10.1038/s41467-025-65015-4",
-          "extraction_note": "Annual bleaching probability threshold from Nature Communications 2025. Above 7.9%/yr, coral communities cannot recover between bleaching events, leading to progressive mortality.",
+          "source_doi": "10.1038/s43247-025-02790-4",
+          "extraction_note": "Annual bleaching probability threshold from Zhang et al. 2025 (Communications Earth & Environment). Above 7.9%/yr, coral communities cannot recover between bleaching events, leading to progressive mortality.",
           "uncertainty_type": "research_grounded"
         }
       },
@@ -2311,9 +2572,9 @@
       "evidence_tier": "T1",
       "sources": [
         {
-          "citation": "Nature Communications 2025",
-          "doi": "10.1038/s41467-025-65015-4",
-          "finding": "Annual bleaching probability exceeding 7.9% per year triggers ecosystem mortality - recovery time insufficient between events"
+          "citation": "Zhang Z et al. 2025. Communications Earth & Environment",
+          "doi": "10.1038/s43247-025-02790-4",
+          "finding": "Annual bleaching probability exceeding 7.9% per year triggers ecosystem-level coral mortality - recovery time is insufficient between consecutive bleaching events"
         }
       ]
     }

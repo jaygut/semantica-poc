@@ -117,8 +117,8 @@ class TestExpandedAxioms:
         for i in range(17, 36):
             assert f"BA-{i:03d}" in ids, f"New axiom BA-{i:03d} missing"
 
-    def test_version_is_2_0(self):
-        assert self.data.get("version") == "2.0"
+    def test_version_is_2_1(self):
+        assert self.data.get("version") == "2.1"
 
 
 # ---------------------------------------------------------------------------

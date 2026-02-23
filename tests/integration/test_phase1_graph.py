@@ -189,11 +189,11 @@ class TestT11SnapshotBeforeRePopulation:
         # Verify expected counts (from CLAUDE.md: 893 nodes total)
         total = sum(counts.values())
         assert total >= 800, f"Total node count {total} is too low (expected ~893)"
-        assert counts.get("BridgeAxiom", 0) == 35, (
-            f"Expected 35 BridgeAxiom nodes, got {counts.get('BridgeAxiom', 0)}"
+        assert counts.get("BridgeAxiom", 0) == 40, (
+            f"Expected 40 BridgeAxiom nodes, got {counts.get('BridgeAxiom', 0)}"
         )
-        assert counts.get("MPA", 0) == 4, (
-            f"Expected 4 MPA nodes, got {counts.get('MPA', 0)}"
+        assert counts.get("MPA", 0) >= 9, (
+            f"Expected at least 9 MPA nodes (9 portfolio sites), got {counts.get('MPA', 0)}"
         )
 
         # Store for later comparison
@@ -219,11 +219,11 @@ class TestT11SnapshotBeforeRePopulation:
         print(f"\nRelationship counts baseline: {json.dumps(counts, indent=2)}")
 
     def test_axiom_evidence_baseline(self):
-        """Verify all 35 axioms have at least one EVIDENCED_BY edge."""
+        """Verify all 40 axioms have at least one EVIDENCED_BY edge."""
         evidence = _get_axiom_evidence_counts()
 
         assert len(evidence) == 40, (
-            f"Expected 35 BridgeAxiom nodes, got {len(evidence)}"
+            f"Expected 40 BridgeAxiom nodes, got {len(evidence)}"
         )
 
         for axiom_id, count in evidence.items():

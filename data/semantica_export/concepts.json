@@ -7,71 +7,173 @@
       "name": "Blue Carbon Sequestration",
       "description": "The process by which coastal and marine ecosystems capture and store atmospheric CO2 in biomass and sediments, creating long-term carbon sinks",
       "domain": "carbon",
-      "applicable_habitats": ["seagrass_meadow", "mangrove_forest", "kelp_forest"],
-      "involved_axiom_ids": ["BA-007", "BA-008", "BA-013", "BA-014", "BA-015", "BA-016", "BA-017", "BA-018"],
-      "key_document_dois": ["10.1038/s41558-018-0090-4", "10.1038/ngeo1477"]
+      "applicable_habitats": [
+        "seagrass_meadow",
+        "mangrove_forest",
+        "kelp_forest"
+      ],
+      "involved_axiom_ids": [
+        "BA-003",
+        "BA-007",
+        "BA-008",
+        "BA-013",
+        "BA-014",
+        "BA-015",
+        "BA-016",
+        "BA-017",
+        "BA-018",
+        "BA-019"
+      ],
+      "key_document_dois": [
+        "10.1038/s41558-018-0090-4",
+        "10.1038/ngeo1477"
+      ]
     },
     {
       "concept_id": "BC-002",
       "name": "Coastal Protection Services",
       "description": "Ecosystem-based coastal defense provided by reefs, mangroves, and seagrasses that attenuate waves, reduce storm surge, and prevent erosion",
       "domain": "protection",
-      "applicable_habitats": ["coral_reef", "mangrove_forest", "seagrass_meadow"],
-      "involved_axiom_ids": ["BA-004", "BA-005", "BA-023", "BA-024", "BA-025"],
-      "key_document_dois": ["10.1038/s41467-018-04568-z", "10.1073/pnas.1214313110"]
+      "applicable_habitats": [
+        "coral_reef",
+        "mangrove_forest",
+        "seagrass_meadow"
+      ],
+      "involved_axiom_ids": [
+        "BA-004",
+        "BA-005",
+        "BA-023",
+        "BA-024",
+        "BA-025"
+      ],
+      "key_document_dois": [
+        "10.1038/s41467-018-04568-z",
+        "10.1073/pnas.1214313110"
+      ]
     },
     {
       "concept_id": "BC-003",
       "name": "Marine Tourism Economics",
       "description": "Economic value generation through reef tourism, dive operations, and marine ecotourism driven by ecosystem health and biodiversity",
       "domain": "tourism",
-      "applicable_habitats": ["coral_reef", "seagrass_meadow", "kelp_forest"],
-      "involved_axiom_ids": ["BA-001", "BA-028", "BA-029"],
-      "key_document_dois": ["10.1038/s41598-024-83664-1"]
+      "applicable_habitats": [
+        "coral_reef",
+        "seagrass_meadow",
+        "kelp_forest"
+      ],
+      "involved_axiom_ids": [
+        "BA-001",
+        "BA-028",
+        "BA-029"
+      ],
+      "key_document_dois": [
+        "10.1038/s41598-024-83664-1"
+      ]
     },
     {
       "concept_id": "BC-004",
       "name": "Fisheries Production",
       "description": "Fish biomass accumulation and spillover from protected areas supporting commercial and artisanal fisheries",
       "domain": "fisheries",
-      "applicable_habitats": ["coral_reef", "mangrove_forest", "seagrass_meadow", "kelp_forest"],
-      "involved_axiom_ids": ["BA-002", "BA-006", "BA-012", "BA-027"],
-      "key_document_dois": ["10.1002/eap.3027", "10.1038/nature13022"]
+      "applicable_habitats": [
+        "coral_reef",
+        "mangrove_forest",
+        "seagrass_meadow",
+        "kelp_forest"
+      ],
+      "involved_axiom_ids": [
+        "BA-002",
+        "BA-006",
+        "BA-010",
+        "BA-012",
+        "BA-027"
+      ],
+      "key_document_dois": [
+        "10.1002/eap.3027",
+        "10.1038/nature13022"
+      ]
     },
     {
       "concept_id": "BC-005",
       "name": "Carbon Credit Markets",
       "description": "Voluntary and compliance carbon markets that monetize blue carbon sequestration through verified carbon credits",
       "domain": "carbon_finance",
-      "applicable_habitats": ["seagrass_meadow", "mangrove_forest", "kelp_forest"],
-      "involved_axiom_ids": ["BA-014", "BA-016", "BA-020", "BA-021", "BA-022"],
-      "key_document_dois": ["10.1038/s41558-018-0090-4"]
+      "applicable_habitats": [
+        "seagrass_meadow",
+        "mangrove_forest",
+        "kelp_forest"
+      ],
+      "involved_axiom_ids": [
+        "BA-008",
+        "BA-013",
+        "BA-014",
+        "BA-016",
+        "BA-020",
+        "BA-021",
+        "BA-022"
+      ],
+      "key_document_dois": [
+        "10.1038/s41558-018-0090-4"
+      ]
     },
     {
       "concept_id": "BC-006",
       "name": "Biodiversity Value",
       "description": "Economic and insurance value of marine biodiversity including species richness, functional diversity, and genetic resources",
       "domain": "biodiversity",
-      "applicable_habitats": ["coral_reef", "mangrove_forest", "seagrass_meadow", "kelp_forest"],
-      "involved_axiom_ids": ["BA-030"],
-      "key_document_dois": ["10.1038/nature13022"]
+      "applicable_habitats": [
+        "coral_reef",
+        "mangrove_forest",
+        "seagrass_meadow",
+        "kelp_forest"
+      ],
+      "involved_axiom_ids": [
+        "BA-030"
+      ],
+      "key_document_dois": [
+        "10.1038/nature13022"
+      ]
     },
     {
       "concept_id": "BC-007",
       "name": "MPA Effectiveness",
       "description": "Measurable ecological and economic outcomes of Marine Protected Areas including biomass recovery, spillover, and ecosystem resilience",
       "domain": "conservation",
-      "applicable_habitats": ["coral_reef", "mangrove_forest", "seagrass_meadow", "kelp_forest"],
-      "involved_axiom_ids": ["BA-002", "BA-011", "BA-027", "BA-034"],
-      "key_document_dois": ["10.1002/eap.3027", "10.1038/nature13022"]
+      "applicable_habitats": [
+        "coral_reef",
+        "mangrove_forest",
+        "seagrass_meadow",
+        "kelp_forest"
+      ],
+      "involved_axiom_ids": [
+        "BA-002",
+        "BA-011",
+        "BA-027",
+        "BA-034",
+        "BA-036",
+        "BA-037",
+        "BA-038",
+        "BA-039"
+      ],
+      "key_document_dois": [
+        "10.1002/eap.3027",
+        "10.1038/nature13022"
+      ]
     },
     {
       "concept_id": "BC-008",
       "name": "Ecosystem Restoration",
       "description": "Active restoration of degraded coastal ecosystems including mangrove replanting, coral gardening, and seagrass reseeding with measurable ROI",
       "domain": "restoration",
-      "applicable_habitats": ["coral_reef", "mangrove_forest", "seagrass_meadow"],
-      "involved_axiom_ids": ["BA-009", "BA-033"],
+      "applicable_habitats": [
+        "coral_reef",
+        "mangrove_forest",
+        "seagrass_meadow"
+      ],
+      "involved_axiom_ids": [
+        "BA-009",
+        "BA-033"
+      ],
       "key_document_dois": []
     },
     {
@@ -79,8 +181,18 @@
       "name": "Climate Resilience",
       "description": "Capacity of marine ecosystems to resist and recover from climate impacts including warming, acidification, and extreme weather events",
       "domain": "climate",
-      "applicable_habitats": ["coral_reef", "mangrove_forest", "seagrass_meadow", "kelp_forest"],
-      "involved_axiom_ids": ["BA-011", "BA-035"],
+      "applicable_habitats": [
+        "coral_reef",
+        "mangrove_forest",
+        "seagrass_meadow",
+        "kelp_forest"
+      ],
+      "involved_axiom_ids": [
+        "BA-011",
+        "BA-029",
+        "BA-035",
+        "BA-040"
+      ],
       "key_document_dois": []
     },
     {
@@ -88,8 +200,16 @@
       "name": "Nature-Based Solutions Finance",
       "description": "Financial mechanisms for funding marine ecosystem conservation and restoration including green/blue bonds, impact investing, and blended finance",
       "domain": "finance",
-      "applicable_habitats": ["coral_reef", "mangrove_forest", "seagrass_meadow", "kelp_forest"],
-      "involved_axiom_ids": ["BA-031", "BA-032"],
+      "applicable_habitats": [
+        "coral_reef",
+        "mangrove_forest",
+        "seagrass_meadow",
+        "kelp_forest"
+      ],
+      "involved_axiom_ids": [
+        "BA-031",
+        "BA-032"
+      ],
       "key_document_dois": []
     },
     {
@@ -97,8 +217,14 @@
       "name": "Trophic Cascade Economics",
       "description": "Economic value of trophic cascades where predator recovery drives ecosystem-wide benefits including carbon sequestration and fisheries productivity",
       "domain": "ecology",
-      "applicable_habitats": ["coral_reef", "kelp_forest"],
-      "involved_axiom_ids": ["BA-003", "BA-002"],
+      "applicable_habitats": [
+        "coral_reef",
+        "kelp_forest"
+      ],
+      "involved_axiom_ids": [
+        "BA-003",
+        "BA-002"
+      ],
       "key_document_dois": []
     },
     {
@@ -106,8 +232,21 @@
       "name": "Habitat Degradation Risk",
       "description": "Financial risk from ecosystem degradation including reef bleaching, mangrove deforestation, and seagrass loss leading to service value decline",
       "domain": "risk",
-      "applicable_habitats": ["coral_reef", "mangrove_forest", "seagrass_meadow"],
-      "involved_axiom_ids": ["BA-012", "BA-015", "BA-029"],
+      "applicable_habitats": [
+        "coral_reef",
+        "mangrove_forest",
+        "seagrass_meadow"
+      ],
+      "involved_axiom_ids": [
+        "BA-012",
+        "BA-015",
+        "BA-029",
+        "BA-036",
+        "BA-037",
+        "BA-038",
+        "BA-039",
+        "BA-040"
+      ],
       "key_document_dois": []
     },
     {
@@ -115,8 +254,14 @@
       "name": "Blue Bond Instruments",
       "description": "Debt instruments specifically structured to fund ocean conservation, sustainable fisheries, and marine ecosystem restoration",
       "domain": "finance",
-      "applicable_habitats": ["coral_reef", "mangrove_forest", "seagrass_meadow"],
-      "involved_axiom_ids": ["BA-032"],
+      "applicable_habitats": [
+        "coral_reef",
+        "mangrove_forest",
+        "seagrass_meadow"
+      ],
+      "involved_axiom_ids": [
+        "BA-032"
+      ],
       "key_document_dois": []
     },
     {
@@ -124,8 +269,12 @@
       "name": "Reef Insurance Mechanisms",
       "description": "Parametric insurance products that fund rapid reef restoration after storm damage, triggered by wind speed or wave height thresholds",
       "domain": "insurance",
-      "applicable_habitats": ["coral_reef"],
-      "involved_axiom_ids": ["BA-026"],
+      "applicable_habitats": [
+        "coral_reef"
+      ],
+      "involved_axiom_ids": [
+        "BA-026"
+      ],
       "key_document_dois": []
     },
     {
@@ -133,7 +282,12 @@
       "name": "TNFD Disclosure Framework",
       "description": "Task Force on Nature-related Financial Disclosures framework for reporting on nature-related risks, impacts, and dependencies",
       "domain": "disclosure",
-      "applicable_habitats": ["coral_reef", "mangrove_forest", "seagrass_meadow", "kelp_forest"],
+      "applicable_habitats": [
+        "coral_reef",
+        "mangrove_forest",
+        "seagrass_meadow",
+        "kelp_forest"
+      ],
       "involved_axiom_ids": [],
       "key_document_dois": []
     }

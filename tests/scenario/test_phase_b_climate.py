@@ -187,7 +187,9 @@ def test_ba036_to_ba040_in_templates_json():
             assert mcclanahan_doi in source_dois, f"{axiom['axiom_id']} missing McClanahan DOI"
 
     # Verify BA-040 cites bleaching threshold DOI
-    bleaching_doi = "10.1038/s41467-025-65015-4"
+    # Corrected 2026-02-23: Zhang et al. 2025 is Communications Earth &
+    # Environment (s43247), not Nature Communications (s41467).
+    bleaching_doi = "10.1038/s43247-025-02790-4"
     for axiom in data["axioms"]:
         if axiom["axiom_id"] == "BA-040":
             source_dois = [s["doi"] for s in axiom.get("sources", [])]

@@ -920,8 +920,8 @@
           "support_type": "primary"
         },
         {
-          "doc_id": "unknown_10_3389_fevo_2019_00338",
-          "doi": "10.3389/fevo.2019.00338",
+          "doc_id": "lovelock_duarte_2019_blue_carbon_realism",
+          "doi": "10.1098/rsbl.2018.0781",
           "support_type": "supporting"
         }
       ],
@@ -1834,15 +1834,15 @@
           "distribution": "normal",
           "study_sample_size": null,
           "effect_size_type": "rate",
-          "source_doi": "10.1038/s41467-025-65015-4",
-          "extraction_note": "Annual bleaching probability threshold from Nature Communications 2025.",
+          "source_doi": "10.1038/s43247-025-02790-4",
+          "extraction_note": "Annual bleaching probability threshold from Zhang et al. 2025. Communications Earth & Environment.",
           "uncertainty_type": "research_grounded"
         }
       },
       "evidence_sources": [
         {
-          "doc_id": "nature_comms_2025_bleaching_threshold",
-          "doi": "10.1038/s41467-025-65015-4",
+          "doc_id": "zhang_2025_bleaching_threshold_comms_earth",
+          "doi": "10.1038/s43247-025-02790-4",
           "support_type": "primary"
         }
       ],
