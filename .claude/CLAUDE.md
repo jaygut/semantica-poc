@@ -280,7 +280,7 @@ pytest tests/ -v
 | `../docs/developer_guide.md` | Full architecture, population pipeline, extension guide |
 | `../docs/api_reference.md` | API endpoints, graph schema, query categories |
 | `../docs/user_guide.md` | Dashboard usage, Ask Nereus, confidence levels |
-| `../SEMANTICA_HANDOFF_README.md` | Integration guide for Semantica team |
+| `../docs/semantica_handoff_readme.md` | Integration guide for Semantica team |
 | `../docs/investment_grade_definition.md` | Investment-grade definition and criteria |
 | `../docs/second_site_characterization_plan.md` | Plan for characterizing a second MPA site |
 | `../ai_docs/scaling/` | v4 scaling research and population guide |
