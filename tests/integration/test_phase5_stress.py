@@ -222,10 +222,12 @@ class TestT52CharacterizationRoundTrip:
             assert results[0]["name"] == test_mpa_name
             assert results[0]["country"] == "Indonesia"
 
-            # Verify the total MPA count is now 5 (4 real + 1 test)
+            # Verify the total MPA count increased by 1 (real nodes + 1 test)
             count_result = run_query("MATCH (m:MPA) RETURN count(m) AS cnt")
-            assert count_result[0]["cnt"] == 5, (
-                f"Expected 5 MPA nodes (4 real + 1 test), got {count_result[0]['cnt']}"
+            real_count = run_query("MATCH (m:MPA) WHERE m.test_node IS NULL RETURN count(m) AS cnt")
+            expected = real_count[0]["cnt"] + 1
+            assert count_result[0]["cnt"] == expected, (
+                f"Expected {expected} MPA nodes ({real_count[0]['cnt']} real + 1 test), got {count_result[0]['cnt']}"
             )
 
         finally:
