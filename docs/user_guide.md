@@ -31,7 +31,7 @@ The system is designed for blue bond underwriters, conservation finance analysts
    python scripts/populate_neo4j_v4.py
    ```
 
-   This loads 195 peer-reviewed papers, 35 bridge axioms with DOI-backed evidence, ecosystem service valuations for 9 Gold-tier MPA sites, species data, and trophic network structure. The v4 populator dynamically discovers all case study files. See the [Developer Guide](developer_guide.md#knowledge-graph-data-lineage) for full data lineage.
+   This loads 195 peer-reviewed papers, 40 bridge axioms with DOI-backed evidence, ecosystem service valuations for 9 Gold-tier MPA sites, species data, and trophic network structure. The v4 populator dynamically discovers all case study files. See the [Developer Guide](developer_guide.md#knowledge-graph-data-lineage) for full data lineage.
 
 3. **Launch the platform (recommended - one command):**
 
@@ -105,14 +105,14 @@ A split-panel interface showing both the chat and the reasoning pipeline:
 
 #### Tab 4: Scenario Lab
 
-Interactive Monte Carlo simulation with site-aware axiom chains:
+v6 Prospective Scenario Intelligence - forward-looking analysis with P5/P50/P95 uncertainty envelopes:
 
-- **Site selector**: Run scenarios against any of the 9 Gold-tier sites
-- **4 parameter sliders**: Carbon price ($10-100/tonne), Habitat loss (0-50%), Tourism growth (-20% to +30%), Fisheries change (-30% to +20%)
-- **Overlay histogram**: Shows how parameter changes shift the ESV distribution relative to the baseline
-- **Tornado sensitivity chart**: Ranks parameters by their impact on total ESV
-- **Bridge axiom chain impact**: Shows how parameter changes flow through applicable axioms to affect the bottom line
-- Uses `maris.axioms.monte_carlo` and `maris.axioms.sensitivity` engines for real computation
+- **Climate Pathway** - SSP1-2.6 / SSP2-4.5 / SSP5-8.5 habitat degradation curves with year slider (2025-2100); McClanahan tipping point proximity badges
+- **Counterfactual** - ESV delta if MPA protection were removed; deterministic provenance chain per site
+- **Restoration ROI** - Benefit-cost ratio for a user-defined investment; break-even year and option value
+- **Custom / Blue Carbon** - Dynamic carbon pricing ($15-65/tCO2e), mangrove/seagrass sequestration revenue modeling
+- **Scenario Workbench** - Save and compare up to 4 scenarios side by side; export as JSON
+- All 36 site x scenario type combinations have precomputed demo-mode answers grounded in actual Python engine output
 
 #### Tab 5: Site Intelligence
 
@@ -250,7 +250,7 @@ Valuation and provenance queries for any of these sites return rich, multi-layer
 
 **Comparison sites** (Great Barrier Reef, Papahanaumokuakea) have governance metadata (NEOLI score, area, asset rating) but not full ecosystem service valuations. Queries about their financial value will note the absence of site-specific valuation data.
 
-When the API is unavailable, Ask Nereus falls back to 139 precomputed responses covering all 7 query categories (valuation, provenance, axiom, comparison, risk, concept_explanation, scenario_analysis). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
+When the API is unavailable, Ask Nereus falls back to 146 precomputed responses covering all 7 query categories (valuation, provenance, axiom, comparison, risk, concept_explanation, scenario_analysis). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
 
 ### Graph Explorer
 
@@ -375,7 +375,7 @@ cd investor_demo
 streamlit run streamlit_app.py
 ```
 
-This uses a pre-computed JSON bundle (`demos/context_graph_demo/cabo_pulmo_investment_grade_bundle.json`). The Ask MARIS and Graph Explorer features are not available in v1 static mode, but all pre-computed sections (KPIs, provenance chain, risk profile, framework alignment) render fully.
+This uses a pre-computed JSON bundle (`docs/demos/context_graph_demo/cabo_pulmo_investment_grade_bundle.json`). The Ask MARIS and Graph Explorer features are not available in v1 static mode, but all pre-computed sections (KPIs, provenance chain, risk profile, framework alignment) render fully.
 
 ---
 

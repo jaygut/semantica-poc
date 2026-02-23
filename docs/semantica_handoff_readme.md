@@ -2,16 +2,16 @@
 
 ## Overview
 
-This document describes how the **Semantica SDK** and its "Hybrid Intelligence Payload" are integrated into the Nereus platform. The integration is not just about code; it is about ingesting a **physically linked logic layer**—35 extracted Bridge Axioms—that allows Nereus to "think" with scientific precision.
+This document describes how the **Semantica SDK** and its "Hybrid Intelligence Payload" are integrated into the Nereus platform. The integration is not just about code; it is about ingesting a **physically linked logic layer**—40 extracted Bridge Axioms—that allows Nereus to "think" with scientific precision.
 
 **Synchronization Status:** **Complete & Validated.**
-*   **Payload:** 35 Bridge Axioms (BA-001 to BA-035).
-*   **Graph:** Fully synchronized Neo4j population.
+*   **Payload:** 40 Bridge Axioms (BA-001 to BA-040), registry v2.1.
+*   **Graph:** Fully synchronized Neo4j population (953+ nodes, 244+ edges).
 *   **Reasoning:** Deterministic traversal from ecological observation to financial value.
 
 This document describes how the **Semantica SDK** is integrated into the Nereus platform (powered by MARIS + Semantica). The integration spans 5 priority tiers (P0-P4) with 27 modules and a 6-file bridge layer, enabling W3C PROV-O provenance tracking, multi-site scaling, cross-domain reasoning, TNFD disclosure automation, and dynamic axiom discovery.
 
-**Integration Status:** Complete. All P0-P4 gaps are closed, validated by 910 tests (706 unit + 204 integration).
+**Integration Status:** Complete. All P0-P4 gaps are closed, validated by 1141 tests (790+ unit + 230+ integration + 13 scenario invariants).
 
 ---
 
@@ -52,7 +52,7 @@ cert = manager.get_certificate("cabo_pulmo_esv")
 | Component | Purpose |
 |-----------|---------|
 | `MARISProvenanceManager` | Track extraction, axiom application, get lineage |
-| `BridgeAxiomRegistry` | All 16 axioms as typed BridgeAxiom objects |
+| `BridgeAxiomRegistry` | All 40 axioms as typed BridgeAxiom objects |
 | `ProvenanceCertificate` | JSON and Markdown certificate generation |
 | `InMemoryStorage` + `SQLiteStorage` | Dual storage backends |
 | SHA-256 integrity verification | Checksum for all tracked entities |
@@ -132,7 +132,7 @@ The curated data is exported in four files for Semantica ingestion, located in `
 |------|--------|----------|
 | `entities.jsonld` | JSON-LD | 14 entities with WoRMS/FishBase/TNFD URIs |
 | `relationships.json` | JSON | 15 typed edges with provenance |
-| `bridge_axioms.json` | JSON | 35 axioms with evidence mapping |
+| `bridge_axioms.json` | JSON | 40 axioms with evidence mapping |
 | `document_corpus.json` | JSON | 195-paper corpus summary |
 
 These files are also consumed directly by the Neo4j v4 population pipeline (`scripts/populate_neo4j_v4.py`).
@@ -145,25 +145,26 @@ These files are also consumed directly by the Neo4j v4 population pipeline (`scr
 
 195 papers across 9 domains, 92% peer-reviewed (T1). Full bibliography in `.claude/registry/document_index.json`.
 
-### Bridge Axioms (35)
+### Bridge Axioms (40)
 
-12 core axioms (reef, MPA, mangrove, kelp) + 23 expanded axioms (blue carbon, fisheries, protection). All 35 have 3+ supporting sources. Templates with uncertainty quantification (CI, distribution, sample size) in `schemas/bridge_axiom_templates.json`.
+12 core axioms (reef, MPA, mangrove, kelp) + 23 expanded axioms (blue carbon, fisheries, protection) + 5 McClanahan tipping point threshold axioms (BA-036 to BA-040, v6). All 40 have 3+ supporting sources. Full registry v2.1 with uncertainty quantification (CI, distribution, sample size) in `schemas/bridge_axiom_templates.json`.
 
 ### Site Portfolio ($1.62B)
 
 9 Gold-tier MPA sites across 4 ocean basins and 4 habitat types:
 
-| Site | Habitat | ESV |
-|------|---------|-----|
-| Cabo Pulmo National Park | Coral reef | $29.27M |
-| Shark Bay World Heritage Area | Seagrass | $21.5M |
-| Ningaloo Coast | Coral reef | $145.0M |
-| Belize Barrier Reef | Coral reef + mangrove | $395.0M |
-| Galapagos Marine Reserve | Mixed/volcanic | $285.0M |
-| Raja Ampat MPA Network | Coral reef | $362.0M |
-| Sundarbans Reserve Forest | Mangrove | $187.0M |
-| Aldabra Atoll | Coral reef/atoll | $78.0M |
-| Cispata Bay MPA | Mangrove | $139.0M |
+| Site | Habitat | ESV | Rating |
+|------|---------|-----|--------|
+| Sundarbans Reserve Forest | Mangrove | $778.9M | A |
+| Galapagos Marine Reserve | Coral + Kelp + Mangrove | $320.9M | AAA |
+| Belize Barrier Reef Reserve System | Coral + Mangrove + Seagrass | $292.5M | AA |
+| Ningaloo Coast WHA | Coral reef | $83.0M | AA |
+| Raja Ampat Marine Park | Coral + Mangrove | $78.0M | AA |
+| Cabo Pulmo National Park | Coral reef | $29.27M | AAA |
+| Shark Bay WHA | Seagrass | $21.5M | AA |
+| Cispata Bay Mangrove CA | Mangrove | $8.0M | A |
+| Aldabra Atoll | Coral + Mangrove + Seagrass | $6.0M | AAA |
+| **Portfolio Total** | | **$1.62B** | |
 
 ---
 
@@ -173,13 +174,12 @@ The **v4 dashboard** (`investor_demo/streamlit_app_v4.py`) is the primary invest
 
 | Tab | Content |
 |-----|---------|
-| Portfolio Overview | **[NEW] Global 3D Map** + Grid of all 9 sites with ESV, rating, habitat, tier indicators |
-| Analytics | **[NEW] Multi-Site Comparison** with Radar (scoring) & Bar (valuation) charts |
-| Intelligence Brief | Per-site KPIs, provenance graph, axiom evidence, risk profile |
-| Ask Nereus (GraphRAG) | **[NEW] Context-aware** chat with site-specific queries + pipeline transparency |
-| Scenario Lab | Interactive Monte Carlo with site-aware axiom chains, tornado sensitivity |
-| Site Scout | Deferred placeholder |
-| TNFD Compliance | LEAP disclosure with **[NEW] PDF Export** & alignment scoring for all 9 sites |
+| Portfolio Overview | 9-site grid with ESV, rating, habitat, data quality badges; portfolio composition breakdown |
+| Intelligence Brief | Per-site KPIs, provenance chain, axiom evidence table, CI ranges, Monte Carlo risk profile |
+| Ask Nereus (GraphRAG) | Split-panel chat + reasoning pipeline; 7 query categories incl. `scenario_analysis`; 146 precomputed demo responses |
+| Scenario Lab | v6 Prospective Scenario Intelligence: SSP climate pathways, counterfactual analysis, blue carbon revenue, restoration ROI, custom scenarios |
+| Site Intelligence | NEOLI heatmap, habitat-axiom map, data quality dashboard, tipping point proximity panel |
+| TNFD Compliance | LEAP disclosure for all 9 sites; alignment scoring; Markdown/JSON/PDF export |
 
 Launch with `./launch.sh v4` or manually:
 
@@ -192,7 +192,7 @@ cd investor_demo && streamlit run streamlit_app_v4.py --server.port 8504
 
 ## Testing
 
-910 tests (706 unit + 204 integration) validating all integration modules:
+1141 tests (790+ unit + 230+ integration + 13 scenario invariants) validating all integration modules:
 
 ```bash
 pip install -r requirements-dev.txt

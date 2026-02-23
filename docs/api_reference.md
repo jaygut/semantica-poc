@@ -44,7 +44,7 @@ Returns system status including Neo4j connectivity, LLM availability, and graph 
   "neo4j_connected": true,
   "llm_available": true,
   "graph_stats": {
-    "total_nodes": 938,
+    "total_nodes": 967,
     "total_edges": 244,
     "node_breakdown": {
       "Document": 835,
@@ -52,7 +52,6 @@ Returns system status including Neo4j connectivity, LLM availability, and graph 
       "Species": 17,
       "BridgeAxiom": 40,
       "MPA": 11,
-      "TrophicLevel": 10,
       "Concept": 15,
       "Habitat": 4,
       "FinancialInstrument": 3,
@@ -313,13 +312,12 @@ The Neo4j graph uses the following node labels and relationship types. All nodes
 | `Species` | `worms_id` or `name` | 17 | common_name, trophic_level, role_in_ecosystem, commercial_importance | Marine species with WoRMS taxonomic identifiers |
 | `BridgeAxiom` | `axiom_id` | 40 | name, category, description, pattern, coefficients_json, confidence, evidence_tier, ci_low, ci_high, distribution, study_sample_size, effect_size_type | Ecological-to-financial translation rule with peer-reviewed coefficients and uncertainty quantification. 40 axioms (BA-001 through BA-040) covering carbon, coastal protection, tourism, fisheries, tipping point thresholds (BA-036-040), and cross-cutting mechanisms |
 | `MPA` | `name` | 11 | area_km2, designation_year, neoli_score, total_esv_usd, biomass_ratio, asset_rating, biomass_measurement_year, last_validated_date, data_freshness_status | Marine Protected Area (9 Gold-tier + 2 comparison) |
-| `TrophicLevel` | `name` | 10 | trophic_level | Trophic network node (apex predator, mesopredator, herbivore, etc.) |
 | `Concept` | `concept_id` | 15 | name, description, domain, applicable_habitats, involved_axiom_ids | Blue finance domain concept (BC-001 through BC-015): Blue Carbon Sequestration, Coastal Protection, Marine Tourism Economics, Carbon Credits, Reef Insurance, TNFD Disclosure, etc. Enables mechanism questions without site anchor |
 | `Habitat` | `habitat_id` or `name` | 4 | condition | Marine habitat type (coral reef, kelp forest, seagrass meadow, mangrove forest) |
 | `FinancialInstrument` | `instrument_id` | 3 | name, description | Blue finance instrument (blue bond, parametric reef insurance) |
 | `Framework` | `framework_id` | 3 | name, description | Disclosure or accounting framework (TNFD LEAP, SEEA) |
 
-**Total:** 953+ nodes (includes 15 new Concept nodes pending population), 244+ edges
+**Total:** 967 nodes, 244+ edges. Note: `TrophicLevel` nodes (v3 legacy) are not populated by the v4 populator.
 
 ### Relationship Types
 
@@ -333,8 +331,6 @@ The Neo4j graph uses the following node labels and relationship types. All nodes
 | `TRANSLATES` | BridgeAxiom | EcosystemService | 16 | Axiom converts ecological state to this service value |
 | `HAS_HABITAT` | MPA | Habitat | 14 | MPA contains this habitat type |
 | `INHABITS` | Species | Habitat | 10 | Species lives in this habitat |
-| `PREYS_ON` | TrophicLevel | TrophicLevel | 7 | Trophic interaction in the food web |
-| `PART_OF_FOODWEB` | TrophicLevel | MPA | 5 | Trophic level exists within this site |
 | `PROVIDES` | Habitat | EcosystemService | 4 | Habitat type generates this service |
 | `APPLICABLE_TO` | Framework | MPA | 3 | Disclosure framework is applicable to this site |
 | `GOVERNS` | Framework | FinancialInstrument | 3 | Framework governs this instrument type |

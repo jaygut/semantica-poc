@@ -1,5 +1,7 @@
 # Second Site Characterization Plan
 
+> **Status: Completed.** This plan was written when Nereus had one characterized site (Cabo Pulmo). The system now has 9 Gold-tier sites across 4 habitat types. Retained for historical reference.
+
 ## Overview
 
 MARIS currently has a single fully characterized reference site (Cabo Pulmo National Park). This document presents a research-backed plan for characterizing a second site to reduce single-point-of-failure risk and demonstrate the system's generalizability.

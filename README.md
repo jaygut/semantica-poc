@@ -15,7 +15,7 @@
 
 ## Executive Summary
 
-This repository contains the **complete knowledge foundation** for Nereus v4, a "Hybrid" Intelligence system where **Semantica plays a foundational role**. Unlike traditional RAG systems that merely cite text, Nereus "thinks" using **35 Bridge Axioms**—scientific rules physically extracted from literature and loaded into a Neo4j knowledge graph.
+This repository contains the **complete knowledge foundation** for Nereus, a "Hybrid" Intelligence system where **Semantica plays a foundational role**. Unlike traditional RAG systems that merely cite text, Nereus "thinks" using **40 Bridge Axioms**—scientific rules physically extracted from literature and loaded into a Neo4j knowledge graph.
 
 **Current Status:** The **Nereus v6 Prospective Scenario Intelligence** release transforms Nereus from retrospective ESV valuation into forward-looking scenario intelligence. Built on the v5 Audit-Grade Integrity platform (40 bridge axioms, DOI-backed provenance), v6 adds SSP climate pathways, counterfactual protection analysis, McClanahan tipping point engine, blue carbon revenue modeling, portfolio Nature VaR, and real options valuation - all with deterministic provenance chains and P5/P50/P95 uncertainty envelopes.
 
@@ -76,7 +76,7 @@ This repository contains the **complete knowledge foundation** for Nereus v4, a 
 |----------|------|---------|
 | 1 | [`data/semantica_export/entities.jsonld`](./data/semantica_export/entities.jsonld) | 14 entities with JSON-LD context (WoRMS, FishBase, TNFD) |
 | 2 | [`data/semantica_export/relationships.json`](./data/semantica_export/relationships.json) | 15 typed relationships with provenance |
-| 3 | [`data/semantica_export/bridge_axioms.json`](./data/semantica_export/bridge_axioms.json) | 35 bridge axioms (BA-001 to BA-035) with 3+ evidence sources each |
+| 3 | [`data/semantica_export/bridge_axioms.json`](./data/semantica_export/bridge_axioms.json) | 40 bridge axioms (BA-001 to BA-040) with 3+ evidence sources each |
 | 4 | [`data/semantica_export/document_corpus.json`](./data/semantica_export/document_corpus.json) | 195-paper corpus summary |
 | 5 | [`data/sample_extractions/`](./data/sample_extractions/) | 5 critical paper extractions |
 
@@ -104,7 +104,7 @@ result = manager.execute_chain(
 cert = manager.get_certificate("cabo_pulmo_esv")
 ```
 
-See [SEMANTICA_HANDOFF_README.md](SEMANTICA_HANDOFF_README.md) for full integration architecture and P0-P4 module details.
+See [docs/semantica_handoff_readme.md](docs/semantica_handoff_readme.md) for full integration architecture and P0-P4 module details.
 
 ### Environment Setup (Recommended: uv)
 
@@ -263,7 +263,7 @@ The Nereus pipeline generates a **Semantica-ready export bundle** designed for d
 │                                                    ↓                        │
 │   ┌──────────────────┐                  ┌──────────────────────┐           │
 │   │ Bridge Axioms    │ ──────────────→  │ Inference Engine     │           │
-│   │ (16 axioms)      │  bridge_axioms   │ (Translate + Query)  │           │
+│   │ (40 axioms)      │  bridge_axioms   │ (Translate + Query)  │           │
 │   └──────────────────┘                  └──────────────────────┘           │
 │                                                    ↓                        │
 │                                         ┌──────────────────────┐           │
@@ -310,7 +310,7 @@ Located in `data/semantica_export/`:
 
 ### Bridge Axiom Evidence
 
-All 16 bridge axioms now have **3+ supporting sources** (12 core + 4 blue carbon):
+All 40 bridge axioms have **3+ supporting sources**. The first 16 (core + blue carbon) are shown below; the full registry is in `schemas/bridge_axiom_templates.json`.
 
 | Axiom | Name | Sources | Key Paper |
 |-------|------|---------|-----------|
@@ -333,7 +333,7 @@ All 16 bridge axioms now have **3+ supporting sources** (12 core + 4 blue carbon
 
 ### Using the Semantica Bridge
 
-The Nereus codebase includes a 6-file Semantica SDK bridge layer (`maris/semantica_bridge/`) that provides drop-in integration. See [SEMANTICA_HANDOFF_README.md](SEMANTICA_HANDOFF_README.md) for full architecture details, API usage examples, and P0-P4 module documentation.
+The Nereus codebase includes a 6-file Semantica SDK bridge layer (`maris/semantica_bridge/`) that provides drop-in integration. See [docs/semantica_handoff_readme.md](docs/semantica_handoff_readme.md) for full architecture details, API usage examples, and P0-P4 module documentation.
 
 ---
 
@@ -374,7 +374,7 @@ User Question (NL)
         |
    [Cypher Template]  -- 8 parameterized templates (5 core + 3 utility)
         |
-   [Neo4j Graph]  -- 938 nodes, 244 relationships, 9 MPA sites
+   [Neo4j Graph]  -- 967 nodes, 244+ relationships, 9 MPA sites
         |
    [LLM Synthesis]  -- DeepSeek/Claude/GPT-4 (configurable)
         |
@@ -398,7 +398,7 @@ cp .env.example .env
 
 # 2. Install dependencies
 uv venv .venv && source .venv/bin/activate
-uv pip install -r requirements-v2.txt
+uv pip install -e .
 ```
 
 > **Security:** The `.env` file contains your API keys and is excluded from git via `.gitignore`. Never commit `.env` - use `.env.example` as the template. Key variables: `MARIS_LLM_API_KEY` (LLM provider), `MARIS_API_KEY` (API Bearer token), `MARIS_CORS_ORIGINS` (allowed origins, default `http://localhost:8501`).
@@ -469,6 +469,8 @@ The classifier routes questions to parameterized Cypher templates:
 | `axiom_explanation` | bridge axiom, BA-001, coefficient | "Explain BA-002" |
 | `comparison` | compare, versus, rank | "Compare to other sites" |
 | `risk_assessment` | risk, climate, threat, decline | "What if protection fails?" |
+| `concept_explanation` | blue carbon, trophic cascade, how does | "How does blue carbon sequestration work?" |
+| `scenario_analysis` | what if, SSP, without protection, counterfactual, nature VaR | "What happens to Belize under SSP2-4.5 by 2050?" |
 
 ### Authentication and Security
 
@@ -488,7 +490,7 @@ Exceeding the limit returns HTTP 429. Rate limit headers are included in respons
 
 ### Testing
 
-The project includes **910 tests** (706 unit + 204 integration) covering all core modules and the Semantica integration:
+The project includes **1141 tests** (790+ unit + 230+ integration + 13 scenario invariants) covering all core modules and the Semantica integration:
 
 ```bash
 # Install dev dependencies
@@ -504,7 +506,7 @@ pytest tests/integration/ -v
 pytest tests/ --cov=maris --cov-report=term-missing
 ```
 
-Tests are organized by module in `tests/` with shared fixtures in `conftest.py`. Integration tests live in `tests/integration/` with 7 phase files covering bridge validation, graph integrity, external APIs, query pipeline, disclosure/discovery, stress tests, and LLM-enhanced discovery (phase 6 tests against live DeepSeek). CI runs automatically on push and PR to `main` via GitHub Actions (`.github/workflows/ci.yml`): linting with ruff, then pytest.
+Tests are organized by module in `tests/` with shared fixtures in `conftest.py`. Integration tests live in `tests/integration/` (6 phase files) and scenario tests in `tests/scenario/` (4 phase files + 13 invariant checks). CI runs automatically on push and PR to `main` via GitHub Actions (`.github/workflows/ci.yml`): linting with ruff, then pytest.
 
 ---
 
@@ -558,7 +560,7 @@ Tests are organized by module in `tests/` with shared fixtures in `conftest.py`.
 |-----------|----------|--------|---------|----------------------|
 | **Entities** | `data/semantica_export/entities.jsonld` | JSON-LD | 14 entities with WoRMS/FishBase/TNFD URIs | Ingested via Semantica API |
 | **Relationships** | `data/semantica_export/relationships.json` | JSON | 15 relationship types with provenance | Ingested via Semantica API |
-| **Bridge Axioms** | `data/semantica_export/bridge_axioms.json` | JSON | 16 axioms with 3+ evidence sources each | Registered as Semantica inference rules |
+| **Bridge Axioms** | `data/semantica_export/bridge_axioms.json` | JSON | 40 axioms with 3+ evidence sources each | Registered as Semantica inference rules |
 | **Corpus Summary** | `data/semantica_export/document_corpus.json` | JSON | 195-paper library statistics | Indexed in Semantica document index |
 | Document Library | `.claude/registry/document_index.json` | JSON | 195 indexed papers with full metadata | Indexed via Semantica API |
 | Critical Extractions | `data/sample_extractions/` | JSON | 5 papers with entities/relationships | Extracted via Semantica API |
@@ -574,10 +576,9 @@ semantica-poc/
 │
 ├── README.md                              # This file
 ├── CLAUDE.md                              # Claude Code instructions
-├── SEMANTICA_HANDOFF_README.md            # Integration guide
 ├── .env.example                           # Environment template (copy to .env)
 ├── docker-compose.yml                     # One-command deployment (Neo4j + API + Dashboard)
-├── requirements-v2.txt                    # Python dependencies for v2 stack
+├── pyproject.toml                         # Python package definition and dependencies
 │
 ├── maris/                                 # ═══ MARIS v2 BACKEND ═══
 │   ├── api/                               # FastAPI application
@@ -602,7 +603,7 @@ semantica-poc/
 │   ├── ingestion/                         # PDF extraction + graph merging
 │   ├── provenance/                        # P0: W3C PROV-O provenance tracking
 │   │   ├── manager.py                     # MARISProvenanceManager (entity/activity/agent)
-│   │   ├── bridge_axiom_registry.py       # 16 axioms as typed BridgeAxiom objects
+│   │   ├── bridge_axiom_registry.py       # 40 axioms as typed BridgeAxiom objects
 │   │   ├── certificate.py                 # Provenance certificate generation (JSON/Markdown)
 │   │   ├── core.py                        # PROV-O core dataclasses
 │   │   ├── integrity.py                   # SHA-256 checksum verification
