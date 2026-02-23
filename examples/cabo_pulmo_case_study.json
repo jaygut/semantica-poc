@@ -46,7 +46,10 @@
   ],
   "ecological_status": {
     "primary_habitat": "coral_reef",
-    "secondary_habitats": ["seagrass_meadow", "mangrove_forest"],
+    "secondary_habitats": [
+      "seagrass_meadow",
+      "mangrove_forest"
+    ],
     "dominant_species": "Lutjanus argentiventris"
   },
   "neoli_assessment": {
@@ -86,7 +89,7 @@
   "ecological_recovery": {
     "@type": "RecoveryTrajectory",
     "baseline_year": 1999,
-    "assessment_year": 2009,
+    "assessment_year": 2022,
     "last_validated_date": "2026-02-11",
     "duration_years": 10,
     "metrics": {
@@ -99,7 +102,7 @@
           3.8,
           5.5
         ],
-        "measurement_year": 2009,
+        "measurement_year": 2022,
         "comparison": "Highest documented recovery in Gulf of California"
       },
       "apex_predator_density": {
