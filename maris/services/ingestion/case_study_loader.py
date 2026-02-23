@@ -267,6 +267,8 @@ class CaseStudyLoader:
                 """
                 MATCH (m:MPA {name: $mpa_name})
                 MERGE (d:Document {doi: $doi})
+                ON CREATE SET d.source_tier = $tier,
+                              d.title       = $title
                 MERGE (m)-[r:DERIVED_FROM]->(d)
                 SET r.data_type   = $data_type,
                     r.access_date = $access_date
@@ -274,6 +276,8 @@ class CaseStudyLoader:
                 {
                     "mpa_name": site_name,
                     "doi": doi,
+                    "tier": src.get("source_tier", ""),
+                    "title": src.get("citation", ""),
                     "data_type": src.get("data_type", ""),
                     "access_date": src.get("access_date", ""),
                 },
@@ -282,14 +286,22 @@ class CaseStudyLoader:
 
         neoli_doi = neoli.get("source", {}).get("doi", "")
         if neoli_doi:
+            neoli_src = neoli.get("source", {})
             self.session.run(
                 """
                 MATCH (m:MPA {name: $mpa_name})
                 MERGE (d:Document {doi: $doi})
+                ON CREATE SET d.source_tier = $tier,
+                              d.title       = $title
                 MERGE (m)-[r:DERIVED_FROM]->(d)
                 SET r.data_type = "NEOLI assessment"
                 """,
-                {"mpa_name": site_name, "doi": neoli_doi},
+                {
+                    "mpa_name": site_name,
+                    "doi": neoli_doi,
+                    "tier": neoli_src.get("source_tier", ""),
+                    "title": neoli_src.get("citation", ""),
+                },
             )
             count += 1
 

@@ -21,7 +21,8 @@ TEMPLATES: dict[str, dict] = {
         "cypher": """
             MATCH (m:MPA {name: $site_name})
             OPTIONAL MATCH (m)-[:GENERATES]->(es:EcosystemService)
-            OPTIONAL MATCH (es)<-[:TRANSLATES]-(ba:BridgeAxiom)-[:EVIDENCED_BY]->(d:Document)
+            OPTIONAL MATCH (ba:BridgeAxiom)-[:APPLIES_TO]->(m)
+            OPTIONAL MATCH (ba)-[:EVIDENCED_BY]->(d:Document)
             OPTIONAL MATCH (m)-[:HAS_ECOLOGICAL_PROCESS]->(p:EcologicalProcess)
             OPTIONAL MATCH (m)-[:USING_MECHANISM]->(fm:FinancialMechanism)
             OPTIONAL MATCH (m)-[rel:FACES_RISK]->(r:Risk)
@@ -132,7 +133,8 @@ TEMPLATES: dict[str, dict] = {
             MATCH (m:MPA)
             WHERE m.name IN $site_names
             OPTIONAL MATCH (m)-[:GENERATES]->(es:EcosystemService)
-            OPTIONAL MATCH (es)<-[:TRANSLATES]-(ba:BridgeAxiom)-[:EVIDENCED_BY]->(d:Document)
+            OPTIONAL MATCH (ba:BridgeAxiom)-[:APPLIES_TO]->(m)
+            OPTIONAL MATCH (ba)-[:EVIDENCED_BY]->(d:Document)
             RETURN m.name AS site, m.total_esv_usd AS total_esv,
                    m.biomass_ratio AS biomass_ratio, m.neoli_score AS neoli_score,
                    m.asset_rating AS asset_rating,

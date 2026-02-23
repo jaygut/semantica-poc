@@ -663,6 +663,7 @@ def _populate_bridge_axioms(session, cfg):
         count += 1
 
         # Link axiom -> EVIDENCED_BY -> Document (by DOI)
+        axiom_tier = axiom.get("evidence_tier", "T1")
         for src in axiom.get("sources", []):
             doi, verification_status, verification_reason = _verified_doi(
                 src.get("doi", ""),
@@ -673,8 +674,10 @@ def _populate_bridge_axioms(session, cfg):
                     """
                     MATCH (a:BridgeAxiom {axiom_id: $axiom_id})
                     MERGE (d:Document {doi: $doi})
-                    ON CREATE SET d.title = $title
-                    SET d.doi_verification_status = $verification_status,
+                    ON CREATE SET d.title       = $title,
+                                  d.source_tier = $source_tier
+                    SET d.source_tier             = COALESCE(d.source_tier, $source_tier),
+                        d.doi_verification_status = $verification_status,
                         d.doi_verification_reason = $verification_reason
                     MERGE (a)-[e:EVIDENCED_BY]->(d)
                     SET e.finding = $finding
@@ -683,6 +686,7 @@ def _populate_bridge_axioms(session, cfg):
                         "axiom_id": aid,
                         "doi": doi,
                         "title": src.get("citation", ""),
+                        "source_tier": axiom_tier,
                         "verification_status": verification_status,
                         "verification_reason": verification_reason,
                         "finding": src.get("finding", ""),
