@@ -10,7 +10,6 @@ Do NOT use it against the production v2/v3 database.
 """
 
 import json
-from os import getenv
 from pathlib import Path
 
 from maris.settings import settings

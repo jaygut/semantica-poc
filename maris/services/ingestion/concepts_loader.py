@@ -1,7 +1,6 @@
 """Service for loading Concept JSONs into Neo4j."""
 
 import json
-from pathlib import Path
 
 from neo4j import Session
 

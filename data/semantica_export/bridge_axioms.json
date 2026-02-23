@@ -920,8 +920,8 @@
           "support_type": "primary"
         },
         {
-          "doc_id": "unknown_10_3389_fevo_2019_00338",
-          "doi": "10.3389/fevo.2019.00338",
+          "doc_id": "lovelock_duarte_2019_blue_carbon_realism",
+          "doi": "10.1098/rsbl.2018.0781",
           "support_type": "supporting"
         }
       ],
@@ -1654,6 +1654,200 @@
       ],
       "confidence": "high",
       "validation": ""
+    },
+    {
+      "axiom_id": "BA-036",
+      "name": "reef_biomass_warning_threshold",
+      "domain_from": "ecological",
+      "domain_to": "ecological",
+      "description": "When fish biomass drops below 1130 kg/ha, reef ecosystem function falls below 90% - macroalgal variance begins increasing as early warning signal of degradation",
+      "formula": "IF biomass(Site) < 1130 kg/ha THEN reef_function(Site) < 0.90",
+      "coefficients": {
+        "threshold_kg_ha": {
+          "value": 1130,
+          "ci_low": 1076,
+          "ci_high": 1184,
+          "distribution": "normal",
+          "study_sample_size": null,
+          "effect_size_type": "threshold",
+          "source_doi": "10.1073/pnas.1106861108",
+          "extraction_note": "Warning threshold from McClanahan et al. 2011 Figure 2.",
+          "uncertainty_type": "research_grounded"
+        },
+        "reef_function_at_threshold": {
+          "value": 0.9,
+          "ci_low": 0.85,
+          "ci_high": 0.95,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "fraction",
+          "source_doi": "10.1073/pnas.1106861108",
+          "extraction_note": "Reef function fraction at warning threshold.",
+          "uncertainty_type": "research_grounded"
+        }
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "mcclanahan_2011_biomass_thresholds",
+          "doi": "10.1073/pnas.1106861108",
+          "support_type": "primary"
+        }
+      ],
+      "confidence": "high",
+      "validation": "biomass < 1130 kg/ha -> reef_function < 0.90 (macroalgal variance increasing)"
+    },
+    {
+      "axiom_id": "BA-037",
+      "name": "reef_biomass_mmsy_upper_threshold",
+      "domain_from": "ecological",
+      "domain_to": "ecological",
+      "description": "When fish biomass drops below 600 kg/ha (B_MMSY upper bound), multiple reef ecosystem metrics begin degrading simultaneously",
+      "formula": "IF biomass(Site) < 600 kg/ha THEN multiple_metrics_degrade(Site)",
+      "coefficients": {
+        "threshold_kg_ha": {
+          "value": 600,
+          "ci_low": 546,
+          "ci_high": 654,
+          "distribution": "normal",
+          "study_sample_size": null,
+          "effect_size_type": "threshold",
+          "source_doi": "10.1073/pnas.1106861108",
+          "extraction_note": "B_MMSY upper bound from McClanahan et al. 2011 Table 1. 600 +/- 54 kg/ha.",
+          "uncertainty_type": "research_grounded"
+        },
+        "reef_function_at_threshold": {
+          "value": 0.65,
+          "ci_low": 0.6,
+          "ci_high": 0.7,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "fraction",
+          "source_doi": "10.1073/pnas.1106861108",
+          "extraction_note": "Reef function fraction at MMSY upper threshold.",
+          "uncertainty_type": "research_grounded"
+        }
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "mcclanahan_2011_biomass_thresholds",
+          "doi": "10.1073/pnas.1106861108",
+          "support_type": "primary"
+        }
+      ],
+      "confidence": "high",
+      "validation": "biomass < 600 kg/ha -> multiple metrics degrade simultaneously"
+    },
+    {
+      "axiom_id": "BA-038",
+      "name": "reef_biomass_mmsy_lower_threshold",
+      "domain_from": "ecological",
+      "domain_to": "ecological",
+      "description": "When fish biomass drops below 300 kg/ha (B_MMSY lower bound), 5 of 8 ecosystem metrics fall below their thresholds simultaneously",
+      "formula": "IF biomass(Site) < 300 kg/ha THEN 5_of_8_metrics_below_threshold(Site)",
+      "coefficients": {
+        "threshold_kg_ha": {
+          "value": 300,
+          "ci_low": 270,
+          "ci_high": 330,
+          "distribution": "normal",
+          "study_sample_size": null,
+          "effect_size_type": "threshold",
+          "source_doi": "10.1073/pnas.1106861108",
+          "extraction_note": "B_MMSY lower bound from McClanahan et al. 2011.",
+          "uncertainty_type": "research_grounded"
+        },
+        "reef_function_at_threshold": {
+          "value": 0.3,
+          "ci_low": 0.25,
+          "ci_high": 0.35,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "fraction",
+          "source_doi": "10.1073/pnas.1106861108",
+          "extraction_note": "Reef function fraction at MMSY lower threshold.",
+          "uncertainty_type": "research_grounded"
+        }
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "mcclanahan_2011_biomass_thresholds",
+          "doi": "10.1073/pnas.1106861108",
+          "support_type": "primary"
+        }
+      ],
+      "confidence": "high",
+      "validation": "biomass < 300 kg/ha -> 5 of 8 metrics below threshold"
+    },
+    {
+      "axiom_id": "BA-039",
+      "name": "reef_biomass_collapse_threshold",
+      "domain_from": "ecological",
+      "domain_to": "ecological",
+      "description": "When fish biomass drops below 150 kg/ha, hard coral cover and calcification approach zero, indicating functional reef collapse",
+      "formula": "IF biomass(Site) < 150 kg/ha THEN hard_coral_and_calcification_near_zero(Site)",
+      "coefficients": {
+        "threshold_kg_ha": {
+          "value": 150,
+          "ci_low": 120,
+          "ci_high": 180,
+          "distribution": "normal",
+          "study_sample_size": null,
+          "effect_size_type": "threshold",
+          "source_doi": "10.1073/pnas.1106861108",
+          "extraction_note": "Collapse threshold from McClanahan et al. 2011.",
+          "uncertainty_type": "research_grounded"
+        },
+        "reef_function_at_threshold": {
+          "value": 0.05,
+          "ci_low": 0.02,
+          "ci_high": 0.08,
+          "distribution": "triangular",
+          "study_sample_size": null,
+          "effect_size_type": "fraction",
+          "source_doi": "10.1073/pnas.1106861108",
+          "extraction_note": "Reef function fraction at collapse threshold.",
+          "uncertainty_type": "research_grounded"
+        }
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "mcclanahan_2011_biomass_thresholds",
+          "doi": "10.1073/pnas.1106861108",
+          "support_type": "primary"
+        }
+      ],
+      "confidence": "high",
+      "validation": "biomass < 150 kg/ha -> hard coral and calcification near zero (functional collapse)"
+    },
+    {
+      "axiom_id": "BA-040",
+      "name": "coral_bleaching_annual_probability_threshold",
+      "domain_from": "ecological",
+      "domain_to": "ecological",
+      "description": "When annual bleaching probability exceeds 7.9% per year, coral reef ecosystems begin experiencing mortality-level bleaching events with insufficient recovery time",
+      "formula": "IF bleaching_freq(Site) > 7.9%/yr THEN ecosystem_mortality_begins(Site)",
+      "coefficients": {
+        "bleaching_frequency_threshold_pct_yr": {
+          "value": 7.9,
+          "ci_low": 6.5,
+          "ci_high": 9.3,
+          "distribution": "normal",
+          "study_sample_size": null,
+          "effect_size_type": "rate",
+          "source_doi": "10.1038/s43247-025-02790-4",
+          "extraction_note": "Annual bleaching probability threshold from Zhang et al. 2025. Communications Earth & Environment.",
+          "uncertainty_type": "research_grounded"
+        }
+      },
+      "evidence_sources": [
+        {
+          "doc_id": "zhang_2025_bleaching_threshold_comms_earth",
+          "doi": "10.1038/s43247-025-02790-4",
+          "support_type": "primary"
+        }
+      ],
+      "confidence": "high",
+      "validation": "bleaching_freq > 7.9%/yr -> ecosystem mortality begins (insufficient recovery time)"
     }
   ],
   "export_metadata": {

@@ -155,21 +155,45 @@ def render_graphrag_chat(
     with st.expander("How confidence is computed (full transparency)", expanded=False):
         st.markdown(_confidence_methodology_markdown())
 
-    # Quick query buttons
-    quick_queries = _build_quick_queries(site_short, context_name)
+    # Quick query buttons — two labelled sections
+    historical_queries, scenario_queries = _build_quick_queries(site_short, context_name)
+
+    _SECTION_HEADER = (
+        "display:flex;align-items:center;gap:10px;"
+        "font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;"
+        "margin:16px 0 10px 0;padding-bottom:6px;"
+        "border-bottom:1px solid"
+    )
+    # Site intelligence header (slate-blue accent)
     st.markdown(
-        '<div style="font-size:15px;font-weight:600;color:#94A3B8;'
-        'margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">'
-        "Quick queries</div>",
+        f'<div style="{_SECTION_HEADER} #1E3A5F;">'
+        '<span style="color:#60A5FA">&#9670;</span>'
+        '<span style="color:#94A3B8">Site Intelligence</span>'
+        "</div>",
         unsafe_allow_html=True,
     )
-    grid_cols = 2
-    for row_start in range(0, len(quick_queries), grid_cols):
-        row = st.columns(grid_cols)
-        for col_idx, q in enumerate(quick_queries[row_start: row_start + grid_cols]):
-            button_idx = row_start + col_idx
+    for row_start in range(0, len(historical_queries), 2):
+        row = st.columns(2)
+        for col_idx, q in enumerate(historical_queries[row_start: row_start + 2]):
             with row[col_idx]:
-                if st.button(q, key=f"v4_quick_{button_idx}", use_container_width=True):
+                if st.button(q, key=f"v4_hist_{row_start + col_idx}", use_container_width=True):
+                    _submit_query(client, q, mode)
+
+    # Prospective scenarios header (teal accent)
+    st.markdown(
+        f'<div style="{_SECTION_HEADER} #0D3D3D;margin-top:20px;">'
+        '<span style="color:#2DD4BF">&#9654;</span>'
+        '<span style="color:#5EEAD4">Prospective Scenarios</span>'
+        '<span style="color:#475569;font-size:11px;font-weight:400;'
+        'text-transform:none;letter-spacing:0">- powered by v6 Scenario Intelligence</span>'
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    for row_start in range(0, len(scenario_queries), 2):
+        row = st.columns(2)
+        for col_idx, q in enumerate(scenario_queries[row_start: row_start + 2]):
+            with row[col_idx]:
+                if st.button(q, key=f"v4_scen_{row_start + col_idx}", use_container_width=True):
                     _submit_query(client, q, mode)
 
     with st.form(key="v4_query_form", clear_on_submit=True):
@@ -191,9 +215,22 @@ def render_graphrag_chat(
 # ---------------------------------------------------------------------------
 
 
-def _build_quick_queries(site_short: str, full_name: str) -> list[str]:
-    """Return 6 quick-query strings, prioritized from case study JSON."""
-    defaults = [
+def _build_quick_queries(
+    site_short: str, full_name: str
+) -> tuple[list[str], list[str]]:
+    """Return (historical_queries, scenario_queries) as two separate lists.
+
+    historical_queries: 6 site-intelligence questions (knowledge graph)
+    scenario_queries:   4 prospective scenario questions (v6 engine)
+    """
+    scenario_queries = [
+        f"What would {site_short} be worth without protection?",
+        f"What happens to {site_short} under SSP2-4.5 by 2050?",
+        f"What blue carbon revenue could {site_short} generate at $45/tCO2?",
+        f"How close is {site_short} to a tipping point?",
+    ]
+
+    default_historical = [
         f"What is {site_short} worth?",
         "What evidence supports the valuation?",
         "How is NEOLI calculated?",
@@ -202,56 +239,58 @@ def _build_quick_queries(site_short: str, full_name: str) -> list[str]:
         "How does blue carbon sequestration work?",
     ]
 
-    # Try to load from case study JSON first
+    # Try to load custom historical queries from case study JSON
     from investor_demo.components.v4.shared import get_site_data
     site_data = get_site_data(full_name)
     if site_data:
         custom = site_data.get("demo_value", {}).get("quick_queries", [])
         if custom:
-            # Pad with defaults if fewer than 6 custom queries
-            return (custom + defaults)[:6]
+            return custom[:6], scenario_queries
 
-    # Fallback to hardcoded logic (legacy safety net)
+    # Fallback to site-specific hardcoded historical queries
     lower_name = full_name.lower()
-    
+    bc_concept = "How does blue carbon sequestration work?"
+
     if "galapagos" in lower_name:
-        return [
-            "How does El Niño impact Galapagos?",
+        historical = [
+            "How does El Nino impact Galapagos?",
             "What is the value of hammerhead shark tourism?",
             "How does the NEOLI score explain recovery?",
             "Compare Galapagos to Cabo Pulmo",
             "What conflict exists with industrial fishing?",
-            defaults[5]
+            bc_concept,
         ]
     elif "cabo pulmo" in lower_name:
-        return [
+        historical = [
             "What drove the 463% biomass recovery?",
             "What is the total ecosystem service value?",
             "How did community enforcement help?",
             "Compare to other Gulf of California sites",
             "What are the top 3 species recovering?",
-            defaults[5]
+            bc_concept,
         ]
     elif "ningaloo" in lower_name:
-        return [
+        historical = [
             "What is the value of whale shark tourism?",
             "How does the Leeuwin Current affect biodiversity?",
             "What evidence supports the resilience rating?",
             "Compare tourism revenue to fisheries",
             "What are the threats from oil and gas?",
-            defaults[5]
+            bc_concept,
         ]
     elif "belize" in lower_name:
-        return [
+        historical = [
             "What is the value of storm protection?",
             "How does coral bleaching risk affect value?",
             "What is the impact of mangrove loss?",
             "Compare coastal protection to tourism value",
             "What is the status of the barrier reef?",
-            defaults[5]
+            bc_concept,
         ]
-        
-    return defaults
+    else:
+        historical = default_historical
+
+    return historical, scenario_queries
 
 
 # ---------------------------------------------------------------------------
@@ -540,6 +579,74 @@ def _md_to_html(text: str) -> str:
     return "\n".join(result)
 
 
+def render_scenario_response(response: dict, container: Any = None) -> None:
+    """Render a structured scenario response block.
+
+    Used for responses with ``scenario_request`` field (scenario_analysis category).
+    """
+    target = container if container is not None else st
+
+    if response.get("scenario_request") is None:
+        return  # Not a scenario response; use existing render path
+
+    # KPI strip: type-dependent metrics
+    scenario_req = response.get("scenario_request") or {}
+    scenario_type = scenario_req.get("scenario_type", "counterfactual")
+
+    if scenario_type == "market":
+        # Blue carbon revenue: show annual revenue and range
+        annual_rev = response.get("annual_revenue_usd", 0)
+        rev_range = response.get("revenue_range", {})
+        col1, col2, col3 = target.columns(3)
+        col1.metric("Annual Revenue", f"${annual_rev / 1e6:.2f}M/yr" if annual_rev else "See answer")
+        col2.metric("Range Low", f"${rev_range.get('low', 0) / 1e6:.2f}M" if rev_range else "-")
+        col3.metric("Range High", f"${rev_range.get('high', 0) / 1e6:.2f}M" if rev_range else "-")
+    elif scenario_type == "tipping_point":
+        # Tipping point: no ESV delta — skip KPI strip, info is in the answer text
+        pass
+    else:
+        # Counterfactual / climate / intervention: show ESV delta
+        baseline_esv = response.get("baseline_case", {}).get("total_esv_usd", 0)
+        scenario_esv = response.get("scenario_case", {}).get("total_esv_usd", 0)
+        if baseline_esv or scenario_esv:
+            delta_pct = (scenario_esv - baseline_esv) / baseline_esv * 100 if baseline_esv else 0
+            col1, col2, col3 = target.columns(3)
+            col1.metric("Baseline ESV", f"${baseline_esv / 1e6:.1f}M")
+            col2.metric("Scenario ESV", f"${scenario_esv / 1e6:.1f}M")
+            col3.metric("Delta", f"{delta_pct:+.1f}%", delta=f"${abs(scenario_esv - baseline_esv) / 1e6:.1f}M")
+
+    # Tipping point badge (if present)
+    if response.get("tipping_point_proximity"):
+        target.warning(f"Tipping Point Alert: {response['tipping_point_proximity']}")
+
+    # Uncertainty band
+    unc = response.get("uncertainty", {})
+    if unc:
+        target.caption(
+            f"P5: ${unc.get('p5', 0) / 1e6:.1f}M | "
+            f"P50: ${unc.get('p50', 0) / 1e6:.1f}M | "
+            f"P95: ${unc.get('p95', 0) / 1e6:.1f}M"
+        )
+
+    # Propagation trace expander
+    trace = response.get("propagation_trace", [])
+    if trace:
+        with target.expander("Propagation Trace (full axiom arc)"):
+            for step in trace:
+                st.markdown(f"**{step['axiom_id']}**: {step['description']}")
+                st.caption(
+                    f"{step['input_parameter']} {step['input_value']:.2f} -> "
+                    f"{step['output_parameter']} {step['output_value']:.2f}"
+                )
+
+    # Confidence penalties expander
+    penalties = response.get("confidence_penalties", [])
+    if penalties:
+        with target.expander("Confidence Penalties Applied"):
+            for penalty in penalties:
+                st.caption(f"{penalty['reason']}: {penalty['penalty']:+.2f}")
+
+
 def _render_split_response(entry: dict, idx: int, mode: str) -> None:
     """Render a single query result as a split panel."""
     question = entry["question"]
@@ -553,6 +660,10 @@ def _render_split_response(entry: dict, idx: int, mode: str) -> None:
         f"{_escape(question)}</div>",
         unsafe_allow_html=True,
     )
+
+    # Check if this is a scenario response
+    if resp.get("scenario_request") is not None:
+        render_scenario_response(resp)
 
     col_chat, col_pipeline = st.columns([3, 2])
     with col_chat:

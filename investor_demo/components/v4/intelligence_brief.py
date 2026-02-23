@@ -22,6 +22,10 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from investor_demo.components.v4.axiom_registry import (  # noqa: E402
+    get_axiom_display,
+    get_total_axiom_count,
+)
 from investor_demo.components.v4.shared import (  # noqa: E402
     COLORS,
     axiom_tag,
@@ -31,142 +35,6 @@ from investor_demo.components.v4.shared import (  # noqa: E402
 from maris.sites.esv_estimator import _HABITAT_AXIOM_MAP  # noqa: E402
 
 logger = logging.getLogger(__name__)
-
-# ---------------------------------------------------------------------------
-# Axiom info - plain-English descriptions and citations (all 16)
-# ---------------------------------------------------------------------------
-
-AXIOM_INFO: dict[str, dict[str, str]] = {
-    "BA-001": {
-        "meaning": (
-            "Fish biomass increases drive tourism value: divers will pay "
-            "up to 84% more at sites with healthy reef biomass"
-        ),
-        "citation": "Marcos-Castillo et al. 2024",
-        "doi": "10.1038/s41598-024-83664-1",
-    },
-    "BA-002": {
-        "meaning": (
-            "No-take marine reserves accumulate biomass to 670% of "
-            "unprotected levels (global meta-analysis of 82 MPAs; "
-            "Cabo Pulmo observed 463%)"
-        ),
-        "citation": "Hopf et al. 2024",
-        "doi": "10.1002/eap.3027",
-    },
-    "BA-003": {
-        "meaning": (
-            "Sea otter presence enables kelp forest expansion, increasing "
-            "carbon sequestration through trophic cascade"
-        ),
-        "citation": "Wilmers et al. 2012",
-        "doi": "10.3389/fevo.2012.00012",
-    },
-    "BA-004": {
-        "meaning": (
-            "Coral reef structural complexity reduces wave energy, "
-            "providing coastal flood protection"
-        ),
-        "citation": "Ferrario et al. 2014",
-        "doi": "10.1038/ncomms4794",
-    },
-    "BA-005": {
-        "meaning": (
-            "Mangrove forests provide coastal flood protection, reducing "
-            "wave height by 66% over 100m of forest width"
-        ),
-        "citation": "Menendez et al. 2020",
-        "doi": "10.1038/s41598-020-61136-6",
-    },
-    "BA-006": {
-        "meaning": (
-            "Mangrove forests serve as nursery habitat, supporting "
-            "commercial fisheries production"
-        ),
-        "citation": "zu Ermgassen et al. 2020",
-        "doi": "10.1016/j.ecss.2020.106975",
-    },
-    "BA-007": {
-        "meaning": (
-            "Mangrove sediments store 1,023 tCO2/ha on average, "
-            "among the highest carbon-dense ecosystems"
-        ),
-        "citation": "Alongi 2020",
-        "doi": "10.1016/j.scitotenv.2020.141360",
-    },
-    "BA-008": {
-        "meaning": (
-            "Seagrass meadows generate tradeable carbon credits "
-            "under voluntary standards (Verra VCS VM0033)"
-        ),
-        "citation": "Emmer et al. 2023",
-        "doi": "10.3390/su15010345",
-    },
-    "BA-009": {
-        "meaning": (
-            "Mangrove restoration yields benefit-cost ratios of 3:1 to 10:1 "
-            "when including ecosystem service values"
-        ),
-        "citation": "Su et al. 2021",
-        "doi": "10.1016/j.ecolecon.2021.107048",
-    },
-    "BA-010": {
-        "meaning": (
-            "Kelp forests provide estimated $500B/yr in global ecosystem "
-            "services including carbon, fisheries, and coastal protection"
-        ),
-        "citation": "Eger et al. 2023",
-        "doi": "10.1038/s41467-023-37385-0",
-    },
-    "BA-011": {
-        "meaning": (
-            "Protected reefs suffer 30% less damage from climate "
-            "disturbances than unprotected reefs"
-        ),
-        "citation": "Ortiz-Villa et al. 2024",
-        "doi": "10.1111/gcb.17477",
-    },
-    "BA-012": {
-        "meaning": (
-            "Reef degradation causes 35% loss in fisheries productivity "
-            "when protection fails"
-        ),
-        "citation": "Rogers et al. 2018",
-        "doi": "10.1111/1365-2664.13051",
-    },
-    "BA-013": {
-        "meaning": (
-            "Seagrass meadows sequester carbon at 0.84 tCO2/ha/yr through "
-            "sediment burial of approximately 20% of net primary production"
-        ),
-        "citation": "Gomis et al. 2025",
-        "doi": "10.1038/s41467-025-64667-6",
-    },
-    "BA-014": {
-        "meaning": (
-            "Blue carbon sequestration generates tradeable credits at "
-            "$15-50 per tCO2 under voluntary market standards"
-        ),
-        "citation": "Duarte et al. 2025",
-        "doi": "10.1038/s41558-024-02188-4",
-    },
-    "BA-015": {
-        "meaning": (
-            "Seagrass loss releases 112-476 tCO2/ha of stored carbon, "
-            "as demonstrated by the 2011 Shark Bay heatwave"
-        ),
-        "citation": "Arias-Ortiz et al. 2018",
-        "doi": "10.1038/s41558-018-0096-y",
-    },
-    "BA-016": {
-        "meaning": (
-            "MPA protection with NEOLI 4+/5 provides 25-100 year carbon "
-            "permanence guarantee"
-        ),
-        "citation": "Lovelock et al. 2025",
-        "doi": "10.1038/s41558-024-02206-5",
-    },
-}
 
 
 def _get_site_axioms(data: dict[str, Any]) -> list[str]:
@@ -493,7 +361,7 @@ def _render_kpi_strip(nd: dict[str, Any], *, scenario: str = "p50") -> None:
             if axiom_ids:
                 st.markdown("**Bridge Axiom Chain**")
                 for aid in axiom_ids:
-                    info = AXIOM_INFO.get(aid, {})
+                    info = get_axiom_display(aid)
                     st.markdown(
                         f"- {axiom_tag(aid)} {info.get('meaning', '')}",
                         unsafe_allow_html=True,
@@ -728,7 +596,7 @@ def _render_investment_thesis(nd: dict[str, Any]) -> None:
 
     site = nd["site_name"]
     esv = nd["esv_total"]
-    n_axioms_system = 16
+    n_axioms_system = get_total_axiom_count()
 
     # Determine dominant service
     top_service = ""
@@ -800,7 +668,7 @@ def _render_axiom_evidence_table(nd: dict[str, Any]) -> None:
 
     rows = ""
     for aid in axiom_ids:
-        info = AXIOM_INFO.get(aid, {})
+        info = get_axiom_display(aid)
         meaning = info.get("meaning", "")
         citation = info.get("citation", "") or info.get("source", "")
         doi = info.get("doi", "")

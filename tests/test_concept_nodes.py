@@ -92,7 +92,7 @@ class TestExpandedAxioms:
         self.axioms = self.data.get("axioms", [])
 
     def test_has_35_axioms(self):
-        assert len(self.axioms) == 35
+        assert len(self.axioms) == 40
 
     def test_axiom_ids_sequential(self):
         ids = [a["axiom_id"] for a in self.axioms]
@@ -117,8 +117,8 @@ class TestExpandedAxioms:
         for i in range(17, 36):
             assert f"BA-{i:03d}" in ids, f"New axiom BA-{i:03d} missing"
 
-    def test_version_is_2_0(self):
-        assert self.data.get("version") == "2.0"
+    def test_version_is_2_1(self):
+        assert self.data.get("version") == "2.1"
 
 
 # ---------------------------------------------------------------------------

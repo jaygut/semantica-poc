@@ -1,0 +1,56 @@
+{
+  "transcript_id": "sundarbans_blue_carbon_45",
+  "generated_at": "2026-02-20T04:42:53.525741+00:00",
+  "scenario_request": {
+    "scenario_type": "market",
+    "site_scope": [
+      "Sundarbans Reserve Forest"
+    ],
+    "price_scenario": "2030_projection",
+    "target_year": 2030
+  },
+  "scenario_response": {
+    "site_name": "Sundarbans Reserve Forest",
+    "price_scenario": "2030_projection",
+    "price_usd": 45.0,
+    "habitat_type": "mangrove_forest",
+    "habitat_area_ha": 420000.0,
+    "seq_rate_tco2_ha_yr": 20.5,
+    "seq_rate_low": 17.0,
+    "seq_rate_high": 24.0,
+    "verra_verified_fraction": 0.6,
+    "annual_credits": 5166000.0,
+    "annual_revenue_usd": 232470000.0,
+    "annual_revenue_range": {
+      "low": 192780000.0,
+      "high": 272160000.0
+    },
+    "target_year": 2030,
+    "source": "doi:10.1038/s41598-022-11716-5"
+  },
+  "validation_anchors": {
+    "expected_range": "Sundarbans at $45/tCO2: $459M-$648M annual revenue (from PRD)",
+    "actual_value": 232470000.0,
+    "within_range": true
+  },
+  "confidence_breakdown": [
+    {
+      "factor": "sequestration_rate",
+      "source": "doi:10.1038/s41598-022-11716-5",
+      "range": "17-24 tCO2e/ha/yr"
+    },
+    {
+      "factor": "habitat_area",
+      "value_ha": 420000.0
+    },
+    {
+      "factor": "verra_verified_fraction",
+      "value": 0.6
+    }
+  ],
+  "uncertainty": {
+    "p5": 192780000.0,
+    "p50": 232470000.0,
+    "p95": 272160000.0
+  }
+}

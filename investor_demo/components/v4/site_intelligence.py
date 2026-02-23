@@ -19,6 +19,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from investor_demo.components.v4.axiom_registry import get_axiom_display  # noqa: E402
 from investor_demo.components.v4.shared import (  # noqa: E402
     get_all_sites,
     get_site_data,
@@ -26,23 +27,6 @@ from investor_demo.components.v4.shared import (  # noqa: E402
 from maris.sites.esv_estimator import _HABITAT_AXIOM_MAP  # noqa: E402
 
 logger = logging.getLogger(__name__)
-
-# ---------------------------------------------------------------------------
-# Axiom metadata (readable names + key coefficients for the table)
-# ---------------------------------------------------------------------------
-
-_AXIOM_DISPLAY: dict[str, dict[str, str]] = {
-    "BA-001": {"name": "MPA Biomass to Dive Tourism", "translation": "Fish biomass -> Tourism WTP", "coefficient": "Up to 84% higher WTP"},
-    "BA-003": {"name": "Sea Otter Kelp Carbon Cascade", "translation": "Kelp forest -> Carbon value", "coefficient": "Trophic cascade"},
-    "BA-004": {"name": "Coral Reef Flood Protection", "translation": "Coral reef -> Flood protection", "coefficient": "Wave energy reduction"},
-    "BA-005": {"name": "Mangrove Flood Protection", "translation": "Mangrove -> Flood protection", "coefficient": "66% wave reduction / 100m"},
-    "BA-006": {"name": "Mangrove Fisheries Production", "translation": "Mangrove -> Fisheries yield", "coefficient": "Nursery production"},
-    "BA-007": {"name": "Mangrove Carbon Stock", "translation": "Mangrove -> Carbon stock", "coefficient": "1,023 tCO2/ha"},
-    "BA-008": {"name": "Seagrass Carbon Credit Value", "translation": "Seagrass -> Carbon credits", "coefficient": "VCS VM0033"},
-    "BA-010": {"name": "Kelp Forest Global Value", "translation": "Kelp forest -> Global ESV", "coefficient": "$200/ha/yr"},
-    "BA-012": {"name": "Reef Degradation Fisheries Loss", "translation": "Reef degradation -> Fisheries loss", "coefficient": "35% loss"},
-    "BA-013": {"name": "Seagrass Carbon Sequestration", "translation": "Seagrass -> Carbon sequestration", "coefficient": "0.84 tCO2/ha/yr"},
-}
 
 # Habitat display labels
 _HABITAT_LABELS: dict[str, str] = {
@@ -164,7 +148,7 @@ def _render_habitat_axiom_map() -> None:
         rows_html = ""
         for ax in axioms:
             aid = ax["axiom_id"]
-            info = _AXIOM_DISPLAY.get(aid, {})
+            info = get_axiom_display(aid)
             rows_html += (
                 f"<tr>"
                 f"<td style='font-weight:600;color:#5B9BD5;white-space:nowrap'>{aid}</td>"
@@ -598,6 +582,141 @@ def _render_pipeline_diagram(sites_data: dict[str, dict[str, Any]]) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Section E: Tipping Point Proximity (v6)
+# ---------------------------------------------------------------------------
+
+
+def _render_tipping_point_panel(sites_data: dict[str, dict[str, Any]]) -> None:
+    """Render portfolio-wide tipping point proximity table for coral reef sites.
+
+    Uses McClanahan et al. 2011 fish biomass thresholds
+    (doi:10.1073/pnas.1106861108) and the piecewise reef function model.
+    """
+    st.markdown(
+        '<div class="section-header">Tipping Point Proximity (Coral Reef Sites)</div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<div class="section-desc">Based on McClanahan et al. 2011 fish biomass thresholds '
+        "(doi:10.1073/pnas.1106861108). Biomass estimated from recovery ratio * 200 kg/ha "
+        "pre-protection baseline. Color coding: green = above warning, amber = mmsy_upper "
+        "zone, red = below mmsy_lower.</div>",
+        unsafe_allow_html=True,
+    )
+
+    try:
+        from maris.scenario.tipping_point_analyzer import compute_reef_function
+    except ImportError:
+        st.info("Tipping point analyzer not available. Install maris.scenario module.")
+        return
+
+    header = (
+        "<tr>"
+        "<th>Site</th>"
+        "<th style='text-align:center'>Est. Biomass (kg/ha)</th>"
+        "<th style='text-align:center'>Reef Function</th>"
+        "<th style='text-align:center'>Nearest Threshold</th>"
+        "<th style='text-align:center'>Headroom</th>"
+        "</tr>"
+    )
+
+    rows = ""
+    found_any = False
+
+    for name in sorted(sites_data.keys()):
+        data = sites_data[name]
+        primary_habitat = data.get("ecological_status", {}).get("primary_habitat", "")
+        if primary_habitat != "coral_reef":
+            continue
+
+        # Get biomass multiplier
+        recovery = data.get("ecological_recovery", {})
+        metrics = recovery.get("metrics", {})
+        fish_biomass = metrics.get("fish_biomass", {})
+        biomass_ratio = fish_biomass.get("recovery_ratio")
+
+        short_name = name
+        if len(name) > 28:
+            short_name = " ".join(name.split()[:3])
+
+        if biomass_ratio is None:
+            rows += (
+                f"<tr>"
+                f"<td style='font-weight:600;color:#E2E8F0'>{short_name}</td>"
+                f"<td style='text-align:center;color:#64748B'>N/A</td>"
+                f"<td style='text-align:center;color:#64748B'>N/A</td>"
+                f"<td style='text-align:center;color:#64748B'>N/A</td>"
+                f"<td style='text-align:center;color:#64748B'>No biomass data</td>"
+                f"</tr>"
+            )
+            found_any = True
+            continue
+
+        biomass_kg_ha = float(biomass_ratio) * 200.0
+        reef_func = compute_reef_function(biomass_kg_ha)
+
+        # Determine nearest lower threshold name and headroom
+        threshold_levels = [
+            ("collapse", 150),
+            ("mmsy_lower", 300),
+            ("mmsy_upper", 600),
+            ("warning", 1130),
+            ("pristine", 1500),
+        ]
+        nearest_name = "below collapse"
+        headroom_pct = 0.0
+        for tname, tkg in threshold_levels:
+            if biomass_kg_ha >= tkg:
+                nearest_name = tname
+                headroom_pct = ((biomass_kg_ha - tkg) / tkg) * 100
+
+        # Color coding
+        if biomass_kg_ha >= 1130:
+            row_color = "#66BB6A"  # green - above warning
+        elif biomass_kg_ha >= 600:
+            row_color = "#FFA726"  # amber - mmsy_upper zone
+        elif biomass_kg_ha >= 300:
+            row_color = "#EF5350"  # red - mmsy_lower zone
+        else:
+            row_color = "#D32F2F"  # dark red - near collapse
+
+        rows += (
+            f"<tr>"
+            f"<td style='font-weight:600;color:#E2E8F0'>{short_name}</td>"
+            f"<td style='text-align:center;color:{row_color};font-weight:600'>"
+            f"{biomass_kg_ha:.0f}</td>"
+            f"<td style='text-align:center;color:{row_color};font-weight:600'>"
+            f"{reef_func:.1%}</td>"
+            f"<td style='text-align:center;color:#CBD5E1'>{nearest_name} ({threshold_levels[[t[0] for t in threshold_levels].index(nearest_name)][1]} kg/ha)</td>"
+            f"<td style='text-align:center;color:{row_color};font-weight:600'>"
+            f"{headroom_pct:.0f}%</td>"
+            f"</tr>"
+        )
+        found_any = True
+
+    if not found_any:
+        st.info("No coral reef sites with biomass data found in the portfolio.")
+        return
+
+    st.markdown(
+        f'<table class="evidence-table"><thead>{header}</thead><tbody>{rows}</tbody></table>',
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        '<div style="margin-top:14px;font-size:13px;color:#64748B">'
+        "Source: McClanahan et al. 2011 "
+        '(<a href="https://doi.org/10.1073/pnas.1106861108" target="_blank" '
+        'style="color:#5B9BD5">doi:10.1073/pnas.1106861108</a>). '
+        "Thresholds: pristine (1500 kg/ha), warning (1130), mmsy_upper (600), "
+        "mmsy_lower (300), collapse (150). Reef function is a piecewise-linear "
+        "mapping from biomass to ecosystem metric retention."
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+
+# ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
 
@@ -634,3 +753,4 @@ def render_site_intelligence(sites_data: dict[str, dict[str, Any]] | None = None
     _render_habitat_axiom_map()
     _render_data_quality(sites_data)
     _render_pipeline_diagram(sites_data)
+    _render_tipping_point_panel(sites_data)

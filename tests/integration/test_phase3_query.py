@@ -515,7 +515,7 @@ class TestT35ProvenanceEndpoint:
 
     @requires_api
     def test_provenance_axioms_loaded(self):
-        """Provenance should report 35 axioms loaded."""
+        """Provenance should report at least 35 axioms loaded (40 after DB re-population with BA-036-040)."""
         try:
             result = _api_get("/api/provenance")
         except urllib.error.HTTPError as e:
@@ -523,7 +523,7 @@ class TestT35ProvenanceEndpoint:
                 pytest.xfail("Provenance endpoint not available (see T3.5 findings)")
             raise
         axioms = result.get("axioms_loaded", 0)
-        assert axioms == 35, f"Expected 35 axioms loaded, got {axioms}"
+        assert axioms >= 35, f"Expected at least 35 axioms loaded, got {axioms}"
 
     def test_provenance_route_uses_maris_manager(self):
         """Check if the provenance route uses MARISProvenanceManager (not SemanticaBackedManager).

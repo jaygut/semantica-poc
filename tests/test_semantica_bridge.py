@@ -556,7 +556,7 @@ class TestSemanticaBackedManager:
                 templates_path=str(templates),
                 evidence_path=str(evidence) if evidence.exists() else None,
             )
-            assert mgr.registry.count() == 35
+            assert mgr.registry.count() == 40
         else:
             pytest.skip("Axiom templates not found")
 

@@ -36,6 +36,7 @@ import maris.config as _cfg_mod  # noqa: E402
 _cfg_mod._config = None
 
 from maris.config import get_config  # noqa: E402
+from maris.config_v4 import get_config_v4  # noqa: E402
 from maris.graph.connection import get_driver, run_query  # noqa: E402
 
 # Reset the connection singleton too, in case it was initialized with bad creds
@@ -176,10 +177,10 @@ class TestT11SnapshotBeforeRePopulation:
         """Record node counts and verify expected labels are present."""
         counts = _get_node_counts()
 
-        # Verify expected labels are present
+        # Verify expected labels are present (v4 schema: TrophicLevel not created by v4 populator)
         expected_labels = {
             "Document", "BridgeAxiom", "EcosystemService", "MPA",
-            "Habitat", "Species", "TrophicLevel", "Concept",
+            "Habitat", "Species", "Concept",
             "FinancialInstrument", "Framework",
         }
         present = set(counts.keys())
@@ -189,11 +190,11 @@ class TestT11SnapshotBeforeRePopulation:
         # Verify expected counts (from CLAUDE.md: 893 nodes total)
         total = sum(counts.values())
         assert total >= 800, f"Total node count {total} is too low (expected ~893)"
-        assert counts.get("BridgeAxiom", 0) == 35, (
-            f"Expected 35 BridgeAxiom nodes, got {counts.get('BridgeAxiom', 0)}"
+        assert counts.get("BridgeAxiom", 0) == 40, (
+            f"Expected 40 BridgeAxiom nodes, got {counts.get('BridgeAxiom', 0)}"
         )
-        assert counts.get("MPA", 0) == 4, (
-            f"Expected 4 MPA nodes, got {counts.get('MPA', 0)}"
+        assert counts.get("MPA", 0) >= 9, (
+            f"Expected at least 9 MPA nodes (9 portfolio sites), got {counts.get('MPA', 0)}"
         )
 
         # Store for later comparison
@@ -204,9 +205,11 @@ class TestT11SnapshotBeforeRePopulation:
         """Record relationship counts by type."""
         counts = _get_relationship_counts()
 
+        # v4 schema: PREYS_ON, PART_OF_FOODWEB, TRANSLATES are legacy v2/v3 relationships
+        # not created by the v4 populator
         expected_rels = {
-            "GENERATES", "APPLIES_TO", "TRANSLATES", "EVIDENCED_BY",
-            "HAS_HABITAT", "PREYS_ON", "PART_OF_FOODWEB",
+            "GENERATES", "APPLIES_TO", "EVIDENCED_BY",
+            "HAS_HABITAT", "INVOLVES_AXIOM",
         }
         present = set(counts.keys())
         missing = expected_rels - present
@@ -219,11 +222,11 @@ class TestT11SnapshotBeforeRePopulation:
         print(f"\nRelationship counts baseline: {json.dumps(counts, indent=2)}")
 
     def test_axiom_evidence_baseline(self):
-        """Verify all 35 axioms have at least one EVIDENCED_BY edge."""
+        """Verify all 40 axioms have at least one EVIDENCED_BY edge."""
         evidence = _get_axiom_evidence_counts()
 
-        assert len(evidence) == 35, (
-            f"Expected 35 BridgeAxiom nodes, got {len(evidence)}"
+        assert len(evidence) == 40, (
+            f"Expected 40 BridgeAxiom nodes, got {len(evidence)}"
         )
 
         for axiom_id, count in evidence.items():
@@ -270,13 +273,22 @@ class TestT12ReRunPopulation:
         evidence_before = _get_axiom_evidence_counts()
         mpa_props_before = _get_mpa_properties()
 
-        # Re-run population pipeline via subprocess
+        # Re-run population pipeline via subprocess (v4 populator).
+        # Pass credentials explicitly - some unit tests overwrite MARIS_NEO4J_PASSWORD
+        # in os.environ ("test-password"), which would be inherited by the subprocess
+        # and cause AuthError against the real local Neo4j instance.
+        cfg = get_config_v4()
+        sub_env = os.environ.copy()
+        sub_env["MARIS_NEO4J_PASSWORD"] = cfg.neo4j_password
+        sub_env["MARIS_NEO4J_URI"] = cfg.neo4j_uri
+        sub_env["MARIS_NEO4J_DATABASE"] = cfg.neo4j_database
         result = subprocess.run(
-            [sys.executable, str(PROJECT_ROOT / "scripts" / "populate_neo4j.py")],
+            [sys.executable, str(PROJECT_ROOT / "scripts" / "populate_neo4j_v4.py")],
             capture_output=True,
             text=True,
             cwd=str(PROJECT_ROOT),
             timeout=120,
+            env=sub_env,
         )
         assert result.returncode == 0, (
             f"populate_neo4j.py failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
@@ -762,8 +774,8 @@ class TestT16SemanticaProvenance:
 
             # Verify initial state
             assert mgr.semantica_available is True
-            assert mgr.registry.count() == 35, (
-                f"Expected 35 axioms in registry, got {mgr.registry.count()}"
+            assert mgr.registry.count() == 40, (
+                f"Expected 40 axioms in registry, got {mgr.registry.count()}"
             )
 
             # Track each axiom extraction
@@ -793,7 +805,7 @@ class TestT16SemanticaProvenance:
             print(f"\nProvenance summary: {json.dumps(summary, indent=2, default=str)}")
 
             assert summary["semantica_available"] is True
-            assert summary["axioms_loaded"] == 35
+            assert summary["axioms_loaded"] == 40
             assert summary["semantica_entries"] >= 35, (
                 f"Expected semantica_entries >= 35, got {summary['semantica_entries']}"
             )

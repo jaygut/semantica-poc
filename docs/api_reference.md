@@ -50,7 +50,7 @@ Returns system status including Neo4j connectivity, LLM availability, and graph 
       "Document": 835,
       "EcosystemService": 39,
       "Species": 17,
-      "BridgeAxiom": 35,
+      "BridgeAxiom": 40,
       "MPA": 11,
       "TrophicLevel": 10,
       "Concept": 15,
@@ -282,7 +282,7 @@ Generate a TNFD LEAP (Locate, Evaluate, Assess, Prepare) disclosure for a specif
 
 ## Query Categories
 
-The `QueryClassifier` maps natural-language questions into one of six categories. Each category is backed by a parameterized Cypher template in `maris/query/cypher_templates.py`.
+The `QueryClassifier` maps natural-language questions into one of seven categories. Each category is backed by a parameterized Cypher template in `maris/query/cypher_templates.py`.
 
 | Category | Keyword Triggers | What the Template Returns |
 |----------|-----------------|--------------------------|
@@ -292,6 +292,7 @@ The `QueryClassifier` maps natural-language questions into one of six categories
 | `comparison` | compare, versus, rank, benchmark | Side-by-side MPA metrics (ESV, biomass ratio, NEOLI score, asset rating) |
 | `risk_assessment` | risk, degradation, climate, threat, decline | Ecological-to-service axioms, risk factors, confidence intervals |
 | `concept_explanation` | blue carbon, trophic cascade, mechanism, how does | Concept node details, involved axioms, linked documents - answers mechanism questions without a site anchor |
+| `scenario_analysis` | what if, SSP, without protection, counterfactual, tipping point, carbon price at $X, nature VaR, restoration ROI | Forward-looking ScenarioResponse with baseline/scenario ESV, P5/P50/P95 uncertainty, propagation trace, confidence penalties |
 
 If no keyword rules match and an LLM is configured, the classifier falls back to LLM-based classification. If neither matches, the default category is `site_valuation` with confidence 0.3.
 
@@ -310,7 +311,7 @@ The Neo4j graph uses the following node labels and relationship types. All nodes
 | `Document` | `doi` | 835 | title, year, source_tier, domain, abstract | Peer-reviewed evidence source from the 195-paper registry |
 | `EcosystemService` | `service_name` or `service_id` | 39 | annual_value_usd, valuation_method, ci_low, ci_high | Valued ecosystem service (e.g. Tourism, Fisheries, Carbon Sequestration) |
 | `Species` | `worms_id` or `name` | 17 | common_name, trophic_level, role_in_ecosystem, commercial_importance | Marine species with WoRMS taxonomic identifiers |
-| `BridgeAxiom` | `axiom_id` | 35 | name, category, description, pattern, coefficients_json, confidence, evidence_tier, ci_low, ci_high, distribution, study_sample_size, effect_size_type | Ecological-to-financial translation rule with peer-reviewed coefficients and uncertainty quantification. 35 axioms (BA-001 through BA-035) covering carbon, coastal protection, tourism, fisheries, and cross-cutting mechanisms |
+| `BridgeAxiom` | `axiom_id` | 40 | name, category, description, pattern, coefficients_json, confidence, evidence_tier, ci_low, ci_high, distribution, study_sample_size, effect_size_type | Ecological-to-financial translation rule with peer-reviewed coefficients and uncertainty quantification. 40 axioms (BA-001 through BA-040) covering carbon, coastal protection, tourism, fisheries, tipping point thresholds (BA-036-040), and cross-cutting mechanisms |
 | `MPA` | `name` | 11 | area_km2, designation_year, neoli_score, total_esv_usd, biomass_ratio, asset_rating, biomass_measurement_year, last_validated_date, data_freshness_status | Marine Protected Area (9 Gold-tier + 2 comparison) |
 | `TrophicLevel` | `name` | 10 | trophic_level | Trophic network node (apex predator, mesopredator, herbivore, etc.) |
 | `Concept` | `concept_id` | 15 | name, description, domain, applicable_habitats, involved_axiom_ids | Blue finance domain concept (BC-001 through BC-015): Blue Carbon Sequestration, Coastal Protection, Marine Tourism Economics, Carbon Credits, Reef Insurance, TNFD Disclosure, etc. Enables mechanism questions without site anchor |
