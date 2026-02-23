@@ -36,6 +36,7 @@ import maris.config as _cfg_mod  # noqa: E402
 _cfg_mod._config = None
 
 from maris.config import get_config  # noqa: E402
+from maris.config_v4 import get_config_v4  # noqa: E402
 from maris.graph.connection import get_driver, run_query  # noqa: E402
 
 # Reset the connection singleton too, in case it was initialized with bad creds
@@ -176,10 +177,10 @@ class TestT11SnapshotBeforeRePopulation:
         """Record node counts and verify expected labels are present."""
         counts = _get_node_counts()
 
-        # Verify expected labels are present
+        # Verify expected labels are present (v4 schema: TrophicLevel not created by v4 populator)
         expected_labels = {
             "Document", "BridgeAxiom", "EcosystemService", "MPA",
-            "Habitat", "Species", "TrophicLevel", "Concept",
+            "Habitat", "Species", "Concept",
             "FinancialInstrument", "Framework",
         }
         present = set(counts.keys())
@@ -204,9 +205,11 @@ class TestT11SnapshotBeforeRePopulation:
         """Record relationship counts by type."""
         counts = _get_relationship_counts()
 
+        # v4 schema: PREYS_ON, PART_OF_FOODWEB, TRANSLATES are legacy v2/v3 relationships
+        # not created by the v4 populator
         expected_rels = {
-            "GENERATES", "APPLIES_TO", "TRANSLATES", "EVIDENCED_BY",
-            "HAS_HABITAT", "PREYS_ON", "PART_OF_FOODWEB",
+            "GENERATES", "APPLIES_TO", "EVIDENCED_BY",
+            "HAS_HABITAT", "INVOLVES_AXIOM",
         }
         present = set(counts.keys())
         missing = expected_rels - present
@@ -270,13 +273,22 @@ class TestT12ReRunPopulation:
         evidence_before = _get_axiom_evidence_counts()
         mpa_props_before = _get_mpa_properties()
 
-        # Re-run population pipeline via subprocess
+        # Re-run population pipeline via subprocess (v4 populator).
+        # Pass credentials explicitly - some unit tests overwrite MARIS_NEO4J_PASSWORD
+        # in os.environ ("test-password"), which would be inherited by the subprocess
+        # and cause AuthError against the real local Neo4j instance.
+        cfg = get_config_v4()
+        sub_env = os.environ.copy()
+        sub_env["MARIS_NEO4J_PASSWORD"] = cfg.neo4j_password
+        sub_env["MARIS_NEO4J_URI"] = cfg.neo4j_uri
+        sub_env["MARIS_NEO4J_DATABASE"] = cfg.neo4j_database
         result = subprocess.run(
-            [sys.executable, str(PROJECT_ROOT / "scripts" / "populate_neo4j.py")],
+            [sys.executable, str(PROJECT_ROOT / "scripts" / "populate_neo4j_v4.py")],
             capture_output=True,
             text=True,
             cwd=str(PROJECT_ROOT),
             timeout=120,
+            env=sub_env,
         )
         assert result.returncode == 0, (
             f"populate_neo4j.py failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
