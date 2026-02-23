@@ -7,7 +7,6 @@ from typing import Any
 
 from neo4j import Session
 
-from maris.settings import settings
 
 
 # Habitat ID mapping for normalization

@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import json
 import logging
-import re
 from pathlib import Path
 from typing import Any
 
@@ -137,10 +136,10 @@ def _parse_coeff_value(val_obj: Any) -> dict[str, float]:
         }
     elif isinstance(val_obj, dict) and "value" in val_obj:
         v = float(val_obj["value"])
-        l = float(val_obj.get("ci_low", v * 0.7))
-        h = float(val_obj.get("ci_high", v * 1.3))
+        ci_low = float(val_obj.get("ci_low", v * 0.7))
+        ci_high = float(val_obj.get("ci_high", v * 1.3))
         return {
-            "value": v, "ci_low": l, "ci_high": h, "is_carbon": False
+            "value": v, "ci_low": ci_low, "ci_high": ci_high, "is_carbon": False
         }
     return {"value": 0.0, "ci_low": 0.0, "ci_high": 0.0, "is_carbon": False}
 
