@@ -435,6 +435,37 @@ V4_CSS = """
     /* ---- Tab container ---- */
     .tab-container { padding: 0 4px; }
 
+    /* ---- Streamlit Tabs styling overrides ---- */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 32px;
+        background-color: transparent;
+        border-bottom: 1px solid #1E293B;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 52px;
+        white-space: pre-wrap;
+        background-color: transparent;
+        border-radius: 0;
+        color: #94A3B8;
+        font-family: 'Inter', sans-serif;
+        font-size: 17px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        padding: 0 6px;
+        border-bottom: 2px solid transparent;
+        transition: color 0.2s ease;
+    }
+    .stTabs [aria-selected="true"] {
+        color: #2ECC71 !important;
+        border-bottom: 2px solid #2ECC71 !important;
+    }
+    .stTabs [data-baseweb="tab-highlight"] {
+        display: none !important; /* Hide streamlit's animated highlight to use border instead */
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #F1F5F9;
+    }
+
     /* ---- NEOLI dots ---- */
     .neoli-row { display: flex; gap: 10px; align-items: center; margin: 6px 0; }
     .neoli-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }

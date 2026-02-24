@@ -269,18 +269,18 @@ if data is None:
 # ---------------------------------------------------------------------------
 st.markdown(
     f"""
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding: 10px 5px 0 5px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 10px 5px 0 5px;">
         <div>
-            <div style="font-size: 18px; font-weight: 700; letter-spacing: 5px; color: #F1F5F9; text-transform: uppercase; font-family: 'Inter', sans-serif;">
-                NEREUS <span style="color: #5B9BD5; font-weight: 400; margin-left: 10px; letter-spacing: 2px;">| NATURAL CAPITAL INTELLIGENCE</span>
+            <div style="font-size: 26px; font-weight: 700; letter-spacing: 6px; color: #F1F5F9; text-transform: uppercase; font-family: 'Inter', sans-serif; display: flex; align-items: center;">
+                N E R E U S <span style="color: #64748B; font-weight: 300; margin: 0 16px;">|</span> <span style="color: #CBD5E1; font-weight: 400; letter-spacing: 3px; font-size: 23px;">NATURAL CAPITAL INTELLIGENCE</span>
             </div>
-            <div style="font-size: 11px; font-weight: 500; letter-spacing: 1.5px; color: #64748B; text-transform: uppercase; margin-top: 6px;">
-                Powered by MARIS + Semantica &middot; Provenance-First Blue Finance Infrastructure
+            <div style="font-size: 13px; font-weight: 600; letter-spacing: 2.5px; color: #64748B; text-transform: uppercase; margin-top: 10px;">
+                Powered by MARIS + Semantica <span style="margin: 0 4px;">&middot;</span> Provenance-First Blue Finance Infrastructure
             </div>
         </div>
         <div style="text-align: right;">
-             <div class="conn-status {'conn-live' if mode == 'live' else 'conn-static'}" style="padding: 6px 16px; font-size: 13px;">
-                <span class="conn-dot" style="width: 10px; height: 10px;"></span>
+             <div class="conn-status {{'conn-live' if mode == 'live' else 'conn-static'}}" style="padding: 8px 18px; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; background: transparent; border: 1px solid rgba(102,187,106, 0.3);">
+                <span class="conn-dot" style="width: 8px; height: 8px; margin-right: 8px;"></span>
                 {'LIVE INTELLIGENCE MODE' if mode == 'live' else 'DEMO MODE - PRECOMPUTED'}
             </div>
         </div>
