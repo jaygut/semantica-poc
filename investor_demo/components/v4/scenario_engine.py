@@ -577,6 +577,7 @@ def _render_scenario_workbench(
     scenario_label: str, result_summary: dict[str, Any],
 ) -> None:
     """Render save/compare controls for the Scenario Workbench."""
+    import re as _re
     if "saved_scenarios" not in st.session_state:
         st.session_state["saved_scenarios"] = []
 
@@ -585,7 +586,10 @@ def _render_scenario_workbench(
         unsafe_allow_html=True,
     )
 
-    if st.button("Save Scenario", key="v6_save_scenario"):
+    # Derive a stable, unique widget key from the scenario label so that
+    # multiple simultaneous calls (one per sub-tab) never collide.
+    _safe = _re.sub(r"[^a-z0-9]+", "_", scenario_label.lower()).strip("_")[:48]
+    if st.button("Save Scenario", key=f"v6_save_scenario_{_safe}"):
         st.session_state["saved_scenarios"].append({
             "label": scenario_label,
             **result_summary,
