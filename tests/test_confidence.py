@@ -223,3 +223,75 @@ class TestCompositeConfidence:
             },
         )
         assert result["composite"] <= 0.35
+
+
+class TestObservationQualityIntegration:
+    """Test site_observation_quality parameter in calculate_response_confidence."""
+
+    _NODES = [
+        {"source_tier": "T1", "doi": "10.1234/a", "year": 2024},
+        {"source_tier": "T1", "doi": "10.1234/b", "year": 2025},
+    ]
+
+    def test_none_observation_quality_identical_to_omitted(self):
+        """Passing None should not change the result at all."""
+        r1 = calculate_response_confidence(
+            self._NODES, n_hops=1, current_year=2026,
+        )
+        r2 = calculate_response_confidence(
+            self._NODES, n_hops=1, current_year=2026,
+            site_observation_quality=None,
+        )
+        assert r1["composite"] == r2["composite"]
+        assert "site_observation_quality_factor" not in r1
+        assert "site_observation_quality_factor" not in r2
+
+    def test_observation_quality_changes_composite(self):
+        """A provided quality score should change the composite."""
+        r_without = calculate_response_confidence(
+            self._NODES, n_hops=1, current_year=2026,
+        )
+        r_with = calculate_response_confidence(
+            self._NODES, n_hops=1, current_year=2026,
+            site_observation_quality=0.8,
+        )
+        assert r_with["composite"] != r_without["composite"]
+        assert "site_observation_quality_factor" in r_with
+
+    def test_quality_1_gives_factor_1(self):
+        """Quality=1.0 maps to factor=1.0 (no penalty)."""
+        result = calculate_response_confidence(
+            self._NODES, n_hops=1, current_year=2026,
+            site_observation_quality=1.0,
+        )
+        assert result["site_observation_quality_factor"] == pytest.approx(1.0)
+
+    def test_quality_0_gives_factor_05(self):
+        """Quality=0.0 maps to factor=0.5 (worst case halves the composite)."""
+        result = calculate_response_confidence(
+            self._NODES, n_hops=1, current_year=2026,
+            site_observation_quality=0.0,
+        )
+        assert result["site_observation_quality_factor"] == pytest.approx(0.5)
+
+    def test_quality_05_gives_factor_075(self):
+        """Quality=0.5 maps to factor=0.75 (midpoint)."""
+        result = calculate_response_confidence(
+            self._NODES, n_hops=1, current_year=2026,
+            site_observation_quality=0.5,
+        )
+        assert result["site_observation_quality_factor"] == pytest.approx(0.75)
+
+    def test_factor_included_in_explanation(self):
+        result = calculate_response_confidence(
+            self._NODES, n_hops=1, current_year=2026,
+            site_observation_quality=0.6,
+        )
+        assert "OBIS observation quality factor" in result["explanation"]
+
+    def test_existing_tests_unaffected_by_default(self):
+        """Existing behavior is unchanged when parameter not provided."""
+        nodes = [{"source_tier": "T1"}]
+        result = calculate_response_confidence(nodes, n_hops=1, current_year=2026)
+        assert "composite" in result
+        assert "site_observation_quality_factor" not in result

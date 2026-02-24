@@ -354,3 +354,62 @@ def test_climate_scenario_missing_site_fails_closed():
     result = run_climate_scenario(req)
     assert result.confidence == 0.0
     assert "insufficient" in result.answer.lower()
+
+
+# ---------------------------------------------------------------------------
+# Environmental baseline enrichment
+# ---------------------------------------------------------------------------
+
+def test_climate_scenario_without_env_baselines():
+    """run_climate_scenario must still work when no environmental_baselines in site data."""
+    req = ScenarioRequest(
+        scenario_type="climate", site_scope=["cabo_pulmo"],
+        ssp_scenario="SSP2-4.5", target_year=2050,
+    )
+    result = run_climate_scenario(req)
+    # Must succeed without environmental baselines
+    assert isinstance(result, ScenarioResponse)
+    assert result.baseline_case.get("total_esv_usd") > 0
+    # Answer should NOT mention OBIS SST (no baseline data in stock case study)
+    assert "OBIS" not in result.answer
+
+
+def test_climate_scenario_with_env_baselines(monkeypatch):
+    """Adding environmental_baselines to site data should enrich the answer."""
+    from maris.scenario import climate_scenarios
+
+    original_load = climate_scenarios._load_site_data
+
+    def _patched_load(site_name):
+        data = original_load(site_name)
+        if data is not None:
+            data["environmental_baselines"] = {
+                "sst": {
+                    "median_sst_c": 26.5,
+                    "mean_sst_c": 26.8,
+                    "sst_range_c": (22.0, 30.0),
+                    "n_records": 5000,
+                    "bleaching_proximity_c": 2.5,
+                    "source": "OBIS environmental statistics",
+                },
+            }
+        return data
+
+    monkeypatch.setattr(climate_scenarios, "_load_site_data", _patched_load)
+
+    req = ScenarioRequest(
+        scenario_type="climate", site_scope=["cabo_pulmo"],
+        ssp_scenario="SSP2-4.5", target_year=2050,
+    )
+    result = run_climate_scenario(req)
+    assert isinstance(result, ScenarioResponse)
+    # Answer should mention observed SST baseline
+    assert "26.5" in result.answer
+    assert "OBIS" in result.answer
+    # Should have an additional caveat about SST
+    sst_caveats = [c for c in result.caveats if "SST" in c]
+    assert len(sst_caveats) >= 1
+    # Should have OBIS-ENV-BASELINE propagation step
+    env_steps = [s for s in result.propagation_trace if s.axiom_id == "OBIS-ENV-BASELINE"]
+    assert len(env_steps) == 1
+    assert env_steps[0].input_value == 26.5
