@@ -598,7 +598,7 @@ def _render_tipping_point_panel(sites_data: dict[str, dict[str, Any]]) -> None:
     )
     st.markdown(
         '<div class="section-desc">Based on McClanahan et al. 2011 fish biomass thresholds '
-        "(doi:10.1073/pnas.1106861108). Biomass estimated from recovery ratio * 200 kg/ha "
+        "(doi:10.1073/pnas.1106861108). Biomass estimated from recovery ratio * pre-protection baseline "
         "pre-protection baseline. Color coding: green = above warning, amber = mmsy_upper "
         "zone, red = below mmsy_lower.</div>",
         unsafe_allow_html=True,
@@ -652,16 +652,20 @@ def _render_tipping_point_panel(sites_data: dict[str, dict[str, Any]]) -> None:
             found_any = True
             continue
 
-        biomass_kg_ha = float(biomass_ratio) * 200.0
+        from maris.scenario.tipping_point_analyzer import (
+            _DEFAULT_PRE_PROTECTION_BIOMASS_KG_HA,
+        )
+        biomass_kg_ha = float(biomass_ratio) * _DEFAULT_PRE_PROTECTION_BIOMASS_KG_HA
         reef_func = compute_reef_function(biomass_kg_ha)
 
         # Determine nearest lower threshold name and headroom
+        # McClanahan et al. 2011: B0 ~ 1200 kg/ha (empirical unfished biomass)
         threshold_levels = [
             ("collapse", 150),
             ("mmsy_lower", 300),
             ("mmsy_upper", 600),
             ("warning", 1130),
-            ("pristine", 1500),
+            ("pristine", 1200),
         ]
         nearest_name = "below collapse"
         headroom_pct = 0.0
@@ -687,7 +691,8 @@ def _render_tipping_point_panel(sites_data: dict[str, dict[str, Any]]) -> None:
             f"{biomass_kg_ha:.0f}</td>"
             f"<td style='text-align:center;color:{row_color};font-weight:600'>"
             f"{reef_func:.1%}</td>"
-            f"<td style='text-align:center;color:#CBD5E1'>{nearest_name} ({threshold_levels[[t[0] for t in threshold_levels].index(nearest_name)][1]} kg/ha)</td>"
+            f"<td style='text-align:center;color:#CBD5E1'>{nearest_name}"
+            f"{' (' + str(dict(threshold_levels).get(nearest_name, '')) + ' kg/ha)' if nearest_name in dict(threshold_levels) else ''}</td>"
             f"<td style='text-align:center;color:{row_color};font-weight:600'>"
             f"{headroom_pct:.0f}%</td>"
             f"</tr>"
@@ -708,7 +713,7 @@ def _render_tipping_point_panel(sites_data: dict[str, dict[str, Any]]) -> None:
         "Source: McClanahan et al. 2011 "
         '(<a href="https://doi.org/10.1073/pnas.1106861108" target="_blank" '
         'style="color:#5B9BD5">doi:10.1073/pnas.1106861108</a>). '
-        "Thresholds: pristine (1500 kg/ha), warning (1130), mmsy_upper (600), "
+        "Thresholds: pristine (1200 kg/ha, empirical B0), warning (1130), mmsy_upper (600), "
         "mmsy_lower (300), collapse (150). Reef function is a piecewise-linear "
         "mapping from biomass to ecosystem metric retention."
         "</div>",

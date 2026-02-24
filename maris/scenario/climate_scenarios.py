@@ -5,7 +5,7 @@ interpolating habitat degradation from 2025 (0% loss) through IPCC AR6 WG2 Ch.3
 anchor points (2050, 2100) and applying service-specific sensitivity factors.
 
 All degradation anchors sourced from:
-- IPCC AR6 WG2 Ch.3 (doi:10.1007/978-3-031-59144-8)
+- IPCC AR6 WG2 Ch.3 (doi:10.1017/9781009325844.005)
 - Nature 2025 (doi:10.1038/s41586-025-09439-4)
 """
 
@@ -18,6 +18,7 @@ from typing import Any
 import numpy as np
 
 from maris.scenario.constants import (
+    DEGRADATION_ANCHORS,
     SCENARIO_CONFIDENCE_PENALTIES,
     SERVICE_REEF_SENSITIVITY,
 )
@@ -60,31 +61,8 @@ _HABITAT_ALIAS: dict[str, str] = {
     "mixed": "mixed",
 }
 
-# IPCC AR6 WG2 Ch.3 degradation anchors (fraction of habitat lost)
-# Each entry: {year: (low_fraction, high_fraction)}
-# 2025 is implicitly (0.0, 0.0) - no additional loss from baseline
-_DEGRADATION_ANCHORS: dict[str, dict[str, dict[int, tuple[float, float]]]] = {
-    "coral_reef": {
-        "SSP1-2.6": {2050: (0.30, 0.50), 2100: (0.70, 0.90)},
-        "SSP2-4.5": {2050: (0.50, 0.70), 2100: (0.90, 0.99)},
-        "SSP5-8.5": {2050: (0.70, 0.90), 2100: (0.99, 1.00)},
-    },
-    "mangrove_forest": {
-        "SSP1-2.6": {2050: (0.02, 0.08), 2100: (0.08, 0.20)},
-        "SSP2-4.5": {2050: (0.05, 0.15), 2100: (0.15, 0.30)},
-        "SSP5-8.5": {2050: (0.10, 0.25), 2100: (0.30, 0.55)},
-    },
-    "seagrass_meadow": {
-        "SSP1-2.6": {2050: (0.10, 0.20), 2100: (0.20, 0.40)},
-        "SSP2-4.5": {2050: (0.20, 0.35), 2100: (0.35, 0.55)},
-        "SSP5-8.5": {2050: (0.35, 0.55), 2100: (0.55, 0.80)},
-    },
-    "mixed": {
-        "SSP1-2.6": {2050: (0.15, 0.30), 2100: (0.35, 0.60)},
-        "SSP2-4.5": {2050: (0.25, 0.45), 2100: (0.55, 0.80)},
-        "SSP5-8.5": {2050: (0.45, 0.65), 2100: (0.75, 0.95)},
-    },
-}
+# Single source of truth: DEGRADATION_ANCHORS imported from constants.py
+_DEGRADATION_ANCHORS = DEGRADATION_ANCHORS
 
 # Sites that use "mixed" habitat for climate scenarios
 _MIXED_HABITAT_SITES = {"galapagos", "aldabra"}
@@ -303,7 +281,7 @@ def run_climate_scenario(
         output_value=(deg_low + deg_high) / 2,
         output_parameter=f"degradation_fraction_{target_year}",
         coefficient=None,
-        source_doi="10.1007/978-3-031-59144-8",
+        source_doi="10.1017/9781009325844.005",
     ))
 
     # Mid-point degradation for deterministic per-service calculation
@@ -360,7 +338,7 @@ def run_climate_scenario(
             output_value=scenario_val,
             output_parameter=f"scenario_{svc['service_type']}_usd",
             coefficient=service_retained,
-            source_doi="10.1007/978-3-031-59144-8",
+            source_doi="10.1017/9781009325844.005",
         ))
 
     scenario_total = sum(scenario_services.values())

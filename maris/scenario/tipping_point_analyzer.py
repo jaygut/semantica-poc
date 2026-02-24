@@ -26,7 +26,7 @@ def compute_reef_function(biomass_kg_ha: float) -> float:
     Returns value in [0.0, 1.0].
 
     Thresholds (kg/ha):
-        1500+ -> 1.00 (pristine)
+        1200+ -> 1.00 (pristine, empirical B0 estimate)
         1130  -> 0.90 (warning)
         600   -> 0.65 (mmsy_upper)
         300   -> 0.30 (mmsy_lower)
@@ -34,7 +34,7 @@ def compute_reef_function(biomass_kg_ha: float) -> float:
         <150  -> approaches 0
     """
     if biomass_kg_ha >= 1130:
-        return 0.90 + 0.10 * min((biomass_kg_ha - 1130) / 370, 1.0)
+        return 0.90 + 0.10 * min((biomass_kg_ha - 1130) / 70, 1.0)
     elif biomass_kg_ha >= 600:
         return 0.65 + 0.25 * (biomass_kg_ha - 600) / 530
     elif biomass_kg_ha >= 300:
@@ -55,7 +55,7 @@ def get_threshold_proximity(biomass_kg_ha: float) -> str:
         ("mmsy_lower", 300),
         ("mmsy_upper", 600),
         ("warning", 1130),
-        ("pristine", 1500),
+        ("pristine", 1200),
     ]
 
     current_rf = compute_reef_function(biomass_kg_ha)

@@ -8,7 +8,7 @@ Correlation structure (between ESV shocks across sites):
 - Cross-habitat: 0.25-0.40 (moderate - regional climate linkage)
 
 Sources:
-- IPCC AR6 WG2 Ch.3 for SSP degradation anchors
+- IPCC AR6 WG2 Ch.3 (doi:10.1017/9781009325844.005) for SSP degradation anchors
 - McClanahan et al. 2011 (doi:10.1073/pnas.1106861108) for reef thresholds
 - Habitat correlations derived from observed co-occurrence of thermal stress events
 """
@@ -20,6 +20,8 @@ import logging
 from pathlib import Path
 
 import numpy as np
+
+from maris.scenario.constants import DEGRADATION_ANCHORS
 
 logger = logging.getLogger(__name__)
 
@@ -37,25 +39,9 @@ HABITAT_CORRELATION: dict[tuple[str, str], float] = {
     ("mangrove_forest", "seagrass_meadow"): 0.40,
 }
 
-# Mean degradation fraction by habitat under each SSP by target year
-# Derived from IPCC AR6 WG2 Ch.3 anchor points, linearly interpolated from 2025
-_DEGRADATION_ANCHORS: dict[str, dict[str, dict[int, tuple[float, float]]]] = {
-    "coral_reef": {
-        "SSP1-2.6": {2050: (0.30, 0.50), 2100: (0.70, 0.90)},
-        "SSP2-4.5": {2050: (0.50, 0.70), 2100: (0.90, 0.99)},
-        "SSP5-8.5": {2050: (0.70, 0.90), 2100: (0.99, 1.00)},
-    },
-    "mangrove_forest": {
-        "SSP1-2.6": {2050: (0.03, 0.08), 2100: (0.08, 0.15)},
-        "SSP2-4.5": {2050: (0.05, 0.15), 2100: (0.15, 0.30)},
-        "SSP5-8.5": {2050: (0.10, 0.25), 2100: (0.30, 0.50)},
-    },
-    "seagrass_meadow": {
-        "SSP1-2.6": {2050: (0.10, 0.20), 2100: (0.20, 0.40)},
-        "SSP2-4.5": {2050: (0.15, 0.30), 2100: (0.30, 0.50)},
-        "SSP5-8.5": {2050: (0.25, 0.45), 2100: (0.50, 0.70)},
-    },
-}
+# Single source of truth: DEGRADATION_ANCHORS imported from constants.py
+# (IPCC AR6 WG2 Ch.3 anchor points, linearly interpolated from 2025)
+_DEGRADATION_ANCHORS = DEGRADATION_ANCHORS
 
 
 def _interpolate_degradation(

@@ -27,15 +27,26 @@ if str(_PROJECT_ROOT) not in sys.path:
 from investor_demo.components.v4.shared import COLORS, fmt_usd  # noqa: E402
 from maris.axioms.monte_carlo import run_monte_carlo  # noqa: E402
 from maris.axioms.sensitivity import run_sensitivity_analysis  # noqa: E402
+from maris.scenario.constants import SERVICE_REEF_SENSITIVITY  # noqa: E402
 from maris.sites.esv_estimator import _HABITAT_AXIOM_MAP  # noqa: E402
 
 logger = logging.getLogger(__name__)
+
+# Reverse map: display name -> SERVICE_REEF_SENSITIVITY key
+_DISPLAY_TO_SENSITIVITY_KEY: dict[str, str] = {
+    "Tourism": "tourism",
+    "Fisheries": "fisheries",
+    "Coastal Protection": "coastal_protection",
+    "Carbon": "carbon_sequestration",
+    "Carbon Stock": "carbon_sequestration",
+    "Carbon Credits": "carbon_sequestration",
+}
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 
-_BASE_CARBON_PRICE = 30  # USD per tonne (Verra VCS VM0033)
+_BASE_CARBON_PRICE = 25.25  # S&P DBC-1 assessed average (Dec 2024), per constants.py
 
 _SERVICE_NAME_MAP: dict[str, str] = {
     "tourism": "Tourism",
@@ -53,7 +64,7 @@ _SERVICE_NAME_MAP: dict[str, str] = {
     "ecosystem_value": "Ecosystem Value",
 }
 
-# Axiom metadata for all 16 axioms - used to build chains dynamically
+# Axiom metadata subset for chain display - full registry has 40 axioms (BA-001 to BA-040)
 _AXIOM_META: dict[str, dict[str, Any]] = {
     "BA-001": {"name": "MPA biomass to dive tourism value", "coefficient": "Up to 84% higher WTP", "affected_by": ["tourism_growth"]},
     "BA-002": {"name": "No-take MPA biomass multiplier", "coefficient": "4.63x over 10yr", "affected_by": ["habitat_loss"]},
@@ -199,7 +210,34 @@ def apply_scenario_adjustments(
             svc["ci_high"] *= factor
 
         if habitat_loss > 0:
-            reduction = 1.0 - habitat_loss
+            retained = 1.0 - habitat_loss
+            sens_key = _DISPLAY_TO_SENSITIVITY_KEY.get(name)
+            sensitivity = SERVICE_REEF_SENSITIVITY.get(sens_key) if sens_key else None
+            if sensitivity is not None:
+                # Non-linear: interpolate across McClanahan threshold breakpoints
+                # Breakpoints: (habitat_quality, service_retained_fraction)
+                breakpoints = [
+                    (1.00, 1.00),
+                    (0.90, sensitivity["warning"]),
+                    (0.65, sensitivity["mmsy_upper"]),
+                    (0.30, sensitivity["mmsy_lower"]),
+                    (0.05, sensitivity["collapse"]),
+                    (0.00, 0.00),
+                ]
+                reduction = retained  # fallback
+                for i in range(len(breakpoints) - 1):
+                    upper_hab, upper_svc = breakpoints[i]
+                    lower_hab, lower_svc = breakpoints[i + 1]
+                    if retained >= lower_hab:
+                        if upper_hab == lower_hab:
+                            reduction = upper_svc
+                        else:
+                            t = (retained - lower_hab) / (upper_hab - lower_hab)
+                            reduction = lower_svc + t * (upper_svc - lower_svc)
+                        break
+            else:
+                # Services without sensitivity mapping: linear fallback
+                reduction = retained
             svc["value"] *= reduction
             svc["ci_low"] *= reduction
             svc["ci_high"] *= reduction
@@ -825,7 +863,7 @@ def render_scenario_engine(
         col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 0.5])
         with col1:
             carbon_price = st.slider("Carbon Price ($/tonne)", min_value=10, max_value=100,
-                                     value=_BASE_CARBON_PRICE, step=5, key="v4_scenario_carbon_price")
+                                     value=int(round(_BASE_CARBON_PRICE)), step=5, key="v4_scenario_carbon_price")
         with col2:
             habitat_loss_pct = st.slider("Habitat Loss (%)", min_value=0, max_value=50,
                                          value=0, step=1, key="v4_scenario_habitat_loss")
@@ -838,7 +876,7 @@ def render_scenario_engine(
         with col5:
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("Reset to Base", key="v4_scenario_reset"):
-                st.session_state["v4_scenario_carbon_price"] = _BASE_CARBON_PRICE
+                st.session_state["v4_scenario_carbon_price"] = int(round(_BASE_CARBON_PRICE))
                 st.session_state["v4_scenario_habitat_loss"] = 0
                 st.session_state["v4_scenario_tourism_growth"] = 0
                 st.session_state["v4_scenario_fisheries_change"] = 0
@@ -891,7 +929,10 @@ def render_scenario_engine(
             recovery = data.get("ecological_recovery", {})
             biomass_ratio = recovery.get("metrics", {}).get("fish_biomass", {}).get("recovery_ratio")
             if biomass_ratio is not None:
-                biomass_kg_ha = float(biomass_ratio) * 200.0
+                from maris.scenario.tipping_point_analyzer import (
+                    _DEFAULT_PRE_PROTECTION_BIOMASS_KG_HA,
+                )
+                biomass_kg_ha = float(biomass_ratio) * _DEFAULT_PRE_PROTECTION_BIOMASS_KG_HA
                 try:
                     from maris.scenario.tipping_point_analyzer import get_threshold_proximity
                     proximity_msg = get_threshold_proximity(biomass_kg_ha)

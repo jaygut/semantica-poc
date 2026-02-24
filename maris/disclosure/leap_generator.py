@@ -453,7 +453,7 @@ class LEAPGenerator:
                 title="Process for identifying nature-related issues in direct operations",
                 content=(
                     "MARIS knowledge graph identifies nature-related issues through "
-                    "16 bridge axioms mapping ecological states to financial metrics. "
+                    "40 bridge axioms mapping ecological states to financial metrics. "
                     "All claims traceable to DOI-backed peer-reviewed sources."
                 ),
                 populated=True,

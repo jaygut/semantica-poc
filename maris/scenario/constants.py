@@ -3,7 +3,8 @@ Scenario intelligence constants.
 All values sourced from peer-reviewed literature or verified market data.
 """
 
-# IPCC AR6 WG2 Ch.3 + Nature 2025 (doi:10.1038/s41586-025-09439-4)
+# IPCC AR6 WG2 Ch.3 (doi:10.1017/9781009325844.005)
+# + Nature 2025 (doi:10.1038/s41586-025-09439-4)
 SSP_SCENARIOS: dict[str, dict] = {
     "SSP1-2.6": {
         "label": "Low emissions (Paris-aligned, 1.8C by 2100)",
@@ -24,7 +25,7 @@ SSP_SCENARIOS: dict[str, dict] = {
     "SSP5-8.5": {
         "label": "Very high emissions (4.4C by 2100)",
         "warming_2100_c": 4.4,
-        "sea_level_rise_m_range": (0.63, 1.88),
+        "sea_level_rise_m_range": (0.63, 1.01),
         "coral_loss_pct_by_2050": (70, 90),
         "coral_loss_pct_by_2100": (99, 100),
         "mangrove_sea_level_risk": "high",
@@ -34,7 +35,7 @@ SSP_SCENARIOS: dict[str, dict] = {
 # McClanahan et al. 2011 (doi:10.1073/pnas.1106861108)
 # Fish biomass thresholds in kg/ha where ecosystem metrics undergo discontinuous change
 BIOMASS_THRESHOLDS: dict[str, dict] = {
-    "pristine":   {"kg_ha": 1500, "reef_function_pct": 1.00, "label": "Pristine/fully protected"},
+    "pristine":   {"kg_ha": 1200, "reef_function_pct": 1.00, "label": "Pristine/fully protected (B0 estimate)"},
     "warning":    {"kg_ha": 1130, "reef_function_pct": 0.90, "label": "Early warning - macroalgal variance increasing"},
     "mmsy_upper": {"kg_ha": 600,  "reef_function_pct": 0.65, "label": "Upper sustainable yield (B_MMSY upper)"},
     "mmsy_lower": {"kg_ha": 300,  "reef_function_pct": 0.30, "label": "Multiple metrics degrading simultaneously"},
@@ -73,4 +74,32 @@ SCENARIO_CONFIDENCE_PENALTIES: dict[str, dict] = {
     "ssp_uncertainty":        {"SSP1-2.6": 0.05, "SSP2-4.5": 0.10, "SSP5-8.5": 0.15},
     "threshold_proximity":    {"within_10pct": 0.15, "within_20pct": 0.10},
     "missing_site_calibration": {"penalty": 0.20},
+}
+
+# IPCC AR6 WG2 Ch.3 (doi:10.1017/9781009325844.005) degradation anchors
+# Fraction of habitat functional capacity lost by target year, per SSP scenario.
+# Each entry: {year: (low_fraction, high_fraction)}. 2025 is implicitly (0.0, 0.0).
+# Coral reef values interpolated from AR6 WG2 Ch.3 Table 3.4 + Nature 2025 synthesis.
+# Mangrove/seagrass values from AR6 WG2 Ch.3 Sections 3.4.2.5 and 3.4.2.6.
+DEGRADATION_ANCHORS: dict[str, dict[str, dict[int, tuple[float, float]]]] = {
+    "coral_reef": {
+        "SSP1-2.6": {2050: (0.30, 0.50), 2100: (0.70, 0.90)},
+        "SSP2-4.5": {2050: (0.50, 0.70), 2100: (0.90, 0.99)},
+        "SSP5-8.5": {2050: (0.70, 0.90), 2100: (0.99, 1.00)},
+    },
+    "mangrove_forest": {
+        "SSP1-2.6": {2050: (0.02, 0.08), 2100: (0.08, 0.20)},
+        "SSP2-4.5": {2050: (0.05, 0.15), 2100: (0.15, 0.30)},
+        "SSP5-8.5": {2050: (0.10, 0.25), 2100: (0.30, 0.55)},
+    },
+    "seagrass_meadow": {
+        "SSP1-2.6": {2050: (0.10, 0.20), 2100: (0.20, 0.40)},
+        "SSP2-4.5": {2050: (0.20, 0.35), 2100: (0.35, 0.55)},
+        "SSP5-8.5": {2050: (0.35, 0.55), 2100: (0.55, 0.80)},
+    },
+    "mixed": {
+        "SSP1-2.6": {2050: (0.15, 0.30), 2100: (0.35, 0.60)},
+        "SSP2-4.5": {2050: (0.25, 0.45), 2100: (0.55, 0.80)},
+        "SSP5-8.5": {2050: (0.45, 0.65), 2100: (0.75, 0.95)},
+    },
 }
