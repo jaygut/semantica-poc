@@ -575,6 +575,7 @@ def _is_restoration_eligible(site: str) -> bool:
 
 def _render_scenario_workbench(
     scenario_label: str, result_summary: dict[str, Any],
+    key_suffix: str = "",
 ) -> None:
     """Render save/compare controls for the Scenario Workbench."""
     if "saved_scenarios" not in st.session_state:
@@ -585,7 +586,8 @@ def _render_scenario_workbench(
         unsafe_allow_html=True,
     )
 
-    if st.button("Save Scenario", key="v6_save_scenario"):
+    _save_key = f"v6_save_scenario_{key_suffix}" if key_suffix else "v6_save_scenario"
+    if st.button("Save Scenario", key=_save_key):
         st.session_state["saved_scenarios"].append({
             "label": scenario_label,
             **result_summary,
@@ -690,12 +692,14 @@ def render_scenario_engine(
                 _render_scenario_workbench(
                     f"{ssp_key} {target_year} - {short_name}",
                     {"baseline_esv": b_esv, "scenario_esv": s_esv},
+                    key_suffix="climate",
                 )
             else:
                 st.info("Scenario computed in demo mode - live engine returned no data.")
                 _render_scenario_workbench(
                     f"{ssp_key} {target_year} - {short_name} (demo)",
                     {"baseline_esv": base_esv, "scenario_esv": base_esv * 0.5},
+                    key_suffix="climate",
                 )
 
     # ================================================================
@@ -735,12 +739,14 @@ def render_scenario_engine(
                 _render_scenario_workbench(
                     f"Counterfactual - {short_name}",
                     {"baseline_esv": b_esv, "scenario_esv": s_esv},
+                    key_suffix="counterfactual",
                 )
             else:
                 st.info("Scenario computed in demo mode - live engine returned no data.")
                 _render_scenario_workbench(
                     f"Counterfactual - {short_name} (demo)",
                     {"baseline_esv": base_esv, "scenario_esv": base_esv * 0.35},
+                    key_suffix="counterfactual",
                 )
 
     # ================================================================
@@ -801,6 +807,7 @@ def render_scenario_engine(
                             "baseline_esv": base_esv,
                             "scenario_esv": base_esv + result.get("static_npv", 0),
                         },
+                        key_suffix="roi",
                     )
                 else:
                     st.info("Scenario computed in demo mode - ROI engine returned no data.")
@@ -926,6 +933,7 @@ def render_scenario_engine(
         _render_scenario_workbench(
             f"Custom - {short_name}",
             {"baseline_esv": base_esv, "scenario_esv": scenario_esv},
+            key_suffix="custom",
         )
 
     if mode == "demo":

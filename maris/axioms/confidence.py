@@ -197,6 +197,7 @@ def calculate_response_confidence(
     current_year: int | None = None,
     provenance_certificate: dict | None = None,
     provenance_summary: dict | None = None,
+    site_observation_quality: float | None = None,
 ) -> dict:
     """Calculate composite response confidence with full breakdown.
 
@@ -212,6 +213,10 @@ def calculate_response_confidence(
         Number of inference hops from raw data to the answer.
     current_year : int | None
         Override for current year (for testing).
+    site_observation_quality : float | None
+        OBIS-derived observation quality score (0.0 to 1.0). When provided,
+        acts as a multiplicative factor scaled to [0.5, 1.0] so that even
+        poorly-observed sites do not tank the score completely.
 
     Returns
     -------
@@ -284,6 +289,13 @@ def calculate_response_confidence(
         * completeness_factor
     )
 
+    # Apply OBIS observation quality factor when available
+    obs_quality_factor: float | None = None
+    if site_observation_quality is not None:
+        clamped = max(0.0, min(1.0, site_observation_quality))
+        obs_quality_factor = 0.5 + 0.5 * clamped
+        composite *= obs_quality_factor
+
     if provenance_summary is not None:
         evidence_count = int(provenance_summary.get("evidence_count", 0) or 0)
         doi_citation_count = int(provenance_summary.get("doi_citation_count", 0) or 0)
@@ -338,6 +350,11 @@ def calculate_response_confidence(
             f"evidence completeness {int(completeness_factor * 100)}%"
         )
 
+    if obs_quality_factor is not None:
+        explanation_parts.append(
+            f"OBIS observation quality factor {obs_quality_factor:.2f}"
+        )
+
     if provenance_summary is not None:
         if int(provenance_summary.get("evidence_count", 0) or 0) == 0:
             explanation_parts.append("confidence capped: no evidence items")
@@ -358,6 +375,9 @@ def calculate_response_confidence(
         "completeness_factor": round(completeness_factor, 4),
         "explanation": "; ".join(explanation_parts) if explanation_parts else "Standard confidence",
     }
+
+    if obs_quality_factor is not None:
+        result["site_observation_quality_factor"] = round(obs_quality_factor, 4)
 
     # Attach provenance metadata if certificate provided
     if provenance_certificate is not None:

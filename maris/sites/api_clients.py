@@ -158,6 +158,109 @@ class OBISClient(_BaseClient):
             return result.get("results", [])
         return result
 
+    def get_statistics(
+        self,
+        geometry: str | None = None,
+        mpa_name: str | None = None,
+    ) -> dict[str, Any]:
+        """Get observation statistics for a geographic area.
+
+        Returns species count, record count, dataset count, year range.
+        OBIS endpoint: GET /statistics
+        """
+        params: dict[str, Any] = {}
+        if geometry:
+            params["geometry"] = geometry
+        if mpa_name:
+            area_id = self._resolve_area_id(mpa_name)
+            if area_id is not None:
+                params["areaid"] = area_id
+        result = self._get("statistics", params=params)
+        return result if isinstance(result, dict) else {}
+
+    def get_checklist_redlist(
+        self,
+        geometry: str | None = None,
+        mpa_name: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Get IUCN Red List species checklist for a geographic area.
+
+        Returns species with their IUCN category (CR, EN, VU, etc).
+        OBIS endpoint: GET /checklist/redlist
+        """
+        params: dict[str, Any] = {"size": 500}
+        if geometry:
+            params["geometry"] = geometry
+        if mpa_name:
+            area_id = self._resolve_area_id(mpa_name)
+            if area_id is not None:
+                params["areaid"] = area_id
+        result = self._get("checklist/redlist", params=params)
+        if isinstance(result, dict):
+            return result.get("results", [])
+        return result if isinstance(result, list) else []
+
+    def get_statistics_env(
+        self,
+        geometry: str | None = None,
+        mpa_name: str | None = None,
+    ) -> dict[str, Any]:
+        """Get environmental statistics for a geographic area.
+
+        Returns SST (sea surface temperature), SSS (sea surface salinity),
+        and depth distribution bins.
+        OBIS endpoint: GET /statistics/env
+        """
+        params: dict[str, Any] = {}
+        if geometry:
+            params["geometry"] = geometry
+        if mpa_name:
+            area_id = self._resolve_area_id(mpa_name)
+            if area_id is not None:
+                params["areaid"] = area_id
+        result = self._get("statistics/env", params=params)
+        return result if isinstance(result, dict) else {}
+
+    def get_statistics_composition(
+        self,
+        geometry: str | None = None,
+        mpa_name: str | None = None,
+    ) -> dict[str, Any]:
+        """Get taxonomic composition statistics for a geographic area.
+
+        Returns breakdown by major taxonomic groups.
+        OBIS endpoint: GET /statistics/composition
+        """
+        params: dict[str, Any] = {}
+        if geometry:
+            params["geometry"] = geometry
+        if mpa_name:
+            area_id = self._resolve_area_id(mpa_name)
+            if area_id is not None:
+                params["areaid"] = area_id
+        result = self._get("statistics/composition", params=params)
+        return result if isinstance(result, dict) else {}
+
+    def get_statistics_qc(
+        self,
+        geometry: str | None = None,
+        mpa_name: str | None = None,
+    ) -> dict[str, Any]:
+        """Get quality control statistics for a geographic area.
+
+        Returns QC flags: on_land, no_depth, no_match, shoredistance, total.
+        OBIS endpoint: GET /statistics/qc
+        """
+        params: dict[str, Any] = {}
+        if geometry:
+            params["geometry"] = geometry
+        if mpa_name:
+            area_id = self._resolve_area_id(mpa_name)
+            if area_id is not None:
+                params["areaid"] = area_id
+        result = self._get("statistics/qc", params=params)
+        return result if isinstance(result, dict) else {}
+
     def get_checklist(
         self,
         geometry: str | None = None,
