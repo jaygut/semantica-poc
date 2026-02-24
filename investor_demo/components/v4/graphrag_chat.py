@@ -1104,7 +1104,7 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
 
         hover_label = f"<b>{name}</b><br>Type: {_TYPE_LABELS.get(node_type, node_type)}"
 
-        fig.add_trace(go.Scatter(
+        trace_kwargs: dict = dict(
             x=[info["x"]], y=[info["y"]],
             mode=mode,
             marker={
@@ -1115,13 +1115,16 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
             },
             text=[label_text] if label_text else [],
             textposition="bottom center",
-            textfont={"size": font_size, "color": "#CBD5E1", "family": "Inter"},
             hoverinfo="text",
             hovertext=[hover_label],
             hoverlabel={"bgcolor": "#1E293B", "bordercolor": "#475569",
                         "font": {"color": "#E2E8F0", "size": 12}},
             showlegend=False,
-        ))
+        )
+        # Only pass textfont when text is actually shown (size must be >= 1)
+        if font_size > 0:
+            trace_kwargs["textfont"] = {"size": font_size, "color": "#CBD5E1", "family": "Inter"}
+        fig.add_trace(go.Scatter(**trace_kwargs))
 
     # ── Legend annotations (layer type labels on the right) ──────────────────
     layer_annotations: list[dict] = []
