@@ -1126,6 +1126,29 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
             trace_kwargs["textfont"] = {"size": font_size, "color": "#CBD5E1", "family": "Inter"}
         fig.add_trace(go.Scatter(**trace_kwargs))
 
+    # ── Rotated labels for terminal (Document) nodes ─────────────────────────
+    # Plotly Scatter doesn't support textangle; use layout annotations instead.
+    doc_label_annotations: list[dict] = []
+    for name, info in positions.items():
+        if info["type"] != "Document":
+            continue
+        # Truncate long titles; prefer short DOI-like IDs if the name starts with "10."
+        if name.startswith("10."):
+            display = name[:22]
+        else:
+            display = name[:20] + "…" if len(name) > 20 else name
+        doc_label_annotations.append({
+            "x": info["x"],
+            "y": info["y"] - 0.5,   # just below the node circle
+            "xref": "x", "yref": "y",
+            "text": display,
+            "showarrow": False,
+            "textangle": -90,        # vertical, reads bottom-to-top
+            "xanchor": "center",
+            "yanchor": "top",
+            "font": {"size": 9, "color": "#94A3B8", "family": "Inter"},
+        })
+
     # ── Legend annotations (layer type labels on the right) ──────────────────
     layer_annotations: list[dict] = []
     shown_types: set[str] = set()
@@ -1153,10 +1176,10 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
     # ── Canvas sizing ─────────────────────────────────────────────────────────
     ys = [p["y"] for p in positions.values()]
     xs = [p["x"] for p in positions.values()]
-    x_pad = max(6.0, (max(xs) - min(xs)) * 0.08)
+    x_pad = max(8.0, (max(xs) - min(xs)) * 0.08)
     y_pad_top = 1.8
-    # Bottom padding: extra room below Document layer for hover readability
-    y_pad_bot = 2.5
+    # Bottom padding: extra room for rotated Document labels (≈ 20 chars at 9px)
+    y_pad_bot = 5.5
 
     # Canvas height: scale with vertical extent, capped at a sensible range
     y_span = (max(ys) + y_pad_top) - (min(ys) - y_pad_bot)
@@ -1176,7 +1199,7 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
         font={"family": "Inter", "color": "#CBD5E1"},
-        annotations=layer_annotations,
+        annotations=doc_label_annotations + layer_annotations,
         dragmode="pan",
     )
     st.plotly_chart(fig, use_container_width=True, key=f"v4_graph_explorer_{idx}")
@@ -1202,8 +1225,8 @@ def _layout_nodes(graph_path: list[dict]) -> dict[str, dict]:
 
     # Per-layer horizontal spacing (units between node centres)
     _X_SP: dict[str, float] = {
-        "MPA": 6.0, "Habitat": 4.5, "EcosystemService": 4.5,
-        "BridgeAxiom": 4.0, "Document": 3.6,
+        "MPA": 9.0, "Habitat": 7.0, "EcosystemService": 7.0,
+        "BridgeAxiom": 6.5, "Document": 6.0,
     }
     # Vertical gap between the two sub-rows used when staggering a dense layer
     _STAGGER_GAP: dict[str, float] = {
@@ -1244,7 +1267,7 @@ def _layout_nodes(graph_path: list[dict]) -> dict[str, dict]:
     for ntype, names in nodes_by_type.items():
         if ntype not in _LAYER_ORDER:
             y = -2.5
-            x_sp = 4.0
+            x_sp = 6.0
             total_width = (len(names) - 1) * x_sp
             x_start = -total_width / 2.0
             for i, name in enumerate(names):
