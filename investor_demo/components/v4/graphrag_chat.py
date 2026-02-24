@@ -1076,31 +1076,16 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
         size = _NODE_SIZES.get(node_type, 34)
         n_of_type = type_counts.get(node_type, 1)
 
-        # --- label strategy per layer ---
-        if node_type == "Document":
-            # Always marker-only: too many nodes, labels unreadable
+        # --- label strategy: only MPA nodes show a persistent label ---
+        if node_type == "MPA":
+            mode = "markers+text"
+            label_text = name[:30] + "…" if len(name) > 30 else name
+            font_size = 12
+        else:
+            # All other layers: marker-only; full detail available on hover
             mode = "markers"
             label_text = ""
             font_size = 0
-        elif node_type == "BridgeAxiom":
-            if n_of_type <= 10:
-                # Show short axiom ID ("BA-001") at small font
-                mode = "markers+text"
-                # Extract just the axiom ID token (first word), fallback to 6-char truncate
-                first_token = name.split()[0] if name else name
-                label_text = first_token[:8]
-                font_size = 9
-            else:
-                # Too many axioms — marker-only, full info on hover
-                mode = "markers"
-                label_text = ""
-                font_size = 0
-        else:
-            # MPA / Habitat / EcosystemService: rarely more than 4-6 nodes — show label
-            mode = "markers+text"
-            display = name[:28] + "…" if len(name) > 28 else name
-            label_text = display
-            font_size = 12
 
         hover_label = f"<b>{name}</b><br>Type: {_TYPE_LABELS.get(node_type, node_type)}"
 
@@ -1126,30 +1111,7 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
             trace_kwargs["textfont"] = {"size": font_size, "color": "#CBD5E1", "family": "Inter"}
         fig.add_trace(go.Scatter(**trace_kwargs))
 
-    # ── Rotated labels for terminal (Document) nodes ─────────────────────────
-    # Plotly Scatter doesn't support textangle; use layout annotations instead.
-    doc_label_annotations: list[dict] = []
-    for name, info in positions.items():
-        if info["type"] != "Document":
-            continue
-        # Truncate long titles; prefer short DOI-like IDs if the name starts with "10."
-        if name.startswith("10."):
-            display = name[:22]
-        else:
-            display = name[:20] + "…" if len(name) > 20 else name
-        doc_label_annotations.append({
-            "x": info["x"],
-            "y": info["y"] - 0.5,   # just below the node circle
-            "xref": "x", "yref": "y",
-            "text": display,
-            "showarrow": False,
-            "textangle": -90,        # vertical, reads bottom-to-top
-            "xanchor": "center",
-            "yanchor": "top",
-            "font": {"size": 9, "color": "#94A3B8", "family": "Inter"},
-        })
-
-    # ── Legend annotations (layer type labels on the right) ──────────────────
+    # ── Layer legend annotations (right-side, one per layer type) ────────────
     layer_annotations: list[dict] = []
     shown_types: set[str] = set()
     for name, info in positions.items():
@@ -1158,28 +1120,33 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
             continue
         shown_types.add(ntype)
         label = _TYPE_LABELS.get(ntype, ntype)
-        # Place label to the right of the rightmost node in each layer
-        max_x = max(p["x"] for p in positions.values() if p["type"] == ntype)
-        # Use the y of the first node found for this type as the anchor
-        y_anchor = info["y"]
+        # Anchor to the rightmost node in the layer; centre vertically on the
+        # middle y of that layer (average of upper/lower rows when staggered).
+        layer_xs = [p["x"] for p in positions.values() if p["type"] == ntype]
+        layer_ys = [p["y"] for p in positions.values() if p["type"] == ntype]
+        max_x = max(layer_xs)
+        mid_y = (max(layer_ys) + min(layer_ys)) / 2.0
         layer_annotations.append({
-            "x": max_x, "y": y_anchor,
+            "x": max_x, "y": mid_y,
             "xref": "x", "yref": "y",
-            "text": f"<i>{label}</i>",
+            "text": f"<b>{label}</b>",
             "showarrow": False,
             "xanchor": "left",
             "yanchor": "middle",
-            "xshift": 16,
-            "font": {"size": 10, "color": "#64748B", "family": "Inter"},
+            "xshift": 20,
+            "font": {"size": 13, "color": "#94A3B8", "family": "Inter"},
+            "bgcolor": "rgba(15,26,46,0.75)",
+            "bordercolor": "#334155",
+            "borderwidth": 1,
+            "borderpad": 4,
         })
 
     # ── Canvas sizing ─────────────────────────────────────────────────────────
     ys = [p["y"] for p in positions.values()]
     xs = [p["x"] for p in positions.values()]
     x_pad = max(8.0, (max(xs) - min(xs)) * 0.08)
-    y_pad_top = 1.8
-    # Bottom padding: extra room for rotated Document labels (≈ 20 chars at 9px)
-    y_pad_bot = 5.5
+    y_pad_top = 2.0
+    y_pad_bot = 2.0
 
     # Canvas height: scale with vertical extent, capped at a sensible range
     y_span = (max(ys) + y_pad_top) - (min(ys) - y_pad_bot)
@@ -1199,7 +1166,7 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
         font={"family": "Inter", "color": "#CBD5E1"},
-        annotations=doc_label_annotations + layer_annotations,
+        annotations=layer_annotations,
         dragmode="pan",
     )
     st.plotly_chart(fig, use_container_width=True, key=f"v4_graph_explorer_{idx}")
