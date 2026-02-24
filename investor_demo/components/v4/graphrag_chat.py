@@ -33,8 +33,8 @@ _MECHANISM_KEYWORDS = ("how does", "how do", "what is blue carbon")
 
 _LAYER_ORDER = ["MPA", "Habitat", "EcosystemService", "BridgeAxiom", "Document"]
 _LAYER_Y: dict[str, float] = {
-    "MPA": 5.0, "Habitat": 3.8, "EcosystemService": 2.4,
-    "BridgeAxiom": 1.0, "Document": -1.5,
+    "MPA": 10.0, "Habitat": 7.8, "EcosystemService": 5.8,
+    "BridgeAxiom": 3.2, "Document": 0.0,
 }
 _NODE_SIZES: dict[str, int] = {
     "MPA": 50, "EcosystemService": 40, "BridgeAxiom": 36,
@@ -1028,7 +1028,14 @@ def _confidence_breakdown_html(breakdown: dict) -> str:
 
 
 def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
-    """Render the Plotly network graph for a query's subgraph."""
+    """Render the Plotly network graph for a query's subgraph.
+
+    Label strategy (readability-first):
+    - MPA / Habitat / EcosystemService (few nodes, ≤ 6): full label below node
+    - BridgeAxiom (often 10-25 nodes): short ID ("BA-001") when ≤ 10;
+      marker-only with rich hover when > 10
+    - Document (often 20-50 nodes): marker-only with hover tooltip always
+    """
     if not graph_path:
         st.info("No graph path available for this response.")
         return
@@ -1037,9 +1044,14 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
     if not positions:
         return
 
+    # Count nodes per type so we can make per-layer label decisions
+    type_counts: dict[str, int] = {}
+    for info in positions.values():
+        type_counts[info["type"]] = type_counts.get(info["type"], 0) + 1
+
     fig = go.Figure()
 
-    # Draw edges
+    # ── Draw edges ────────────────────────────────────────────────────────────
     for edge in graph_path:
         src = edge.get("from_node", "")
         tgt = edge.get("to_node", "")
@@ -1048,7 +1060,7 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
             continue
         is_evidence = rel == "EVIDENCED_BY"
         edge_color = "#475569" if is_evidence else "#5B9BD5"
-        edge_width = 1.2 if is_evidence else 2.0
+        edge_width = 1.0 if is_evidence else 1.8
         x0, y0 = positions[src]["x"], positions[src]["y"]
         x1, y1 = positions[tgt]["x"], positions[tgt]["y"]
         fig.add_trace(go.Scatter(
@@ -1057,56 +1069,122 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
             hoverinfo="skip", showlegend=False,
         ))
 
-    # Draw nodes - Document labels rendered as rotated annotations below
-    doc_annotations: list[dict] = []
+    # ── Draw nodes ────────────────────────────────────────────────────────────
     for name, info in positions.items():
         node_type = info["type"]
         color = _TYPE_COLORS.get(node_type, _DEFAULT_COLOR)
         size = _NODE_SIZES.get(node_type, 34)
-        display_name = name[:35] + "..." if len(name) > 35 else name
-        is_doc = node_type == "Document"
+        n_of_type = type_counts.get(node_type, 1)
+
+        # --- label strategy per layer ---
+        if node_type == "Document":
+            # Always marker-only: too many nodes, labels unreadable
+            mode = "markers"
+            label_text = ""
+            font_size = 0
+        elif node_type == "BridgeAxiom":
+            if n_of_type <= 10:
+                # Show short axiom ID ("BA-001") at small font
+                mode = "markers+text"
+                # Extract just the axiom ID token (first word), fallback to 6-char truncate
+                first_token = name.split()[0] if name else name
+                label_text = first_token[:8]
+                font_size = 9
+            else:
+                # Too many axioms — marker-only, full info on hover
+                mode = "markers"
+                label_text = ""
+                font_size = 0
+        else:
+            # MPA / Habitat / EcosystemService: rarely more than 4-6 nodes — show label
+            mode = "markers+text"
+            display = name[:28] + "…" if len(name) > 28 else name
+            label_text = display
+            font_size = 12
+
+        hover_label = f"<b>{name}</b><br>Type: {_TYPE_LABELS.get(node_type, node_type)}"
+
         fig.add_trace(go.Scatter(
             x=[info["x"]], y=[info["y"]],
-            mode="markers" if is_doc else "markers+text",
-            marker={"size": size, "color": color, "line": {"width": 2, "color": "#0B1120"}},
-            text=[] if is_doc else [display_name],
+            mode=mode,
+            marker={
+                "size": size,
+                "color": color,
+                "line": {"width": 1.5, "color": "#0B1120"},
+                "opacity": 0.92,
+            },
+            text=[label_text] if label_text else [],
             textposition="bottom center",
-            textfont={"size": 14, "color": "#E2E8F0", "family": "Inter"},
-            hoverinfo="text", hovertext=[f"<b>{name}</b><br>Type: {node_type}"],
+            textfont={"size": font_size, "color": "#CBD5E1", "family": "Inter"},
+            hoverinfo="text",
+            hovertext=[hover_label],
+            hoverlabel={"bgcolor": "#1E293B", "bordercolor": "#475569",
+                        "font": {"color": "#E2E8F0", "size": 12}},
             showlegend=False,
         ))
-        if is_doc:
-            doc_annotations.append({
-                "x": info["x"], "y": info["y"],
-                "xref": "x", "yref": "y",
-                "text": display_name,
-                "showarrow": False,
-                "textangle": 90,
-                "xanchor": "center",
-                "yanchor": "top",
-                "yshift": -16,
-                "font": {"size": 10, "color": "#94A3B8", "family": "Inter"},
-            })
 
+    # ── Legend annotations (layer type labels on the right) ──────────────────
+    layer_annotations: list[dict] = []
+    shown_types: set[str] = set()
+    for name, info in positions.items():
+        ntype = info["type"]
+        if ntype in shown_types:
+            continue
+        shown_types.add(ntype)
+        label = _TYPE_LABELS.get(ntype, ntype)
+        # Place label to the right of the rightmost node in each layer
+        max_x = max(p["x"] for p in positions.values() if p["type"] == ntype)
+        # Use the y of the first node found for this type as the anchor
+        y_anchor = info["y"]
+        layer_annotations.append({
+            "x": max_x, "y": y_anchor,
+            "xref": "x", "yref": "y",
+            "text": f"<i>{label}</i>",
+            "showarrow": False,
+            "xanchor": "left",
+            "yanchor": "middle",
+            "xshift": 16,
+            "font": {"size": 10, "color": "#64748B", "family": "Inter"},
+        })
+
+    # ── Canvas sizing ─────────────────────────────────────────────────────────
     ys = [p["y"] for p in positions.values()]
     xs = [p["x"] for p in positions.values()]
+    x_pad = max(6.0, (max(xs) - min(xs)) * 0.08)
+    y_pad_top = 1.8
+    # Bottom padding: extra room below Document layer for hover readability
+    y_pad_bot = 2.5
+
+    # Canvas height: scale with vertical extent, capped at a sensible range
+    y_span = (max(ys) + y_pad_top) - (min(ys) - y_pad_bot)
+    canvas_height = max(700, min(1200, int(y_span * 80)))
+
     fig.update_layout(
-        height=700,
-        margin={"l": 10, "r": 10, "t": 30, "b": 120},
-        xaxis={"showgrid": False, "zeroline": False, "showticklabels": False,
-               "range": [min(xs) - 2, max(xs) + 2]},
-        yaxis={"showgrid": False, "zeroline": False, "showticklabels": False,
-               "range": [min(ys) - 5, max(ys) + 1.5]},
+        height=canvas_height,
+        margin={"l": 20, "r": 100, "t": 40, "b": 40},
+        xaxis={
+            "showgrid": False, "zeroline": False, "showticklabels": False,
+            "range": [min(xs) - x_pad, max(xs) + x_pad],
+        },
+        yaxis={
+            "showgrid": False, "zeroline": False, "showticklabels": False,
+            "range": [min(ys) - y_pad_bot, max(ys) + y_pad_top],
+        },
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
         font={"family": "Inter", "color": "#CBD5E1"},
-        annotations=doc_annotations,
+        annotations=layer_annotations,
+        dragmode="pan",
     )
-    st.plotly_chart(fig, width="stretch", key=f"v4_graph_explorer_{idx}")
+    st.plotly_chart(fig, use_container_width=True, key=f"v4_graph_explorer_{idx}")
 
 
 def _layout_nodes(graph_path: list[dict]) -> dict[str, dict]:
-    """Build layout mapping for nodes in semantic layers."""
+    """Build layout mapping for nodes in semantic layers.
+
+    Dense layers (BridgeAxiom > 10 nodes, Document > 12 nodes) are staggered
+    into two interleaved sub-rows so nodes don't form a single unreadable line.
+    """
     seen: set[str] = set()
     nodes_by_type: dict[str, list[str]] = {}
     for edge in graph_path:
@@ -1118,23 +1196,56 @@ def _layout_nodes(graph_path: list[dict]) -> dict[str, dict]:
                 nodes_by_type.setdefault(ntype, []).append(name)
     if not seen:
         return {}
+
+    # Per-layer horizontal spacing (units between node centres)
+    _X_SP: dict[str, float] = {
+        "MPA": 6.0, "Habitat": 4.5, "EcosystemService": 4.5,
+        "BridgeAxiom": 4.0, "Document": 3.6,
+    }
+    # Vertical gap between the two sub-rows used when staggering a dense layer
+    _STAGGER_GAP: dict[str, float] = {
+        "BridgeAxiom": 1.4, "Document": 1.2,
+    }
+    # Stagger threshold: use two rows when node count exceeds this value
+    _STAGGER_THRESH: dict[str, int] = {
+        "BridgeAxiom": 10, "Document": 12,
+    }
+
     positions: dict[str, dict] = {}
+
+    def _place_row(names_row: list[str], y: float, x_sp: float, ntype: str) -> None:
+        n = len(names_row)
+        total_width = (n - 1) * x_sp
+        x_start = -total_width / 2.0
+        for i, name in enumerate(names_row):
+            positions[name] = {"x": x_start + i * x_sp, "y": y, "type": ntype}
+
     for ntype in _LAYER_ORDER:
         names = nodes_by_type.get(ntype, [])
         if not names:
             continue
-        y = _LAYER_Y.get(ntype, 0.0)
-        x_sp = 1.6 if ntype == "Document" else 2.2
-        total_width = (len(names) - 1) * x_sp
-        x_start = -total_width / 2
-        for i, name in enumerate(names):
-            positions[name] = {"x": x_start + i * x_sp, "y": y, "type": ntype}
+        y_base = _LAYER_Y.get(ntype, 0.0)
+        x_sp = _X_SP.get(ntype, 4.0)
+        thresh = _STAGGER_THRESH.get(ntype, 999)
+        gap = _STAGGER_GAP.get(ntype, 1.4)
+
+        if len(names) > thresh:
+            # Interleave into two rows: even indices → upper row, odd → lower row
+            row_upper = names[0::2]
+            row_lower = names[1::2]
+            _place_row(row_upper, y_base, x_sp, ntype)
+            _place_row(row_lower, y_base - gap, ntype=ntype, x_sp=x_sp)
+        else:
+            _place_row(names, y_base, x_sp, ntype)
+
     for ntype, names in nodes_by_type.items():
         if ntype not in _LAYER_ORDER:
-            y = -3.0
-            total_width = (len(names) - 1) * 2.2
-            x_start = -total_width / 2
+            y = -2.5
+            x_sp = 4.0
+            total_width = (len(names) - 1) * x_sp
+            x_start = -total_width / 2.0
             for i, name in enumerate(names):
                 if name not in positions:
-                    positions[name] = {"x": x_start + i * 2.2, "y": y, "type": ntype}
+                    positions[name] = {"x": x_start + i * x_sp, "y": y, "type": ntype}
+
     return positions
