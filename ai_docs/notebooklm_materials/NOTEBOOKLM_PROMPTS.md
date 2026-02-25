@@ -29,7 +29,7 @@
 > **Slide 1: The Hook.** 'The Ocean is an Asset Class.' (Problem: Invisible Value).
 > **Slide 2: The Logic.** 'We Don't Guess. We Prove.' (Solution: The Hybrid Intelligence Model - MARIS + Semantica). Explain the 'Physical Link' concept simply.
 > **Slide 3: The Engine.** 'Powered by 40 Global Axioms.' (Technology: Show the diversity of the 40 Bridge Axioms driving the v6 Scenario Intelligence engine - Carbon Market Revenues, SSP Climate Impacts, Tourism Pricing).
-> **Slide 4: The Scale.** 'From One Reef to the World.' ( Traction: $1.62B Portfolio across 9 Global Sites - Cabo Pulmo to Galapagos).
+> **Slide 4: The Scale.** 'From One Reef to the World.' ( Traction: $1.62B Portfolio across 9 Global Sites - Cabo Pulmo to Galapagos. Address the scale by highlighting the automated live data pipeline connecting directly to global ecological databases like OBIS, WoRMS, and Marine Regions to characterize any MPA on Earth).
 > **Slide 5: The Ask.** 'Invest in Truth.' (Call to Action: Join the v6 Global Scaling Platform).
 >
 > **Tone:** Confident, scientific, visionary. Use short, punchy bullet points. Focus on 'Verification' and 'Provenance' as the key differentiators."

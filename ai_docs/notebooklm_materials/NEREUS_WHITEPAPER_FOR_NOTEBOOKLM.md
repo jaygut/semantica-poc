@@ -78,6 +78,7 @@ The current production system has grown into a powerful v6 engine, managing a **
 5.  **And more:** Belize, Raja Ampat, Sundarbans, Aldabra, Cispata Bay.
 
 **Features:**
+*   **Live Data Integration:** Automated characterization pipeline connecting directly to global ecological databases (OBIS, WoRMS, Marine Regions) to assess any MPA globally.
 *   **Forward-Looking Scenario Intelligence:** Deterministically predict climate impacts (SSP2-4.5) and model blue carbon market revenues.
 *   **Live GraphRAG:** Chat with historical site data, guided by valid logic.
 *   **Monte Carlo Simulator:** Stress-test valuations (P5, P50, P95) based on axiom uncertainty.
