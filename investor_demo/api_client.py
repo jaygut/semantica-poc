@@ -150,16 +150,26 @@ class StaticBundleClient:
         if not _HAS_LOGIC_ENGINE:
             return None
 
-        # Scenario queries require the scenario engine or precomputed responses,
-        # not the ESV estimator. Bypass holographic RAG for these patterns.
+        # Scenario and concept queries must use the precomputed responses.
+        # Holographic RAG only handles direct site valuation/carbon intents.
         _q = question.lower()
-        _SCENARIO_BYPASS = (
+        _BYPASS_PHRASES = (
+            # Scenario patterns
             "without protection",
             "tipping point",
             "carbon revenue",
             "under ssp",
+            # Financial mechanism concept queries - precomputed have richer answers
+            "debt-for-nature",
+            "debt for nature",
+            "blue bond",
+            "reef insurance",
+            "parametric insurance",
+            "nature bond",
+            "mpa bond",
+            "relate to",
         )
-        if any(phrase in _q for phrase in _SCENARIO_BYPASS):
+        if any(phrase in _q for phrase in _BYPASS_PHRASES):
             return None
 
         site_data = self._load_site_json(site_name)
@@ -180,7 +190,12 @@ class StaticBundleClient:
                 ))
             
             services, total, conf = estimate_esv(habitats, area_km2=site_data.get("area_km2"))
-            
+
+            # No services computed (e.g. empty habitats array) - fall through to
+            # precomputed cache which has the correct site-specific answer
+            if total == 0.0 and not services:
+                return None
+
             # Format answer
             answer = f"Based on the **Bridge Axiom Registry v2.0**, {site_name} generates an estimated **${total:,.0f} per year** in ecosystem services.\n\n"
             answer += "**Breakdown by Service:**\n"
