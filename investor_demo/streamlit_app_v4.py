@@ -290,7 +290,9 @@ st.markdown(
 )
 
 # ---------------------------------------------------------------------------
-# Tab Structure (6 tabs - Portfolio Overview is new)
+# Tab Structure (7 tabs)
+# tab0=Portfolio, tab1=Analytics, tab2=Intelligence Brief, tab3=Ask Nereus,
+# tab4=Scenario Lab, tab5=Site Intelligence, tab6=TNFD Compliance
 # ---------------------------------------------------------------------------
 tab_names = [
     "Portfolio",
@@ -301,7 +303,7 @@ tab_names = [
     "Site Intelligence",
     "TNFD Compliance",
 ]
-tab0, tab_analytics, tab1, tab2, tab3, tab4, tab5 = st.tabs(tab_names)
+tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(tab_names)
 
 tier = get_site_tier(site)
 
@@ -309,11 +311,11 @@ with tab0:
     from investor_demo.components.v4.portfolio_overview import render_portfolio_overview
     render_portfolio_overview()
 
-with tab_analytics:
+with tab1:
     from investor_demo.components.v4.comparison import render_comparison_tool
     render_comparison_tool(all_sites)
 
-with tab1:
+with tab2:
     if is_feature_available(tier, "intelligence_brief"):
         from investor_demo.components.v4.intelligence_brief import render_intelligence_brief
         render_intelligence_brief(data, site, mode, scenario=st.session_state.v4_scenario)
@@ -323,7 +325,7 @@ with tab1:
             "Add ecosystem service valuations to the case study JSON to unlock this tab."
         )
 
-with tab2:
+with tab3:
     if is_feature_available(tier, "graphrag_chat"):
         from investor_demo.components.v4.graphrag_chat import render_graphrag_chat
         render_graphrag_chat(data, site, mode, client=client)
@@ -332,7 +334,7 @@ with tab2:
             f"{site} has Bronze-tier data. Ask Nereus requires Silver or Gold data quality."
         )
 
-with tab3:
+with tab4:
     if is_feature_available(tier, "scenario_lab"):
         from investor_demo.components.v4.scenario_engine import render_scenario_engine
         render_scenario_engine(data, site, mode)
@@ -341,11 +343,11 @@ with tab3:
             f"{site} has Bronze-tier data. Scenario Lab requires Silver or Gold data quality."
         )
 
-with tab4:
+with tab5:
     from investor_demo.components.v4.site_intelligence import render_site_intelligence
     render_site_intelligence()
 
-with tab5:
+with tab6:
     if is_feature_available(tier, "tnfd_compliance"):
         from investor_demo.components.v4.tnfd_compliance import render_tnfd_compliance
         render_tnfd_compliance(data, site, mode)

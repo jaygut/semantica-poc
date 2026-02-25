@@ -33,8 +33,8 @@ _MECHANISM_KEYWORDS = ("how does", "how do", "what is blue carbon")
 
 _LAYER_ORDER = ["MPA", "Habitat", "EcosystemService", "BridgeAxiom", "Document"]
 _LAYER_Y: dict[str, float] = {
-    "MPA": 5.0, "Habitat": 3.8, "EcosystemService": 2.4,
-    "BridgeAxiom": 1.0, "Document": -1.5,
+    "MPA": 9.5, "Habitat": 7.2, "EcosystemService": 4.8,
+    "BridgeAxiom": 2.0, "Document": -1.8,
 }
 _NODE_SIZES: dict[str, int] = {
     "MPA": 50, "EcosystemService": 40, "BridgeAxiom": 36,
@@ -1105,18 +1105,18 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
     ys = [p["y"] for p in positions.values()]
     xs = [p["x"] for p in positions.values()]
     fig.update_layout(
-        height=700,
-        margin={"l": 10, "r": 10, "t": 30, "b": 120},
+        height=950,
+        margin={"l": 20, "r": 20, "t": 30, "b": 50},
         xaxis={"showgrid": False, "zeroline": False, "showticklabels": False,
-               "range": [min(xs) - 2, max(xs) + 2]},
+               "range": [min(xs) - 3, max(xs) + 3]},
         yaxis={"showgrid": False, "zeroline": False, "showticklabels": False,
-               "range": [min(ys) - 5, max(ys) + 1.5]},
+               "range": [min(ys) - 3.5, max(ys) + 1.5]},
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
         font={"family": "Inter", "color": "#CBD5E1"},
         annotations=doc_annotations,
     )
-    st.plotly_chart(fig, width="stretch", key=f"v4_graph_explorer_{idx}")
+    st.plotly_chart(fig, use_container_width=True, key=f"v4_graph_explorer_{idx}")
 
 
 def _layout_nodes(graph_path: list[dict]) -> dict[str, dict]:
@@ -1132,20 +1132,32 @@ def _layout_nodes(graph_path: list[dict]) -> dict[str, dict]:
                 nodes_by_type.setdefault(ntype, []).append(name)
     if not seen:
         return {}
+    # Compute document layer width first - used to scale upper-layer spacing
+    doc_count = len(nodes_by_type.get("Document", []))
+    doc_width = max((doc_count - 1) * 1.6, 8.0)
+
     positions: dict[str, dict] = {}
     for ntype in _LAYER_ORDER:
         names = nodes_by_type.get(ntype, [])
         if not names:
             continue
         y = _LAYER_Y.get(ntype, 0.0)
-        x_sp = 1.6 if ntype == "Document" else 2.2
-        total_width = (len(names) - 1) * x_sp
+        n = len(names)
+        if ntype == "Document":
+            x_sp = 1.6
+        elif n == 1:
+            x_sp = 0.0
+        else:
+            # Spread upper layers to fill ~60% of document layer width,
+            # but keep at least 3.0 units between nodes and cap at 18.0
+            x_sp = max(3.0, min(doc_width * 0.60 / (n - 1), 18.0))
+        total_width = (n - 1) * x_sp
         x_start = -total_width / 2
         for i, name in enumerate(names):
             positions[name] = {"x": x_start + i * x_sp, "y": y, "type": ntype}
     for ntype, names in nodes_by_type.items():
         if ntype not in _LAYER_ORDER:
-            y = -3.0
+            y = -3.5
             total_width = (len(names) - 1) * 2.2
             x_start = -total_width / 2
             for i, name in enumerate(names):
