@@ -316,7 +316,10 @@ class CaseStudyLoader:
 
         # Link Axioms
         self._link_axioms_to_site(site_name, habitats_linked)
-        
+
+        # OBIS enrichment properties (no-op if keys absent in case study)
+        self._load_obis_properties(site_name, cs)
+
         print(f"  {site_name}: {count} nodes/edges merged.")
         return count
 
@@ -427,6 +430,43 @@ class CaseStudyLoader:
             },
         )
         linked_set.add(hab_id)
+
+    def _load_obis_properties(self, site_name: str, cs: dict) -> None:
+        """Write OBIS-derived properties onto the MPA node (no-op if keys absent)."""
+        bio = cs.get("biodiversity_metrics") or {}
+        qual = cs.get("observation_quality") or {}
+        env = (cs.get("environmental_baselines") or {}).get("sst") or {}
+
+        if not any([bio, qual, env]):
+            return
+
+        year_range = bio.get("year_range")
+        self.session.run(
+            """
+            MATCH (m:MPA {name: $name})
+            SET m.obis_species_richness          = $species_richness,
+                m.obis_iucn_threatened_count     = $iucn_threatened,
+                m.obis_total_records             = $total_records,
+                m.obis_observation_quality_score = $quality_score,
+                m.obis_median_sst_c              = $median_sst,
+                m.obis_bleaching_proximity_c     = $bleaching_proximity,
+                m.obis_data_year_min             = $year_min,
+                m.obis_data_year_max             = $year_max,
+                m.obis_fetched_at                = $fetched_at
+            """,
+            {
+                "name": site_name,
+                "species_richness": bio.get("species_richness"),
+                "iucn_threatened": bio.get("iucn_threatened_count"),
+                "total_records": bio.get("total_records"),
+                "quality_score": qual.get("composite_quality_score"),
+                "median_sst": env.get("median_sst_c"),
+                "bleaching_proximity": env.get("bleaching_proximity_c"),
+                "year_min": year_range[0] if year_range else None,
+                "year_max": year_range[1] if year_range else None,
+                "fetched_at": bio.get("obis_fetched_at"),
+            },
+        )
 
     def _link_axioms_to_site(self, site_name: str, habitats: set[str]) -> None:
         """Link bridge axioms to a site based on its habitat types."""

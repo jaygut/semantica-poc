@@ -143,6 +143,7 @@ def _render_site_table(sites: list[dict[str, Any]]) -> None:
         "<th>Country</th>"
         "<th>Habitat</th>"
         "<th>ESV</th>"
+        "<th style='text-align:right'>Biodiversity</th>"
         "<th>Quality</th>"
         "<th>Rating</th>"
         "<th>NEOLI</th>"
@@ -185,12 +186,52 @@ def _render_site_table(sites: list[dict[str, Any]]) -> None:
                     'margin-right:3px"></span>'
                 )
 
+        # Biodiversity cell
+        sr = s.get("obis_species_richness")
+        iucn = s.get("obis_iucn_threatened")
+        iucn_cat = s.get("obis_iucn_by_category", {})
+
+        if sr is not None:
+            if iucn and iucn > 50:
+                iucn_cls = "bio-threatened-high"
+            elif iucn and iucn > 10:
+                iucn_cls = "bio-threatened-mid"
+            else:
+                iucn_cls = "bio-threatened-low"
+
+            cr = iucn_cat.get("CR", 0)
+            en = iucn_cat.get("EN", 0)
+            vu = iucn_cat.get("VU", 0)
+            pills = []
+            if cr:
+                pills.append(f'<span class="obis-iucn-pill obis-iucn-cr">{cr} CR</span>')
+            if en:
+                pills.append(f'<span class="obis-iucn-pill obis-iucn-en">{en} EN</span>')
+            if vu:
+                pills.append(f'<span class="obis-iucn-pill obis-iucn-vu">{vu} VU</span>')
+            iucn_pills_html = " ".join(pills)
+
+            iucn_badge = (
+                f'<span class="bio-threatened {iucn_cls}">&#9888; {iucn} threatened</span>'
+                if iucn
+                else ""
+            )
+            bio_cell = (
+                f'<td class="bio-cell" style="text-align:right">'
+                f'<span class="bio-spp">{sr:,} spp</span>{iucn_badge}'
+                f'<div style="margin-top:3px">{iucn_pills_html}</div>'
+                f"</td>"
+            )
+        else:
+            bio_cell = '<td class="bio-cell bio-no-data" style="text-align:right">-</td>'
+
         rows += (
             f"<tr>"
             f"<td style='font-weight:600;color:#E2E8F0'>{s.get('name', '')}</td>"
             f"<td>{s.get('country', '')}</td>"
             f"<td>{h_pill}</td>"
             f"<td style='font-weight:600'>{esv_str}</td>"
+            f"{bio_cell}"
             f"<td>{quality}</td>"
             f"<td style='font-weight:600'>{rating}</td>"
             f"<td>{dots}</td>"

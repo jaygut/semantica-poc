@@ -466,5 +466,59 @@
       "What are the key governance and climate risks for Shark Bay World Heritage Area?",
       "Compare Shark Bay World Heritage Area and Sundarbans Reserve Forest by total ecosystem service value."
     ]
+  },
+  "biodiversity_metrics": {
+    "species_richness": 1543,
+    "total_records": 92580,
+    "dataset_count": 96,
+    "year_range": null,
+    "iucn_threatened_count": 61,
+    "iucn_by_category": {
+      "VU": 26,
+      "EN": 30,
+      "CR": 5
+    },
+    "taxonomic_composition": {
+      "birds": {
+        "records": 2432,
+        "species": 44
+      },
+      "fish": {
+        "records": 14279,
+        "species": 736
+      },
+      "mammals": {
+        "records": 3039,
+        "species": 12
+      },
+      "other": {
+        "records": 7491,
+        "species": 786
+      }
+    },
+    "mt_a_summary": "1,543 species documented; 61 IUCN Red List species (5 CR, 30 EN, 26 VU)",
+    "mt_b_summary": "across 96 datasets (92,580 occurrence records)",
+    "obis_fetched_at": "2026-02-24T23:13:12.733541+00:00"
+  },
+  "observation_quality": {
+    "record_density_score": 0.9432,
+    "dataset_diversity_score": 1.0,
+    "qc_pass_rate": 1.0,
+    "temporal_coverage_score": 0.0,
+    "composite_quality_score": 0.7858,
+    "total_records": 92580,
+    "dataset_count": 96,
+    "year_range": null,
+    "explanation": "92,580 OBIS records; 96 datasets; QC pass rate 100%"
+  },
+  "environmental_baselines": {
+    "sst": {
+      "median_sst_c": null,
+      "mean_sst_c": null,
+      "sst_range_c": null,
+      "n_records": 0,
+      "bleaching_proximity_c": null,
+      "source": "OBIS environmental statistics"
+    }
   }
 }

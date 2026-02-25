@@ -154,6 +154,41 @@ class TestOBISEmptyResults:
 
 
 # ---------------------------------------------------------------------------
+# 4b. OBIS client - get_statistics_env
+# ---------------------------------------------------------------------------
+class TestOBISStatisticsEnv:
+    """OBIS get_statistics_env edge cases."""
+
+    def test_statistics_env_returns_dict(self) -> None:
+        env_data = {"sst": [{"bin": 26.0, "count": 100}], "sss": []}
+        resp = _make_mock_response(
+            status_code=200,
+            content=b'{"sst": [{"bin": 26.0, "count": 100}]}',
+            json_data=env_data,
+        )
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics_env(geometry="POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))")
+        assert isinstance(result, dict)
+        assert "sst" in result
+
+    def test_statistics_env_204_returns_empty_dict(self) -> None:
+        resp = _make_mock_response(status_code=204, content=b"")
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics_env(mpa_name="Nonexistent")
+        # _get returns []; get_statistics_env: isinstance([], dict) -> False -> {}
+        assert result == {}
+
+    def test_statistics_env_empty_body_returns_empty_dict(self) -> None:
+        resp = _make_mock_response(status_code=200, content=b"")
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics_env()
+        assert result == {}
+
+
+# ---------------------------------------------------------------------------
 # 5. Marine Regions client - 204 handling
 # ---------------------------------------------------------------------------
 class TestMarineRegions204:
@@ -190,3 +225,179 @@ class TestMarineRegions204:
             client = MarineRegionsClient(max_retries=1)
             results = client.search_by_name("Nonexistent")
         assert results == []
+
+
+# ---------------------------------------------------------------------------
+# 6. OBIS client - get_statistics
+# ---------------------------------------------------------------------------
+class TestOBISGetStatistics:
+    """Tests for OBISClient.get_statistics()."""
+
+    def test_valid_statistics(self) -> None:
+        data = {
+            "species": 1234,
+            "records": 56789,
+            "datasets": 42,
+            "yearmin": 1985,
+            "yearmax": 2023,
+        }
+        resp = _make_mock_response(
+            status_code=200,
+            content=b'{"species": 1234}',
+            json_data=data,
+        )
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics(geometry="POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))")
+        assert result["species"] == 1234
+        assert result["records"] == 56789
+
+    def test_204_returns_empty_dict(self) -> None:
+        resp = _make_mock_response(status_code=204, content=b"")
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics()
+        assert result == {}
+
+    def test_empty_body_returns_empty_dict(self) -> None:
+        resp = _make_mock_response(status_code=200, content=b"")
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics()
+        # _get returns []; isinstance([], dict) -> False -> {}
+        assert result == {}
+
+
+# ---------------------------------------------------------------------------
+# 7. OBIS client - get_checklist_redlist
+# ---------------------------------------------------------------------------
+class TestOBISGetChecklistRedlist:
+    """Tests for OBISClient.get_checklist_redlist()."""
+
+    def test_valid_redlist(self) -> None:
+        data = {
+            "results": [
+                {"scientificName": "Carcharodon carcharias", "category": "VU"},
+                {"scientificName": "Rhincodon typus", "category": "EN"},
+            ],
+        }
+        resp = _make_mock_response(
+            status_code=200,
+            content=b'{"results": []}',
+            json_data=data,
+        )
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_checklist_redlist(
+                geometry="POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))"
+            )
+        assert len(result) == 2
+        assert result[0]["category"] == "VU"
+
+    def test_empty_results(self) -> None:
+        data = {"results": []}
+        resp = _make_mock_response(
+            status_code=200,
+            content=b'{"results": []}',
+            json_data=data,
+        )
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_checklist_redlist()
+        assert result == []
+
+    def test_204_returns_empty_list(self) -> None:
+        resp = _make_mock_response(status_code=204, content=b"")
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_checklist_redlist()
+        # _get returns []; isinstance([], dict) -> False; isinstance([], list) -> True
+        assert result == []
+
+
+# ---------------------------------------------------------------------------
+# 8. OBIS client - get_statistics_composition
+# ---------------------------------------------------------------------------
+class TestOBISGetStatisticsComposition:
+    """Tests for OBISClient.get_statistics_composition()."""
+
+    def test_valid_composition(self) -> None:
+        data = {
+            "Actinopterygii": 800,
+            "Chondrichthyes": 45,
+            "Mammalia": 12,
+        }
+        resp = _make_mock_response(
+            status_code=200,
+            content=b'{}',
+            json_data=data,
+        )
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics_composition(mpa_name="Cabo Pulmo")
+        assert result["Actinopterygii"] == 800
+
+    def test_204_returns_empty_dict(self) -> None:
+        resp = _make_mock_response(status_code=204, content=b"")
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics_composition()
+        assert result == {}
+
+
+# ---------------------------------------------------------------------------
+# 9. OBIS client - get_statistics_qc
+# ---------------------------------------------------------------------------
+class TestOBISGetStatisticsQC:
+    """Tests for OBISClient.get_statistics_qc()."""
+
+    def test_valid_qc_data(self) -> None:
+        qc_data = {
+            "total": 5000,
+            "on_land": 10,
+            "no_depth": 200,
+            "no_match": 5,
+            "shoredistance": 15,
+        }
+        resp = _make_mock_response(
+            status_code=200,
+            content=b'{"total": 5000}',
+            json_data=qc_data,
+        )
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics_qc(mpa_name="Cabo Pulmo")
+        assert isinstance(result, dict)
+        assert result["total"] == 5000
+        assert result["on_land"] == 10
+
+    def test_204_returns_empty_dict(self) -> None:
+        resp = _make_mock_response(status_code=204, content=b"")
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics_qc(mpa_name="Nonexistent")
+        assert result == {}
+
+    def test_empty_body_returns_empty_dict(self) -> None:
+        resp = _make_mock_response(status_code=200, content=b"")
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp):
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics_qc()
+        assert result == {}
+
+    def test_with_geometry_param(self) -> None:
+        qc_data = {"total": 100, "on_land": 2}
+        resp = _make_mock_response(
+            status_code=200,
+            content=b'{"total": 100}',
+            json_data=qc_data,
+        )
+        with patch("maris.sites.api_clients.httpx.get", return_value=resp) as mock_get:
+            client = OBISClient(max_retries=1)
+            result = client.get_statistics_qc(
+                geometry="POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))",
+            )
+        assert result["total"] == 100
+        call_kwargs = mock_get.call_args
+        params = call_kwargs.kwargs.get("params") or call_kwargs[1].get("params", {})
+        assert "geometry" in params

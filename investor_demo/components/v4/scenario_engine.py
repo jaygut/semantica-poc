@@ -24,29 +24,18 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from investor_demo.components.v4.shared import COLORS, fmt_usd  # noqa: E402
+from investor_demo.components.v4.shared import COLORS, fmt_usd, get_obis_data  # noqa: E402
 from maris.axioms.monte_carlo import run_monte_carlo  # noqa: E402
 from maris.axioms.sensitivity import run_sensitivity_analysis  # noqa: E402
-from maris.scenario.constants import SERVICE_REEF_SENSITIVITY  # noqa: E402
 from maris.sites.esv_estimator import _HABITAT_AXIOM_MAP  # noqa: E402
 
 logger = logging.getLogger(__name__)
-
-# Reverse map: display name -> SERVICE_REEF_SENSITIVITY key
-_DISPLAY_TO_SENSITIVITY_KEY: dict[str, str] = {
-    "Tourism": "tourism",
-    "Fisheries": "fisheries",
-    "Coastal Protection": "coastal_protection",
-    "Carbon": "carbon_sequestration",
-    "Carbon Stock": "carbon_sequestration",
-    "Carbon Credits": "carbon_sequestration",
-}
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 
-_BASE_CARBON_PRICE = 25.25  # S&P DBC-1 assessed average (Dec 2024), per constants.py
+_BASE_CARBON_PRICE = 30  # USD per tonne (Verra VCS VM0033)
 
 _SERVICE_NAME_MAP: dict[str, str] = {
     "tourism": "Tourism",
@@ -64,7 +53,7 @@ _SERVICE_NAME_MAP: dict[str, str] = {
     "ecosystem_value": "Ecosystem Value",
 }
 
-# Axiom metadata subset for chain display - full registry has 40 axioms (BA-001 to BA-040)
+# Axiom metadata for all 16 axioms - used to build chains dynamically
 _AXIOM_META: dict[str, dict[str, Any]] = {
     "BA-001": {"name": "MPA biomass to dive tourism value", "coefficient": "Up to 84% higher WTP", "affected_by": ["tourism_growth"]},
     "BA-002": {"name": "No-take MPA biomass multiplier", "coefficient": "4.63x over 10yr", "affected_by": ["habitat_loss"]},
@@ -210,34 +199,7 @@ def apply_scenario_adjustments(
             svc["ci_high"] *= factor
 
         if habitat_loss > 0:
-            retained = 1.0 - habitat_loss
-            sens_key = _DISPLAY_TO_SENSITIVITY_KEY.get(name)
-            sensitivity = SERVICE_REEF_SENSITIVITY.get(sens_key) if sens_key else None
-            if sensitivity is not None:
-                # Non-linear: interpolate across McClanahan threshold breakpoints
-                # Breakpoints: (habitat_quality, service_retained_fraction)
-                breakpoints = [
-                    (1.00, 1.00),
-                    (0.90, sensitivity["warning"]),
-                    (0.65, sensitivity["mmsy_upper"]),
-                    (0.30, sensitivity["mmsy_lower"]),
-                    (0.05, sensitivity["collapse"]),
-                    (0.00, 0.00),
-                ]
-                reduction = retained  # fallback
-                for i in range(len(breakpoints) - 1):
-                    upper_hab, upper_svc = breakpoints[i]
-                    lower_hab, lower_svc = breakpoints[i + 1]
-                    if retained >= lower_hab:
-                        if upper_hab == lower_hab:
-                            reduction = upper_svc
-                        else:
-                            t = (retained - lower_hab) / (upper_hab - lower_hab)
-                            reduction = lower_svc + t * (upper_svc - lower_svc)
-                        break
-            else:
-                # Services without sensitivity mapping: linear fallback
-                reduction = retained
+            reduction = 1.0 - habitat_loss
             svc["value"] *= reduction
             svc["ci_low"] *= reduction
             svc["ci_high"] *= reduction
@@ -613,9 +575,9 @@ def _is_restoration_eligible(site: str) -> bool:
 
 def _render_scenario_workbench(
     scenario_label: str, result_summary: dict[str, Any],
+    key_suffix: str = "",
 ) -> None:
     """Render save/compare controls for the Scenario Workbench."""
-    import re as _re
     if "saved_scenarios" not in st.session_state:
         st.session_state["saved_scenarios"] = []
 
@@ -624,10 +586,8 @@ def _render_scenario_workbench(
         unsafe_allow_html=True,
     )
 
-    # Derive a stable, unique widget key from the scenario label so that
-    # multiple simultaneous calls (one per sub-tab) never collide.
-    _safe = _re.sub(r"[^a-z0-9]+", "_", scenario_label.lower()).strip("_")[:48]
-    if st.button("Save Scenario", key=f"v6_save_scenario_{_safe}"):
+    _save_key = f"v6_save_scenario_{key_suffix}" if key_suffix else "v6_save_scenario"
+    if st.button("Save Scenario", key=_save_key):
         st.session_state["saved_scenarios"].append({
             "label": scenario_label,
             **result_summary,
@@ -647,6 +607,90 @@ def _render_scenario_workbench(
                     f"| ${(s.get('scenario_esv', 0) - s.get('baseline_esv', 0)) / 1e6:.1f}M |\n"
                 )
             st.markdown(header + rows)
+
+
+# ---------------------------------------------------------------------------
+# OBIS Baseline Context
+# ---------------------------------------------------------------------------
+
+
+def _render_obis_baseline_context(data: dict[str, Any], primary_habitat: str) -> None:
+    """Render OBIS-observed baseline context below climate scenario results."""
+    bio = data.get("biodiversity_metrics") or {}
+    qual = data.get("observation_quality") or {}
+    sst = (data.get("environmental_baselines") or {}).get("sst") or {}
+
+    sr = bio.get("species_richness", 0)
+    iucn = bio.get("iucn_threatened_count", 0)
+    records = bio.get("total_records", 0) or qual.get("total_records", 0)
+    quality = qual.get("composite_quality_score")
+    median_sst = sst.get("median_sst_c")
+    bleaching_prox = sst.get("bleaching_proximity_c")
+
+    if not sr and not quality:
+        return  # No OBIS data - silent no-op
+
+    # SST block - only for coral reefs
+    if primary_habitat == "coral_reef" and median_sst is not None:
+        if bleaching_prox is not None:
+            prox_str = f"&#9888; {bleaching_prox:.1f}&deg;C from bleaching threshold"
+        else:
+            prox_str = "OBIS spatial query"
+        sst_html = (
+            f'<div class="obis-context-item">'
+            f'<div class="obis-context-label">Observed Median SST</div>'
+            f'<div class="obis-context-value">{median_sst:.1f}&deg;C</div>'
+            f'<div class="obis-context-sub">{prox_str}</div>'
+            f"</div>"
+        )
+    elif primary_habitat == "coral_reef":
+        sst_html = (
+            '<div class="obis-context-item">'
+            '<div class="obis-context-label">SST Baseline</div>'
+            '<div class="obis-context-value" style="font-size:13px;color:#4A5568">'
+            "Not in OBIS env query</div>"
+            '<div class="obis-context-sub">Degradation uses IPCC AR6 WG2 anchors</div>'
+            "</div>"
+        )
+    else:
+        sst_html = ""
+
+    if quality and quality >= 0.75:
+        q_color = "#66BB6A"
+    elif quality and quality >= 0.55:
+        q_color = "#FFA726"
+    else:
+        q_color = "#EF5350"
+
+    iucn_note = f", {iucn} IUCN Red List" if iucn else ""
+    q_str = f"{quality:.3f}" if quality else "N/A"
+
+    st.markdown(
+        f"""
+    <div class="obis-context-block">
+      <div class="obis-context-title">Observed Ecological Baseline (OBIS)</div>
+      <div class="obis-context-grid">
+        <div class="obis-context-item">
+          <div class="obis-context-label">Documented Species</div>
+          <div class="obis-context-value">{sr:,}</div>
+          <div class="obis-context-sub">{records:,} occurrence records{iucn_note}</div>
+        </div>
+        <div class="obis-context-item">
+          <div class="obis-context-label">Data Quality Score</div>
+          <div class="obis-context-value" style="color:{q_color}">{q_str}</div>
+          <div class="obis-context-sub">Observation confidence index</div>
+        </div>
+        {sst_html}
+      </div>
+      <div style="font-size:11px;color:#4A5568;margin-top:12px;border-top:1px solid #1E2A3A;padding-top:8px">
+        These are observed, empirical counts from OBIS occurrence records.
+        The financial projections above are calibrated against IPCC AR6 WG2 Ch.3 degradation anchors,
+        independently of this observed baseline.
+      </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -680,6 +724,11 @@ def render_scenario_engine(
 
     base_esv = sum(s["value"] for s in base_services)
     primary_habitat = data.get("ecological_status", {}).get("primary_habitat", "")
+
+    # Ensure OBIS fields are present (handles Cabo Pulmo static bundle case)
+    if not data.get("biodiversity_metrics"):
+        obis_extra = get_obis_data(site)
+        data = {**data, **obis_extra}
 
     # ---- Scenario type tabs (v6) ----
     tab_labels = ["Climate Pathway", "Counterfactual", "Restoration ROI", "Custom"]
@@ -732,13 +781,17 @@ def render_scenario_engine(
                 _render_scenario_workbench(
                     f"{ssp_key} {target_year} - {short_name}",
                     {"baseline_esv": b_esv, "scenario_esv": s_esv},
+                    key_suffix="climate",
                 )
+                _render_obis_baseline_context(data, primary_habitat)
             else:
                 st.info("Scenario computed in demo mode - live engine returned no data.")
                 _render_scenario_workbench(
                     f"{ssp_key} {target_year} - {short_name} (demo)",
                     {"baseline_esv": base_esv, "scenario_esv": base_esv * 0.5},
+                    key_suffix="climate",
                 )
+                _render_obis_baseline_context(data, primary_habitat)
 
     # ================================================================
     # Tab: Counterfactual
@@ -777,12 +830,14 @@ def render_scenario_engine(
                 _render_scenario_workbench(
                     f"Counterfactual - {short_name}",
                     {"baseline_esv": b_esv, "scenario_esv": s_esv},
+                    key_suffix="counterfactual",
                 )
             else:
                 st.info("Scenario computed in demo mode - live engine returned no data.")
                 _render_scenario_workbench(
                     f"Counterfactual - {short_name} (demo)",
                     {"baseline_esv": base_esv, "scenario_esv": base_esv * 0.35},
+                    key_suffix="counterfactual",
                 )
 
     # ================================================================
@@ -843,6 +898,7 @@ def render_scenario_engine(
                             "baseline_esv": base_esv,
                             "scenario_esv": base_esv + result.get("static_npv", 0),
                         },
+                        key_suffix="roi",
                     )
                 else:
                     st.info("Scenario computed in demo mode - ROI engine returned no data.")
@@ -863,7 +919,7 @@ def render_scenario_engine(
         col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 0.5])
         with col1:
             carbon_price = st.slider("Carbon Price ($/tonne)", min_value=10, max_value=100,
-                                     value=int(round(_BASE_CARBON_PRICE)), step=5, key="v4_scenario_carbon_price")
+                                     value=_BASE_CARBON_PRICE, step=5, key="v4_scenario_carbon_price")
         with col2:
             habitat_loss_pct = st.slider("Habitat Loss (%)", min_value=0, max_value=50,
                                          value=0, step=1, key="v4_scenario_habitat_loss")
@@ -876,7 +932,7 @@ def render_scenario_engine(
         with col5:
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("Reset to Base", key="v4_scenario_reset"):
-                st.session_state["v4_scenario_carbon_price"] = int(round(_BASE_CARBON_PRICE))
+                st.session_state["v4_scenario_carbon_price"] = _BASE_CARBON_PRICE
                 st.session_state["v4_scenario_habitat_loss"] = 0
                 st.session_state["v4_scenario_tourism_growth"] = 0
                 st.session_state["v4_scenario_fisheries_change"] = 0
@@ -929,10 +985,7 @@ def render_scenario_engine(
             recovery = data.get("ecological_recovery", {})
             biomass_ratio = recovery.get("metrics", {}).get("fish_biomass", {}).get("recovery_ratio")
             if biomass_ratio is not None:
-                from maris.scenario.tipping_point_analyzer import (
-                    _DEFAULT_PRE_PROTECTION_BIOMASS_KG_HA,
-                )
-                biomass_kg_ha = float(biomass_ratio) * _DEFAULT_PRE_PROTECTION_BIOMASS_KG_HA
+                biomass_kg_ha = float(biomass_ratio) * 200.0
                 try:
                     from maris.scenario.tipping_point_analyzer import get_threshold_proximity
                     proximity_msg = get_threshold_proximity(biomass_kg_ha)
@@ -971,6 +1024,7 @@ def render_scenario_engine(
         _render_scenario_workbench(
             f"Custom - {short_name}",
             {"baseline_esv": base_esv, "scenario_esv": scenario_esv},
+            key_suffix="custom",
         )
 
     if mode == "demo":

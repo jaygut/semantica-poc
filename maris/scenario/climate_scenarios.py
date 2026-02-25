@@ -21,6 +21,7 @@ from maris.scenario.constants import (
     DEGRADATION_ANCHORS,
     SCENARIO_CONFIDENCE_PENALTIES,
     SERVICE_REEF_SENSITIVITY,
+    SSP_SCENARIOS,
 )
 from maris.scenario.models import (
     PropagationStep,
@@ -394,6 +395,46 @@ def run_climate_scenario(
         "Service-specific sensitivities based on axiom chain analysis - actual impacts may differ",
         f"Confidence penalized for temporal extrapolation ({target_year}) and SSP uncertainty ({ssp})",
     ]
+
+    # Enrich with environmental baseline if available in site data
+    env_baselines = site_data.get("environmental_baselines", {})
+    sst_baseline = env_baselines.get("sst", {})
+    if sst_baseline.get("median_sst_c") is not None:
+        ssp_warming = float(SSP_SCENARIOS.get(ssp, {}).get("warming_2100_c", 0))
+        # Scale warming by temporal position (linear from 0 at 2025 to full at 2100)
+        temporal_fraction = min(1.0, max(0.0, (target_year - _BASE_YEAR) / (2100 - _BASE_YEAR)))
+        projected_warming = round(ssp_warming * temporal_fraction, 2)
+
+        from maris.scenario.environmental_baselines import compute_warming_impact
+        warming_impact = compute_warming_impact(
+            sst_baseline["median_sst_c"],
+            projected_warming,
+            habitat_key,
+        )
+
+        answer += (
+            f" Observed SST baseline: {sst_baseline['median_sst_c']}C "
+            f"(OBIS, {sst_baseline.get('n_records', 'N/A')} records). "
+            f"{warming_impact['confidence_note']}"
+        )
+
+        caveats.append(
+            "SST baseline derived from OBIS occurrence records, not continuous monitoring"
+        )
+
+        trace.append(PropagationStep(
+            axiom_id="OBIS-ENV-BASELINE",
+            description=(
+                f"Observed SST baseline {sst_baseline['median_sst_c']}C, "
+                f"projected {warming_impact['projected_sst_c']}C under {ssp} by {target_year}"
+            ),
+            input_value=sst_baseline["median_sst_c"],
+            input_parameter="observed_sst_baseline_c",
+            output_value=warming_impact["projected_sst_c"],
+            output_parameter="projected_sst_c",
+            coefficient=projected_warming,
+            source_doi=None,
+        ))
 
     return ScenarioResponse(
         scenario_request=scenario_req,

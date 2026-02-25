@@ -723,3 +723,98 @@ class TestDisclosureEndpoint:
                 headers=auth_headers,
             )
             assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# Biodiversity metrics integration with TNFD disclosures
+# ---------------------------------------------------------------------------
+
+class TestBiodiversityInTNFD:
+    """Verify biodiversity metrics flow into TNFD LEAP disclosures."""
+
+    @pytest.fixture
+    def case_data_with_biodiversity(self, cabo_pulmo_case_data):
+        """Cabo Pulmo data enriched with biodiversity metrics."""
+        data = cabo_pulmo_case_data.copy()
+        data["biodiversity_metrics"] = {
+            "species_richness": 891,
+            "total_records": 34567,
+            "dataset_count": 18,
+            "year_range": (1999, 2023),
+            "iucn_threatened_count": 5,
+            "iucn_by_category": {"CR": 1, "EN": 2, "VU": 2},
+            "mt_a_summary": "891 species documented; 5 IUCN Red List species (1 CR, 2 EN, 2 VU)",
+            "mt_b_summary": "Biodiversity monitoring spans 1999-2023 across 18 datasets (34,567 occurrence records)",
+        }
+        return data
+
+    def test_mt_a_includes_biodiversity(self, generator, case_data_with_biodiversity):
+        disclosure = generator.generate_from_data(
+            "Cabo Pulmo National Park",
+            case_data_with_biodiversity,
+        )
+        mt_a = next(
+            s for s in disclosure.prepare.metrics_targets_sections
+            if s.disclosure_id == "MT-A"
+        )
+        assert "891 species documented" in mt_a.content
+        assert "IUCN Red List" in mt_a.content
+
+    def test_mt_b_includes_biodiversity(self, generator, case_data_with_biodiversity):
+        disclosure = generator.generate_from_data(
+            "Cabo Pulmo National Park",
+            case_data_with_biodiversity,
+        )
+        mt_b = next(
+            s for s in disclosure.prepare.metrics_targets_sections
+            if s.disclosure_id == "MT-B"
+        )
+        assert "1999-2023" in mt_b.content
+        assert "18 datasets" in mt_b.content
+
+    def test_metrics_include_species_richness(self, generator, case_data_with_biodiversity):
+        disclosure = generator.generate_from_data(
+            "Cabo Pulmo National Park",
+            case_data_with_biodiversity,
+        )
+        richness_metrics = [
+            m for m in disclosure.prepare.metrics
+            if m.metric_name == "Species Richness"
+        ]
+        assert len(richness_metrics) == 1
+        assert richness_metrics[0].value == 891
+        assert richness_metrics[0].methodology == "OBIS occurrence records"
+
+    def test_metrics_include_iucn_threatened(self, generator, case_data_with_biodiversity):
+        disclosure = generator.generate_from_data(
+            "Cabo Pulmo National Park",
+            case_data_with_biodiversity,
+        )
+        iucn_metrics = [
+            m for m in disclosure.prepare.metrics
+            if m.metric_name == "IUCN Threatened Species"
+        ]
+        assert len(iucn_metrics) == 1
+        assert iucn_metrics[0].value == 5
+
+    def test_without_biodiversity_still_works(self, generator, cabo_pulmo_case_data):
+        """Disclosure generation works fine without biodiversity_metrics."""
+        disclosure = generator.generate_from_data(
+            "Cabo Pulmo National Park",
+            cabo_pulmo_case_data,
+        )
+        # No biodiversity metrics should be in the metrics list
+        richness_metrics = [
+            m for m in disclosure.prepare.metrics
+            if m.metric_name == "Species Richness"
+        ]
+        assert len(richness_metrics) == 0
+        # Still has 14 disclosures
+        prep = disclosure.prepare
+        total = (
+            len(prep.governance_sections)
+            + len(prep.strategy_sections)
+            + len(prep.risk_management_sections)
+            + len(prep.metrics_targets_sections)
+        )
+        assert total == 14

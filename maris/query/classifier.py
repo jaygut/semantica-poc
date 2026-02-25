@@ -35,10 +35,11 @@ _KEYWORD_RULES: list[tuple[str, list[str]]] = [
         r"\b(?:methodolog\w*|verification|verra|vcs|issuance|accounting)\b",
     ]),
     ("concept_explanation", [
-        r"\bwhat\s+(?:is|are)\b.*\b(?:blue.?carbon|carbon.?credit|coastal.?protect|blue.?bond|nature.?based|tnfd|ecosystem.?service)\b",
+        r"\bwhat\s+(?:is|are)\b.*\b(?:blue.?carbon|carbon.?credit|coastal.?protect|blue.?bonds?|nature.?based|tnfd|ecosystem.?service)\b",
         r"\bhow\b.*\b(?:blue.?carbon|carbon|coastal|ecosystem|nature)\b.*\b(?:work|function|operate)\b",
         r"\bexplain\b.*\b(?:blue.?carbon|carbon|protection|restoration|resilience|trophic|biodiversity)\b",
         r"\bwhat\s+(?:is|are)\b.*\b(?:debt.?for.?nature|reef.?insurance|parametric|mpa.?network|trophic.?cascade)\b",
+        r"\b(?:how\s+(?:does|do|can)|explain)\b.*\b(?:debt.?for.?nature|blue.?bonds?|reef.?insurance|parametric.?insurance|nature.?bonds?|mpa.?bonds?)\b",
     ]),
     ("axiom_explanation", [
         r"\b(?:bridge.?axiom|axiom|coefficient)\b",
@@ -252,7 +253,10 @@ class QueryClassifier:
                 elif (
                     "concept_explanation" in scores
                     and re.search(
-                        r"\b(?:what\s+(?:is|are)|how\s+does|explain)\b.*\b(?:work|function|operate|mechanism)\b",
+                        r"\b(?:what\s+(?:is|are)|how\s+(?:does|do|can)|explain)\b.*"
+                        r"\b(?:work|function|operate|mechanism|relate|link|connect|help|contribute)\b"
+                        r"|\bhow\b.*\b(?:debt.?for.?nature|blue.?bonds?|reef.?insurance|parametric|mpa.?network|nature.?bonds?)\b"
+                        r"|\bwhat\s+(?:is|are)\b.*\b(?:debt.?for.?nature|reef.?insurance|parametric|mpa.?network)\b",
                         q_lower,
                     )
                 ):

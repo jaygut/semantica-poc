@@ -30,6 +30,7 @@ from investor_demo.components.v4.shared import (  # noqa: E402
     COLORS,
     axiom_tag,
     fmt_usd,
+    get_obis_data,
     valuation_method_badge,
 )
 from maris.sites.esv_estimator import _HABITAT_AXIOM_MAP  # noqa: E402
@@ -316,6 +317,79 @@ def _render_masthead(nd: dict[str, Any], mode: str) -> None:
 <div class="masthead-badges">{badges}</div>
 </div>
 """,
+        unsafe_allow_html=True,
+    )
+
+
+def _render_obis_confidence_banner(obis_data: dict[str, Any]) -> None:
+    """Render OBIS observation quality and biodiversity summary banner."""
+    bio = obis_data.get("biodiversity_metrics") or {}
+    qual = obis_data.get("observation_quality") or {}
+
+    if not bio and not qual:
+        return  # No OBIS data yet - silent no-op
+
+    sr = bio.get("species_richness", 0)
+    iucn = bio.get("iucn_threatened_count", 0)
+    iucn_cat = bio.get("iucn_by_category", {})
+    records = bio.get("total_records", 0) or qual.get("total_records", 0)
+    datasets = bio.get("dataset_count", 0) or qual.get("dataset_count", 0)
+    year_range = bio.get("year_range")
+    qc_pass = qual.get("qc_pass_rate", 0)
+    quality = qual.get("composite_quality_score", 0)
+
+    if quality >= 0.75:
+        q_label, q_color = "HIGH", "#66BB6A"
+    elif quality >= 0.55:
+        q_label, q_color = "MODERATE", "#FFA726"
+    else:
+        q_label, q_color = "LOW", "#EF5350"
+
+    fill_pct = int(quality * 100)
+
+    cr = iucn_cat.get("CR", 0)
+    en = iucn_cat.get("EN", 0)
+    vu = iucn_cat.get("VU", 0)
+    iucn_pills = []
+    if cr:
+        iucn_pills.append(f'<span class="obis-iucn-pill obis-iucn-cr">{cr} CR</span>')
+    if en:
+        iucn_pills.append(f'<span class="obis-iucn-pill obis-iucn-en">{en} EN</span>')
+    if vu:
+        iucn_pills.append(f'<span class="obis-iucn-pill obis-iucn-vu">{vu} VU</span>')
+    iucn_pills_html = " ".join(iucn_pills)
+
+    year_str = f"{year_range[0]}-{year_range[1]}" if year_range else "unknown span"
+
+    st.markdown(
+        f"""
+    <div class="obis-banner">
+      <div class="obis-banner-left">
+        <div class="obis-banner-title">OBIS Data Confidence</div>
+        <div class="obis-quality-track">
+          <div class="obis-quality-fill" style="width:{fill_pct}%;
+               background:linear-gradient(90deg,{q_color}88,{q_color});"></div>
+        </div>
+        <div class="obis-quality-label" style="color:{q_color}">
+          {quality:.3f} &middot; {q_label}
+        </div>
+      </div>
+      <div class="obis-banner-stats">
+        <div class="obis-stat-row">
+          <span class="obis-stat-highlight">{sr:,} species documented</span>
+          &nbsp;&middot;&nbsp; {iucn} IUCN Red List {iucn_pills_html}
+        </div>
+        <div class="obis-stat-row">
+          <span class="obis-stat-highlight">{records:,} occurrence records</span>
+          across <span class="obis-stat-highlight">{datasets}</span> datasets
+          &middot; monitoring span {year_str}
+        </div>
+        <div class="obis-stat-muted">
+          QC pass rate: {qc_pass:.0%} &middot; Source: OBIS (Ocean Biodiversity Information System)
+        </div>
+      </div>
+    </div>
+    """,
         unsafe_allow_html=True,
     )
 
@@ -944,6 +1018,8 @@ def render_intelligence_brief(
         st.caption(f"*{disclaimer}*")
 
     _render_investment_thesis(nd)
+    obis_data = get_obis_data(site)
+    _render_obis_confidence_banner(obis_data)
     _render_kpi_strip(nd, scenario=scenario)
     _render_axiom_evidence_table(nd)
     _render_valuation_composition(nd)

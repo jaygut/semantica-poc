@@ -412,5 +412,58 @@
       "How does biodiversity concentration influence Raja Ampat Marine Park asset rating?",
       "Compare Raja Ampat Marine Park and Galapagos Marine Reserve by total ecosystem service value."
     ]
+  },
+  "biodiversity_metrics": {
+    "species_richness": 858,
+    "total_records": 3242,
+    "dataset_count": 51,
+    "year_range": null,
+    "iucn_threatened_count": 41,
+    "iucn_by_category": {
+      "EN": 30,
+      "VU": 11
+    },
+    "taxonomic_composition": {
+      "birds": {
+        "records": 6,
+        "species": 4
+      },
+      "fish": {
+        "records": 2192,
+        "species": 554
+      },
+      "mammals": {
+        "records": 3,
+        "species": 2
+      },
+      "other": {
+        "records": 1020,
+        "species": 281
+      }
+    },
+    "mt_a_summary": "858 species documented; 41 IUCN Red List species (30 EN, 11 VU)",
+    "mt_b_summary": "across 51 datasets (3,242 occurrence records)",
+    "obis_fetched_at": "2026-02-24T23:13:07.244426+00:00"
+  },
+  "observation_quality": {
+    "record_density_score": 0.6667,
+    "dataset_diversity_score": 1.0,
+    "qc_pass_rate": 1.0,
+    "temporal_coverage_score": 0.0,
+    "composite_quality_score": 0.7167,
+    "total_records": 3242,
+    "dataset_count": 51,
+    "year_range": null,
+    "explanation": "3,242 OBIS records; 51 datasets; QC pass rate 100%"
+  },
+  "environmental_baselines": {
+    "sst": {
+      "median_sst_c": null,
+      "mean_sst_c": null,
+      "sst_range_c": null,
+      "n_records": 0,
+      "bleaching_proximity_c": null,
+      "source": "OBIS environmental statistics"
+    }
   }
 }

@@ -860,3 +860,100 @@ class TestT16SemanticaProvenance:
         finally:
             if os.path.exists(db_path):
                 os.unlink(db_path)
+
+
+# ---------------------------------------------------------------------------
+# T1.7: OBIS Enrichment on MPA Nodes
+# ---------------------------------------------------------------------------
+
+@pytest.mark.integration
+@skip_no_neo4j
+class TestT17OBISEnrichment:
+    """T1.7: Verify OBIS enrichment properties on gold-tier MPA nodes.
+
+    Tests gracefully skip if no OBIS data has been fetched yet.
+    Run scripts/enrich_obis.py first to populate OBIS properties.
+    """
+
+    def _get_obis_enriched_mpas(self) -> list[dict]:
+        """Return MPAs that have OBIS data (obis_fetched_at is set)."""
+        return run_query(
+            """
+            MATCH (m:MPA)
+            WHERE m.obis_fetched_at IS NOT NULL
+            RETURN m.name AS name,
+                   m.obis_species_richness AS species_richness,
+                   m.obis_iucn_threatened_count AS iucn_threatened,
+                   m.obis_total_records AS total_records,
+                   m.obis_observation_quality_score AS quality_score,
+                   m.obis_median_sst_c AS median_sst,
+                   m.obis_data_year_min AS year_min,
+                   m.obis_data_year_max AS year_max
+            ORDER BY m.name
+            """
+        )
+
+    def test_obis_properties_on_mpas(self):
+        """If any MPA has OBIS data, verify required properties are set and valid."""
+        enriched = self._get_obis_enriched_mpas()
+
+        if not enriched:
+            pytest.skip(
+                "No MPAs have OBIS data yet. "
+                "Run: python scripts/enrich_obis.py"
+            )
+
+        print(f"\n{len(enriched)} OBIS-enriched MPAs found")
+
+        for mpa in enriched:
+            name = mpa["name"]
+            sr = mpa["species_richness"]
+            assert sr is not None, f"{name}: obis_species_richness is None"
+            assert isinstance(sr, int), (
+                f"{name}: obis_species_richness is not int: {type(sr)}"
+            )
+            assert sr >= 0, f"{name}: obis_species_richness is negative: {sr}"
+
+            tr = mpa["total_records"]
+            assert tr is not None, f"{name}: obis_total_records is None"
+            assert tr >= 0, f"{name}: obis_total_records is negative: {tr}"
+
+            print(f"  {name}: species={sr}, records={tr}")
+
+    def test_obis_quality_score_range(self):
+        """OBIS observation quality score must be in [0, 1] for enriched MPAs."""
+        enriched = self._get_obis_enriched_mpas()
+
+        if not enriched:
+            pytest.skip(
+                "No MPAs have OBIS data yet. "
+                "Run: python scripts/enrich_obis.py"
+            )
+
+        for mpa in enriched:
+            name = mpa["name"]
+            qs = mpa["quality_score"]
+            if qs is not None:
+                assert 0.0 <= qs <= 1.0, (
+                    f"{name}: obis_observation_quality_score {qs} out of [0, 1]"
+                )
+
+        print(f"\nPASS: Quality scores valid for {len(enriched)} OBIS-enriched MPAs")
+
+    def test_obis_year_range_consistency(self):
+        """If year_min and year_max are set, year_min <= year_max."""
+        enriched = self._get_obis_enriched_mpas()
+
+        if not enriched:
+            pytest.skip("No MPAs have OBIS data yet.")
+
+        for mpa in enriched:
+            name = mpa["name"]
+            y_min = mpa["year_min"]
+            y_max = mpa["year_max"]
+            if y_min is not None and y_max is not None:
+                assert y_min <= y_max, (
+                    f"{name}: year_min ({y_min}) > year_max ({y_max})"
+                )
+
+        print(f"\nPASS: Year ranges consistent for {len(enriched)} OBIS-enriched MPAs")

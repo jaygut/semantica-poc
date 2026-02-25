@@ -8591,8 +8591,203 @@
         "explanation": "Axiom is seagrass-derived but applied to mangrove context; carbon valuation uses 2018 price ($20/tCO2) which is below current market; mechanism transfer introduces additional uncertainty"
       },
       "category": "axiom_explanation"
+    },
+    "How does debt-for-nature financing relate to Galapagos Marine Reserve value?": {
+      "answer": "Debt-for-nature financing is directly relevant to Galapagos Marine Reserve's $320.9M annual ecosystem service value (ESV). In 2023, Ecuador executed a landmark $1.6B debt conversion - the largest in history at the time - structured by The Nature Conservancy (TNC), OECD, US Exim Bank, and Inter-American Development Bank. The deal restructured Ecuador's sovereign debt at a discount and redirected $323M over 18.5 years into Galapagos conservation funding.\n\n**How the mechanism relates to ESV:**\n- The $320.9M ESV provides the investment thesis: the reserve generates measurable economic value through tourism ($174.5M), fisheries, and coastal protection, justifying sovereign debt restructuring at conservation-favorable terms\n- BA-031 (Debt-for-Nature Conversion) applies: each $1 of conservation spending preserves the ecological integrity that underpins the ESV stream\n- The deal secured 30-year protection commitments across 198,000 km2 - directly protecting the biomass and habitat stock that drives the AAA asset rating\n- Blue bonds issued as part of the conversion carry lower interest rates because the Galapagos ESV provides credible, measurable collateral for conservation outcomes\n\n**Valuation connection:**\nThe $320.9M annual ESV acts as a floor valuation for the debt conversion: creditors accept discounted restructuring because the conserved reserve generates verified economic returns exceeding the debt service costs. NEOLI 4/5 enforcement mechanisms further reduce credit risk on the conservation commitments.",
+      "confidence": 0.88,
+      "evidence": [
+        {
+          "doi": "10.1016/j.marpol.2025.106549",
+          "doi_url": "https://doi.org/10.1016/j.marpol.2025.106549",
+          "title": "Debt-for-nature swaps and blue bond structures for marine conservation",
+          "tier": "T1",
+          "year": 2025
+        },
+        {
+          "doi": "10.1016/j.marpol.2022.105219",
+          "doi_url": "https://doi.org/10.1016/j.marpol.2022.105219",
+          "title": "Blue bonds for marine conservation: Status, trends, and insights",
+          "tier": "T1",
+          "year": 2022
+        }
+      ],
+      "axioms_used": [
+        "BA-031",
+        "BA-032"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Galapagos Marine Reserve",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Ecosystem Service Value",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-031",
+          "from_type": "BridgeAxiom",
+          "relationship": "GOVERNS",
+          "to_node": "Debt-for-Nature Swap",
+          "to_type": "Concept"
+        },
+        {
+          "from_node": "Debt-for-Nature Swap",
+          "from_type": "Concept",
+          "relationship": "FINANCES",
+          "to_node": "Galapagos Marine Reserve",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "Ecuador's $1.6B Galapagos deal (2023) is the reference case for this mechanism",
+        "ESV provides investment thesis for debt restructuring at conservation-favorable rates",
+        "Computed instantly in Demo Mode using local Python logic engine."
+      ],
+      "verified_claims": [
+        "Ecuador 2023 debt conversion: $1.6B, TNC/OECD/US Exim Bank/IDB structure",
+        "$323M redirected to Galapagos conservation over 18.5 years",
+        "Galapagos Marine Reserve: $320.9M annual ESV, AAA rating, 198,000 km2"
+      ],
+      "unverified_claims": [],
+      "confidence_breakdown": {
+        "data_completeness": 0.95,
+        "source_quality": 0.9,
+        "axiom_coverage": 0.85,
+        "graph_hops": 2,
+        "composite": 0.88
+      }
+    },
+    "How does debt-for-nature financing relate to Galapagos Marine value?": {
+      "answer": "Debt-for-nature financing is directly relevant to Galapagos Marine Reserve's $320.9M annual ecosystem service value (ESV). In 2023, Ecuador executed a landmark $1.6B debt conversion - the largest in history at the time - structured by The Nature Conservancy (TNC), OECD, US Exim Bank, and Inter-American Development Bank. The deal restructured Ecuador's sovereign debt at a discount and redirected $323M over 18.5 years into Galapagos conservation funding.\n\n**How the mechanism relates to ESV:**\n- The $320.9M ESV provides the investment thesis: the reserve generates measurable economic value through tourism ($174.5M), fisheries, and coastal protection, justifying sovereign debt restructuring at conservation-favorable terms\n- BA-031 (Debt-for-Nature Conversion) applies: each $1 of conservation spending preserves the ecological integrity that underpins the ESV stream\n- The deal secured 30-year protection commitments across 198,000 km2 - directly protecting the biomass and habitat stock that drives the AAA asset rating\n- Blue bonds issued as part of the conversion carry lower interest rates because the Galapagos ESV provides credible, measurable collateral for conservation outcomes\n\n**Valuation connection:**\nThe $320.9M annual ESV acts as a floor valuation for the debt conversion: creditors accept discounted restructuring because the conserved reserve generates verified economic returns exceeding the debt service costs. NEOLI 4/5 enforcement mechanisms further reduce credit risk on the conservation commitments.",
+      "confidence": 0.88,
+      "evidence": [
+        {
+          "doi": "10.1016/j.marpol.2025.106549",
+          "doi_url": "https://doi.org/10.1016/j.marpol.2025.106549",
+          "title": "Debt-for-nature swaps and blue bond structures for marine conservation",
+          "tier": "T1",
+          "year": 2025
+        },
+        {
+          "doi": "10.1016/j.marpol.2022.105219",
+          "doi_url": "https://doi.org/10.1016/j.marpol.2022.105219",
+          "title": "Blue bonds for marine conservation: Status, trends, and insights",
+          "tier": "T1",
+          "year": 2022
+        }
+      ],
+      "axioms_used": [
+        "BA-031",
+        "BA-032"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Galapagos Marine Reserve",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Ecosystem Service Value",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-031",
+          "from_type": "BridgeAxiom",
+          "relationship": "GOVERNS",
+          "to_node": "Debt-for-Nature Swap",
+          "to_type": "Concept"
+        },
+        {
+          "from_node": "Debt-for-Nature Swap",
+          "from_type": "Concept",
+          "relationship": "FINANCES",
+          "to_node": "Galapagos Marine Reserve",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "Ecuador's $1.6B Galapagos deal (2023) is the reference case for this mechanism",
+        "ESV provides investment thesis for debt restructuring at conservation-favorable rates",
+        "Computed instantly in Demo Mode using local Python logic engine."
+      ],
+      "verified_claims": [
+        "Ecuador 2023 debt conversion: $1.6B, TNC/OECD/US Exim Bank/IDB structure",
+        "$323M redirected to Galapagos conservation over 18.5 years",
+        "Galapagos Marine Reserve: $320.9M annual ESV, AAA rating, 198,000 km2"
+      ],
+      "unverified_claims": [],
+      "confidence_breakdown": {
+        "data_completeness": 0.95,
+        "source_quality": 0.9,
+        "axiom_coverage": 0.85,
+        "graph_hops": 2,
+        "composite": 0.88
+      }
+    },
+    "How does debt-for-nature financing relate to Galapagos value?": {
+      "answer": "Debt-for-nature financing is directly relevant to Galapagos Marine Reserve's $320.9M annual ecosystem service value (ESV). In 2023, Ecuador executed a landmark $1.6B debt conversion - the largest in history at the time - structured by The Nature Conservancy (TNC), OECD, US Exim Bank, and Inter-American Development Bank. The deal restructured Ecuador's sovereign debt at a discount and redirected $323M over 18.5 years into Galapagos conservation funding.\n\n**How the mechanism relates to ESV:**\n- The $320.9M ESV provides the investment thesis: the reserve generates measurable economic value through tourism ($174.5M), fisheries, and coastal protection, justifying sovereign debt restructuring at conservation-favorable terms\n- BA-031 (Debt-for-Nature Conversion) applies: each $1 of conservation spending preserves the ecological integrity that underpins the ESV stream\n- The deal secured 30-year protection commitments across 198,000 km2 - directly protecting the biomass and habitat stock that drives the AAA asset rating\n- Blue bonds issued as part of the conversion carry lower interest rates because the Galapagos ESV provides credible, measurable collateral for conservation outcomes\n\n**Valuation connection:**\nThe $320.9M annual ESV acts as a floor valuation for the debt conversion: creditors accept discounted restructuring because the conserved reserve generates verified economic returns exceeding the debt service costs. NEOLI 4/5 enforcement mechanisms further reduce credit risk on the conservation commitments.",
+      "confidence": 0.88,
+      "evidence": [
+        {
+          "doi": "10.1016/j.marpol.2025.106549",
+          "doi_url": "https://doi.org/10.1016/j.marpol.2025.106549",
+          "title": "Debt-for-nature swaps and blue bond structures for marine conservation",
+          "tier": "T1",
+          "year": 2025
+        },
+        {
+          "doi": "10.1016/j.marpol.2022.105219",
+          "doi_url": "https://doi.org/10.1016/j.marpol.2022.105219",
+          "title": "Blue bonds for marine conservation: Status, trends, and insights",
+          "tier": "T1",
+          "year": 2022
+        }
+      ],
+      "axioms_used": [
+        "BA-031",
+        "BA-032"
+      ],
+      "graph_path": [
+        {
+          "from_node": "Galapagos Marine Reserve",
+          "from_type": "MPA",
+          "relationship": "GENERATES",
+          "to_node": "Ecosystem Service Value",
+          "to_type": "EcosystemService"
+        },
+        {
+          "from_node": "BA-031",
+          "from_type": "BridgeAxiom",
+          "relationship": "GOVERNS",
+          "to_node": "Debt-for-Nature Swap",
+          "to_type": "Concept"
+        },
+        {
+          "from_node": "Debt-for-Nature Swap",
+          "from_type": "Concept",
+          "relationship": "FINANCES",
+          "to_node": "Galapagos Marine Reserve",
+          "to_type": "MPA"
+        }
+      ],
+      "caveats": [
+        "Ecuador's $1.6B Galapagos deal (2023) is the reference case for this mechanism",
+        "ESV provides investment thesis for debt restructuring at conservation-favorable rates",
+        "Computed instantly in Demo Mode using local Python logic engine."
+      ],
+      "verified_claims": [
+        "Ecuador 2023 debt conversion: $1.6B, TNC/OECD/US Exim Bank/IDB structure",
+        "$323M redirected to Galapagos conservation over 18.5 years",
+        "Galapagos Marine Reserve: $320.9M annual ESV, AAA rating, 198,000 km2"
+      ],
+      "unverified_claims": [],
+      "confidence_breakdown": {
+        "data_completeness": 0.95,
+        "source_quality": 0.9,
+        "axiom_coverage": 0.85,
+        "graph_hops": 2,
+        "composite": 0.88
+      }
     }
   },
-  "total_responses": 146,
+  "total_responses": 149,
   "scenario_analysis_count": 45
 }

@@ -77,7 +77,7 @@ The default landing tab presents a grid view of the entire 9-site portfolio:
 | Section | What You See |
 |---------|-------------|
 | **Portfolio Summary** | Total portfolio ESV, site count, habitat coverage, average rating |
-| **Site Grid** | Cards for all 9 sites showing ESV, habitat type, asset rating, and NEOLI score |
+| **Site Table** | All 9 sites with ESV (color-coded by valuation method), habitat type, asset rating, NEOLI score, and a **Biodiversity** column showing OBIS-observed species count with IUCN Red List threatened-species badges (CR/EN/VU color-coded by severity) |
 | **Portfolio Composition** | Breakdown by habitat type, geography, and ESV contribution |
 | **Risk Heatmap** | Cross-site risk factors and data freshness indicators |
 
@@ -87,6 +87,7 @@ Per-site deep dive with full provenance:
 
 | Section | What You See |
 |---------|-------------|
+| **OBIS Data Confidence Banner** | Green-left-bordered banner showing OBIS composite quality score (gauge bar + label), documented species count, IUCN Red List breakdown (CR/EN/VU pills), occurrence records, dataset count, monitoring year range, and QC pass rate. Appears for all sites that have OBIS enrichment data. |
 | **KPI Strip** | 4 expandable cards: Annual ESV, NEOLI Score, Asset Rating, Confidence Interval (with detailed breakdowns on expand) |
 | **Investment Thesis** | Site-specific narrative with market context |
 | **Provenance Chain** | Interactive Plotly network graph with semantic layers (MPA, Services, Axioms, Documents) |
@@ -105,22 +106,37 @@ A split-panel interface showing both the chat and the reasoning pipeline:
 
 #### Tab 4: Scenario Lab
 
-v6 Prospective Scenario Intelligence - forward-looking analysis with P5/P50/P95 uncertainty envelopes:
+Four-tab forward scenario engine with site-aware axiom chains and OBIS ecological baseline context:
 
-- **Climate Pathway** - SSP1-2.6 / SSP2-4.5 / SSP5-8.5 habitat degradation curves with year slider (2025-2100); McClanahan tipping point proximity badges
-- **Counterfactual** - ESV delta if MPA protection were removed; deterministic provenance chain per site
-- **Restoration ROI** - Benefit-cost ratio for a user-defined investment; break-even year and option value
-- **Custom / Blue Carbon** - Dynamic carbon pricing ($15-65/tCO2e), mangrove/seagrass sequestration revenue modeling
-- **Scenario Workbench** - Save and compare up to 4 scenarios side by side; export as JSON
-- All 36 site x scenario type combinations have precomputed demo-mode answers grounded in actual Python engine output
+**Climate Pathway** - SSP climate scenario analysis:
+- **SSP selector**: SSP1-2.6 (mitigation), SSP2-4.5 (intermediate), SSP5-8.5 (high emissions)
+- **Year slider**: Project to 2030, 2050, or 2100
+- **Degradation results**: ESV impact by service type under the selected climate trajectory, with McClanahan tipping point badges for coral reef sites
+- **Scenario Workbench**: Save and compare up to 3 named scenarios side-by-side
+- **OBIS Ecological Baseline**: Below Climate Pathway results, a context block shows OBIS-observed species count, data quality score, and SST baseline (with bleaching threshold proximity for coral reef sites)
+
+**Counterfactual** - Protection removal delta:
+- Estimate ESV loss if MPA protection were removed
+- Validated anchor: Cabo Pulmo counterfactual delta -$20.16M
+
+**Restoration ROI** - Blue carbon and habitat restoration:
+- Blue carbon revenue modeling with dynamic carbon pricing ($15-$65/tCO2e)
+- Restoration cost vs. carbon revenue benefit-cost ratio (BCR)
+
+**Custom** - Interactive Monte Carlo with parameter controls:
+- **4 parameter sliders**: Carbon price ($10-100/tonne), Habitat loss (0-50%), Tourism growth (-20% to +30%), Fisheries change (-30% to +20%)
+- **Overlay histogram**: Shows how parameter changes shift the ESV distribution relative to the baseline
+- **Tornado sensitivity chart**: Ranks parameters by their impact on total ESV
+- Uses `maris.axioms.monte_carlo` and `maris.axioms.sensitivity` engines for real computation
 
 #### Tab 5: Site Intelligence
 
-Four-panel intelligence view for the selected site:
+Four-panel intelligence view for the selected site, plus OBIS-sourced data quality and environmental context:
 
 - **NEOLI Heatmap** - Portfolio-wide NEOLI alignment scores across all 9 sites, with the selected site highlighted
 - **Habitat-Axiom Map** - Which bridge axioms are applicable to each habitat type in the portfolio
-- **Data Quality Dashboard** - Per-site evidence tier breakdown (T1-T4), DOI coverage, and provenance_summary badges
+- **Data Quality Dashboard** - Per-site evidence tier breakdown (T1-T4), DOI coverage, provenance_summary badges, and an **Observation Quality** column showing the OBIS composite quality score (0-1) for each site
+- **Environmental Profile** - OBIS-observed SST baseline and bleaching threshold proximity for coral reef sites (displayed when OBIS env data is available)
 - **Characterization Pipeline Diagram** - Annotated flow showing the 5-step auto-characterization process (OBIS species pull, WoRMS taxonomy, Marine Regions geometry, ecological scoring, Gold/Silver/Bronze tiering)
 
 #### Tab 6: TNFD Compliance
@@ -187,7 +203,7 @@ Nereus uses two distinct confidence models:
 **Answer-Level Confidence** - A composite score shown on Ask Nereus responses, computed as:
 
 ```
-composite = tier_base * path_discount * staleness_discount * sample_factor
+composite = tier_base * path_discount * staleness_discount * sample_factor [* observation_quality_factor]
 ```
 
 | Factor | What It Measures | Values |
@@ -196,8 +212,9 @@ composite = tier_base * path_discount * staleness_discount * sample_factor
 | path_discount | Inference chain length (graph hops) | -5% per hop, floor 0.1 |
 | staleness_discount | Age of underlying data (based on median year) | No penalty <=5 years, -2%/year beyond, floor 0.3 |
 | sample_factor | Number of independent sources | Linear ramp: 0.6 (1 source) to 1.0 (4+ sources) |
+| observation_quality_factor | OBIS observation quality score for the site (optional) | 0.5 + 0.5 * quality; sites with quality=0.8 get factor 0.9, quality=0.5 gets 0.75 |
 
-Typical score ranges: direct site valuations score 80-88%, mechanism explanations ~74%, and multi-hop risk assessments ~57%. Each factor is independently auditable, so investors can see exactly why a particular answer received its confidence score.
+The `observation_quality_factor` is applied only when a site-specific OBIS quality score is available, making answer confidence sensitive to the underlying observation density and data quality at each site. Typical score ranges: direct site valuations score 80-88%, mechanism explanations ~74%, and multi-hop risk assessments ~57%. Each factor is independently auditable, so investors can see exactly why a particular answer received its confidence score.
 
 ---
 
@@ -250,7 +267,7 @@ Valuation and provenance queries for any of these sites return rich, multi-layer
 
 **Comparison sites** (Great Barrier Reef, Papahanaumokuakea) have governance metadata (NEOLI score, area, asset rating) but not full ecosystem service valuations. Queries about their financial value will note the absence of site-specific valuation data.
 
-When the API is unavailable, Ask Nereus falls back to 146 precomputed responses covering all 7 query categories (valuation, provenance, axiom, comparison, risk, concept_explanation, scenario_analysis). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
+When the API is unavailable, Ask Nereus falls back to 139 precomputed responses covering all 7 query categories (valuation, provenance, axiom, comparison, risk, concept_explanation, scenario_analysis). The fallback uses TF-IDF-style keyword matching to find the best precomputed answer for your question.
 
 ### Graph Explorer
 
@@ -375,7 +392,7 @@ cd investor_demo
 streamlit run streamlit_app.py
 ```
 
-This uses a pre-computed JSON bundle (`docs/demos/context_graph_demo/cabo_pulmo_investment_grade_bundle.json`). The Ask MARIS and Graph Explorer features are not available in v1 static mode, but all pre-computed sections (KPIs, provenance chain, risk profile, framework alignment) render fully.
+This uses a pre-computed JSON bundle (`demos/context_graph_demo/cabo_pulmo_investment_grade_bundle.json`). The Ask MARIS and Graph Explorer features are not available in v1 static mode, but all pre-computed sections (KPIs, provenance chain, risk profile, framework alignment) render fully.
 
 ---
 

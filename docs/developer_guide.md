@@ -6,6 +6,8 @@ Nereus is a provenance-first blue finance platform, powered by MARIS (Marine Ass
 
 The v6 Prospective Scenario Intelligence release (built on v5 Audit-Grade Integrity) transforms Nereus from retrospective ESV valuation into forward-looking scenario intelligence. It adds a `maris/scenario/` module with counterfactual analysis, SSP climate degradation curves, McClanahan tipping point engine, blue carbon revenue modeling, portfolio Nature VaR (Cholesky-correlated Monte Carlo), and real options valuation - all provenance-traced with P5/P50/P95 uncertainty envelopes. A 7th query category (`scenario_analysis`) routes "what if" and SSP questions through the new engine. Bridge axioms expanded from 35 to 40 (BA-036-040: McClanahan threshold axioms). The Neo4j graph contains 953+ nodes and 244+ edges across 9 Gold-tier MPA sites, with a FastAPI query engine covering 7 natural-language classification categories.
 
+The **OBIS Biodiversity Integration** (feature/obis-integration, merged into v6 branch) adds three new modules to `maris/sites/` and `maris/scenario/` that hydrate empirical OBIS occurrence data into the platform. Live OBIS data was fetched for all 9 sites (2026-02-24) and written into case study JSONs and Neo4j MPA nodes as 9 new properties. OBIS observation quality now feeds a multiplicative confidence factor, and TNFD LEAP disclosures include MT-A/MT-B biodiversity metrics sourced directly from OBIS checklists. The v4 dashboard surfaces this data in three locations: a Biodiversity column in Portfolio Overview, an OBIS Data Confidence banner in Intelligence Brief, and an Observed Ecological Baseline block in Scenario Lab.
+
 ## Architecture Overview
 
 ```
@@ -70,11 +72,12 @@ maris/
     models.py                 # Pydantic v2: ScenarioRequest, ScenarioResponse, ScenarioDelta, PropagationStep, ScenarioUncertainty
     scenario_parser.py        # NL -> ScenarioRequest (pattern-based, no LLM required in demo mode)
     counterfactual_engine.py  # run_counterfactual(): protection removal delta (Cabo Pulmo -$20.16M validated)
-    climate_scenarios.py      # run_climate_scenario(): SSP1-2.6/SSP2-4.5/SSP5-8.5 degradation curves per habitat/year
+    climate_scenarios.py      # run_climate_scenario(): SSP1-2.6/SSP2-4.5/SSP5-8.5 degradation curves per habitat/year; enriches answer with observed SST baseline when environmental_baselines present
     tipping_point_analyzer.py # compute_reef_function(): McClanahan 4-threshold piecewise; get_tipping_point_site_report()
     blue_carbon_revenue.py    # compute_blue_carbon_revenue(): dynamic carbon pricing, mangrove/seagrass sequestration
     stress_test_engine.py     # run_portfolio_stress_test(): Nature VaR with Cholesky-correlated Monte Carlo
     real_options_valuator.py  # compute_conservation_option_value(): GBM-based option premium above static NPV
+    environmental_baselines.py # OBIS NEW: SST median and bleaching threshold proximity from OBIS /statistics/env; gracefully returns None when OBIS env query yields no SST bins
   ingestion/                  # Document ingestion pipeline
     pdf_extractor.py          # PDF text extraction
     llm_extractor.py          # LLM-based entity/relationship extraction
@@ -82,7 +85,7 @@ maris/
     graph_merger.py           # Merge extracted triples into Neo4j
   provenance/                 # P0: W3C PROV-O provenance tracking
     manager.py                # MARISProvenanceManager (entity/activity/agent tracking)
-    bridge_axiom_registry.py  # 40 axioms as typed BridgeAxiom objects with TranslationChain
+    bridge_axiom_registry.py  # 35 axioms as typed BridgeAxiom objects with TranslationChain
     bridge_axiom.py           # BridgeAxiom dataclass
     certificate.py            # Provenance certificate generation (JSON/Markdown)
     core.py                   # PROV-O core dataclasses (ProvenanceEntity, ProvenanceActivity, ProvenanceAgent)
@@ -91,9 +94,11 @@ maris/
     doi_verifier.py           # DOI format and reachability verification (v5 NEW)
     models.py                 # Provenance Pydantic models for strict deterministic guards (v5 NEW)
   sites/                      # P1: Multi-site scaling pipeline
-    api_clients.py            # OBIS (numeric area resolution), WoRMS (204 fix), Marine Regions (404+JSON handling) API clients
+    api_clients.py            # OBIS (numeric area resolution + 5 new endpoints for biodiversity/QC/SST), WoRMS (204 fix), Marine Regions (404+JSON handling) API clients
     characterizer.py          # 5-step auto-characterization pipeline (Bronze/Silver/Gold) with multi-signal habitat scoring (keywords, taxonomy, functional groups)
     esv_estimator.py          # Bridge axiom-based ESV estimation with CI propagation
+    biodiversity_metrics.py   # OBIS NEW: species richness, IUCN Red List counts (CR/EN/VU), TNFD MT-A/MT-B summaries from OBIS checklist + WoRMS taxonomy
+    observation_quality.py    # OBIS NEW: composite quality score (0-1) from record_density, dataset_diversity, qc_pass_rate, temporal_coverage; feeds confidence model
     models.py                 # Pydantic v2 models (SiteCharacterization, SpeciesRecord, etc.)
     registry.py               # JSON-backed site registry with CRUD operations
   reasoning/                  # P2: Cross-domain reasoning engine
@@ -148,6 +153,7 @@ investor_demo/
 | Script | Purpose |
 |--------|---------|
 | `scripts/populate_neo4j_v4.py` | v4 11-stage generic populator with dynamic site discovery (recommended) |
+| `scripts/enrich_obis.py` | OBIS NEW: fetches live biodiversity/QC/SST data for all 9 sites; `--dry-run`, `--site SITE_NAME`, `--force` flags; requires `PYTHONPATH=.` |
 | `scripts/populate_neo4j.py` | Legacy 8-stage population pipeline (Cabo Pulmo + Shark Bay only) |
 | `scripts/validate_graph.py` | Verifies node counts, relationship integrity, axiom evidence chains |
 | `scripts/generate_scenario_audit_bundle.py` | v6 NEW: generates 5 canonical scenario transcripts in docs/scenario_audit_bundle/ |
@@ -209,7 +215,7 @@ The `scripts/populate_neo4j_v4.py` script uses `maris.config_v4` for dynamic sit
 | 4 | `_populate_site(site)` | Each case study JSON | MPA enrichment (NEOLI, ESV, habitats), EcosystemService values, Species nodes, TrophicLevel food web |
 | 5 | `_populate_site_services(site)` | Each case study JSON | GENERATES edges linking MPA to EcosystemService |
 | 6 | `_populate_site_species(site)` | Each case study JSON | Species nodes with LOCATED_IN and INHABITS edges |
-| 7 | `_populate_bridge_axioms()` | `bridge_axiom_templates.json` + `bridge_axioms.json` | 40 BridgeAxiom nodes; EVIDENCED_BY, APPLIES_TO, TRANSLATES edges |
+| 7 | `_populate_bridge_axioms()` | `bridge_axiom_templates.json` + `bridge_axioms.json` | 35 BridgeAxiom nodes; EVIDENCED_BY, APPLIES_TO, TRANSLATES edges |
 | 8 | `_populate_comparison_sites()` | Hardcoded | Great Barrier Reef, Papahanaumokuakea MPA nodes |
 | 9 | `_populate_relationships()` | `relationships.json` | Cross-domain relationship edges |
 | 10 | `_populate_cross_domain_links()` | Dynamic | Structural edges (HAS_HABITAT, PROVIDES, INHABITS, GOVERNS, etc.) |
@@ -283,10 +289,10 @@ MARIS_LLM_API_KEY=<your-api-key>
 
 ```bash
 # Using uv (recommended)
-uv pip install -e .
+uv pip install -r requirements-v2.txt
 
 # Or using pip
-pip install -e .
+pip install -r requirements-v2.txt
 ```
 
 ### Populate the Knowledge Graph
@@ -307,7 +313,7 @@ The v4 populator executes the 11-stage pipeline described above, dynamically dis
 python scripts/validate_graph.py
 ```
 
-Checks node counts by label (953+ nodes expected), relationship integrity (244+ edges expected), and that all 40 bridge axioms have at least one EVIDENCED_BY edge to a Document node.
+Checks node counts by label (938+ nodes expected), relationship integrity (244+ edges expected), and that all 40 bridge axioms have at least one EVIDENCED_BY edge to a Document node. Also reports OBIS enrichment status (informational, non-blocking).
 
 ---
 
@@ -360,7 +366,7 @@ streamlit run streamlit_app_v3.py --server.port 8503
 streamlit run streamlit_app_v2.py
 ```
 
-The v4 dashboard opens at `http://localhost:8504` with 6 tabs: Portfolio Overview, Intelligence Brief, Ask Nereus (GraphRAG), Scenario Lab, Site Intelligence, and TNFD Compliance. Each tab has dual-mode operation (Live/Demo) toggled from the sidebar. The v3 dashboard opens at `http://localhost:8503`. The v2 dashboard opens at `http://localhost:8501`.
+The v4 dashboard opens at `http://localhost:8504` with 6 tabs: Portfolio Overview, Intelligence Brief, Ask Nereus (GraphRAG), Scenario Lab, Site Scout, and TNFD Compliance. Each tab has dual-mode operation (Live/Demo) toggled from the sidebar. The v3 dashboard opens at `http://localhost:8503`. The v2 dashboard opens at `http://localhost:8501`.
 
 ### Docker Compose
 
@@ -450,10 +456,10 @@ The `maris/query/validators.py` module implements a 5-step validation pipeline t
 
 ### Confidence Model
 
-The confidence model in `maris/axioms/confidence.py` computes a composite score from four independently auditable factors:
+The confidence model in `maris/axioms/confidence.py` computes a composite score from four independently auditable factors, with an optional fifth factor from OBIS observation quality:
 
 ```
-composite = tier_base * path_discount * staleness_discount * sample_factor
+composite = tier_base * path_discount * staleness_discount * sample_factor [* observation_quality_factor]
 ```
 
 | Factor | Description | Range |
@@ -462,20 +468,30 @@ composite = tier_base * path_discount * staleness_discount * sample_factor
 | `path_discount` | Graph distance penalty: -5% per hop from source to claim, with a floor of 0.1. | 0.10 - 1.00 |
 | `staleness_discount` | Data age penalty based on the **median** data year (not the oldest), so a single old foundational paper does not tank the score when most evidence is recent. No penalty for data <=5 years old, -2% per year beyond that, floor of 0.3. If no year information is available, defaults to 0.85. | 0.30 - 1.00 |
 | `sample_factor` | Source diversity: **linear ramp** from 0.6 (single source) to 1.0 (4+ sources). A single peer-reviewed source still carries meaningful weight (0.6); additional sources provide incremental corroboration up to saturation at 4 independent sources. | 0.60 - 1.00 |
+| `observation_quality_factor` | **OBIS NEW** - Optional multiplicative factor applied when `site_observation_quality` is present in the site context. Scales the composite score using `0.5 + 0.5 * quality` so that a zero-quality site receives 50% rather than 0%, and a perfect-quality site applies no penalty. Currently sourced from `maris/sites/observation_quality.py`. | 0.50 - 1.00 |
 
-The model is inspired by the GRADE framework (evidence certainty grading), the IPCC likelihood scale, and knowledge-graph confidence propagation techniques. It produces sensible gradients: well-characterized sites with mostly T1 evidence score 80-88%, mechanism explanations ~74%, and multi-hop risk assessments ~57%.
+The model is inspired by the GRADE framework (evidence certainty grading), the IPCC likelihood scale, and knowledge-graph confidence propagation techniques. It produces sensible gradients: well-characterized sites with mostly T1 evidence score 80-88%, mechanism explanations ~74%, and multi-hop risk assessments ~57%. When OBIS observation quality is available (e.g., Aldabra quality=0.800), the factor is 0.90, slightly reducing the composite to reflect empirical data density.
 
 The function returns a breakdown dict containing the composite score, each individual factor, and a human-readable explanation string suitable for display in the dashboard.
 
 ### Data Freshness Tracking
 
-MPA nodes in the knowledge graph carry freshness metadata to flag aging data:
+MPA nodes in the knowledge graph carry freshness metadata to flag aging data, plus 9 OBIS-sourced properties hydrated by `scripts/enrich_obis.py`:
 
 | Property | Type | Description |
 |----------|------|-------------|
 | `biomass_measurement_year` | int | Year of the most recent biomass measurement |
 | `data_freshness_status` | string | Computed status: "current" (<=5 years old), "aging" (<=10 years), or "stale" (>10 years) |
 | `last_validated_date` | string | ISO date when the data was last verified against source publications |
+| `obis_species_richness` | int | Total distinct species in OBIS occurrence records within site bounding box |
+| `obis_iucn_threatened_count` | int | Count of IUCN Red List species (CR + EN + VU) from OBIS checklist |
+| `obis_total_records` | int | Total OBIS occurrence records within site bounding box |
+| `obis_observation_quality_score` | float | Composite quality score 0-1 (record_density, dataset_diversity, qc_pass_rate, temporal_coverage) |
+| `obis_median_sst_c` | float or null | Median sea surface temperature from OBIS /statistics/env; null if OBIS env query returns no SST bins |
+| `obis_bleaching_proximity_c` | float or null | Degrees from bleaching threshold (28.5°C for tropical coral reefs); null for non-coral habitats or missing SST |
+| `obis_data_year_min` | int | Earliest year of OBIS occurrence records |
+| `obis_data_year_max` | int | Latest year of OBIS occurrence records |
+| `obis_fetched_at` | string | ISO 8601 datetime when enrichment was last run |
 
 Freshness status is computed during the population pipeline in `maris/graph/population.py`. Graph validation (`scripts/validate_graph.py`) warns on missing `biomass_measurement_year` and flags stale data. The staleness status feeds directly into the confidence model via the `staleness_discount` factor described above.
 
@@ -501,7 +517,7 @@ The output is designed to be directly interpretable by investors and underwriter
 
 ### Bridge Axiom Uncertainty Quantification
 
-Bridge axiom templates (v2.1) now include uncertainty quantification fields alongside the existing coefficient data:
+Bridge axiom templates (v1.3) now include uncertainty quantification fields alongside the existing coefficient data:
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -556,7 +572,7 @@ The v4 populator discovers case study files automatically via `maris/config_v4.p
 
 ### Test Suite
 
-The project includes **1141 tests** (790+ unit + 230+ integration + 13 scenario invariants) across 27 test files. Tests cover the full stack: query classification (with hardened regex patterns), Cypher template generation, LLM response validation, confidence model (aligned with visible evidence payload), sensitivity analysis, API endpoints, graph population, W3C PROV-O provenance, DOI verification, deterministic provenance guards, multi-site scaling (with OBIS area resolution and WoRMS 204 handling), cross-domain reasoning (with rule compilation), TNFD disclosure, axiom discovery (with LLM-enhanced pattern detection), Semantica SDK bridge adapters, and LLM discovery integration against live DeepSeek.
+The project includes **1020 tests** (790+ unit + 230+ integration) across 27 test files. Tests cover the full stack: query classification (with hardened regex patterns), Cypher template generation, LLM response validation, confidence model (aligned with visible evidence payload), sensitivity analysis, API endpoints, graph population, W3C PROV-O provenance, DOI verification, deterministic provenance guards, multi-site scaling (with OBIS area resolution and WoRMS 204 handling), cross-domain reasoning (with rule compilation), TNFD disclosure, axiom discovery (with LLM-enhanced pattern detection), Semantica SDK bridge adapters, and LLM discovery integration against live DeepSeek.
 
 **Setup and execution:**
 
@@ -627,7 +643,7 @@ tests/
 The project uses GitHub Actions (`.github/workflows/ci.yml`) for continuous integration on every push and pull request to `main`:
 
 1. **Lint** - Runs `ruff` for code style and import order checks
-2. **Test** - Runs the full pytest suite (1141 tests: 790+ unit + 230+ integration + 13 scenario invariants)
+2. **Test** - Runs the full pytest suite (1020 tests: 790+ unit + 230+ integration)
 
 Dev dependencies are specified in `requirements-dev.txt`: pytest>=8.0, pytest-asyncio>=0.23, httpx>=0.26, ruff>=0.8, pytest-cov>=4.0.
 
@@ -656,7 +672,7 @@ Expected: JSON response with `answer`, `confidence` >= 0.5, `evidence` array wit
 python scripts/validate_graph.py
 ```
 
-Checks: node counts per label (953+ nodes, 244+ edges across 11 MPA nodes), all 40 BridgeAxiom nodes have EVIDENCED_BY edges, all MPA nodes have GENERATES edges to EcosystemService nodes.
+Checks: node counts per label (938+ nodes, 244+ edges across 11 MPA nodes), all 35 BridgeAxiom nodes have EVIDENCED_BY edges, all MPA nodes have GENERATES edges to EcosystemService nodes.
 
 ---
 

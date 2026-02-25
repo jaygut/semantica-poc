@@ -60,6 +60,16 @@ VALIDATION_QUERIES = {
         """,
         "description": "MPA data freshness status",
     },
+    "obis_enrichment": {
+        "cypher": """
+            MATCH (m:MPA)
+            WHERE m.characterization_tier = 'gold'
+            RETURN
+                count(m) AS total_gold,
+                count(m.obis_species_richness) AS with_obis_data
+        """,
+        "description": "OBIS enrichment coverage for gold-tier MPAs",
+    },
 }
 
 
@@ -155,6 +165,23 @@ def validate_graph(verbose: bool = True) -> dict:
             print("\nDATA AGE ERRORS:")
             for e in age_results["errors"]:
                 print(f"  [ERROR] {e}")
+
+        # OBIS enrichment info
+        obis_records = results.get("obis_enrichment", [{}])
+        if obis_records:
+            total_gold = obis_records[0].get("total_gold", 0)
+            with_obis = obis_records[0].get("with_obis_data", 0)
+            if with_obis == 0 and total_gold > 0:
+                print(
+                    f"\nOBIS ENRICHMENT WARNING:"
+                    f"\n  [WARN] No gold-tier MPAs have OBIS data "
+                    f"({total_gold} gold sites). Run: python scripts/enrich_obis.py"
+                )
+            else:
+                print(
+                    f"\nOBIS ENRICHMENT:"
+                    f"\n  [INFO] {with_obis}/{total_gold} gold-tier MPAs enriched with OBIS data"
+                )
 
         print("=" * 60)
         print(f"Overall: {'ALL CHECKS PASSED' if all_pass else 'SOME CHECKS FAILED'}")

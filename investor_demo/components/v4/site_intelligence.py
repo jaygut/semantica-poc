@@ -301,6 +301,9 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
         for tier in ("T1", "T2", "T3", "T4"):
             portfolio_tiers[tier] += tier_dist.get(tier, 0)
 
+        obs_quality = data.get("observation_quality", {})
+        obs_composite = obs_quality.get("composite_quality_score")
+
         site_rows.append({
             "name": name,
             "n_services": len(services),
@@ -312,6 +315,7 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
             "n_url_only": n_url_only,
             "doi_coverage_pct": doi_coverage_pct,
             "tier_dist": tier_dist,
+            "obs_quality_score": obs_composite,
             "n_caveats": len(caveats),
             "assessment_year": assessment_year,
         })
@@ -364,6 +368,7 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
         "<th style='text-align:center'>URL-Only</th>"
         "<th style='text-align:center'>DOI Coverage</th>"
         "<th style='text-align:center'>Tier Mix (T1/T2/T3/T4)</th>"
+        "<th style='text-align:center'>Obs. Quality</th>"
         "<th style='text-align:center'>Caveats</th>"
         "<th style='text-align:center'>Assessment Year</th></tr>"
     )
@@ -373,6 +378,22 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
         short_name = sr["name"]
         if len(short_name) > 28:
             short_name = " ".join(short_name.split()[:3])
+
+        # Observation quality badge
+        oqs = sr.get("obs_quality_score")
+        if oqs is not None:
+            if oqs > 0.7:
+                oq_color = "#66BB6A"
+            elif oqs > 0.4:
+                oq_color = "#FFA726"
+            else:
+                oq_color = "#EF5350"
+            oq_cell = (
+                f"<td style='text-align:center;font-weight:600;color:{oq_color}'>"
+                f"{oqs:.2f}</td>"
+            )
+        else:
+            oq_cell = "<td style='text-align:center;color:#64748B'>N/A</td>"
 
         rows += (
             f"<tr>"
@@ -389,6 +410,7 @@ def _render_data_quality(sites_data: dict[str, dict[str, Any]]) -> None:
             f"{sr['tier_dist'].get('T1', 0)}/{sr['tier_dist'].get('T2', 0)}/"
             f"{sr['tier_dist'].get('T3', 0)}/{sr['tier_dist'].get('T4', 0)}"
             f"</td>"
+            f"{oq_cell}"
             f"<td style='text-align:center'>{sr['n_caveats']}</td>"
             f"<td style='text-align:center'>{sr['assessment_year']}</td>"
             f"</tr>"
@@ -722,6 +744,118 @@ def _render_tipping_point_panel(sites_data: dict[str, dict[str, Any]]) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Section F: Environmental Profile (OBIS SST baselines)
+# ---------------------------------------------------------------------------
+
+
+def _render_environmental_profile(sites_data: dict[str, dict[str, Any]]) -> None:
+    """Render per-site environmental profile from pre-computed baselines.
+
+    Displays SST, SSS, and bleaching proximity for sites that have
+    environmental_baselines in their case study JSON.  No live API calls.
+    """
+    # Check if any site has environmental baselines
+    sites_with_env = {
+        name: data
+        for name, data in sites_data.items()
+        if data.get("environmental_baselines", {}).get("sst", {}).get("median_sst_c") is not None
+    }
+    if not sites_with_env:
+        return
+
+    st.markdown(
+        '<div class="section-header">Environmental Profile (OBIS SST Baselines)</div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<div class="section-desc">Observed sea surface temperature (SST) baselines '
+        "from OBIS occurrence records. For coral reef sites, bleaching proximity "
+        "indicates the margin below the NOAA Coral Reef Watch threshold (29C). "
+        "Source: doi:10.1007/s00338-018-1755-4 (Skirving et al. 2019).</div>",
+        unsafe_allow_html=True,
+    )
+
+    header = (
+        "<tr>"
+        "<th>Site</th>"
+        "<th style='text-align:center'>Habitat</th>"
+        "<th style='text-align:center'>Median SST (C)</th>"
+        "<th style='text-align:center'>Mean SST (C)</th>"
+        "<th style='text-align:center'>SST Range (C)</th>"
+        "<th style='text-align:center'>Records</th>"
+        "<th style='text-align:center'>Bleaching Proximity</th>"
+        "</tr>"
+    )
+
+    rows = ""
+    for name in sorted(sites_with_env.keys()):
+        data = sites_with_env[name]
+        sst = data.get("environmental_baselines", {}).get("sst", {})
+        primary_habitat = data.get("ecological_status", {}).get("primary_habitat", "unknown")
+        habitat_label = _HABITAT_LABELS.get(primary_habitat, primary_habitat.replace("_", " ").title())
+
+        median_sst = sst.get("median_sst_c")
+        mean_sst = sst.get("mean_sst_c")
+        sst_range = sst.get("sst_range_c")
+        n_records = sst.get("n_records", 0)
+        bleaching_prox = sst.get("bleaching_proximity_c")
+
+        short_name = name
+        if len(name) > 28:
+            short_name = " ".join(name.split()[:3])
+
+        range_str = f"{sst_range[0]}-{sst_range[1]}" if sst_range else "N/A"
+        n_str = f"{n_records:,}" if n_records else "N/A"
+
+        # Bleaching proximity color coding (coral reef only)
+        if primary_habitat == "coral_reef" and bleaching_prox is not None:
+            if bleaching_prox <= 1.0:
+                prox_color = "#EF5350"  # red - very close
+                prox_label = f"{bleaching_prox}C"
+            elif bleaching_prox <= 3.0:
+                prox_color = "#FFA726"  # amber - moderate
+                prox_label = f"{bleaching_prox}C"
+            else:
+                prox_color = "#66BB6A"  # green - safe margin
+                prox_label = f"{bleaching_prox}C"
+        elif bleaching_prox is not None:
+            prox_color = "#94A3B8"
+            prox_label = f"{bleaching_prox}C"
+        else:
+            prox_color = "#64748B"
+            prox_label = "N/A"
+
+        rows += (
+            f"<tr>"
+            f"<td style='font-weight:600;color:#E2E8F0;white-space:nowrap'>{short_name}</td>"
+            f"<td style='text-align:center;color:#94A3B8'>{habitat_label}</td>"
+            f"<td style='text-align:center;color:#5B9BD5;font-weight:600'>"
+            f"{median_sst if median_sst is not None else 'N/A'}</td>"
+            f"<td style='text-align:center;color:#CBD5E1'>"
+            f"{mean_sst if mean_sst is not None else 'N/A'}</td>"
+            f"<td style='text-align:center;color:#94A3B8'>{range_str}</td>"
+            f"<td style='text-align:center;color:#94A3B8'>{n_str}</td>"
+            f"<td style='text-align:center;color:{prox_color};font-weight:600'>"
+            f"{prox_label}</td>"
+            f"</tr>"
+        )
+
+    st.markdown(
+        f'<table class="evidence-table"><thead>{header}</thead><tbody>{rows}</tbody></table>',
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        '<div style="margin-top:14px;font-size:13px;color:#64748B">'
+        "SST baselines derived from OBIS occurrence record distributions. "
+        "Bleaching threshold: 29C (MMM + 1C, NOAA Coral Reef Watch). "
+        "These are observation-derived baselines, not continuous monitoring data."
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+
+# ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
 
@@ -759,3 +893,4 @@ def render_site_intelligence(sites_data: dict[str, dict[str, Any]] | None = None
     _render_data_quality(sites_data)
     _render_pipeline_diagram(sites_data)
     _render_tipping_point_panel(sites_data)
+    _render_environmental_profile(sites_data)

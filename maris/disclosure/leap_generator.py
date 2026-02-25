@@ -500,7 +500,7 @@ class LEAPGenerator:
                 disclosure_id="MT-A",
                 pillar="Metrics & Targets",
                 title="Metrics used to assess nature-related risks and opportunities",
-                content=self._metrics_content(evaluate, assess),
+                content=self._metrics_content(evaluate, assess, case_data),
                 populated=True,
             ),
             DisclosureSection(
@@ -578,7 +578,12 @@ class LEAPGenerator:
             f"Demonstrates resilience range under parameter uncertainty."
         )
 
-    def _metrics_content(self, evaluate: TNFDEvaluate, assess: TNFDAssess) -> str:
+    def _metrics_content(
+        self,
+        evaluate: TNFDEvaluate,
+        assess: TNFDAssess,
+        case_data: dict | None = None,
+    ) -> str:
         parts = [
             f"Total ESV: ${evaluate.total_esv_usd:,.0f}/year.",
             f"NEOLI score: {assess.neoli_score}/5.",
@@ -590,6 +595,13 @@ class LEAPGenerator:
                 f"Monte Carlo P5-P95 range: "
                 f"${mc.get('p5', 0):,.0f} - ${mc.get('p95', 0):,.0f}."
             )
+        # Biodiversity metrics from OBIS (if available in case data)
+        if case_data:
+            biodiversity = case_data.get("biodiversity_metrics", {})
+            if biodiversity:
+                mt_a = biodiversity.get("mt_a_summary", "")
+                if mt_a:
+                    parts.append(mt_a + ".")
         return " ".join(parts)
 
     def _impact_metrics_content(self, case_data: dict, evaluate: TNFDEvaluate) -> str:
@@ -612,6 +624,13 @@ class LEAPGenerator:
             parts.append(
                 f"Carbon sequestration: {seq.get('rate_tCO2_per_ha_yr', 0)} tCO2/ha/yr."
             )
+
+        # Biodiversity metrics from OBIS (if available in case data)
+        biodiversity = case_data.get("biodiversity_metrics", {})
+        if biodiversity:
+            mt_b = biodiversity.get("mt_b_summary", "")
+            if mt_b:
+                parts.append(mt_b + ".")
 
         # Service count
         parts.append(
@@ -675,6 +694,23 @@ class LEAPGenerator:
                 value=seq.get("rate_tCO2_per_ha_yr"),
                 unit="tCO2/ha/yr",
                 source_doi="10.1038/s41558-018-0096-y",
+            ))
+
+        # Biodiversity metrics from OBIS (if available in case data)
+        biodiversity = case_data.get("biodiversity_metrics", {})
+        if biodiversity.get("species_richness"):
+            metrics.append(MetricEntry(
+                metric_name="Species Richness",
+                value=biodiversity["species_richness"],
+                unit="species",
+                methodology="OBIS occurrence records",
+            ))
+        if biodiversity.get("iucn_threatened_count"):
+            metrics.append(MetricEntry(
+                metric_name="IUCN Threatened Species",
+                value=biodiversity["iucn_threatened_count"],
+                unit="species (CR+EN+VU)",
+                methodology="IUCN Red List via OBIS",
             ))
 
         return metrics

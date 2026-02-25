@@ -435,5 +435,59 @@
       "What are the key sea-level-rise risks for Aldabra Atoll?",
       "Compare Aldabra Atoll and Galapagos Marine Reserve by total ecosystem service value."
     ]
+  },
+  "biodiversity_metrics": {
+    "species_richness": 2055,
+    "total_records": 184419,
+    "dataset_count": 49,
+    "year_range": null,
+    "iucn_threatened_count": 173,
+    "iucn_by_category": {
+      "VU": 41,
+      "EN": 128,
+      "CR": 4
+    },
+    "taxonomic_composition": {
+      "birds": {
+        "records": 161,
+        "species": 6
+      },
+      "fish": {
+        "records": 37051,
+        "species": 905
+      },
+      "mammals": {
+        "records": 1659,
+        "species": 5
+      },
+      "other": {
+        "records": 16146,
+        "species": 1097
+      }
+    },
+    "mt_a_summary": "2,055 species documented; 173 IUCN Red List species (4 CR, 128 EN, 41 VU)",
+    "mt_b_summary": "across 49 datasets (184,419 occurrence records)",
+    "obis_fetched_at": "2026-02-24T23:12:34.081189+00:00"
+  },
+  "observation_quality": {
+    "record_density_score": 1.0,
+    "dataset_diversity_score": 1.0,
+    "qc_pass_rate": 1.0,
+    "temporal_coverage_score": 0.0,
+    "composite_quality_score": 0.8,
+    "total_records": 184419,
+    "dataset_count": 49,
+    "year_range": null,
+    "explanation": "184,419 OBIS records; 49 datasets; QC pass rate 100%"
+  },
+  "environmental_baselines": {
+    "sst": {
+      "median_sst_c": null,
+      "mean_sst_c": null,
+      "sst_range_c": null,
+      "n_records": 0,
+      "bleaching_proximity_c": null,
+      "source": "OBIS environmental statistics"
+    }
   }
 }
