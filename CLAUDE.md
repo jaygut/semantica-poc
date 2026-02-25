@@ -6,7 +6,7 @@ This file provides guidance to Claude Code when working with this repository.
 
 **Nereus** is a "Hybrid" Intelligence platform, powered by MARIS + Semantica. It creates auditable, **physically linked** pathways from peer-reviewed ecological science to investment-grade financial metrics. Unlike standard RAG, Nereus executes logic (axioms) extracted directly from literature.
 
-**Current Status:** v6 Prospective Scenario Intelligence - **Forward-Looking ESV Analytics** (40 Bridge Axioms). Built on the v5 Audit-Grade Integrity platform. Neo4j knowledge graph (953+ nodes), 9 MPA sites, $1.62B ESV. Adds counterfactual analysis, SSP climate scenarios, McClanahan tipping point engine, blue carbon revenue modeling, portfolio Nature VaR, and real options valuation - all with deterministic provenance chains and P5/P50/P95 uncertainty envelopes.
+**Current Status:** v6 Prospective Scenario Intelligence - **Forward-Looking ESV Analytics** (40 Bridge Axioms) + OBIS Biodiversity Integration. Built on the v5 Audit-Grade Integrity platform. Neo4j knowledge graph (1024+ nodes), 9 MPA sites, $1.62B ESV. Adds counterfactual analysis, SSP climate scenarios, McClanahan tipping point engine, blue carbon revenue modeling, portfolio Nature VaR, and real options valuation - all with deterministic provenance chains and P5/P50/P95 uncertainty envelopes.
 
 ## Core Philosophy: "The Logic is Physically Linked"
 1.  **No Hallucinations:** Financial claims must be the result of a deterministic graph traversal.
@@ -18,7 +18,7 @@ This file provides guidance to Claude Code when working with this repository.
 ## Quick Start
 
 ```bash
-./launch.sh v4      # v4 Global Scaling Platform (9 sites, 6 tabs, :8504)
+./launch.sh v4      # v4 Global Scaling Platform (9 sites, 7 tabs, :8504)
 ./launch.sh v3      # Intelligence Platform (2 sites, 5 tabs, :8503)
 ./launch.sh v2      # Single-scroll dashboard (2 sites, :8501)
 ./launch.sh v1      # Static mode (1 site, no external services)
@@ -55,7 +55,7 @@ maris/
   config_v4.py      # v4 dynamic site discovery wrapper
 
 investor_demo/
-  streamlit_app_v4.py               # v4: 9 sites, 6 tabs, $1.62B (:8504)
+  streamlit_app_v4.py               # v4: 9 sites, 7 tabs, $1.62B (:8504)
   streamlit_app_v3.py               # v3: 2 sites, 5 tabs (:8503)
   streamlit_app_v2.py               # v2: single-scroll (:8501)
   streamlit_app.py                  # v1: static mode
@@ -110,6 +110,7 @@ Comparison sites (GBR, Papahanaumokuakea): governance metadata only, no ESV.
 | Tab | Content |
 |-----|---------|
 | Portfolio Overview | 9-site grid with ESV, rating, habitat, data quality badges, OBIS biodiversity column (species richness, IUCN threatened) |
+| Analytics | Multi-site comparison tool: ESV bar chart, radar overlays, service breakdown, ranking table |
 | Intelligence Brief | Per-site KPIs, provenance chain, axiom evidence, CI ranges, Monte Carlo, OBIS data confidence banner |
 | Ask Nereus (GraphRAG) | Split-panel chat + reasoning pipeline, 149 precomputed demo responses (incl. 15 scenario), scenario response block |
 | Scenario Lab | 4 tabs: Climate Pathway (SSP selector + year slider), Counterfactual, Restoration ROI, Custom. McClanahan tipping point badges. Scenario Workbench (save/compare). OBIS observed baseline context block. |
@@ -145,7 +146,7 @@ Comparison sites (GBR, Papahanaumokuakea): governance metadata only, no ESV.
 
 **API auth:** Bearer token via `MARIS_API_KEY`. Bypassed with `MARIS_DEMO_MODE=true`. Rate limits: 30/min (query), 60/min (others).
 
-**Graph schema:** 953+ nodes (Document 835, EcosystemService 39, Species 17, BridgeAxiom 40, MPA 11, Concept 15, TrophicLevel 10, Habitat 4, FinancialInstrument 3, Framework 3). 244+ relationships. MPA nodes carry 9 OBIS properties: `obis_species_richness`, `obis_iucn_threatened_count`, `obis_total_records`, `obis_observation_quality_score`, `obis_median_sst_c`, `obis_bleaching_proximity_c`, `obis_data_year_min`, `obis_data_year_max`, `obis_fetched_at`.
+**Graph schema:** 1024+ nodes (Document ~842, EcosystemService 39, Species 17, BridgeAxiom 40, MPA 11, Concept 25, TrophicLevel 10, Habitat 4, FinancialInstrument 3, Framework 3). 637+ relationships. MPA nodes carry 9 OBIS properties: `obis_species_richness`, `obis_iucn_threatened_count`, `obis_total_records`, `obis_observation_quality_score`, `obis_median_sst_c`, `obis_bleaching_proximity_c`, `obis_data_year_min`, `obis_data_year_max`, `obis_fetched_at`.
 
 **Data lineage:** `scripts/populate_neo4j_v4.py` auto-discovers `examples/*_case_study.json` through 11-stage idempotent MERGE pipeline.
 

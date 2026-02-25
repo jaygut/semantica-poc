@@ -263,7 +263,7 @@ The Nereus pipeline generates a **Semantica-ready export bundle** designed for d
 │                                                    ↓                        │
 │   ┌──────────────────┐                  ┌──────────────────────┐           │
 │   │ Bridge Axioms    │ ──────────────→  │ Inference Engine     │           │
-│   │ (16 axioms)      │  bridge_axioms   │ (Translate + Query)  │           │
+│   │ (40 axioms)      │  bridge_axioms   │ (Translate + Query)  │           │
 │   └──────────────────┘                  └──────────────────────┘           │
 │                                                    ↓                        │
 │                                         ┌──────────────────────┐           │
@@ -282,7 +282,7 @@ Located in `data/semantica_export/`:
 |------|--------|----------|---------------|
 | `entities.jsonld` | JSON-LD | 14 entities with WoRMS/FishBase/TNFD URIs | Ontology ingestion |
 | `relationships.json` | JSON | 15 typed relationships with provenance | Graph construction |
-| `bridge_axioms.json` | JSON | 16 axioms with 3+ evidence sources each | Inference rules |
+| `bridge_axioms.json` | JSON | 40 axioms (BA-001 to BA-040) with 3+ evidence sources each | Inference rules |
 | `document_corpus.json` | JSON | 195-paper corpus summary | Retrieval index |
 
 ### Entity Types in Export
@@ -310,7 +310,7 @@ Located in `data/semantica_export/`:
 
 ### Bridge Axiom Evidence
 
-All 16 bridge axioms now have **3+ supporting sources** (12 core + 4 blue carbon):
+All 40 bridge axioms have **3+ supporting sources** (BA-001 to BA-016 core + blue carbon; BA-017 to BA-040 scenario/financial; see `schemas/bridge_axiom_templates.json` for the full registry). Founding 16 shown below:
 
 | Axiom | Name | Sources | Key Paper |
 |-------|------|---------|-----------|
@@ -374,7 +374,7 @@ User Question (NL)
         |
    [Cypher Template]  -- 8 parameterized templates (5 core + 3 utility)
         |
-   [Neo4j Graph]  -- 938 nodes, 244 relationships, 9 MPA sites
+   [Neo4j Graph]  -- 1024+ nodes, 637+ relationships, 9 MPA sites
         |
    [LLM Synthesis]  -- DeepSeek/Claude/GPT-4 (configurable)
         |
@@ -406,7 +406,7 @@ uv pip install -r requirements-v2.txt
 ### Quick Start (Unified Launcher - Recommended)
 
 ```bash
-# v4 Global Scaling Platform (9 sites, 6 tabs)
+# v4 Global Scaling Platform (9 sites, 7 tabs)
 ./launch.sh v4
 
 # Other versions
@@ -469,6 +469,8 @@ The classifier routes questions to parameterized Cypher templates:
 | `axiom_explanation` | bridge axiom, BA-001, coefficient | "Explain BA-002" |
 | `comparison` | compare, versus, rank | "Compare to other sites" |
 | `risk_assessment` | risk, climate, threat, decline | "What if protection fails?" |
+| `concept_explanation` | blue bond, debt-for-nature, reef insurance, mechanism | "How does a blue bond work?" |
+| `scenario_analysis` | SSP, without protection, tipping point, carbon revenue | "Cabo Pulmo under SSP2-4.5 by 2050?" |
 
 ### Authentication and Security
 
@@ -488,7 +490,7 @@ Exceeding the limit returns HTTP 429. Rate limit headers are included in respons
 
 ### Testing
 
-The project includes **910 tests** (706 unit + 204 integration) covering all core modules and the Semantica integration:
+The project includes **1265 tests** (1057 unit + 208 integration) covering all core modules, Semantica integration, v6 scenario engine, and OBIS biodiversity layer:
 
 ```bash
 # Install dev dependencies
@@ -504,7 +506,7 @@ pytest tests/integration/ -v
 pytest tests/ --cov=maris --cov-report=term-missing
 ```
 
-Tests are organized by module in `tests/` with shared fixtures in `conftest.py`. Integration tests live in `tests/integration/` with 7 phase files covering bridge validation, graph integrity, external APIs, query pipeline, disclosure/discovery, stress tests, and LLM-enhanced discovery (phase 6 tests against live DeepSeek). CI runs automatically on push and PR to `main` via GitHub Actions (`.github/workflows/ci.yml`): linting with ruff, then pytest.
+Tests are organized by module in `tests/` with shared fixtures in `conftest.py`. Integration tests live in `tests/integration/` with 7 phase files covering bridge validation, graph integrity, external APIs (incl. OBIS T1.7), query pipeline, disclosure/discovery, stress tests, and LLM-enhanced discovery (phase 6 tests against live DeepSeek). CI runs automatically on push and PR to `main` via GitHub Actions (`.github/workflows/ci.yml`): linting with ruff, then pytest.
 
 ---
 
@@ -558,7 +560,7 @@ Tests are organized by module in `tests/` with shared fixtures in `conftest.py`.
 |-----------|----------|--------|---------|----------------------|
 | **Entities** | `data/semantica_export/entities.jsonld` | JSON-LD | 14 entities with WoRMS/FishBase/TNFD URIs | Ingested via Semantica API |
 | **Relationships** | `data/semantica_export/relationships.json` | JSON | 15 relationship types with provenance | Ingested via Semantica API |
-| **Bridge Axioms** | `data/semantica_export/bridge_axioms.json` | JSON | 16 axioms with 3+ evidence sources each | Registered as Semantica inference rules |
+| **Bridge Axioms** | `data/semantica_export/bridge_axioms.json` | JSON | 40 axioms (BA-001 to BA-040) with evidence | Registered as Semantica inference rules |
 | **Corpus Summary** | `data/semantica_export/document_corpus.json` | JSON | 195-paper library statistics | Indexed in Semantica document index |
 | Document Library | `.claude/registry/document_index.json` | JSON | 195 indexed papers with full metadata | Indexed via Semantica API |
 | Critical Extractions | `data/sample_extractions/` | JSON | 5 papers with entities/relationships | Extracted via Semantica API |
@@ -602,15 +604,17 @@ semantica-poc/
 │   ├── ingestion/                         # PDF extraction + graph merging
 │   ├── provenance/                        # P0: W3C PROV-O provenance tracking
 │   │   ├── manager.py                     # MARISProvenanceManager (entity/activity/agent)
-│   │   ├── bridge_axiom_registry.py       # 16 axioms as typed BridgeAxiom objects
+│   │   ├── bridge_axiom_registry.py       # 40 axioms as typed BridgeAxiom objects
 │   │   ├── certificate.py                 # Provenance certificate generation (JSON/Markdown)
 │   │   ├── core.py                        # PROV-O core dataclasses
 │   │   ├── integrity.py                   # SHA-256 checksum verification
 │   │   └── storage.py                     # In-memory + SQLite storage backends
-│   ├── sites/                             # P1: Multi-site scaling pipeline
-│   │   ├── api_clients.py                 # OBIS (area resolution), WoRMS (204 fix), Marine Regions (404+JSON handling) API clients
-│   │   ├── characterizer.py              # 5-step auto-characterization (Bronze/Silver/Gold) with multi-signal habitat scoring (keywords, taxonomy, functional groups)
-│   │   ├── esv_estimator.py              # Bridge axiom-based ESV estimation
+│   ├── sites/                             # P1: Multi-site scaling pipeline + OBIS biodiversity layer
+│   │   ├── api_clients.py                 # OBIS (5 methods), WoRMS, Marine Regions API clients
+│   │   ├── biodiversity_metrics.py        # OBIS species richness, IUCN Red List, TNFD MT-A/MT-B
+│   │   ├── observation_quality.py         # OBIS composite quality score; feeds confidence factor
+│   │   ├── characterizer.py              # 5-step auto-characterization (Bronze/Silver/Gold)
+│   │   ├── esv_estimator.py              # Bridge axiom-based ESV estimation (dynamic carbon pricing)
 │   │   ├── models.py                      # Pydantic site models
 │   │   └── registry.py                    # JSON-backed site registry
 │   ├── reasoning/                         # P2: Cross-domain reasoning engine
@@ -647,7 +651,7 @@ semantica-poc/
 │   └── config_v4.py                      # v4 wrapper around settings.py
 │
 ├── investor_demo/                         # ═══ STREAMLIT DASHBOARDS ═══
-│   ├── streamlit_app_v4.py                # v4 Global Scaling Platform (9 sites, 6 tabs, latest)
+│   ├── streamlit_app_v4.py                # v4 Global Scaling Platform (9 sites, 7 tabs, latest)
 │   ├── streamlit_app_v3.py                # v3 Intelligence Platform (multi-tab)
 │   ├── streamlit_app_v2.py                # v2 dashboard (live API + static bundle)
 │   ├── streamlit_app.py                   # v1 dashboard (static bundle only)
@@ -678,24 +682,25 @@ semantica-poc/
 ├── schemas/                               # ═══ INGEST THESE FIRST ═══
 │   ├── entity_schema.json                 # 8 entity types (JSON-LD)
 │   ├── relationship_schema.json           # 14 relationship types
-│   └── bridge_axiom_templates.json        # 16 translation rules
+│   └── bridge_axiom_templates.json        # 40 translation rules (BA-001 to BA-040)
 │
 ├── data/
 │   ├── semantica_export/                  # ═══ SEMANTICA-READY BUNDLE ═══
 │   │   ├── entities.jsonld                # 14 entities (JSON-LD)
 │   │   ├── relationships.json             # 15 relationships
-│   │   ├── bridge_axioms.json             # 16 axioms with evidence
+│   │   ├── bridge_axioms.json             # 40 axioms with evidence
 │   │   └── document_corpus.json           # Corpus summary
 │   └── sample_extractions/                # 5 critical paper extractions
 │
 ├── scripts/
 │   ├── populate_neo4j_v4.py               # v4 population (11-stage, dynamic site discovery)
+│   ├── enrich_obis.py                     # OBIS enrichment: biodiversity/quality/SST for all 9 sites
 │   ├── populate_neo4j.py                  # Legacy population (2-site, v2/v3)
 │   ├── demo_healthcheck.py                # Pre-demo system verification
 │   ├── validate_graph.py                  # Post-population integrity checks
 │   └── run_ingestion.py                   # PDF ingestion pipeline
 │
-├── tests/                                # ═══ TEST SUITE (910 tests) ═══
+├── tests/                                # ═══ TEST SUITE (1265 tests) ═══
 │   ├── conftest.py                        # Shared fixtures
 │   ├── test_api_endpoints.py              # API route tests with auth validation
 │   ├── test_auth.py                       # Auth enforcement, rate limiting, input validation
@@ -717,11 +722,16 @@ semantica-poc/
 │   ├── test_disclosure.py                 # P3: TNFD disclosure tests (30 tests)
 │   ├── test_axiom_discovery.py            # P4: Axiom discovery pipeline tests (70+ tests)
 │   ├── test_semantica_bridge.py           # Semantica SDK bridge adapter tests (51 tests)
-│   └── integration/                       # ═══ INTEGRATION TESTS (204 tests) ═══
+│   ├── test_biodiversity_metrics.py       # OBIS biodiversity metrics tests (17 tests)
+│   ├── test_observation_quality.py        # OBIS observation quality tests (12 tests)
+│   ├── test_environmental_baselines.py    # OBIS SST baseline tests (24 tests)
+│   ├── test_enrich_obis.py                # OBIS enrichment script tests (6 tests)
+│   ├── scenario/                          # v6 scenario tests (127 tests)
+│   └── integration/                       # ═══ INTEGRATION TESTS (208 tests) ═══
 │       ├── test_phase0_bridge.py          # SDK availability, SQLite persistence, dual-write
-│       ├── test_phase1_graph.py           # Graph integrity, idempotent re-population
+│       ├── test_phase1_graph.py           # Graph integrity, idempotent re-population, OBIS enrichment (T1.7)
 │       ├── test_phase2_apis.py            # OBIS, WoRMS, Marine Regions real API calls
-│       ├── test_phase3_query.py           # 5-category regression, classifier accuracy
+│       ├── test_phase3_query.py           # 7-category regression, classifier accuracy
 │       ├── test_phase4_disclosure.py      # TNFD disclosure, axiom discovery
 │       ├── test_phase5_stress.py          # SQLite persistence, concurrent queries
 │       └── test_phase6_llm_discovery.py   # LLM-enhanced discovery integration (7 tests against live DeepSeek)
@@ -1067,16 +1077,17 @@ cd investor_demo
 streamlit run streamlit_app_v4.py --server.port 8504
 ```
 
-Opens at `http://localhost:8504` with 6 tabs:
+Opens at `http://localhost:8504` with 7 tabs:
 
 | Tab | Content |
 |-----|---------|
-| **Portfolio Overview** | Grid of all 9 MPA sites with ESV, asset rating, habitat type, country, and tier indicators |
-| **Intelligence Brief** | Per-site KPIs, provenance chain graph, axiom evidence table, valuation composition, Monte Carlo risk profile |
+| **Portfolio Overview** | Grid of all 9 MPA sites with ESV, asset rating, habitat type, country, tier indicators, and OBIS biodiversity column (species richness, IUCN threatened) |
+| **Analytics** | Multi-site comparison tool: ESV bar charts, radar overlays, service breakdown, ranking table |
+| **Intelligence Brief** | Per-site KPIs, provenance chain graph, axiom evidence table, valuation composition, Monte Carlo risk profile, OBIS data confidence banner |
 | **Ask Nereus (GraphRAG)** | Split-panel: chat on left (60%), reasoning pipeline on right (40%) showing CLASSIFY -> QUERY -> SYNTHESIZE -> VALIDATE steps with Cypher display, confidence breakdown, and knowledge graph subgraph visualization |
-| **Scenario Lab** | Interactive Monte Carlo with site-aware axiom chains, 4 parameter sliders, overlay histogram, tornado sensitivity chart |
-| **Site Scout** | Deferred (placeholder with pipeline-ready description) |
-| **TNFD Compliance** | TNFD LEAP disclosure with alignment scoring for all 9 sites, per-pillar breakdown, gap analysis, download buttons |
+| **Scenario Lab** | 4 sub-tabs: Climate Pathway (SSP selector + year slider + McClanahan tipping point), Counterfactual, Restoration ROI, Custom. OBIS observed ecological baseline context block. |
+| **Site Intelligence** | NEOLI heatmap, habitat-axiom map, data quality dashboard (incl. observation quality column), pipeline diagram, tipping point proximity panel, OBIS environmental profile |
+| **TNFD Compliance** | TNFD LEAP disclosure for all 9 sites (incl. MT-A/MT-B biodiversity metrics from OBIS), alignment scoring, downloads |
 
 **Sidebar:** Mode toggle (Live/Demo), service health panel, site selector (all 9 sites), scenario slider, system metadata.
 
@@ -1216,7 +1227,7 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 ### P0: Automated Provenance Chains - Complete
 
 - [x] `maris/provenance/` module (7 files) - W3C PROV-O entity/activity/agent tracking
-- [x] `BridgeAxiomRegistry` - all 16 axioms as typed BridgeAxiom objects
+- [x] `BridgeAxiomRegistry` - all 40 axioms as typed BridgeAxiom objects (BA-001 to BA-040)
 - [x] `ProvenanceCertificate` - JSON and Markdown certificate generation
 - [x] `MARISProvenanceManager` - track_extraction, track_axiom_application, get_lineage
 - [x] SHA-256 integrity verification with InMemoryStorage and SQLiteStorage
@@ -1269,7 +1280,7 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 - [x] `SemanticaBackedManager` - drop-in replacement for MARISProvenanceManager with SQLite persistence
 - [x] Dual-write provenance: writes to both MARIS and Semantica backends simultaneously
 - [x] Graceful degradation when `semantica` package is not installed
-- [x] 51 unit tests + 204 integration tests validating all bridge adapters
+- [x] 51 unit tests + 208 integration tests validating all bridge adapters
 
 ---
 
@@ -1277,11 +1288,11 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 
 ### Document Library + Core System ✅ COMPLETE
 
-- [x] Neo4j knowledge graph (938 nodes, 244 edges, 9 MPA sites)
+- [x] Neo4j knowledge graph (1024+ nodes, 637+ edges, 9 MPA sites)
 - [x] FastAPI query engine with 9 endpoints (7 core + provenance + disclosure)
 - [x] Streamlit investor dashboards (v1 static, v2 live, v3 intelligence, v4 global scaling)
-- [x] NL-to-Cypher classification (5 categories + open_domain)
-- [x] 16 bridge axioms with Monte Carlo simulation
+- [x] NL-to-Cypher classification (7 categories)
+- [x] 40 bridge axioms (BA-001 to BA-040) with Monte Carlo simulation
 - [x] Composite confidence model (GRADE/IPCC-inspired)
 - [x] Bearer token auth + rate limiting + CORS
 - [x] Multi-stage Docker builds
@@ -1291,10 +1302,28 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 
 - [x] Registry-driven site discovery from `examples/*_case_study.json`
 - [x] 9 MPA sites across 4 ocean basins ($1.62B combined portfolio)
-- [x] v4 Global Scaling Platform dashboard (6 tabs, port 8504)
+- [x] v4 Global Scaling Platform dashboard (7 tabs, port 8504)
 - [x] Tier-aware feature gating (Gold/Silver/Bronze)
 - [x] LEAPGeneratorV4 with auto-discovery of all case study files
 - [x] Unified launcher (`./launch.sh v1|v2|v3|v4|api|stop`)
+
+### Phase 6: v6 Prospective Scenario Intelligence ✅ COMPLETE
+
+- [x] `maris/scenario/` module (9 files): counterfactual engine, SSP climate pathways, McClanahan tipping point analyzer, blue carbon revenue, portfolio Nature VaR, real options valuator, scenario parser
+- [x] Validation anchors: Cabo Pulmo counterfactual -$20.16M, portfolio VaR_95 $646.6M, Cispata BCR 13.34
+- [x] P5/P50/P95 uncertainty envelopes across all scenarios
+- [x] 7th query category (`scenario_analysis`) in classifier + generator + routes
+- [x] 13 scenario invariant tests + 5 canonical audit transcripts
+
+### Phase 7: OBIS Biodiversity Integration ✅ COMPLETE
+
+- [x] `maris/sites/biodiversity_metrics.py` - species richness, IUCN Red List (CR/EN/VU), TNFD MT-A/MT-B
+- [x] `maris/sites/observation_quality.py` - composite quality score (0-1); feeds multiplicative confidence factor
+- [x] `maris/scenario/environmental_baselines.py` - SST baselines from OBIS; bleaching threshold proximity
+- [x] OBISClient extended with 5 methods in `maris/sites/api_clients.py`
+- [x] `scripts/enrich_obis.py` - live OBIS enrichment for all 9 sites (--dry-run, --site, --force)
+- [x] 9 OBIS properties written to Neo4j MPA nodes; all 9 case study JSONs enriched
+- [x] Dashboard surfaces: Portfolio biodiversity column, Intelligence Brief confidence banner, Scenario Lab baseline context, Site Intelligence environmental profile, TNFD MT-A/MT-B metrics
 
 ---
 
@@ -1315,9 +1344,9 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 | Criterion | Target |
 |-----------|--------|
 | Investor demo | Complete 10-min narrative without gaps |
-| Bridge axiom coverage | All 16 axioms functional |
+| Bridge axiom coverage | All 40 axioms functional (BA-001 to BA-040) |
 | Multi-habitat support | Coral, kelp, mangrove, seagrass |
-| Test suite | 910 tests passing (706 unit + 204 integration) |
+| Test suite | 1265 tests passing (1057 unit + 208 integration) |
 | API authentication | Bearer token + rate limiting |
 | Docker builds | Multi-stage API + Dashboard |
 | CI pipeline | GitHub Actions (lint + test) |
@@ -1325,7 +1354,7 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 | Provenance tracking | W3C PROV-O with SQLite persistence |
 | TNFD disclosure | LEAP automation with 14-disclosure alignment scoring |
 | Multi-site scaling | 9 MPA sites, $1.62B portfolio, 4 ocean basins |
-| v4 Global Scaling Platform | Registry-driven, 6 tabs, tier-aware feature gating |
+| v4 Global Scaling Platform | Registry-driven, 7 tabs, tier-aware feature gating |
 
 ---
 
@@ -1337,7 +1366,7 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 |------|---------|-----------|
 | `data/semantica_export/entities.jsonld` | JSON-LD entities for ingestion | **Day 1 - Ingest first** |
 | `data/semantica_export/relationships.json` | Typed relationships with provenance | **Day 1 - Ingest second** |
-| `data/semantica_export/bridge_axioms.json` | 16 axioms with evidence | **Day 1 - Configure inference** |
+| `data/semantica_export/bridge_axioms.json` | 40 axioms with evidence | **Day 1 - Configure inference** |
 | `data/semantica_export/document_corpus.json` | Corpus summary for indexing | **Day 1 - Build retrieval** |
 | `examples/cabo_pulmo_case_study.json` | Validation target | During testing |
 | `examples/sample_queries.md` | Query templates | During GraphRAG dev |
@@ -1373,7 +1402,7 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 | `maris/api/models.py` | Pydantic request/response schemas |
 | `maris/query/cypher_templates.py` | 8 parameterized Cypher query templates |
 | `maris/graph/population.py` | Graph population from curated JSON assets |
-| `investor_demo/streamlit_app_v4.py` | v4 Global Scaling Platform (9 sites, 6 tabs, latest) |
+| `investor_demo/streamlit_app_v4.py` | v4 Global Scaling Platform (9 sites, 7 tabs, latest) |
 | `investor_demo/streamlit_app_v3.py` | v3 Intelligence Platform (multi-tab) |
 | `investor_demo/streamlit_app_v2.py` | v2 dashboard with live API integration |
 | `investor_demo/components/v3/` | v3/v4 tab components (intelligence brief, GraphRAG, scenario, TNFD) |
@@ -1400,15 +1429,16 @@ The Semantica framework (v0.2.7+) has been integrated across five priority tiers
 
 ## External Resources
 
-### Data Sources (for future integration)
+### External Data Sources
 
-| Source | URL | Data Type |
-|--------|-----|-----------|
-| WoRMS | marinespecies.org | Marine taxonomy |
-| FishBase | fishbase.org | Fish species data |
-| OBIS | obis.org | Occurrence records |
-| GloBI | globalbioticinteractions.org | Species interactions |
-| WDPA | protectedplanet.net | MPA boundaries |
+| Source | URL | Data Type | Status |
+|--------|-----|-----------|--------|
+| WoRMS | marinespecies.org | Marine taxonomy | Integrated (api_clients.py) |
+| FishBase | fishbase.org | Fish species data | Integrated (api_clients.py) |
+| OBIS | obis.org | Species richness, IUCN, quality, SST baselines | **Integrated** - `maris/sites/` + `scripts/enrich_obis.py` |
+| Marine Regions | marineregions.org | MPA boundaries | Integrated (api_clients.py) |
+| GloBI | globalbioticinteractions.org | Species interactions | Future integration |
+| WDPA | protectedplanet.net | MPA boundaries | Future integration |
 
 ### Standards & Frameworks
 
