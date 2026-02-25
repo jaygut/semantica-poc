@@ -1057,6 +1057,17 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
             hoverinfo="skip", showlegend=False,
         ))
 
+    # Count nodes per layer to decide label visibility (suppress labels in dense layers)
+    _node_count_by_type: dict[str, int] = {}
+    for _info in positions.values():
+        t = _info["type"]
+        _node_count_by_type[t] = _node_count_by_type.get(t, 0) + 1
+    # Threshold: more nodes than this → markers-only, labels on hover
+    _LABEL_THRESHOLD: dict[str, int] = {
+        "MPA": 99, "Habitat": 5, "EcosystemService": 5,
+        "BridgeAxiom": 6, "Document": 0,
+    }
+
     # Draw nodes - Document labels rendered as rotated annotations below
     doc_annotations: list[dict] = []
     for name, info in positions.items():
@@ -1065,13 +1076,16 @@ def _render_graph_explorer(graph_path: list[dict], idx: int = 0) -> None:
         size = _NODE_SIZES.get(node_type, 34)
         display_name = name[:35] + "..." if len(name) > 35 else name
         is_doc = node_type == "Document"
+        layer_count = _node_count_by_type.get(node_type, 0)
+        threshold = _LABEL_THRESHOLD.get(node_type, 6)
+        show_label = not is_doc and layer_count <= threshold
         fig.add_trace(go.Scatter(
             x=[info["x"]], y=[info["y"]],
-            mode="markers" if is_doc else "markers+text",
+            mode="markers+text" if show_label else "markers",
             marker={"size": size, "color": color, "line": {"width": 2, "color": "#0B1120"}},
-            text=[] if is_doc else [display_name],
+            text=[display_name] if show_label else [],
             textposition="bottom center",
-            textfont={"size": 14, "color": "#E2E8F0", "family": "Inter"},
+            textfont={"size": 12, "color": "#E2E8F0", "family": "Inter"},
             hoverinfo="text", hovertext=[f"<b>{name}</b><br>Type: {node_type}"],
             showlegend=False,
         ))

@@ -411,5 +411,59 @@
       "How does Leeuwin Current risk context affect Ningaloo Coast World Heritage Area?",
       "Compare Ningaloo Coast World Heritage Area and Cabo Pulmo National Park by total ecosystem service value."
     ]
+  },
+  "biodiversity_metrics": {
+    "species_richness": 2196,
+    "total_records": 73545,
+    "dataset_count": 105,
+    "year_range": null,
+    "iucn_threatened_count": 125,
+    "iucn_by_category": {
+      "EN": 77,
+      "VU": 40,
+      "CR": 8
+    },
+    "taxonomic_composition": {
+      "birds": {
+        "records": 197,
+        "species": 40
+      },
+      "fish": {
+        "records": 49170,
+        "species": 550
+      },
+      "mammals": {
+        "records": 72,
+        "species": 5
+      },
+      "other": {
+        "records": 16466,
+        "species": 1492
+      }
+    },
+    "mt_a_summary": "2,196 species documented; 125 IUCN Red List species (8 CR, 77 EN, 40 VU)",
+    "mt_b_summary": "across 105 datasets (73,545 occurrence records)",
+    "obis_fetched_at": "2026-02-24T23:13:01.062675+00:00"
+  },
+  "observation_quality": {
+    "record_density_score": 0.9242,
+    "dataset_diversity_score": 1.0,
+    "qc_pass_rate": 1.0,
+    "temporal_coverage_score": 0.0,
+    "composite_quality_score": 0.781,
+    "total_records": 73545,
+    "dataset_count": 105,
+    "year_range": null,
+    "explanation": "73,545 OBIS records; 105 datasets; QC pass rate 100%"
+  },
+  "environmental_baselines": {
+    "sst": {
+      "median_sst_c": null,
+      "mean_sst_c": null,
+      "sst_range_c": null,
+      "n_records": 0,
+      "bleaching_proximity_c": null,
+      "source": "OBIS environmental statistics"
+    }
   }
 }

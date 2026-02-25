@@ -312,14 +312,14 @@ The Neo4j graph uses the following node labels and relationship types. All nodes
 | `EcosystemService` | `service_name` or `service_id` | 39 | annual_value_usd, valuation_method, ci_low, ci_high | Valued ecosystem service (e.g. Tourism, Fisheries, Carbon Sequestration) |
 | `Species` | `worms_id` or `name` | 17 | common_name, trophic_level, role_in_ecosystem, commercial_importance | Marine species with WoRMS taxonomic identifiers |
 | `BridgeAxiom` | `axiom_id` | 40 | name, category, description, pattern, coefficients_json, confidence, evidence_tier, ci_low, ci_high, distribution, study_sample_size, effect_size_type | Ecological-to-financial translation rule with peer-reviewed coefficients and uncertainty quantification. 40 axioms (BA-001 through BA-040) covering carbon, coastal protection, tourism, fisheries, tipping point thresholds (BA-036-040), and cross-cutting mechanisms |
-| `MPA` | `name` | 11 | area_km2, designation_year, neoli_score, total_esv_usd, biomass_ratio, asset_rating, biomass_measurement_year, last_validated_date, data_freshness_status | Marine Protected Area (9 Gold-tier + 2 comparison) |
+| `MPA` | `name` | 11 | area_km2, designation_year, neoli_score, total_esv_usd, biomass_ratio, asset_rating, biomass_measurement_year, last_validated_date, data_freshness_status, obis_species_richness, obis_iucn_threatened_count, obis_total_records, obis_observation_quality_score, obis_median_sst_c, obis_bleaching_proximity_c, obis_data_year_min, obis_data_year_max, obis_fetched_at | Marine Protected Area (9 Gold-tier + 2 comparison). OBIS properties are populated for all 9 Gold-tier sites by `scripts/enrich_obis.py` |
 | `TrophicLevel` | `name` | 10 | trophic_level | Trophic network node (apex predator, mesopredator, herbivore, etc.) |
 | `Concept` | `concept_id` | 15 | name, description, domain, applicable_habitats, involved_axiom_ids | Blue finance domain concept (BC-001 through BC-015): Blue Carbon Sequestration, Coastal Protection, Marine Tourism Economics, Carbon Credits, Reef Insurance, TNFD Disclosure, etc. Enables mechanism questions without site anchor |
 | `Habitat` | `habitat_id` or `name` | 4 | condition | Marine habitat type (coral reef, kelp forest, seagrass meadow, mangrove forest) |
 | `FinancialInstrument` | `instrument_id` | 3 | name, description | Blue finance instrument (blue bond, parametric reef insurance) |
 | `Framework` | `framework_id` | 3 | name, description | Disclosure or accounting framework (TNFD LEAP, SEEA) |
 
-**Total:** 953+ nodes (includes 15 new Concept nodes pending population), 244+ edges
+**Total:** 1024+ nodes, 637+ edges (includes 40 BridgeAxiom, 25 Concept, 11 MPA, ~842 Document nodes; MPA nodes enriched with 9 OBIS properties via `scripts/enrich_obis.py`)
 
 ### Relationship Types
 

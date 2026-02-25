@@ -24,7 +24,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from investor_demo.components.v4.shared import COLORS, fmt_usd  # noqa: E402
+from investor_demo.components.v4.shared import COLORS, fmt_usd, get_obis_data  # noqa: E402
 from maris.axioms.monte_carlo import run_monte_carlo  # noqa: E402
 from maris.axioms.sensitivity import run_sensitivity_analysis  # noqa: E402
 from maris.sites.esv_estimator import _HABITAT_AXIOM_MAP  # noqa: E402
@@ -610,6 +610,90 @@ def _render_scenario_workbench(
 
 
 # ---------------------------------------------------------------------------
+# OBIS Baseline Context
+# ---------------------------------------------------------------------------
+
+
+def _render_obis_baseline_context(data: dict[str, Any], primary_habitat: str) -> None:
+    """Render OBIS-observed baseline context below climate scenario results."""
+    bio = data.get("biodiversity_metrics") or {}
+    qual = data.get("observation_quality") or {}
+    sst = (data.get("environmental_baselines") or {}).get("sst") or {}
+
+    sr = bio.get("species_richness", 0)
+    iucn = bio.get("iucn_threatened_count", 0)
+    records = bio.get("total_records", 0) or qual.get("total_records", 0)
+    quality = qual.get("composite_quality_score")
+    median_sst = sst.get("median_sst_c")
+    bleaching_prox = sst.get("bleaching_proximity_c")
+
+    if not sr and not quality:
+        return  # No OBIS data - silent no-op
+
+    # SST block - only for coral reefs
+    if primary_habitat == "coral_reef" and median_sst is not None:
+        if bleaching_prox is not None:
+            prox_str = f"&#9888; {bleaching_prox:.1f}&deg;C from bleaching threshold"
+        else:
+            prox_str = "OBIS spatial query"
+        sst_html = (
+            f'<div class="obis-context-item">'
+            f'<div class="obis-context-label">Observed Median SST</div>'
+            f'<div class="obis-context-value">{median_sst:.1f}&deg;C</div>'
+            f'<div class="obis-context-sub">{prox_str}</div>'
+            f"</div>"
+        )
+    elif primary_habitat == "coral_reef":
+        sst_html = (
+            '<div class="obis-context-item">'
+            '<div class="obis-context-label">SST Baseline</div>'
+            '<div class="obis-context-value" style="font-size:13px;color:#4A5568">'
+            "Not in OBIS env query</div>"
+            '<div class="obis-context-sub">Degradation uses IPCC AR6 WG2 anchors</div>'
+            "</div>"
+        )
+    else:
+        sst_html = ""
+
+    if quality and quality >= 0.75:
+        q_color = "#66BB6A"
+    elif quality and quality >= 0.55:
+        q_color = "#FFA726"
+    else:
+        q_color = "#EF5350"
+
+    iucn_note = f", {iucn} IUCN Red List" if iucn else ""
+    q_str = f"{quality:.3f}" if quality else "N/A"
+
+    st.markdown(
+        f"""
+    <div class="obis-context-block">
+      <div class="obis-context-title">Observed Ecological Baseline (OBIS)</div>
+      <div class="obis-context-grid">
+        <div class="obis-context-item">
+          <div class="obis-context-label">Documented Species</div>
+          <div class="obis-context-value">{sr:,}</div>
+          <div class="obis-context-sub">{records:,} occurrence records{iucn_note}</div>
+        </div>
+        <div class="obis-context-item">
+          <div class="obis-context-label">Data Quality Score</div>
+          <div class="obis-context-value" style="color:{q_color}">{q_str}</div>
+          <div class="obis-context-sub">Observation confidence index</div>
+        </div>
+        {sst_html}
+      </div>
+      <div style="font-size:11px;color:#4A5568;margin-top:12px;border-top:1px solid #1E2A3A;padding-top:8px">
+        These are observed, empirical counts from OBIS occurrence records.
+        The financial projections above are calibrated against IPCC AR6 WG2 Ch.3 degradation anchors,
+        independently of this observed baseline.
+      </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+
+# ---------------------------------------------------------------------------
 # Main render function
 # ---------------------------------------------------------------------------
 
@@ -640,6 +724,11 @@ def render_scenario_engine(
 
     base_esv = sum(s["value"] for s in base_services)
     primary_habitat = data.get("ecological_status", {}).get("primary_habitat", "")
+
+    # Ensure OBIS fields are present (handles Cabo Pulmo static bundle case)
+    if not data.get("biodiversity_metrics"):
+        obis_extra = get_obis_data(site)
+        data = {**data, **obis_extra}
 
     # ---- Scenario type tabs (v6) ----
     tab_labels = ["Climate Pathway", "Counterfactual", "Restoration ROI", "Custom"]
@@ -694,6 +783,7 @@ def render_scenario_engine(
                     {"baseline_esv": b_esv, "scenario_esv": s_esv},
                     key_suffix="climate",
                 )
+                _render_obis_baseline_context(data, primary_habitat)
             else:
                 st.info("Scenario computed in demo mode - live engine returned no data.")
                 _render_scenario_workbench(
@@ -701,6 +791,7 @@ def render_scenario_engine(
                     {"baseline_esv": base_esv, "scenario_esv": base_esv * 0.5},
                     key_suffix="climate",
                 )
+                _render_obis_baseline_context(data, primary_habitat)
 
     # ================================================================
     # Tab: Counterfactual

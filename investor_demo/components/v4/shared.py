@@ -503,6 +503,74 @@ V4_CSS = """
         display: inline-block; padding: 3px 10px; border-radius: 12px;
         font-size: 13px; font-weight: 600; margin-right: 4px;
     }
+
+    /* OBIS Biodiversity Column - Portfolio Table */
+    .bio-cell { font-size: 13px; color: #94A3B8; white-space: nowrap; }
+    .bio-spp { font-weight: 600; color: #E2E8F0; }
+    .bio-threatened {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      padding: 2px 7px; border-radius: 10px; margin-left: 5px; vertical-align: middle;
+    }
+    .bio-threatened-high { background: rgba(239,83,80,0.15); color: #EF5350; }
+    .bio-threatened-mid  { background: rgba(255,167,38,0.15); color: #FFA726; }
+    .bio-threatened-low  { background: rgba(102,187,106,0.15); color: #66BB6A; }
+    .bio-no-data { color: #4A5568; font-size: 12px; }
+
+    /* OBIS Confidence Banner - Intelligence Brief */
+    .obis-banner {
+      display: flex; align-items: center; gap: 24px;
+      background: linear-gradient(135deg, rgba(15,26,42,0.9), rgba(22,32,57,0.9));
+      border: 1px solid #243352; border-left: 3px solid #66BB6A;
+      border-radius: 8px; padding: 16px 22px; margin-bottom: 22px;
+    }
+    .obis-banner-left { flex: 0 0 180px; }
+    .obis-banner-title {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      color: #66BB6A; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .obis-quality-track {
+      background: #1E2A3A; border-radius: 4px; height: 8px;
+      width: 100%; margin-bottom: 6px;
+    }
+    .obis-quality-fill {
+      height: 8px; border-radius: 4px;
+      background: linear-gradient(90deg, #4CAF50, #81C784);
+      transition: width 0.6s ease;
+    }
+    .obis-quality-label { font-size: 12px; font-weight: 600; color: #B0BEC5; }
+    .obis-banner-stats {
+      flex: 1; display: flex; flex-direction: column; gap: 6px;
+    }
+    .obis-stat-row { font-size: 14px; color: #CBD5E1; line-height: 1.4; }
+    .obis-stat-highlight { font-weight: 700; color: #E2E8F0; }
+    .obis-stat-muted { color: #64748B; font-size: 12px; }
+    .obis-iucn-pill {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      padding: 1px 7px; border-radius: 8px; margin-left: 4px;
+    }
+    .obis-iucn-cr { background: rgba(239,83,80,0.20); color: #EF5350; }
+    .obis-iucn-en { background: rgba(255,167,38,0.20); color: #FFA726; }
+    .obis-iucn-vu { background: rgba(255,213,79,0.15); color: #FFD54F; }
+
+    /* OBIS Baseline Context Block - Scenario Lab */
+    .obis-context-block {
+      background: linear-gradient(135deg, rgba(15,26,42,0.85), rgba(22,32,57,0.85));
+      border: 1px solid #2D3F5C; border-top: 2px solid #5B9BD5;
+      border-radius: 8px; padding: 18px 22px; margin-top: 20px;
+    }
+    .obis-context-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      color: #5B9BD5; text-transform: uppercase; margin-bottom: 14px;
+    }
+    .obis-context-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .obis-context-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 1px;
+      color: #64748B; text-transform: uppercase; margin-bottom: 4px;
+    }
+    .obis-context-value { font-size: 16px; font-weight: 700; color: #E2E8F0; }
+    .obis-context-sub { font-size: 11px; color: #64748B; margin-top: 2px; }
 </style>
 """
 
@@ -789,6 +857,9 @@ def _extract_site_meta(data: dict[str, Any], path: Path) -> dict[str, Any]:
     else:
         tier = "Bronze"
 
+    bio = data.get("biodiversity_metrics") or {}
+    qual = data.get("observation_quality") or {}
+
     return {
         "name": site.get("name", path.stem.replace("_case_study", "").replace("_", " ").title()),
         "country": site.get("country", "Unknown"),
@@ -803,10 +874,15 @@ def _extract_site_meta(data: dict[str, Any], path: Path) -> dict[str, Any]:
         "tier": tier,
         "path": str(path),
         "n_services": len(esv_block.get("services", [])),
-        "n_services": len(esv_block.get("services", [])),
         "dominant_species": eco.get("dominant_species", ""),
         "latitude": site.get("coordinates", {}).get("latitude"),
         "longitude": site.get("coordinates", {}).get("longitude"),
+        "obis_species_richness": bio.get("species_richness"),
+        "obis_iucn_threatened": bio.get("iucn_threatened_count"),
+        "obis_iucn_by_category": bio.get("iucn_by_category", {}),
+        "obis_total_records": bio.get("total_records"),
+        "obis_quality_score": qual.get("composite_quality_score"),
+        "obis_mt_a_summary": bio.get("mt_a_summary", ""),
     }
 
 
@@ -853,6 +929,29 @@ def get_site_data(
             return data
 
     return None
+
+
+def get_obis_data(site_name: str) -> dict[str, Any]:
+    """Load OBIS enrichment data for a site directly from case study JSON.
+
+    Bypasses the Cabo Pulmo bundle preference in get_site_data() so OBIS
+    fields are always read from the source-of-truth case study JSON.
+
+    Returns dict with keys: biodiversity_metrics, observation_quality,
+    environmental_baselines - each may be None if not yet enriched.
+    """
+    for path in _discover_case_studies():
+        data = _load_case_study_json(path)
+        if data is None:
+            continue
+        name = data.get("site", {}).get("name", "")
+        if name == site_name:
+            return {
+                "biodiversity_metrics": data.get("biodiversity_metrics"),
+                "observation_quality": data.get("observation_quality"),
+                "environmental_baselines": data.get("environmental_baselines"),
+            }
+    return {}
 
 
 def get_site_summary(site_name: str) -> str:

@@ -449,5 +449,59 @@
       "What are the key transboundary governance risks for Sundarbans Reserve Forest?",
       "Compare Sundarbans Reserve Forest and Cispata Bay Mangrove Conservation Area by total ecosystem service value."
     ]
+  },
+  "biodiversity_metrics": {
+    "species_richness": 611,
+    "total_records": 78116,
+    "dataset_count": 8,
+    "year_range": null,
+    "iucn_threatened_count": 55,
+    "iucn_by_category": {
+      "EN": 14,
+      "VU": 25,
+      "CR": 16
+    },
+    "taxonomic_composition": {
+      "birds": {
+        "records": 27,
+        "species": 3
+      },
+      "fish": {
+        "records": 9129,
+        "species": 561
+      },
+      "mammals": {
+        "records": 2751,
+        "species": 4
+      },
+      "other": {
+        "records": 3405,
+        "species": 40
+      }
+    },
+    "mt_a_summary": "611 species documented; 55 IUCN Red List species (16 CR, 14 EN, 25 VU)",
+    "mt_b_summary": "across 8 datasets (78,116 occurrence records)",
+    "obis_fetched_at": "2026-02-24T23:13:17.202983+00:00"
+  },
+  "observation_quality": {
+    "record_density_score": 0.9292,
+    "dataset_diversity_score": 0.6398,
+    "qc_pass_rate": 1.0,
+    "temporal_coverage_score": 0.0,
+    "composite_quality_score": 0.6923,
+    "total_records": 78116,
+    "dataset_count": 8,
+    "year_range": null,
+    "explanation": "78,116 OBIS records; 8 datasets; QC pass rate 100%"
+  },
+  "environmental_baselines": {
+    "sst": {
+      "median_sst_c": null,
+      "mean_sst_c": null,
+      "sst_range_c": null,
+      "n_records": 0,
+      "bleaching_proximity_c": null,
+      "source": "OBIS environmental statistics"
+    }
   }
 }

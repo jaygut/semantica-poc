@@ -15,7 +15,7 @@
 
 ## Executive Summary
 
-This repository contains the **complete knowledge foundation** for Nereus v4, a "Hybrid" Intelligence system where **Semantica plays a foundational role**. Unlike traditional RAG systems that merely cite text, Nereus "thinks" using **35 Bridge Axioms**—scientific rules physically extracted from literature and loaded into a Neo4j knowledge graph.
+This repository contains the **complete knowledge foundation** for Nereus v4, a "Hybrid" Intelligence system where **Semantica plays a foundational role**. Unlike traditional RAG systems that merely cite text, Nereus "thinks" using **40 Bridge Axioms**—scientific rules physically extracted from literature and loaded into a Neo4j knowledge graph.
 
 **Current Status:** The **Nereus v6 Prospective Scenario Intelligence** release transforms Nereus from retrospective ESV valuation into forward-looking scenario intelligence. Built on the v5 Audit-Grade Integrity platform (40 bridge axioms, DOI-backed provenance), v6 adds SSP climate pathways, counterfactual protection analysis, McClanahan tipping point engine, blue carbon revenue modeling, portfolio Nature VaR, and real options valuation - all with deterministic provenance chains and P5/P50/P95 uncertainty envelopes.
 
@@ -76,7 +76,7 @@ This repository contains the **complete knowledge foundation** for Nereus v4, a 
 |----------|------|---------|
 | 1 | [`data/semantica_export/entities.jsonld`](./data/semantica_export/entities.jsonld) | 14 entities with JSON-LD context (WoRMS, FishBase, TNFD) |
 | 2 | [`data/semantica_export/relationships.json`](./data/semantica_export/relationships.json) | 15 typed relationships with provenance |
-| 3 | [`data/semantica_export/bridge_axioms.json`](./data/semantica_export/bridge_axioms.json) | 35 bridge axioms (BA-001 to BA-035) with 3+ evidence sources each |
+| 3 | [`data/semantica_export/bridge_axioms.json`](./data/semantica_export/bridge_axioms.json) | 40 bridge axioms (BA-001 to BA-040) with 3+ evidence sources each |
 | 4 | [`data/semantica_export/document_corpus.json`](./data/semantica_export/document_corpus.json) | 195-paper corpus summary |
 | 5 | [`data/sample_extractions/`](./data/sample_extractions/) | 5 critical paper extractions |
 

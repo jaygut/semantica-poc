@@ -448,5 +448,59 @@
       "How does debt-for-nature financing relate to Galapagos Marine Reserve value?",
       "Compare Galapagos Marine Reserve and Cabo Pulmo National Park by total ecosystem service value."
     ]
+  },
+  "biodiversity_metrics": {
+    "species_richness": 2786,
+    "total_records": 149670,
+    "dataset_count": 122,
+    "year_range": null,
+    "iucn_threatened_count": 78,
+    "iucn_by_category": {
+      "EN": 22,
+      "VU": 38,
+      "CR": 18
+    },
+    "taxonomic_composition": {
+      "birds": {
+        "records": 249,
+        "species": 37
+      },
+      "fish": {
+        "records": 58081,
+        "species": 615
+      },
+      "mammals": {
+        "records": 2772,
+        "species": 29
+      },
+      "other": {
+        "records": 84714,
+        "species": 2024
+      }
+    },
+    "mt_a_summary": "2,786 species documented; 78 IUCN Red List species (18 CR, 22 EN, 38 VU)",
+    "mt_b_summary": "across 122 datasets (149,670 occurrence records)",
+    "obis_fetched_at": "2026-02-24T23:12:54.566980+00:00"
+  },
+  "observation_quality": {
+    "record_density_score": 0.9828,
+    "dataset_diversity_score": 1.0,
+    "qc_pass_rate": 1.0,
+    "temporal_coverage_score": 0.0,
+    "composite_quality_score": 0.7957,
+    "total_records": 149670,
+    "dataset_count": 122,
+    "year_range": null,
+    "explanation": "149,670 OBIS records; 122 datasets; QC pass rate 100%"
+  },
+  "environmental_baselines": {
+    "sst": {
+      "median_sst_c": null,
+      "mean_sst_c": null,
+      "sst_range_c": null,
+      "n_records": 0,
+      "bleaching_proximity_c": null,
+      "source": "OBIS environmental statistics"
+    }
   }
 }

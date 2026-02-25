@@ -454,5 +454,59 @@
       "Explain BA-004 for coastal protection in Belize Barrier Reef Reserve System.",
       "Compare Belize Barrier Reef Reserve System and Galapagos Marine Reserve by total ecosystem service value."
     ]
+  },
+  "biodiversity_metrics": {
+    "species_richness": 344,
+    "total_records": 1916,
+    "dataset_count": 12,
+    "year_range": null,
+    "iucn_threatened_count": 22,
+    "iucn_by_category": {
+      "CR": 14,
+      "EN": 2,
+      "VU": 6
+    },
+    "taxonomic_composition": {
+      "birds": {
+        "records": 0,
+        "species": 0
+      },
+      "fish": {
+        "records": 834,
+        "species": 121
+      },
+      "mammals": {
+        "records": 1,
+        "species": 1
+      },
+      "other": {
+        "records": 1065,
+        "species": 213
+      }
+    },
+    "mt_a_summary": "344 species documented; 22 IUCN Red List species (14 CR, 2 EN, 6 VU)",
+    "mt_b_summary": "across 12 datasets (1,916 occurrence records)",
+    "obis_fetched_at": "2026-02-24T23:12:39.455670+00:00"
+  },
+  "observation_quality": {
+    "record_density_score": 0.6234,
+    "dataset_diversity_score": 0.7469,
+    "qc_pass_rate": 1.0,
+    "temporal_coverage_score": 0.0,
+    "composite_quality_score": 0.6426,
+    "total_records": 1916,
+    "dataset_count": 12,
+    "year_range": null,
+    "explanation": "1,916 OBIS records; 12 datasets; QC pass rate 100%"
+  },
+  "environmental_baselines": {
+    "sst": {
+      "median_sst_c": null,
+      "mean_sst_c": null,
+      "sst_range_c": null,
+      "n_records": 0,
+      "bleaching_proximity_c": null,
+      "source": "OBIS environmental statistics"
+    }
   }
 }

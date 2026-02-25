@@ -503,5 +503,58 @@
       "What are the key risks for Cabo Pulmo National Park?",
       "Compare Cabo Pulmo National Park and Galapagos Marine Reserve by total ecosystem service value."
     ]
+  },
+  "biodiversity_metrics": {
+    "species_richness": 285,
+    "total_records": 901,
+    "dataset_count": 17,
+    "year_range": null,
+    "iucn_threatened_count": 4,
+    "iucn_by_category": {
+      "EN": 3,
+      "VU": 1
+    },
+    "taxonomic_composition": {
+      "birds": {
+        "records": 0,
+        "species": 0
+      },
+      "fish": {
+        "records": 465,
+        "species": 177
+      },
+      "mammals": {
+        "records": 97,
+        "species": 2
+      },
+      "other": {
+        "records": 254,
+        "species": 97
+      }
+    },
+    "mt_a_summary": "285 species documented; 4 IUCN Red List species (3 EN, 1 VU)",
+    "mt_b_summary": "across 17 datasets (901 occurrence records)",
+    "obis_fetched_at": "2026-02-24T23:12:43.982175+00:00"
+  },
+  "observation_quality": {
+    "record_density_score": 0.5612,
+    "dataset_diversity_score": 0.8417,
+    "qc_pass_rate": 1.0,
+    "temporal_coverage_score": 0.0,
+    "composite_quality_score": 0.6507,
+    "total_records": 901,
+    "dataset_count": 17,
+    "year_range": null,
+    "explanation": "901 OBIS records; 17 datasets; QC pass rate 100%"
+  },
+  "environmental_baselines": {
+    "sst": {
+      "median_sst_c": null,
+      "mean_sst_c": null,
+      "sst_range_c": null,
+      "n_records": 0,
+      "bleaching_proximity_c": null,
+      "source": "OBIS environmental statistics"
+    }
   }
 }
